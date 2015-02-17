@@ -11,6 +11,7 @@
 (filecon "/etc/rc\.d/rc\.local" file exec)
 (filecon "/etc/rc\.d/init\.d(/.*)?" file exec)
 (filecon "/etc/security/namespace\.init" file exec)
+(filecon "/etc/selinux/laptop/laptop\.sh" file exec)
 (filecon "/etc/sysconfig/network-scripts/ifdown-.*" file exec)
 (filecon "/etc/sysconfig/network-scripts/ifup-.*" file exec)
 (filecon "/etc/sysconfig/network-scripts/init\.ipv6-global" file exec)
