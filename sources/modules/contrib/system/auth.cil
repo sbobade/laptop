@@ -56,8 +56,6 @@
 
 (roleattributeset chkpwd_role system_r)
 
-(typeattributeset auth_subject_type chkpwd_t)
-
 (context chkpwd_exec (system_u object_r chkpwd_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/unix_chkpwd" file chkpwd_exec)
 

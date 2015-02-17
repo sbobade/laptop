@@ -63,6 +63,7 @@
 
 (call auth_admin (sysadm_t))
 (call auth_run_authconfig (sysadm_t sysadm_r))
+(call auth_run_chkpwd (sysadm_t sysadm_r))
 (call auth_run_utempter (sysadm_t sysadm_r))
 
 (call seutil_manage_policy_config (sysadm_t))
