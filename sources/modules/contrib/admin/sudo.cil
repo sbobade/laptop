@@ -125,6 +125,8 @@
 
 (call auth_nsswitch_client_subject_type (sudo_visudo_subject_type))
 
+(call miscfiles_read_locale (sudo_visudo_subject_type))
+
 (call sudo_list_config (sudo_visudo_subject_type))
 
 (macro sudo_exec ((type ARG1))
