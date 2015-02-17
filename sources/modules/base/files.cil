@@ -599,6 +599,31 @@
     (call filesystems_rw_rootfs_dirs (ARG1))
     (allow ARG1 files_flag_object_type manage_file_perms))
 
+(macro files_search_file ((type ARG1))
+    (allow ARG1 file_t search_dir_perms))
+
+(macro files_list_file ((type ARG1))
+    (allow ARG1 file_t list_dir_perms))
+
+(macro files_read_file_files ((type ARG1))
+    (call read_files_pattern (ARG1 file_t file_t)))
+
+(macro files_read_file_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 file_t file_t)))
+
+(macro files_read_file ((type ARG1))
+    (allow ARG1 file_t read_file_perms)
+    (allow ARG1 file_t list_dir_perms)
+    (allow ARG1 file_t read_fifo_file_perms)
+    (allow ARG1 file_t read_lnk_file_perms))
+
+(macro files_manage_file ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 file_t manage_file_perms)
+    (allow ARG1 file_t manage_dir_perms)
+    (allow ARG1 file_t manage_fifo_file_perms)
+    (allow ARG1 file_t manage_lnk_file_perms))
+
 (macro files_search_home ((type ARG1))
     (allow ARG1 home_t search_dir_perms))
 

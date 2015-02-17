@@ -41,6 +41,7 @@
 (call devices_getattr_all (sysadm_t))
 
 (call files_manage_config (sysadm_t))
+(call files_manage_file (sysadm_t))
 
 (call filesystems_getattr_all_filesystems (sysadm_t))
 (call filesystems_getattr_devpts_chr_files (sysadm_t))
