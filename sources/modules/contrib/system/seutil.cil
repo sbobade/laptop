@@ -130,6 +130,8 @@
 (context getenforce_exec (system_u object_r getenforce_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/getenforce" file getenforce_exec)
 
+(call selinux_get_enforce_mode (getenforce_t))
+
 (type setenforce_t)
 (type setenforce_exec_t)
 (call applications_app (setenforce_t setenforce_exec_t))
