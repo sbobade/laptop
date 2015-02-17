@@ -281,6 +281,11 @@
     (call files_object_type (ARG1))
     (typeattributeset files_spool_object_type ARG1))
 
+(macro files_rootfs_object_type_transition_file ((type ARG1))
+    (call filesystems_rootfs_object_type_transition (ARG1 file_t file "*"))
+    (call filesystems_rootfs_object_type_transition (ARG1 file_t dir "*"))
+    (call filesystems_rootfs_object_type_transition (ARG1 file_t lnk_file "*")))
+
 (macro files_boot_object_type_transition ((type ARG1)(type ARG2)
     (class ARG3)(name ARG4))
     (call object_type_transition_pattern (ARG1 boot_t ARG2 ARG3 ARG4)))

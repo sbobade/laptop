@@ -116,6 +116,8 @@
 (call filesystems_read_proc_lnk_files (subject_common_type))
 (call filesystems_search_sysfs (subject_common_type))
 
+(call files_rootfs_object_type_transition_file (subject_common_type))
+
 (call devices_rw_devtty (subject_common_type))
 (call devices_rw_null (subject_common_type))
 (call devices_rw_zero (subject_common_type))

@@ -72,8 +72,6 @@
 
 (typeattributeset rpm_object_type rpm_tmpfs_t)
 
-(call filesystems_rootfs_object_type_transition (rpm_t rpm_lib_t lnk_file "*"))
-
 (call auth_manage_shadow (rpm_t))
 (call auth_relabel_shadow (rpm_t))
 
