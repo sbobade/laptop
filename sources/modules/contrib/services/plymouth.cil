@@ -151,7 +151,7 @@
 
 (macro plymouth_run ((type ARG1)(role ARG2))
     (call plymouth_auto_subject_type_transition (ARG1))
-    (roleattributeset plymouth_role ARG1))
+    (roleattributeset plymouth_role ARG2))
 
 (macro plymouth_auto_subject_type_transition_plymouthd ((type ARG1))
     (call plymouth_send_signal_plymouthd (ARG1))

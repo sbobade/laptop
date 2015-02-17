@@ -60,6 +60,3 @@
 (macro autorelabel_manage_flag_files ((type ARG1))
     (call filesystems_rw_rootfs_dirs (ARG1))
     (allow ARG1 autorelabel_flag_t manage_file_perms))
-
-(macro autorelabel_rootfs_object_type_transition_flag_files ((type ARG1))
-    (call filesystems_rootfs_object_type_transition (ARG1 autorelabel_flag_t file ".autorelabel")))

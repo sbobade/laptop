@@ -99,7 +99,7 @@
 (macro coredump_send_signal_coredumpctl ((type ARG1))
     (allow ARG1 coredumpctl_t (process (signal))))
 
-(macro coredump_run_coredumptl ((type ARG1)(role ARG2))
+(macro coredump_run_coredumpctl ((type ARG1)(role ARG2))
     (call coredump_auto_subject_type_transition_coredumpctl (ARG1))
     (roleattributeset coredump_coredumpctl_role ARG2))
 

@@ -31,20 +31,217 @@
 (context sysadm_mail_spool (sysadm_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
 (filecon "/var/spool/mail/root" file sysadm_mail_spool)
 
+(allow sysadm_t self (capability (dac_override dac_read_search
+    kill chown fowner fsetid sys_ptrace sys_admin)))
+(allow sysadm_t self (process (ptrace setfscreate)))
+
+(call system_read_all_proc (sysadm_t))
+(call system_read_all_sysctls (sysadm_t))
+
+(call devices_getattr_all (sysadm_t))
+
+(call files_manage_config (sysadm_t))
+
+(call filesystems_getattr_all_filesystems (sysadm_t))
+(call filesystems_getattr_devpts_chr_files (sysadm_t))
+(call filesystems_read_cgroup_files (sysadm_t))
+
+(call storage_write_fixed_disk (sysadm_t))
+(call storage_write_removable (sysadm_t))
+(call storage_write_scsi_generic (sysadm_t))
+
+(call subject_getattr_all_common_subjects (sysadm_t))
+(call subject_read_all_common_subjects_state (sysadm_t))
+
+(call terminals_use_inherited_unallocated_ttys (sysadm_t))
+
+(call audit_admin (sysadm_t))
+(call audit_run_auditctl (sysadm_t sysadm_r))
+(call audit_run_augenrules (sysadm_t sysadm_r))
+(call audit_run_ausearch (sysadm_t sysadm_r))
+
+(call auth_manage_all_pam_config (sysadm_t))
+
+(call auth_run_authconfig (sysadm_t sysadm_r))
+
+(call auth_change_user_passwd (sysadm_t))
+(call auth_change_user_finger_info (sysadm_t))
+(call auth_change_user_login_shell (sysadm_t))
+(call auth_change_user_crontab (sysadm_t))
+(call auth_pam_rootok (sysadm_t))
+
+(call seutil_manage_policy_config (sysadm_t))
+(call seutil_config_object_type_transition_policy_config_dirs (sysadm_t))
+
+(call seutil_manage_default_context (sysadm_t))
+(call seutil_config_object_type_transition_default_context_dirs (sysadm_t))
+
+(call seutil_manage_policy_src (sysadm_t))
+(call seutil_config_object_type_transition_policy_src_dirs (sysadm_t))
+
+(call seutil_manage_selinux_config (sysadm_t))
+(call seutil_config_object_type_transition_selinux_config_dirs (sysadm_t))
+
+(call seutil_manage_file_context (sysadm_t))
+(call seutil_default_context_object_type_transition_file_context_dirs (sysadm_t))
+
+(call seutil_run_load_policy (sysadm_t sysadm_r))
+(call seutil_run_secilc (sysadm_t sysadm_r))
+(call seutil_run_getenforce (sysadm_t sysadm_r))
+(call seutil_run_setenforce (sysadm_t sysadm_r))
+(call seutil_run_setfiles (sysadm_t sysadm_r))
+(call seutil_run_setools (sysadm_t sysadm_r))
+(call seutil_run_getsebool (sysadm_t sysadm_r))
+(call seutil_run_setsebool (sysadm_t sysadm_r))
+
 (type sysadm_chfn_t)
 (call usermanage_role_template_chfn (sysadm_r sysadm_t sysadm_chfn_t))
 
 (type sysadm_passwd_t)
 (call usermanage_role_template_passwd (sysadm_r sysadm_t sysadm_passwd_t))
 
+(call usermanage_run_groupadd (sysadm_t sysadm_r))
+(call usermanage_run_useradd (sysadm_t sysadm_r))
+
+(optional sysadm_optional_alsa
+    (call alsa_admin (sysadm_t))
+    (call alsa_run_alsactl (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_bootloader
+    (call bootloader_run (sysadm_t sysadm_r))
+    (call bootloader_manage_config (sysadm_t)))
+
+(optional sysadm_optional_dbus
+    (call dbus_admin (sysadm_t))
+    (call dbus_manage_all_config (sysadm_t)))
+
+(optional sysadm_optional_dhcp
+    (call dhcp_manage_config (sysadm_t)))
+
+(optional sysadm_optional_dm
+    (call dm_admin (sysadm_t))
+    (call dm_run_dmcrypt (sysadm_t sysadm_r))
+    (call dm_run_dmsetup (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_dmesg
+    (call dmesg_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_dns
+    (call dns_manage_resolve_config_files (sysadm_t)))
+
+(optional sysadm_optional_fstools
+    (call fstools_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_fuse
+    (call fuse_run_fusermount (sysadm_t sysadm_r))
+    (call fuse_run_ulockmgr (sysadm_t sysadm_r))
+    (call fuse_manage_config_files (sysadm_t)))
+
+(optional sysadm_optional_getty
+    (call getty_admin (sysadm_t)))
+
+(optional sysadm_optional_hostname
+    (call hostname_run (sysadm_t sysadm_r))
+    (call hostname_manage_config_files (sysadm_t)))
+
+(optional sysadm_optional_hwclock
+    (call hwclock_run (sysadm_t sysadm_r))
+    (call hwclock_manage_config_files (sysadm_t)))
+
+(optional sysadm_optional_iptables
+    (call iptables_admin (sysadm_t))
+    (call iptables_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_iptools
+    (call iptools_run (sysadm_t sysadm_r))
+    (call iptools_manage_config (sysadm_t)))
+
+(optional sysadm_optional_kmod
+    (call kmod_admin (sysadm_t))
+    (call kmod_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_ld
+    (call ld_admin (sysadm_t))
+    (call ld_run_ldconfig (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_login
+    (call login_admin (sysadm_t)))
+
+(optional sysadm_optional_logrotate
+    (call logrotate_admin (sysadm_t))
+    (call logrotate_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_lvm
+    (call lvm_admin (sysadm_t))
+    (call lvm_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_mandb
+    (call mandb_admin (sysadm_t))
+    (call mandb_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_md
+    (call md_admin (sysadm_t))
+    (call md_run_mdadm (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_mount
+    (call mount_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_nettools
+    (call nettools_admin (sysadm_t))
+    (call nettools_run_ping (sysadm_t sysadm_r))
+    (call nettools_run_arp (sysadm_t sysadm_r))
+    (call nettools_run (sysadm_t sysadm_r))
+    (call nettools_run_traceroute (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_nm
+    (call nm_admin (sysadm_t))
+    (call nm_run_nmcli (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_ntp
+    (call ntp_admin (sysadm_t))
+    (call ntp_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_pa
+    (call pa_manage_config (sysadm_t)))
+
+(optional sysadm_optional_pcitools
+    (call pcitools_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_pcsc
+    (call pcsc_admin (sysadm_t)))
+
+(optional sysadm_optional_plymouth
+    (call plymouth_admin (sysadm_t))
+    (call plymouth_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_polkit
+    (call polkit_admin (sysadm_t))
+    (call polkit_run_pklauth (sysadm_t sysadm_r))
+    (call polkit_run_pkladm (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_rpm
+    (call rpm_admin (sysadm_t))
+    (call rpm_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_rtkit
+    (call rtkit_admin (sysadm_t))
+    (call rtkit_run_rtkitctl (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_sudo
     (call sudo_send_signal (sysadm_t))
 
+    (call sudo_manage_config (sysadm_t))
+
+    (type sysadm_visudo_t)
+    (call sudo_role_template_visudo (sysadm_r sysadm_t sysadm_visudo_t))
+
     (optional sysadm_optional_staff
         (call staff_rw_inherited_fifo_files (sysadm_t))
-        (call staff_use_fd (sysadm_t))
-    )
-)
+        (call staff_use_fd (sysadm_t))))
+
+(optional sysadm_optional_sysctl
+    (call sysctl_run (sysadm_t sysadm_r))
+    (call sysctl_manage_config (sysadm_t)))
 
 (optional sysadm_optional_systemd
     (type sysadm_systemd_t)
@@ -64,13 +261,64 @@
     (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemd_config_home)
 
     (optional sysadm_optional_askpwd
+        (call askpwd_run (sysadm_t sysadm_r))
         (call askpwd_run_askpwdagent (sysadm_t sysadm_r)))
 
-    (optional sysadm_optional_journal
-        (call journal_run_journalctl (sysadm_t sysadm_r))))
+    (optional sysadm_optional_autorelabel
+        (call autorelabel_manage_flag_files (sysadm_t)))
 
-(optional sysadm_optional_unconfined
-    (call unconfined_subject_type (sysadm_t)))
+    (optional sysadm_optional_binfmt
+        (call binfmt_manage_config (sysadm_t)))
+
+    (optional sysadm_optional_coredump
+        (call coredump_run_coredumpctl (sysadm_t sysadm_r)))
+
+    (optional sysadm_optional_hostnamectl
+        (call hostname_run_hostnamectl (sysadm_t sysadm_r)))
+
+    (optional sysadm_optional_journal
+        (call journal_admin (sysadm_t))
+        (call journal_run_journalctl (sysadm_t sysadm_r)))
+
+    (optional sysadm_optional_loadmodules
+        (call loadmodules_manage_config (sysadm_t)))
+
+    (optional sysadm_optional_locale
+        (call locale_run_localectl (sysadm_t sysadm_r))
+        (call locale_manage_config_files (sysadm_t)))
+
+    (optional sysadm_optional_loginctl
+        (call login_run_loginctl (sysadm_t sysadm_r)))
+
+    (optional sysadm_optional_machine
+        (call machine_run_machinectl (sysadm_t sysadm_r))
+        (call machine_manage_config_files (sysadm_t)))
+
+    (optional sysadm_optional_notify
+        (call notify_run (sysadm_t sysadm_r)))
+
+    (call systemd_admin (sysadm_t))
+    (call systemd_run_systemctl (sysadm_t sysadm_r))
+    (call systemd_manage_all_config (sysadm_t))
+
+    (optional sysadm_optional_sysusers
+        (call sysusers_run (sysadm_t sysadm_r))
+        (call sysusers_manage_config (sysadm_t)))
+
+    (optional sysadm_optional_tmpfiles
+        (call tmpfiles_run (sysadm_t sysadm_r))
+        (call tmpfiles_manage_config (sysadm_t)))
+
+    (optional sysadm_optional_vconsole
+        (call vconsole_manage_config_files (sysadm_t))))
+
+(optional sysadm_optional_udev
+    (call udev_admin (sysadm_t))
+    (call udev_run_udevadm (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_wpa
+    (call wpa_admin (sysadm_t))
+    (call wpa_run_wpacli (sysadm_t sysadm_r)))
 
 (macro sysadm_roleallow ((role ARG1))
     (roleallow ARG1 sysadm_r))

@@ -188,7 +188,11 @@
 
 (macro sudo_read_pam_config_files ((type ARG1))
     (call auth_search_pam_config (ARG1))
-    (call read_files_pattern (ARG1 sudo_pam_config_t sudo_pam_config_t)))
+    (allow ARG1 sudo_pam_config_t read_file_perms))
+
+(macro sudo_manage_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 sudo_pam_config_t manage_file_perms))
 
 (macro sudo_search_var ((type ARG1))
     (call files_search_var (ARG1))

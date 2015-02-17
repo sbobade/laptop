@@ -267,6 +267,14 @@
     (call auth_search_pam_config (ARG1))
     (allow ARG1 chfn_pam_config_t read_file_perms))
 
+(macro usermanage_manage_chfn_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 chfn_pam_config_t manage_file_perms))
+
 (macro usermanage_read_passwd_pam_config_files ((type ARG1))
     (call auth_search_pam_config (ARG1))
     (allow ARG1 passwd_pam_config_t read_file_perms))
+
+(macro usermanage_manage_passwd_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 passwd_pam_config_t manage_file_perms))

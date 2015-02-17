@@ -63,7 +63,7 @@
 (macro machine_auto_subject_type_transition_machinectl ((type ARG1))
     (call machine_send_signal_machinectl (ARG1))
     (call auto_subject_type_transition_pattern
-        (ARG1 machinectl_exec machinectl_t)))
+        (ARG1 machinectl_exec_t machinectl_t)))
 
 (macro machine_send_signal_machinectl ((type ARG1))
     (allow ARG1 machinectl_t (process (signal))))

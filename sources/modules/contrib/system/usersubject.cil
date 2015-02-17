@@ -65,7 +65,7 @@
 (type user_mail_spool_t)
 (call usersubject_mail_spool_object_type (user_mail_spool_t))
 
-(allow usersubject_common_type self (process (setpgid getattr getsched)))
+(allow usersubject_common_type self (process (setpgid getattr getsched setsched)))
 (allow usersubject_common_type self create_unix_stream_socket_perms)
 (allow usersubject_common_type self rw_fifo_file_perms)
 

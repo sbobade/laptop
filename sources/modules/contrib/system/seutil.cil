@@ -347,6 +347,12 @@
     (allow ARG1 selinux_config_t list_dir_perms)
     (allow ARG1 selinux_config_t read_lnk_file_perms))
 
+(macro seutil_manage_selinux_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 selinux_config_t manage_file_perms)
+    (allow ARG1 selinux_config_t manage_dir_perms)
+    (allow ARG1 selinux_config_t manage_lnk_file_perms))
+
 (macro seutil_rw_selinux_config_dirs ((type ARG1))
     (call files_search_config (ARG1))
     (allow ARG1 selinux_config_t rw_dir_perms))
@@ -372,6 +378,12 @@
     (allow ARG1 default_context_t read_file_perms)
     (allow ARG1 default_context_t list_dir_perms)
     (allow ARG1 default_context_t read_lnk_file_perms))
+
+(macro seutil_manage_default_context ((type ARG1))
+    (call seutil_rw_selinux_config_dirs (ARG1))
+    (allow ARG1 default_context_t manage_file_perms)
+    (allow ARG1 default_context_t manage_dir_perms)
+    (allow ARG1 default_context_t manage_lnk_file_perms))
 
 (macro seutil_rw_default_context_dirs ((type ARG1))
     (call seutil_search_selinux_config (ARG1))
@@ -485,6 +497,12 @@
     (allow ARG1 policy_src_t read_file_perms)
     (allow ARG1 policy_src_t list_dir_perms)
     (allow ARG1 policy_src_t read_lnk_file_perms))
+
+(macro seutil_manage_policy_src ((type ARG1))
+    (call seutil_rw_selinux_config_dirs (ARG1))
+    (allow ARG1 policy_src_t manage_file_perms)
+    (allow ARG1 policy_src_t manage_dir_perms)
+    (allow ARG1 policy_src_t manage_lnk_file_perms))
 
 (macro seutil_config_object_type_transition_policy_config_dirs ((type ARG1))
     (call files_search_config (ARG1))
