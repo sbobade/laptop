@@ -1,0 +1,304 @@
+(roleattribute login_loginctl_role)
+
+(typeattribute login_loginctl_client_subject_type)
+
+(typeattribute login_logind_client_subject_type)
+
+(typeattribute login_logind_admin_subject_type)
+
+(typeattribute login_logind_object_type)
+
+(type loginctl_t)
+(type loginctl_exec_t)
+(call applications_app (loginctl_t loginctl_exec_t))
+(roletype login_loginctl_role loginctl_t)
+
+(call login_loginctl_client_subject_type (loginctl_t))
+
+(context loginctl_exec (system_u object_r loginctl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/loginctl" file loginctl_exec)
+
+(type logind_t)
+(type logind_exec_t)
+(call systemd_daemon (logind_t logind_exec_t))
+
+(context logind_exec (system_u object_r logind_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-logind" file logind_exec)
+
+(type logind_unit_t)
+(call systemd_unit_object_type (logind_unit_t))
+
+(typeattributeset login_logind_object_type logind_unit_t)
+
+(context logind_unit (system_u object_r logind_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-logind.*" file logind_unit)
+(filecon "/usr/lib/systemd/system/[^/]*org\.freedesktop\.login1.*" file logind_unit)
+
+(type logind_systemd_config_t)
+(call systemd_config_object_type (logind_systemd_config_t))
+
+(typeattributeset login_logind_object_type logind_systemd_config_t)
+
+(context logind_systemd_config (system_u object_r logind_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/logind\.conf" file logind_systemd_config)
+
+(type logind_dbus_config_t)
+(call dbus_config_object_type (logind_dbus_config_t))
+
+(typeattributeset login_logind_object_type logind_dbus_config_t)
+
+(context logind_dbus_config (system_u object_r logind_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.login1\.conf" file logind_dbus_config)
+
+(type logind_systemd_runtime_t)
+(call systemd_runtime_object_type (logind_systemd_runtime_t))
+
+(typeattributeset login_logind_object_type logind_systemd_runtime_t)
+
+(context logind_systemd_runtime (system_u object_r logind_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/seats(/.*)?" any logind_systemd_runtime)
+(filecon "/var/run/systemd/sessions(/.*)?" any logind_systemd_runtime)
+(filecon "/var/run/systemd/users(/.*)?" any logind_systemd_runtime)
+(filecon "/var/run/systemd/inhibit(/.*)?" any logind_systemd_runtime)
+
+(allow logind_t logind_systemd_runtime_t manage_dir_perms)
+(allow logind_t logind_systemd_runtime_t manage_file_perms)
+(allow logind_t logind_systemd_runtime_t manage_lnk_file_perms)
+(allow logind_t logind_systemd_runtime_t manage_fifo_file_perms)
+(call systemd_runtime_object_type_transition (logind_t logind_systemd_runtime_t dir "*"))
+
+(type logind_systemd_lib_t)
+(call systemd_lib_object_type (logind_systemd_lib_t))
+
+(typeattributeset login_logind_object_type logind_systemd_lib_t)
+
+(context logind_systemd_lib (system_u object_r logind_systemd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/systemd/linger(/.*)?" any logind_systemd_lib)
+
+(allow logind_t logind_systemd_lib_t manage_dir_perms)
+(allow logind_t logind_systemd_lib_t manage_file_perms)
+(call systemd_lib_object_type_transition (logind_t logind_systemd_lib_t dir "*"))
+
+(allow logind_t self (capability (chown fowner sys_tty_config sys_admin dac_override)))
+(allow logind_t self (process (getcap setfscreate)))
+
+(allow logind_t login_logind_client_subject_type read_file_perms)
+(allow logind_t login_logind_client_subject_type list_dir_perms)
+(allow logind_t login_logind_client_subject_type read_lnk_file_perms)
+
+(call system_read_kernel_sysctl (logind_t))
+
+(call devices_getattr_dri (logind_t))
+(call devices_getattr_sound (logind_t))
+(call devices_getattr_wireless (logind_t))
+(call devices_getattr_v4l (logind_t))
+
+(call devices_read_urandom (logind_t))
+
+(call devices_rw_event (logind_t))
+(call devices_rw_dri (logind_t))
+
+(call devices_setattr_dri (logind_t))
+(call devices_setattr_sound (logind_t))
+(call devices_setattr_wireless (logind_t))
+(call devices_setattr_v4l (logind_t))
+
+(call filesystems_list_sysfs (logind_t))
+(call filesystems_rw_sysfs_files (logind_t))
+(call filesystems_read_sysfs_lnk_files (logind_t))
+
+(call filesystems_getattr_tmpfs_filesystems (logind_t))
+(call filesystems_list_tmpfs (logind_t))
+(call filesystems_mount_tmpfs (logind_t))
+(call filesystems_unmount_tmpfs (logind_t))
+
+(call files_search_home (logind_t))
+(call files_manage_user_runtime_dirs (logind_t))
+(call files_mounton_user_runtime_dirs (logind_t))
+
+(call selinux_get_enforce_mode (logind_t))
+
+(call storage_getattr_fixed_disk (logind_t))
+(call storage_setattr_fixed_disk (logind_t))
+
+(call storage_getattr_removable (logind_t))
+(call storage_setattr_removable (logind_t))
+
+(call storage_getattr_scsi_generic (logind_t))
+(call storage_setattr_scsi_generic (logind_t))
+
+(call terminals_use_unallocated_ttys (logind_t))
+
+(call auth_read_state_all_login_program_subjects (logind_t))
+(call auth_nsswitch_client_subject_type (logind_t))
+
+(call dbus_system_service (logind_t))
+
+(call getty_start_units (logind_t))
+
+(call journal_client_subject_type (logind_t))
+
+(call login_read_logind_systemd_config_files (logind_t))
+
+(call polkit_dbus_chat_polkitd (logind_t))
+
+(call seutil_read_selinux_config_files (logind_t))
+(call seutil_read_file_context_files (logind_t))
+
+(call systemd_dbus_chat (logind_t))
+
+(call systemd_status_system_units (logind_t))
+(call systemd_status_system (logind_t))
+
+(call systemd_start_power_units (logind_t))
+(call systemd_start_system_units (logind_t))
+(call systemd_start_system (logind_t))
+(call systemd_start_transient_systemd_units (logind_t))
+
+(call systemd_stop_system_units (logind_t))
+(call systemd_stop_system (logind_t))
+
+(call systemd_stream_connect (logind_t))
+
+(call usersubject_delete_all_tmpfs (logind_t))
+(call usersubject_setattr_terminals (logind_t))
+(call usersubject_use_terminals (logind_t))
+
+(call udev_client_subject_type (logind_t))
+
+(optional logind_optional_unconfined
+    (call unconfined_read_state_all_user_subjects (logind_t)))
+
+(allow login_logind_admin_subject_type logind_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (login_logind_admin_subject_type logind_t))
+
+(allow login_logind_admin_subject_type logind_unit_t (service (all)))
+
+(allow login_logind_admin_subject_type login_logind_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(call login_dbus_chat_logind (login_logind_client_subject_type))
+(call login_use_fd_logind (login_logind_client_subject_type))
+(call login_write_inherited_logind_systemd_runtime_fifo_files (login_logind_client_subject_type))
+
+(macro login_exec_loginctl ((type ARG1))
+    (call can_exec (ARG1 loginctl_exec_t))
+    (call login_loginctl_client_subject_type (ARG1)))
+
+(macro login_loginctl_client_subject_type ((type ARG1))
+    (typeattributeset login_loginctl_client_subject_type ARG1))
+
+(macro login_exec_logind ((type ARG1))
+    (call can_exec (ARG1 logind_exec_t)))
+
+(macro login_auto_subject_type_transition_logind ((type ARG1))
+    (call login_send_signal_logind (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 logind_exec_t logind_t)))
+
+(macro login_send_signal_logind ((type ARG1))
+    (allow ARG1 logind_t (process (signal))))
+
+(macro login_auto_subject_type_transition_loginctl ((type ARG1))
+    (call login_send_signal_loginctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 loginctl_exec_t loginctl_t)))
+
+(macro login_send_signal_loginctl ((type ARG1))
+    (allow ARG1 loginctl_t (process (signal))))
+
+(macro login_run_loginctl ((type ARG1)(role ARG2))
+    (call login_auto_subject_type_transition_loginctl (ARG1))
+    (roleattributeset login_loginctl_role ARG2))
+
+(macro login_read_logind_systemd_config_files ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 logind_systemd_config_t read_file_perms))
+
+(macro login_manage_logind_systemd_config_files ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 logind_systemd_config_t manage_file_perms))
+
+(macro login_read_logind_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 logind_dbus_config_t read_file_perms))
+
+(macro login_manage_logind_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 logind_dbus_config_t manage_file_perms))
+
+(macro login_search_logind_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 logind_systemd_runtime_t search_dir_perms))
+
+(macro login_list_logind_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 logind_systemd_runtime_t list_dir_perms))
+
+(macro login_read_logind_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 logind_systemd_runtime_t logind_systemd_runtime_t)))
+
+(macro login_write_inherited_logind_systemd_runtime_fifo_files ((type ARG1))
+    (allow ARG1 logind_systemd_runtime_t write_inherited_fifo_file_perms))
+
+(macro login_read_logind_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 logind_systemd_runtime_t logind_systemd_runtime_t)))
+
+(macro login_read_logind_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 logind_systemd_runtime_t read_file_perms)
+    (allow ARG1 logind_systemd_runtime_t list_dir_perms)
+    (allow ARG1 logind_systemd_runtime_t read_fifo_file_perms)
+    (allow ARG1 logind_systemd_runtime_t read_lnk_file_perms))
+
+(macro login_manage_logind_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 logind_systemd_runtime_t manage_file_perms)
+    (allow ARG1 logind_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 logind_systemd_runtime_t manage_fifo_file_perms)
+    (allow ARG1 logind_systemd_runtime_t manage_lnk_file_perms))
+
+(macro login_search_logind_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 logind_systemd_lib_t search_dir_perms))
+
+(macro login_list_logind_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 logind_systemd_lib_t list_dir_perms))
+
+(macro login_read_logind_systemd_lib_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_files_pattern (ARG1 logind_systemd_lib_t logind_systemd_lib_t)))
+
+(macro login_read_logind_systemd_lib_lnk_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 logind_systemd_lib_t logind_systemd_lib_t)))
+
+(macro login_read_logind_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 logind_systemd_lib_t read_file_perms)
+    (allow ARG1 logind_systemd_lib_t list_dir_perms)
+    (allow ARG1 logind_systemd_lib_t read_lnk_file_perms))
+
+(macro login_manage_logind_systemd_lib ((type ARG1))
+    (call systemd_rw_lib_dirs (ARG1))
+    (allow ARG1 logind_systemd_lib_t manage_file_perms)
+    (allow ARG1 logind_systemd_lib_t manage_dir_perms)
+    (allow ARG1 logind_systemd_lib_t manage_lnk_file_perms))
+
+(macro login_dbus_chat_logind ((type ARG1))
+    (allow ARG1 logind_t (dbus (send_msg)))
+    (allow logind_t ARG1 (dbus (send_msg))))
+
+(macro login_use_fd_logind ((type ARG1))
+    (allow ARG1 logind_t (fd (use))))
+
+(macro login_logind_client_subject_type ((type ARG1))
+    (typeattributeset login_logind_client_subject_type ARG1))
+
+(macro logind_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset login_logind_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

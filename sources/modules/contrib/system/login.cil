@@ -1,0 +1,188 @@
+(boolean login_priv_user true)
+
+(typeattribute login_admin_subject_type)
+(typeattribute login_subject_type)
+
+(typeattribute login_object_type)
+
+(type login_priv_user_t)
+(call selinux_bool_object_type (login_priv_user_t))
+
+(context login_priv_user (system_u object_r login_priv_user_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/login_priv_user" login_priv_user)
+
+(type login_t)
+(type login_exec_t)
+(call subject_common_type (login_t))
+(call subject_entry (login_t login_exec_t))
+(roletype system_r login_t)
+
+(typeattributeset login_subject_type login_t)
+
+(context login_exec (system_u object_r login_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/login" file login_exec)
+
+(type login_pam_config_t)
+(call auth_pam_config_object_type (login_pam_config_t))
+
+(typeattributeset login_object_type login_pam_config_t)
+
+(context login_pam_config (system_u object_r login_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/login" file login_pam_config)
+
+(allow login_t self (capability (kill fsetid fowner sys_tty_config
+    dac_override sys_admin)))
+(allow login_t self rw_fifo_file_perms)
+
+(call system_link_keyring (login_t))
+(call system_read_kernel_sysctl (login_t))
+
+(call devices_read_urandom (login_t))
+
+(call files_read_config_files (login_t))
+
+(call terminals_relabel_unallocated_ttys (login_t))
+(call terminals_setattr_unallocated_ttys (login_t))
+(call terminals_use_unallocated_ttys (login_t))
+
+(call auth_login_program_subject_type (login_t))
+(call auth_manage_pam_console_runtime_files (login_t))
+
+(call usersubject_search_home_dir (login_t))
+(call usersubject_relabel_ttys (login_t))
+(call usersubject_setattr_ttys (login_t))
+(call usersubject_use_ttys (login_t))
+
+(booleanif login_priv_user
+    (true
+        (call usersubject_shell_exec_manual_subject_type_transition_all_common_login_subjects (login_t)))
+    (false
+        (call usersubject_shell_exec_manual_subject_type_transition_all_unpriv_login_subjects (login_t))))
+
+(booleanif terminals_console_login
+    (true
+        (call terminals_relabel_console (login_t))
+        (call terminals_setattr_console (login_t))
+        (call terminals_use_console (login_t)))
+    (false
+        (call terminals_dontaudit_use_console (login_t))))
+
+(optional login_optional_dbus
+    (call dbus_system_client_subject_type (login_t)))
+
+(optional login_optional_plymouth
+    (call plymouth_exec (login_t)))
+
+(optional login_optional_systemd
+    (call systemd_daemon (login_t login_exec_t)))
+
+(type sulogin_t)
+(type sulogin_exec_t)
+(call subject_common_type (sulogin_t))
+(call subject_entry (sulogin_t sulogin_exec_t))
+(roletype system_r sulogin_t)
+
+(typeattributeset login_subject_type sulogin_t)
+
+(context sulogin_exec (system_u object_r sulogin_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/sulogin" file sulogin_exec)
+(filecon "/usr/sbin/sushell" file sulogin_exec)
+
+(allow sulogin_t self (capability (sys_admin sys_tty_config dac_override)))
+(allow sulogin_t self (process (setexec setsched)))
+(allow sulogin_t self rw_fifo_file_perms)
+
+(call system_read_crypto_sysctl (sulogin_t))
+
+(call filesystems_list_devtmpfs (sulogin_t))
+(call filesystems_dontaudit_getattr_devtmpfs_chr_files (sulogin_t))
+(call filesystems_dontaudit_getattr_devtmpfs_blk_files (sulogin_t))
+(call filesystems_read_sysfs_files (sulogin_t))
+
+(call devices_getattr_all (sulogin_t))
+
+(call subject_identity_change_exemption (sulogin_t))
+(call subject_object_identity_change_exemption (sulogin_t))
+(call subject_role_change_exemption (sulogin_t))
+
+(call selinux_compute_user_contexts (sulogin_t))
+(call selinux_validate_context (sulogin_t))
+
+(call terminals_use_console (sulogin_t))
+(call terminals_use_unallocated_ttys (sulogin_t))
+
+(call auth_read_shadow (sulogin_t))
+(call auth_nsswitch_client_subject_type (sulogin_t))
+
+(call miscfiles_read_locale (sulogin_t))
+
+(call seutil_read_selinux_config_files (sulogin_t))
+(call seutil_read_default_context_files (sulogin_t))
+
+(call usersubject_search_home_dir (sulogin_t))
+(call usersubject_shell_exec_manual_subject_type_transition_all_common_login_subjects (sulogin_t))
+
+(optional sulogin_optional_plymouth
+    (call plymouth_exec (sulogin_t)))
+
+(optional sulogin_optional_systemd
+    (call systemd_daemon (sulogin_t sulogin_exec_t))
+
+    (type sulogin_unit_t)
+    (call systemd_unit_object_type (sulogin_unit_t))
+
+    (typeattributeset login_object_type sulogin_unit_t)
+
+    (context sulogin_unit (system_u object_r sulogin_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*emergency.*" file sulogin_unit)
+
+    (allow login_admin_subject_type sulogin_unit_t (service (all)))
+
+    (call systemd_getpgid (sulogin_t)))
+
+(allow login_admin_subject_type login_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (login_admin_subject_type login_subject_type))
+
+(allow login_admin_subject_type login_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro login_exec ((type ARG1))
+    (call can_exec (ARG1 login_exec_t)))
+
+(macro login_exec_sulogin ((type ARG1))
+    (call can_exec (ARG1 sulogin_exec_t)))
+
+(macro login_auto_subject_type_transition ((type ARG1))
+    (call login_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 login_exec_t login_t)))
+
+(macro login_send_signal ((type ARG1))
+    (allow ARG1 login_t (process (signal))))
+
+(macro login_entry_subject ((type ARG1))
+    (call subject_entry (ARG1 login_exec_t)))
+
+(macro login_auto_subject_type_transition_sulogin ((type ARG1))
+    (call login_send_signal_sulogin (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sulogin_exec_t sulogin_t)))
+
+(macro login_send_signull ((type ARG1))
+    (allow ARG1 login_t (process (signull))))
+
+(macro login_send_signal_sulogin ((type ARG1))
+    (allow ARG1 sulogin_t (process (signal))))
+
+(macro login_use_fd_sulogin ((type ARG1))
+    (allow ARG1 sulogin_t (fd (use))))
+
+(macro login_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 login_pam_config_t read_file_perms))
+
+(macro login_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset login_admin_subject_type ARG1)
+    (optional login_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

@@ -1,0 +1,469 @@
+(roleattribute nmcli_role)
+
+(typeattribute nm_admin_subject_type)
+(typeattribute nm_client_subject_type)
+(typeattribute nm_subject_type)
+
+(typeattribute nm_object_type)
+
+(type nm_t)
+(type nm_exec_t)
+(call subject_common_type (nm_t))
+(call subject_entry (nm_t nm_exec_t))
+(roletype system_r nm_t)
+
+(typeattributeset nm_subject_type nm_t)
+
+(context nm_exec (system_u object_r nm_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/nm-dispatcher\.action" file nm_exec)
+(filecon "/usr/sbin/NetworkManager" file nm_exec)
+
+(type nm_config_t)
+(call files_config_object_type (nm_config_t))
+
+(typeattributeset nm_object_type nm_config_t)
+
+(context nm_config (system_u object_r nm_config_t (systemlow systemlow)))
+(filecon "/etc/NetworkManager(/.*)?" any nm_config)
+
+(type nm_dbus_config_t)
+(call dbus_config_object_type (nm_dbus_config_t))
+
+(typeattributeset nm_object_type nm_dbus_config_t)
+
+(context nm_dbus_config (system_u object_r nm_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/nm-avahi-autoipd\.conf" file nm_dbus_config)
+(filecon "/etc/dbus-1/system\.d/nm-dispatcher\.conf" file nm_dbus_config)
+(filecon "/etc/dbus-1/system\.d/nm-ifcfg-rh\.conf" file nm_dbus_config)
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.NetworkManager\.conf" file nm_dbus_config)
+
+(type nm_runtime_t)
+(call files_runtime_object_type (nm_runtime_t))
+
+(typeattributeset nm_object_type nm_runtime_t)
+
+(context nm_runtime (system_u object_r nm_runtime_t (systemlow systemlow)))
+(filecon "/var/run/NetworkManager(/.*)?" any nm_runtime)
+(filecon "/var/run/netreport(/.*)?" any nm_runtime)
+
+(allow nm_t nm_runtime_t manage_dir_perms)
+(allow nm_t nm_runtime_t manage_file_perms)
+(allow nm_t nm_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (nm_t nm_runtime_t dir "*"))
+
+(type nm_lib_t)
+(call files_lib_object_type (nm_lib_t))
+
+(typeattributeset nm_object_type nm_lib_t)
+
+(context nm_lib (system_u object_r nm_lib_t (systemlow systemlow)))
+(filecon "/var/lib/NetworkManager(/.*)?" any nm_lib)
+
+(allow nm_t nm_lib_t manage_dir_perms)
+(allow nm_t nm_lib_t manage_file_perms)
+(call files_lib_object_type_transition (nm_t nm_lib_t dir "*"))
+
+(allow nm_t self (process (setpgid)))
+(allow nm_t self (capability (net_admin net_raw sys_admin)))
+(allow nm_t self create_netlink_socket_perms)
+(allow nm_t self (netlink_route_socket (nlmsg_write)))
+(allow nm_t self (unix_stream_socket (listen accept)))
+(allow nm_t self create_rawip_socket_perms)
+(allow nm_t self rw_fifo_file_perms)
+
+(call system_load_kernel_module (nm_t))
+(call system_read_net_proc (nm_t))
+(call system_request_load_module (nm_t))
+(call system_rw_net_sysctl (nm_t))
+
+(call commands_mmap_shell (nm_t))
+(call commands_read_exec_files (nm_t))
+
+(call devices_read_urandom (nm_t))
+(call devices_rw_wireless (nm_t))
+
+(call filesystems_getattr_filesystems (nm_t))
+(call filesystems_read_sysfs (nm_t))
+(call filesystems_list_tmpfs (nm_t))
+(call filesystems_read_cgroup_files (nm_t))
+
+(call files_list_tmp (nm_t))
+(call files_read_config_files (nm_t))
+(call files_manage_config_lnk_files (nm_t))
+(call files_read_data (nm_t))
+
+(call auth_nsswitch_client_subject_type (nm_t))
+
+(call dbus_system_service (nm_t))
+
+(call dns_manage_resolve_config_files (nm_t))
+(call dns_config_object_type_transition_resolve_config_files (nm_t))
+
+(call hostname_read_config_files (nm_t))
+
+(call http_tcp_connect_http_port (nm_t))
+
+(call iptools_auto_subject_type_transition (nm_t))
+
+(call miscfiles_manage_net_config_files (nm_t))
+(call miscfiles_config_object_type_transition_net_config (nm_t file "*"))
+(call miscfiles_read_locale (nm_t))
+
+(call mount_exec (nm_t))
+
+(call nettools_auto_subject_type_transition (nm_t))
+
+(call nm_exec_nmhelper (nm_t))
+(call nm_getattr_all_client_subjects (nm_t))
+(call nm_manage_config_files (nm_t))
+(call nm_read_state_all_client_subjects (nm_t))
+(call nm_read_state_nmonline (nm_t))
+
+(call sysctl_read_config (nm_t))
+
+(call udev_client_subject_type (nm_t))
+
+(optional networkmgr_optional_dhcp
+    (call dhcp_delete_dhclient_runtime_files (nm_t))
+    (call dhcp_read_config_files (nm_t))
+    (call dhcp_read_dhclient_lib_files (nm_t))
+    (call dhcp_send_sigkill_dhclient (nm_t))
+    (call dhcp_auto_subject_type_transition_dhclient (nm_t)))
+
+(optional nm_optional_journal
+    (call journal_client_subject_type (nm_t)))
+
+(optional nm_optional_login_logind
+    (call login_logind_client_subject_type (nm_t))
+    (call login_read_logind_systemd_runtime (nm_t)))
+
+(optional nm_optional_machine
+    (call machine_read_machined_systemd_runtime (nm_t)))
+
+(optional nm_optinal_polkit
+    (call polkit_dbus_chat_polkitd (nm_t)))
+
+(optional nm_optional_systemd
+    (call systemd_daemon (nm_t nm_exec_t))
+
+    (type nm_unit_t)
+    (call systemd_unit_object_type (nm_unit_t))
+
+    (typeattributeset nm_object_type nm_unit_t)
+
+    (context nm_unit (system_u object_r nm_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*NetworkManager.*" file nm_unit)
+
+    (allow nm_admin_subject_type nm_unit_t (service (all))))
+
+(optional nm_optional_unconfined
+    (call unconfined_read_state_all_subjects (nm_t)))
+
+(type nmdisp_t)
+(type nmdisp_exec_t)
+(call subject_common_type (nmdisp_t))
+(call subject_entry (nmdisp_t nmdisp_exec_t))
+(roletype system_r nmdisp_t)
+
+(typeattributeset nm_subject_type nmdisp_t)
+
+(context nmdisp_exec (system_u object_r nmdisp_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/nm-dispatcher" file nmdisp_exec)
+
+(allow nmdisp_t self (process (setpgid)))
+
+(call system_read_net_proc (nmdisp_t))
+
+(call commands_exec_shell (nmdisp_t))
+
+(call files_read_config (nmdisp_t))
+
+(call auth_nsswitch_client_subject_type (nmdisp_t))
+
+(call dbus_acquire_system_service (nmdisp_t))
+
+(call iptools_exec (nmdisp_t))
+(call iptools_read_config_files (nmdisp_t))
+
+(call miscfiles_read_net_config_files (nmdisp_t))
+
+(call mount_exec (nmdisp_t))
+
+(call nm_client_subject_type (nmdisp_t))
+(call nm_exec_nmhelper (nmdisp_t))
+(call nm_read_config (nmdisp_t))
+(call nm_read_runtime (nmdisp_t))
+
+(optional nmdisp_optional_dhcp
+    (call dhcp_auto_subject_type_transition_dhclient (nmdisp_t)))
+
+(optional nmdisp_optional_journal
+    (call journal_client_subject_type (nmdisp_t)))
+
+(optional nmdisp_optional_ntp
+    (call ntp_auto_subject_type_transition (nmdisp_t)))
+
+(optional nmdisp_optional_systemd
+    (call systemd_daemon (nmdisp_t nmdisp_exec_t))
+
+    (call systemd_exec_systemctl (nmdisp_t)))
+
+(type nmonline_t)
+(type nmonline_exec_t)
+(call subject_common_type (nmonline_t))
+(call subject_entry (nmonline_t nmonline_exec_t))
+(roletype system_r nmonline_t)
+
+(typeattributeset nm_subject_type nmonline_t)
+
+(context nmonline_exec (system_u object_r nmonline_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/nm-online" file nmonline_exec)
+
+(allow nmonline_t self create_unix_stream_socket_perms)
+
+(call devices_read_urandom (nmonline_t))
+
+(call files_list_tmp (nmonline_t))
+
+(call filesystems_list_tmpfs (nmonline_t))
+
+(call auth_read_passwd_config_files (nmonline_t))
+
+(call miscfiles_read_locale (nmonline_t))
+
+(call nm_client_subject_type (nmonline_t))
+
+(optional nmonline_optional_systemd
+    (call systemd_daemon (nmonline_t nmonline_exec_t)))
+
+(type nmcli_t)
+(type nmcli_exec_t)
+(call applications_app (nmcli_t nmcli_exec_t))
+(roletype nmcli_role nmcli_t)
+
+(context nmcli_exec (system_u object_r nmcli_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/nmcli" file nmcli_exec)
+(filecon "/usr/bin/nmtui" file nmcli_exec)
+(filecon "/usr/bin/nmtui-connect" file nmcli_exec)
+(filecon "/usr/bin/nmtui-edit" file nmcli_exec)
+(filecon "/usr/bin/nmtui-hostname" file nmcli_exec)
+
+(call devices_read_urandom (nmcli_t))
+
+(call filesystems_list_tmpfs (nmcli_t))
+(call filesystems_read_sysfs_files (nmcli_t))
+
+(call auth_read_passwd_config_files (nmcli_t))
+
+(call miscfiles_read_all_terminfo (nmcli_t))
+(call miscfiles_read_locale (nmcli_t))
+
+(call nm_client_subject_type (nmcli_t))
+
+(call udev_client_subject_type (nmcli_t))
+
+(type nmhelper_exec_t)
+(call commands_exec_object_type (nmhelper_exec_t))
+
+(context nmhelper_exec (system_u object_r nmhelper_exec_t (systemlow systemlow)))
+(filecon "/etc/NetworkManager/dispatcher\.d/.*" file nmhelper_exec)
+(filecon "/usr/libexec/nm-dhcp-helper" file nmhelper_exec)
+
+(call nm_stream_connect (nm_client_subject_type))
+(call nm_dbus_chat (nm_client_subject_type))
+
+(allow nm_admin_subject_type nm_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (nm_admin_subject_type nm_subject_type))
+
+(allow nm_admin_subject_type nm_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro nm_exec ((type ARG1))
+    (call can_exec (ARG1 nm_exec_t)))
+
+(macro nm_exec_nmdisp ((type ARG1))
+    (call can_exec (ARG1 nmdisp_exec_t)))
+
+(macro nm_exec_nmonline ((type ARG1))
+    (call can_exec (ARG1 nmonline_exec_t)))
+
+(macro nm_exec_nmhelper ((type ARG1))
+    (call can_exec (ARG1 nmhelper_exec_t)))
+
+(macro nm_exec_nmcli ((type ARG1))
+    (call can_exec (ARG1 nmcli_exec_t)))
+
+(macro nm_auto_subject_type_transition ((type ARG1))
+    (call nm_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nm_exec_t nm_t)))
+
+(macro nm_send_signal ((type ARG1))
+    (allow ARG1 nm_t (process (signal))))
+
+(macro nm_auto_subject_type_transition_nmdisp ((type ARG1))
+    (call nm_send_signal_nmdisp (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nmdisp_exec_t nmdisp_t)))
+
+(macro nm_send_signal_nmdisp ((type ARG1))
+    (allow ARG1 nmdisp_t (process (signal))))
+
+(macro nm_auto_subject_type_transition_nmonline ((type ARG1))
+    (call nm_send_signal_nmonline (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nmonline_exec_t nmonline_t)))
+
+(macro nm_send_signal_nmonline ((type ARG1))
+    (allow ARG1 nmonline_t (process (signal))))
+
+(macro nm_auto_subject_type_transition_nmcli ((type ARG1))
+    (call nm_send_signal_nmcli (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nmcli_exec_t nmcli_t)))
+
+(macro nm_send_signal_nmcli ((type ARG1))
+    (allow ARG1 nmcli_t (process (signal))))
+
+(macro nm_run_nmcli ((type ARG1)(role ARG2))
+    (call nm_auto_subject_type_transition_nmcli (ARG1))
+    (roleattributeset nmcli_role ARG2))
+
+(macro nm_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 nm_config_t search_dir_perms))
+
+(macro nm_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 nm_config_t list_dir_perms))
+
+(macro nm_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 nm_config_t nm_config_t)))
+
+(macro nm_manage_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call manage_files_pattern (ARG1 nm_config_t nm_config_t)))
+
+(macro nm_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 nm_config_t nm_config_t)))
+
+(macro nm_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 nm_config_t read_file_perms)
+    (allow ARG1 nm_config_t list_dir_perms)
+    (allow ARG1 nm_config_t read_lnk_file_perms))
+
+(macro nm_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 nm_config_t manage_file_perms)
+    (allow ARG1 nm_config_t manage_dir_perms)
+    (allow ARG1 nm_config_t manage_lnk_file_perms))
+
+(macro nm_read_dbus_config ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 nm_dbus_config_t read_file_perms))
+
+(macro nm_manage_dbus_config ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 nm_dbus_config_t manage_file_perms))
+
+(macro nm_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 nm_runtime_t search_dir_perms))
+
+(macro nm_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 nm_runtime_t list_dir_perms))
+
+(macro nm_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 nm_runtime_t nm_runtime_t)))
+
+(macro nm_read_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_sock_files_pattern (ARG1 nm_runtime_t nm_runtime_t)))
+
+(macro nm_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 nm_runtime_t nm_runtime_t)))
+
+(macro nm_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 nm_runtime_t read_file_perms)
+    (allow ARG1 nm_runtime_t list_dir_perms)
+    (allow ARG1 nm_runtime_t read_sock_file_perms)
+    (allow ARG1 nm_runtime_t read_lnk_file_perms))
+
+(macro nm_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 nm_runtime_t manage_file_perms)
+    (allow ARG1 nm_runtime_t manage_dir_perms)
+    (allow ARG1 nm_runtime_t manage_sock_file_perms)
+    (allow ARG1 nm_runtime_t manage_lnk_file_perms))
+
+(macro nm_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 nm_lib_t search_dir_perms))
+
+(macro nm_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 nm_lib_t list_dir_perms))
+
+(macro nm_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 nm_lib_t nm_lib_t)))
+
+(macro nm_manage_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call manage_files_pattern (ARG1 nm_lib_t nm_lib_t)))
+
+(macro nm_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 nm_lib_t nm_lib_t)))
+
+(macro nm_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 nm_lib_t read_file_perms)
+    (allow ARG1 nm_lib_t list_dir_perms)
+    (allow ARG1 nm_lib_t read_lnk_file_perms))
+
+(macro nm_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 nm_lib_t manage_file_perms)
+    (allow ARG1 nm_lib_t manage_dir_perms)
+    (allow ARG1 nm_lib_t manage_lnk_file_perms))
+
+(macro nm_stream_connect ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern
+        (ARG1 nm_runtime_t nm_runtime_t nm_t)))
+
+(macro nm_client_subject_type ((type ARG1))
+    (typeattributeset nm_client_subject_type ARG1))
+
+(macro nm_getattr_all_client_subjects ((type ARG1))
+    (allow ARG1 nm_client_subject_type (process (getattr))))
+
+(macro nm_read_state_all_client_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 nm_client_subject_type read_file_perms)
+    (allow ARG1 nm_client_subject_type list_dir_perms)
+    (allow ARG1 nm_client_subject_type read_lnk_file_perms))
+
+(macro nm_read_state_nmonline ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 nmonline_t read_file_perms)
+    (allow ARG1 nmonline_t list_dir_perms)
+    (allow ARG1 nmonline_t read_lnk_file_perms))
+
+(macro nm_dbus_chat ((type ARG1))
+    (allow ARG1 nm_t (dbus (send_msg)))
+    (allow nm_t ARG1 (dbus (send_msg))))
+
+(macro nm_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset nm_admin_subject_type ARG1)
+    (optional nm_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

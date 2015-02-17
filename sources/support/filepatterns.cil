@@ -1,0 +1,291 @@
+(macro getattr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (file (getattr))))
+
+(macro setattr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (file (setattr))))
+
+(macro read_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 read_file_perms))
+
+(macro mmap_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 mmap_file_perms))
+
+(macro exec_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 exec_file_perms))
+
+(macro append_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 append_file_perms))
+
+(macro write_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 write_file_perms))
+
+(macro rw_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 rw_file_perms))
+
+(macro create_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (allow ARG1 ARG3 create_file_perms))
+
+(macro delete_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 del_entry_dir_perms)
+    (allow ARG1 ARG3 delete_file_perms))
+
+(macro rename_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 rename_file_perms))
+
+(macro manage_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 manage_file_perms))
+
+(macro relabelfrom_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelfrom_file_perms))
+
+(macro relabelto_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelto_file_perms))
+
+(macro relabel_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabel_file_perms))
+
+(macro getattr_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (dir (getattr))))
+
+(macro setattr_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (dir (setattr))))
+
+(macro search_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 search_dir_perms))
+
+(macro list_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 list_dir_perms))
+
+(macro rw_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 rw_dir_perms))
+
+(macro create_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (allow ARG1 ARG3 create_dir_perms))
+
+(macro delete_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 del_entry_dir_perms)
+    (allow ARG1 ARG3 delete_dir_perms))
+
+(macro manage_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 manage_dir_perms))
+
+(macro relabelfrom_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelfrom_dir_perms))
+
+(macro relabel_dirs_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabel_dir_perms))
+
+(macro getattr_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (lnk_file (getattr))))
+
+(macro read_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 read_lnk_file_perms))
+
+(macro rw_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 rw_lnk_file_perms))
+
+(macro create_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (allow ARG1 ARG3 create_lnk_file_perms))
+
+(macro delete_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 del_entry_dir_perms)
+    (allow ARG1 ARG3 delete_lnk_file_perms))
+
+(macro manage_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 manage_lnk_file_perms))
+
+(macro relabelfrom_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelfrom_lnk_file_perms))
+
+(macro relabel_lnk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabel_lnk_file_perms))
+
+(macro getattr_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (chr_file (getattr))))
+
+(macro setattr_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (chr_file (setattr))))
+
+(macro read_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 read_chr_file_perms))
+
+(macro append_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 append_chr_file_perms))
+
+(macro write_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 write_chr_file_perms))
+
+(macro rw_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 rw_chr_file_perms))
+
+(macro create_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 self (capability (mknod)))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (allow ARG1 ARG3 create_chr_file_perms))
+
+(macro delete_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 del_entry_dir_perms)
+    (allow ARG1 ARG3 delete_chr_file_perms))
+
+(macro rename_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 rename_chr_file_perms))
+
+(macro manage_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 self (capability (mknod)))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 manage_chr_file_perms))
+
+(macro relabelfrom_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelfrom_chr_file_perms))
+
+(macro relabel_chr_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabel_chr_file_perms))
+
+(macro getattr_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (blk_file (getattr))))
+
+(macro setattr_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (blk_file (setattr))))
+
+(macro read_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 read_blk_file_perms))
+
+(macro rw_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 rw_blk_file_perms))
+
+(macro create_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 self (capability (mknod)))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (allow ARG1 ARG3 create_blk_file_perms))
+
+(macro delete_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 del_entry_dir_perms)
+    (allow ARG1 ARG3 delete_blk_file_perms))
+
+(macro rename_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 rename_blk_file_perms))
+
+(macro manage_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 self (capability (mknod)))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 manage_blk_file_perms))
+
+(macro relabelfrom_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelfrom_blk_file_perms))
+
+(macro relabel_blk_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabel_blk_file_perms))
+
+(macro getattr_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (sock_file (getattr))))
+
+(macro read_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 read_sock_file_perms))
+
+(macro write_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 write_sock_file_perms))
+
+(macro rw_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 rw_sock_file_perms))
+
+(macro create_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (allow ARG1 ARG3 create_sock_file_perms))
+
+(macro delete_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 del_entry_dir_perms)
+    (allow ARG1 ARG3 delete_sock_file_perms))
+
+(macro manage_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 manage_sock_file_perms))
+
+(macro relabelfrom_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelfrom_sock_file_perms))
+
+(macro relabel_sock_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabel_sock_file_perms))
+
+(macro getattr_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 (fifo_file (getattr))))
+
+(macro read_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 read_fifo_file_perms))
+
+(macro write_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 write_fifo_file_perms))
+
+(macro rw_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 rw_fifo_file_perms))
+
+(macro delete_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 del_entry_dir_perms)
+    (allow ARG1 ARG3 delete_fifo_file_perms))
+
+(macro manage_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (allow ARG1 ARG3 manage_fifo_file_perms))
+
+(macro relabelfrom_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabelfrom_fifo_file_perms))
+
+(macro relabel_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG3 relabel_fifo_file_perms))

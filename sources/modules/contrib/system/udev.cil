@@ -1,0 +1,307 @@
+(roleattribute udev_udevadm_role)
+
+(typeattribute udev_udevadm_client_subject_type)
+
+(typeattribute udev_admin_subject_type)
+(typeattribute udev_client_subject_type)
+
+(typeattribute udev_object_type)
+
+(type udevadm_t)
+(type udevadm_exec_t)
+(call applications_app (udevadm_t udevadm_exec_t))
+(roletype udev_udevadm_role udevadm_t)
+
+(roleattributeset udev_udevadm_role system_r)
+
+(context udevadm_exec (system_u object_r udevadm_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/udevadm" file udevadm_exec)
+
+(allow udevadm_t self create_netlink_kobject_uevent_socket_perms)
+
+(call devices_read_urandom (udevadm_t))
+
+(call filesystems_list_sysfs (udevadm_t))
+(call filesystems_rw_sysfs_files (udevadm_t))
+(call filesystems_read_sysfs_lnk_files (udevadm_t))
+
+(call storage_read_fixed_disk (udevadm_t))
+(call storage_read_removable (udevadm_t))
+(call storage_read_scsi_generic (udevadm_t))
+
+(call seutil_read_selinux_config_files (udevadm_t))
+(call seutil_read_file_context_files (udevadm_t))
+
+(call udev_manage_config (udevadm_t))
+(call udev_manage_runtime (udevadm_t))
+(call udev_stream_connect_udevd (udevadm_t))
+
+(optional udevadm_optional_systemd
+    (call systemd_daemon (udevadm_t udevadm_exec_t))
+    (call systemd_search_runtime (udevadm_t)))
+
+(type udevd_t)
+(type udevd_exec_t)
+(call subject_common_type (udevd_t))
+(call subject_entry (udevd_t udevd_exec_t))
+(roletype system_r udevd_t)
+
+(context udevd_exec (system_u object_r udevd_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-udevd" file udevd_exec)
+
+(type udev_config_t)
+(call files_config_object_type (udev_config_t))
+
+(typeattributeset udev_object_type udev_config_t)
+
+(context udev_config (system_u object_r udev_config_t (systemlow systemlow)))
+(filecon "/etc/udev(/.*)?" any udev_config)
+
+(type udev_runtime_t)
+(call files_runtime_object_type (udev_runtime_t))
+
+(typeattributeset udev_object_type udev_runtime_t)
+
+(context udev_runtime (system_u object_r udev_runtime_t (systemlow systemlow)))
+(filecon "/var/run/udev(/.*)?" any udev_runtime)
+
+(allow udevd_t udev_runtime_t manage_dir_perms)
+(allow udevd_t udev_runtime_t manage_file_perms)
+(allow udevd_t udev_runtime_t manage_lnk_file_perms)
+(allow udevd_t udev_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (udevd_t udev_runtime_t dir "*"))
+
+(allow udevd_t self (capability (dac_override chown sys_admin
+    net_admin sys_rawio fsetid fowner)))
+(allow udevd_t self (capability2 (block_suspend)))
+(allow udevd_t self (process (setfscreate getsched)))
+(allow udevd_t self rw_fifo_file_perms)
+(allow udevd_t self create_netlink_kobject_uevent_socket_perms)
+(allow udevd_t self (netlink_route_socket (nlmsg_write)))
+(allow udevd_t self create_netlink_socket_perms)
+(allow udevd_t self (unix_stream_socket (listen accept)))
+
+(call system_link_keyring (udevd_t))
+(call system_load_kernel_module (udevd_t))
+(call system_read_net_proc (udevd_t))
+(call system_request_load_module (udevd_t))
+(call system_search_invalid (udevd_t))
+
+(call commands_exec_shell (udevd_t))
+
+(call devices_rw_all (udevd_t))
+(call devices_relabel_all (udevd_t))
+(call devices_setattr_all (udevd_t))
+
+(call files_list_config (udevd_t))
+
+(call filesystems_mprot_write_rootfs_dirs (udevd_t))
+(call filesystems_list_debugfs (udevd_t))
+(call filesystems_manage_devtmpfs_dirs (udevd_t))
+(call filesystems_manage_devtmpfs_files (udevd_t))
+(call filesystems_manage_devtmpfs_lnk_files (udevd_t))
+(call filesystems_manage_devtmpfs_blk_files (udevd_t))
+(call filesystems_manage_devtmpfs_chr_files (udevd_t))
+(call filesystems_list_sysfs (udevd_t))
+(call filesystems_read_sysfs_lnk_files (udevd_t))
+(call filesystems_rw_sysfs_files (udevd_t))
+(call filesystems_relabelfrom_devtmpfs_chr_files (udevd_t))
+(call filesystems_relabelfrom_devtmpfs_blk_files (udevd_t))
+(call filesystems_list_efivarfs (udevd_t))
+
+(call selinux_get_enforce_mode (udevd_t))
+
+(call auth_nsswitch_client_subject_type (udevd_t))
+
+(call dm_auto_subject_type_transition_dmsetup (udevd_t))
+
+(call iptools_exec (udevd_t))
+
+(call kmod_read_config (udevd_t))
+(call kmod_auto_subject_type_transition (udevd_t))
+
+(call lvm_auto_subject_type_transition (udevd_t))
+
+(call miscfiles_read_modules (udevd_t))
+(call miscfiles_read_net_config_files (udevd_t))
+
+(call seutil_read_selinux_config_files (udevd_t))
+(call seutil_read_file_context_files (udevd_t))
+
+(call sysctl_auto_subject_type_transition (udevd_t))
+
+(call udev_exec_udevhelper (udevd_t))
+(call udev_read_config (udevd_t))
+
+(optional udevd_optional_alsa
+    (call alsa_auto_subject_type_transition_alsactl (udevd_t))
+    (call alsa_read_config (udevd_t)))
+
+(optional udevd_optional_journal
+    (call journal_client_subject_type (udevd_t)))
+
+(optional udevd_optional_login_logind
+    (call login_read_logind_systemd_runtime (udevd_t)))
+
+(optional udevd_optional_systemd
+    (call systemd_daemon (udevd_t udevd_exec_t))
+
+    (call systemd_socket_activated (udevd_t udev_runtime_t))
+
+    (type udevd_unit_t)
+    (call systemd_unit_object_type (udevd_unit_t))
+
+    (typeattributeset udev_object_type udevd_unit_t)
+
+    (context udevd_unit (system_u object_r udevd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*systemd-udev.*" file udevd_unit)
+
+    (allow udev_admin_subject_type udevd_unit_t (service (all)))
+
+    (call systemd_search_config (udevd_t))
+    (call systemd_exec_systemctl (udevd_t)))
+
+(optional udevd_optional_vconsole
+    (call vconsole_auto_subject_type_transition (udevd_t)))
+
+(type udevhelper_exec_t)
+(call commands_exec_object_type (udevhelper_exec_t))
+
+(context udevhelper_exec (system_u object_r udevhelper_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/udev/[^/]*" file udevhelper_exec)
+(filecon "/usr/sbin/biosdevname" file udevhelper_exec)
+(filecon "/usr/sbin/crda" file udevhelper_exec)
+(filecon "/usr/sbin/setregdomain" file udevhelper_exec)
+
+(call devices_read_urandom (udev_udevadm_client_subject_type))
+
+(call udev_client_subject_type (udev_udevadm_client_subject_type))
+(call udev_stream_connect_udevd (udev_udevadm_client_subject_type))
+
+(optional udev_udevadm_client_subject_type_optional_systemd
+    (call systemd_search_runtime (udev_udevadm_client_subject_type)))
+
+(allow udev_client_subject_type self create_netlink_kobject_uevent_socket_perms)
+
+(call udev_read_config (udev_client_subject_type))
+(call udev_read_runtime (udev_client_subject_type))
+
+(allow udev_admin_subject_type udevd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (udev_admin_subject_type udevd_t))
+
+(allow udev_admin_subject_type udev_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro udev_exec_udevadm ((type ARG1))
+    (call can_exec (ARG1 udevadm_exec_t))
+    (call udev_udevadm_client_subject_type (ARG1)))
+
+(macro udev_udevadm_client_subject_type ((type ARG1))
+    (typeattributeset udev_udevadm_client_subject_type ARG1))
+
+(macro udev_exec_udevd ((type ARG1))
+    (call can_exec (ARG1 udevd_exec_t)))
+
+(macro udev_exec_udevhelper ((type ARG1))
+    (call can_exec (ARG1 udevhelper_exec_t)))
+
+(macro udev_auto_subject_type_transition_udevd ((type ARG1))
+    (call udev_send_signal_udevd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 udevd_exec_t udevd_t)))
+
+(macro udev_send_signal_udevd ((type ARG1))
+    (allow ARG1 udevd_t (process (signal))))
+
+(macro udev_auto_subject_type_transition_udevadm ((type ARG1))
+    (call udev_send_signal_udevadm (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 udevadm_exec_t udevadm_t)))
+
+(macro udev_send_signal_udevadm ((type ARG1))
+    (allow ARG1 udevadm_t (process (signal))))
+
+(macro udev_run_udevadm ((type ARG1)(role ARG2))
+    (call udev_auto_subject_type_transition_udevadm (ARG1))
+    (roleattributeset udev_udevadm_role ARG2))
+
+(macro udev_client_subject_type ((type ARG1))
+    (typeattributeset udev_client_subject_type ARG1))
+
+(macro udev_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 udev_config_t search_dir_perms))
+
+(macro udev_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 udev_config_t list_dir_perms))
+
+(macro udev_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 udev_config_t udev_config_t)))
+
+(macro udev_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 udev_config_t udev_config_t)))
+
+(macro udev_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 udev_config_t read_file_perms)
+    (allow ARG1 udev_config_t list_dir_perms)
+    (allow ARG1 udev_config_t read_lnk_file_perms))
+
+(macro udev_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 udev_config_t manage_file_perms)
+    (allow ARG1 udev_config_t manage_dir_perms)
+    (allow ARG1 udev_config_t manage_lnk_file_perms))
+
+(macro udev_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 udev_runtime_t search_dir_perms))
+
+(macro udev_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 udev_runtime_t list_dir_perms))
+
+(macro udev_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 udev_runtime_t udev_runtime_t)))
+
+(macro udev_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 udev_runtime_t udev_runtime_t)))
+
+(macro udev_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 udev_runtime_t udev_runtime_t)))
+
+(macro udev_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 udev_runtime_t read_file_perms)
+    (allow ARG1 udev_runtime_t list_dir_perms)
+    (allow ARG1 udev_runtime_t read_sock_file_perms)
+    (allow ARG1 udev_runtime_t read_lnk_file_perms))
+
+(macro udev_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 udev_runtime_t manage_file_perms)
+    (allow ARG1 udev_runtime_t manage_dir_perms)
+    (allow ARG1 udev_runtime_t manage_sock_file_perms)
+    (allow ARG1 udev_runtime_t manage_lnk_file_perms))
+
+(macro udev_rw_inherited_udevd_udp_sockets ((type ARG1))
+    (allow ARG1 udevd_t (udp_socket (read write))))
+
+(macro udev_stream_connect_udevd ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 udev_runtime_t udev_runtime_t udevd_t)))
+
+(macro udev_create_udevd_netlink_kobject_uevent_socket ((type ARG1))
+    (allow ARG1 udevd_t create_netlink_kobject_uevent_socket_perms))
+
+(macro udev_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset udev_admin_subject_type ARG1)
+    (optional udev_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

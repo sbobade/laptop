@@ -1,0 +1,148 @@
+(roleattribute tmpfiles_role)
+
+(typeattribute tmpfiles_manageable_object_type)
+(typeattribute tmpfiles_manageable_object_exception_type)
+
+(typeattribute tmpfiles_relabelable_object_type)
+(typeattribute tmpfiles_relabelable_object_exception_type)
+
+(typeattribute tmpfiles_client_subject_type)
+(typeattribute tmpfiles_object_type)
+
+(type tmpfiles_t)
+(type tmpfiles_exec_t)
+(call applications_app (tmpfiles_t tmpfiles_exec_t))
+(call systemd_daemon (tmpfiles_t tmpfiles_exec_t))
+(roletype tmpfiles_role tmpfiles_t)
+
+(context tmpfiles_exec (system_u object_r tmpfiles_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-tmpfiles" file tmpfiles_exec)
+
+(type tmpfiles_config_t)
+(call files_config_object_type (tmpfiles_config_t))
+
+(context tmpfiles_config (system_u object_r tmpfiles_config_t (systemlow systemlow)))
+(filecon "/etc/tmpfiles\.d(/.*)?" any tmpfiles_config)
+
+(type tmpfiles_runtime_t)
+(call files_runtime_object_type (tmpfiles_runtime_t))
+
+(context tmpfiles_runtime (system_u object_r tmpfiles_runtime_t (systemlow systemlow)))
+(filecon "/var/run/tmpfiles\.d(/.*)?" any tmpfiles_runtime)
+
+(allow tmpfiles_t tmpfiles_runtime_t manage_dir_perms)
+(allow tmpfiles_t tmpfiles_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (tmpfiles_t tmpfiles_runtime_t dir "*"))
+
+(allow tmpfiles_t self (capability (fowner fsetid dac_override chown)))
+(allow tmpfiles_t self (process (getcap setfscreate)))
+(allow tmpfiles_t self create_unix_stream_socket_perms)
+
+(call system_read_kernel_sysctl (tmpfiles_t))
+(call system_read_net_proc (tmpfiles_t))
+
+(call selinux_set_check_req_prot (tmpfiles_t))
+
+(call devices_manage_all (tmpfiles_t))
+(call devices_relabel_all (tmpfiles_t))
+
+(call filesystems_manage_devtmpfs_dirs (tmpfiles_t))
+(call filesystems_manage_devtmpfs_lnk_files (tmpfiles_t))
+(call filesystems_manage_tmpfs_dirs (tmpfiles_t))
+(call filesystems_read_sysfs (tmpfiles_t))
+
+(call journal_client_subject_type (tmpfiles_t))
+
+(call miscfiles_read_factory_data (tmpfiles_t))
+(call miscfiles_read_locale (tmpfiles_t))
+
+(call files_spec_exception (tmpfiles_manageable_object_type tmpfiles_manageable_object_exception_type))
+(allow tmpfiles_t tmpfiles_manageable_object_type (all_file_objects (manage)))
+
+(call files_spec_exception (tmpfiles_relabelable_object_type tmpfiles_relabelable_object_exception_type))
+(allow tmpfiles_t tmpfiles_relabelable_object_type (all_file_objects (relabel)))
+
+(macro tmpfiles_exec ((type ARG1))
+    (call can_exec (ARG1 tmpfiles_exec_t)))
+
+(macro tmpfiles_auto_subject_type_transition ((type ARG1))
+    (call tmpfiles_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 tmpfiles_exec_t tmpfiles_t)))
+
+(macro tmpfiles_send_signal ((type ARG1))
+    (allow ARG1 tmpfiles_t (process (signal))))
+
+(macro tmpfiles_run ((type ARG1)(role ARG2))
+    (call tmpfiles_auto_subject_type_transition (ARG1))
+    (roleattributeset tmpfiles_role ARG2))
+
+(macro tmpfiles_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 tmpfiles_config_t search_dir_perms))
+
+(macro tmpfiles_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 tmpfiles_config_t list_dir_perms))
+
+(macro tmpfiles_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 tmpfiles_config_t tmpfiles_config_t)))
+
+(macro tmpfiles_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 tmpfiles_config_t tmpfiles_config_t)))
+
+(macro tmpfiles_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 tmpfiles_config_t read_file_perms)
+    (allow ARG1 tmpfiles_config_t list_dir_perms)
+    (allow ARG1 tmpfiles_config_t read_lnk_file_perms))
+
+(macro tmpfiles_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 tmpfiles_config_t manage_file_perms)
+    (allow ARG1 tmpfiles_config_t manage_dir_perms)
+    (allow ARG1 tmpfiles_config_t manage_lnk_file_perms))
+
+(macro tmpfiles_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 tmpfiles_runtime_t search_dir_perms))
+
+(macro tmpfiles_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 tmpfiles_config_t list_dir_perms))
+
+(macro tmpfiles_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 tmpfiles_runtime_t tmpfiles_runtime_t)))
+
+(macro tmpfiles_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 tmpfiles_runtime_t tmpfiles_runtime_t)))
+
+(macro tmpfiles_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 tmpfiles_runtime_t tmpfiles_runtime_t)))
+
+(macro tmpfiles_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 tmpfiles_runtime_t read_file_perms)
+    (allow ARG1 tmpfiles_runtime_t list_dir_perms)
+    (allow ARG1 tmpfiles_runtime_t read_lnk_file_perms))
+
+(macro tmpfiles_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 tmpfiles_runtime_t manage_file_perms)
+    (allow ARG1 tmpfiles_runtime_t manage_dir_perms)
+    (allow ARG1 tmpfiles_runtime_t manage_lnk_file_perms))
+
+(macro tmpfiles_manageable_object_exception_type ((type ARG1))
+    (typeattributeset tmpfiles_manageable_object_exception_type ARG1))
+
+(macro tmpfiles_relabelable_object_exception_type ((type ARG1))
+    (typeattributeset tmpfiles_relabelable_object_exception_type ARG1))
+
+(macro tmpfiles_object_exception_type ((type ARG1))
+    (call tmpfiles_manageable_object_exception_type (ARG1))
+    (call tmpfiles_relabelable_object_exception_type (ARG1)))

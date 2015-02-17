@@ -1,0 +1,48 @@
+(macro base_manual_subject_type_transition_pattern ((type ARG1)(type ARG2)
+    (type ARG3))
+    (allow ARG1 ARG2 mmap_file_perms)
+    (allow ARG1 ARG3 (process (transition)))
+    (dontaudit ARG1 ARG3 (process (noatsecure siginh rlimitinh))))
+
+(macro manual_subject_type_transition_pattern ((type ARG1)(type ARG2)
+    (type ARG3))
+    (allow ARG1 self (process (setexec)))
+    (call base_manual_subject_type_transition_pattern (ARG1 ARG2 ARG3))
+    (allow ARG3 ARG1 (fd (use)))
+    (allow ARG3 ARG1 rw_inherited_fifo_file_perms)
+    (allow ARG3 ARG1 (process (sigchld))))
+
+(macro base_auto_subject_type_transition_pattern ((type ARG1)(type ARG2)
+    (type ARG3))
+    (call base_manual_subject_type_transition_pattern (ARG1 ARG2 ARG3))
+    (typetransition ARG1 ARG2 process "*" ARG3))
+
+(macro auto_subject_type_transition_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (call base_auto_subject_type_transition_pattern (ARG1 ARG2 ARG3))
+    (allow ARG3 ARG1 (fd (use)))
+    (allow ARG3 ARG1 rw_inherited_fifo_file_perms)
+    (allow ARG3 ARG1 (process (sigchld))))
+
+(macro dynamic_subject_type_transition_pattern ((type ARG1)(type ARG2))
+    (allow ARG1 self (process (setcurrent)))
+    (allow ARG1 ARG2 (process (dyntransition)))
+    (allow ARG2 ARG1 (process (sigchld))))
+
+(macro object_type_transition_add_pattern ((type ARG1)(type ARG2)
+    (type ARG3)(class ARG4)(name ARG5))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (typetransition ARG1 ARG2 ARG4 ARG5 ARG3))
+
+(macro object_type_transition_pattern ((type ARG1)(type ARG2)
+    (type ARG3)(class ARG4)(name ARG5))
+    (allow ARG1 ARG2 rw_dir_perms)
+    (typetransition ARG1 ARG2 ARG4 ARG5 ARG3))
+
+(macro ps_subject_pattern ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 read_file_perms)
+    (allow ARG1 ARG2 search_dir_perms)
+    (allow ARG1 ARG2 read_lnk_file_perms)
+    (allow ARG1 ARG2 (process (getattr))))
+
+(macro can_exec ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 exec_file_perms))

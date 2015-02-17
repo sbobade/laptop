@@ -1,0 +1,1242 @@
+(boolean files_execmod_all_except true)
+
+(typeattribute files_object_type)
+
+(typeattribute files_auth_object_type)
+(typeattribute files_non_auth_object_type)
+
+(typeattribute files_sec_object_type)
+(typeattribute files_non_sec_object_type)
+
+(typeattribute files_boot_object_type)
+(typeattribute files_cache_object_type)
+(typeattribute files_config_object_type)
+(typeattribute files_data_object_type)
+(typeattribute files_flag_object_type)
+(typeattribute files_lib_object_type)
+(typeattribute files_lock_object_type)
+(typeattribute files_log_object_type)
+(typeattribute files_runtime_object_type)
+(typeattribute files_var_object_type)
+(typeattribute files_spool_object_type)
+(typeattribute files_tmp_object_type)
+(typeattribute files_tmpfs_object_type)
+
+(typeattribute files_unconfined_subject_type)
+
+(type boot_t)
+(call files_boot_object_type (boot_t))
+(call system_mountpoint_object_type (boot_t))
+
+(context boot (system_u object_r boot_t (systemlow systemlow)))
+(filecon "/boot(/.*)?" any boot)
+
+(type config_t)
+(call files_config_object_type (config_t))
+(call system_mountpoint_object_type (config_t))
+
+(context config (system_u object_r config_t (systemlow systemlow)))
+(filecon "/etc(/.*)?" any config)
+(filecon "/etc/sysconfig/network-scripts/network-functions.*" file config)
+(filecon "/etc/rc\.d/init\.d/functions" file config)
+(filecon "/etc/rc\.d/init\.d/README" file config)
+
+(type data_t)
+(call files_data_object_type (data_t))
+(call system_mountpoint_object_type (data_t))
+
+(context data (system_u object_r data_t (systemlow systemlow)))
+(filecon "/opt(/.*)?" any data)
+(filecon "/usr(/.*)?" any data)
+
+(type file_t)
+(call files_object_type (file_t))
+
+(context file (system_u object_r file_t (systemlow systemlow)))
+(filecon "/.*" any file)
+
+(type home_t)
+(call files_object_type (home_t))
+(call system_mountpoint_object_type (home_t))
+
+(context home (system_u object_r home_t (systemlow mls_systemhigh)))
+(filecon "/home" dir home)
+(filecon "/home/.*" any ())
+(filecon "/home" symlink (system_u object_r home_t (systemlow systemlow)))
+
+(type lf_t)
+(call files_object_type (lf_t))
+
+(context lf (system_u object_r lf_t (mls_systemhigh mls_systemhigh)))
+(filecon "/\.journal" any ())
+(filecon "/lost\+found/.*" any ())
+(filecon "/lost\+found" dir lf)
+(filecon "/boot/\.journal" any ())
+(filecon "/boot/lost\+found/.*" any ())
+(filecon "/boot/lost\+found" dir lf)
+(filecon "/etc/\.journal" any ())
+(filecon "/etc/lost\+found/.*" any ())
+(filecon "/etc/lost\+found" dir lf)
+(filecon "/home/\.journal" any ())
+(filecon "/home/lost\+found/.*" any ())
+(filecon "/home/lost\+found" dir lf)
+(filecon "/opt/\.journal" any ())
+(filecon "/opt/lost\+found/.*" any ())
+(filecon "/opt/lost\+found" dir lf)
+(filecon "/srv/\.journal" any ())
+(filecon "/srv/lost\+found/.*" any ())
+(filecon "/srv/lost\+found" dir lf)
+(filecon "/usr/\.journal" any ())
+(filecon "/usr/lost\+found/.*" any ())
+(filecon "/usr/lost\+found" dir lf)
+(filecon "/var/\.journal" any ())
+(filecon "/var/lost\+found/.*" any ())
+(filecon "/var/lost\+found" dir lf)
+(filecon "/var/cache/\.journal" any ())
+(filecon "/var/cache/lost\+found/.*" any ())
+(filecon "/var/cache/lost\+found" dir lf)
+(filecon "/var/lib/\.journal" any ())
+(filecon "/var/lib/lost\+found/.*" any ())
+(filecon "/var/lib/lost\+found" dir lf)
+(filecon "/var/log/\.journal" any ())
+(filecon "/var/log/lost\+found/.*" any ())
+(filecon "/var/log/lost\+found" dir lf)
+(filecon "/var/log/audit/\.journal" any ())
+(filecon "/var/log/audit/lost\+found/.*" any ())
+(filecon "/var/log/audit/lost\+found" dir lf)
+(filecon "/var/spool/\.journal" any ())
+(filecon "/var/spool/lost\+found/.*" any ())
+(filecon "/var/spool/lost\+found" dir lf)
+(filecon "/var/tmp/\.journal" any ())
+(filecon "/var/tmp/lost\+found/.*" any ())
+(filecon "/var/tmp/lost\+found" dir lf)
+
+(type lock_runtime_t)
+(call files_lock_object_type (lock_runtime_t))
+(call system_mountpoint_object_type (lock_runtime_t))
+
+(context lock_runtime (system_u object_r lock_runtime_t (systemlow systemlow)))
+(filecon "/var/lock" symlink lock_runtime)
+(filecon "/var/run/lock(/.*)?" any lock_runtime)
+(filecon "/var/run/lock" symlink lock_runtime)
+
+(type mnt_t)
+(call files_object_type (mnt_t))
+(call system_mountpoint_object_type (mnt_t))
+
+(context mnt (system_u object_r mnt_t (systemlow systemlow)))
+(filecon "/media/[^/]*/.*" any ())
+(filecon "/media(/[^/]*)?" symlink mnt)
+(filecon "/media(/[^/]*)?" dir mnt)
+(filecon "/mnt/[^/]*/.*" any ())
+(filecon "/mnt(/[^/]*)?" symlink mnt)
+(filecon "/mnt(/[^/]*)?" dir mnt)
+
+(type runtime_t)
+(call files_runtime_object_type (runtime_t))
+(call system_mountpoint_object_type (runtime_t))
+
+(context runtime (system_u object_r runtime_t (systemlow systemlow)))
+(filecon "/var/run(/.*)?" any runtime)
+(filecon "/var/run" symlink runtime)
+
+(type user_runtime_t)
+(call files_runtime_object_type (user_runtime_t))
+(call system_mountpoint_object_type (user_runtime_t))
+
+(context user_runtime (system_u object_r user_runtime_t (systemlow mls_systemhigh)))
+(filecon "/var/run/user/.*" any ())
+(filecon "/var/run/user" dir user_runtime)
+
+(type var_t)
+(call files_var_object_type (var_t))
+(call system_mountpoint_object_type (var_t))
+
+(context var (system_u object_r var_t (systemlow systemlow)))
+(filecon "/srv(/.*)?" any var)
+(filecon "/var(/.*)?" any var)
+
+(type var_cache_t)
+(call files_cache_object_type (var_cache_t))
+(call system_mountpoint_object_type (var_cache_t))
+
+(context var_cache (system_u object_r var_cache_t (systemlow systemlow)))
+(filecon "/var/cache(/.*)?" any var_cache)
+
+(type var_lib_t)
+(call files_lib_object_type (var_lib_t))
+(call system_mountpoint_object_type (var_lib_t))
+
+(context var_lib (system_u object_r var_lib_t (systemlow systemlow)))
+(filecon "/var/lib(/.*)?" any var_lib)
+
+(type var_log_t)
+(call files_log_object_type (var_log_t))
+(call system_mountpoint_object_type (var_log_t))
+
+(context var_log (system_u object_r var_log_t (systemlow mls_systemhigh)))
+(filecon "/var/log(/.*)?" any var_log)
+
+(type var_spool_t)
+(call files_spool_object_type (var_spool_t))
+(call system_mountpoint_object_type (var_spool_t))
+
+(context var_spool (system_u object_r var_spool_t (systemlow systemlow)))
+(filecon "/var/spool(/.*)?" any var_spool)
+
+(filecon "/var/mail" symlink var_spool)
+
+(type var_tmp_t)
+(call files_tmp_object_type (var_tmp_t))
+(call system_mountpoint_object_type (var_tmp_t))
+
+(context var_tmp (system_u object_r var_tmp_t (systemlow mls_systemhigh)))
+(filecon "/var/tmp/.*" any ())
+(filecon "/var/tmp" dir var_tmp)
+
+(filecon "/usr/tmp" symlink (system_u object_r var_tmp_t (systemlow systemlow)))
+
+(call system_object_type (files_object_type))
+(call system_object_type (files_auth_object_type))
+(call system_object_type (files_sec_object_type))
+
+(typeattribute files_except)
+(typeattribute files_exception_object_type)
+(typeattributeset files_except
+    (and (files_object_type) (not (files_auth_object_type files_sec_object_type files_exception_object_type))))
+
+(call filesystems_associate_fs (files_object_type))
+
+(call filesystems_associate_tmpfs (files_lock_object_type))
+(call filesystems_associate_tmpfs (files_runtime_object_type))
+(call filesystems_associate_tmpfs (files_tmpfs_object_type))
+
+(allow files_unconfined_subject_type files_except (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(call files_execmod_all_except (files_unconfined_subject_type))
+
+(macro files_object_type ((type ARG1))
+    (typeattributeset files_object_type ARG1)
+    (typeattributeset files_non_auth_object_type ARG1)
+    (typeattributeset files_non_sec_object_type ARG1))
+
+(macro files_auth_object_type ((type ARG1))
+    (typeattributeset files_object_type ARG1)
+    (typeattributeset files_auth_object_type ARG1))
+
+(macro files_sec_object_type ((type ARG1))
+    (typeattributeset files_object_type ARG1)
+    (typeattributeset files_sec_object_type ARG1))
+
+(macro files_boot_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_boot_object_type ARG1))
+
+(macro files_cache_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_cache_object_type ARG1))
+
+(macro files_config_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_config_object_type ARG1))
+
+(macro files_data_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_data_object_type ARG1))
+
+(macro files_flag_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_flag_object_type ARG1))
+
+(macro files_lib_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_lib_object_type ARG1))
+
+(macro files_lock_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_lock_object_type ARG1))
+
+(macro files_log_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_log_object_type ARG1))
+
+(macro files_runtime_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_runtime_object_type ARG1))
+
+(macro files_tmp_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_tmp_object_type ARG1))
+
+(macro files_tmpfs_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_tmpfs_object_type ARG1))
+
+(macro files_var_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_var_object_type ARG1))
+
+(macro files_spool_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_spool_object_type ARG1))
+
+(macro files_boot_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 boot_t ARG2 ARG3 ARG4)))
+
+(macro files_cache_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call files_search_var (ARG1))
+    (call object_type_transition_pattern (ARG1 var_cache_t ARG2 ARG3 ARG4)))
+
+(macro files_config_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 config_t ARG2 ARG3 ARG4)))
+
+(macro files_data_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 data_t ARG2 ARG3 ARG4)))
+
+(macro files_home_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 home_t ARG2 ARG3 ARG4)))
+
+(macro files_lib_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 var_lib_t ARG2 ARG3 ARG4)))
+
+(macro files_lock_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call files_search_lock (ARG1))
+    (call object_type_transition_pattern (ARG1 lock_runtime_t ARG2 ARG3 ARG4)))
+
+(macro files_log_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call files_search_log (ARG1))
+    (call object_type_transition_pattern (ARG1 var_log_t ARG2 ARG3 ARG4)))
+
+(macro files_runtime_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 runtime_t ARG2 ARG3 ARG4)))
+
+(macro files_user_runtime_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call files_search_runtime (ARG1))
+    (call object_type_transition_pattern (ARG1 user_runtime_t ARG2 ARG3 ARG4)))
+
+(macro files_tmp_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call files_search_var (ARG1))
+    (call object_type_transition_pattern (ARG1 var_tmp_t ARG2 ARG3 ARG4)))
+
+(macro files_var_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 var_t ARG2 ARG3 ARG4)))
+
+(macro files_spool_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call files_search_var (ARG1))
+    (call object_type_transition_pattern (ARG1 var_spool_t ARG2 ARG3 ARG4)))
+
+(macro files_search_boot ((type ARG1))
+    (allow ARG1 boot_t search_dir_perms))
+
+(macro files_list_boot ((type ARG1))
+    (allow ARG1 boot_t list_dir_perms))
+
+(macro files_read_boot_files ((type ARG1))
+    (call read_files_pattern (ARG1 boot_t boot_t)))
+
+(macro files_rw_boot_files ((type ARG1))
+    (call rw_files_pattern (ARG1 boot_t boot_t)))
+
+(macro files_read_boot_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 boot_t boot_t)))
+
+(macro files_read_boot ((type ARG1))
+    (allow ARG1 boot_t read_file_perms)
+    (allow ARG1 boot_t list_dir_perms)
+    (allow ARG1 boot_t read_fifo_file_perms)
+    (allow ARG1 boot_t read_sock_file_perms)
+    (allow ARG1 boot_t read_lnk_file_perms))
+
+(macro files_manage_boot ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 boot_t manage_file_perms)
+    (allow ARG1 boot_t manage_dir_perms)
+    (allow ARG1 boot_t manage_fifo_file_perms)
+    (allow ARG1 boot_t manage_sock_file_perms)
+    (allow ARG1 boot_t manage_lnk_file_perms))
+
+(macro files_rw_boot_dirs ((type ARG1))
+    (allow ARG1 boot_t rw_dir_perms))
+
+(macro files_search_all_boot ((type ARG1))
+    (allow ARG1 files_boot_object_type search_dir_perms))
+
+(macro files_list_all_boot ((type ARG1))
+    (allow ARG1 files_boot_object_type list_dir_perms))
+
+(macro files_read_all_boot_files ((type ARG1))
+    (call read_files_pattern (ARG1 files_boot_object_type files_boot_object_type)))
+
+(macro files_read_all_boot_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 files_boot_object_type files_boot_object_type)))
+
+(macro files_read_all_boot ((type ARG1))
+    (allow ARG1 files_boot_object_type read_file_perms)
+    (allow ARG1 files_boot_object_type list_dir_perms)
+    (allow ARG1 files_boot_object_type read_fifo_file_perms)
+    (allow ARG1 files_boot_object_type read_sock_file_perms)
+    (allow ARG1 files_boot_object_type read_lnk_file_perms))
+
+(macro files_manage_all_boot ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 files_boot_object_type manage_file_perms)
+    (allow ARG1 files_boot_object_type manage_dir_perms)
+    (allow ARG1 files_boot_object_type manage_fifo_file_perms)
+    (allow ARG1 files_boot_object_type manage_sock_file_perms)
+    (allow ARG1 files_boot_object_type manage_lnk_file_perms))
+
+(macro files_search_cache ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_cache_t search_dir_perms))
+
+(macro files_list_cache ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_cache_t list_dir_perms))
+
+(macro files_read_cache_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 var_cache_t var_cache_t)))
+
+(macro files_read_cache_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 var_cache_t var_cache_t)))
+
+(macro files_read_cache ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_cache_t read_file_perms)
+    (allow ARG1 var_cache_t list_dir_perms)
+    (allow ARG1 var_cache_t read_fifo_file_perms)
+    (allow ARG1 var_cache_t read_sock_file_perms)
+    (allow ARG1 var_cache_t read_lnk_file_perms))
+
+(macro files_manage_cache ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 var_cache_t manage_file_perms)
+    (allow ARG1 var_cache_t manage_dir_perms)
+    (allow ARG1 var_cache_t manage_fifo_file_perms)
+    (allow ARG1 var_cache_t manage_sock_file_perms)
+    (allow ARG1 var_cache_t manage_lnk_file_perms))
+
+(macro files_rw_cache_dirs ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_cache_t rw_dir_perms))
+
+(macro files_search_all_cache ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_cache_object_type search_dir_perms))
+
+(macro files_list_all_cache ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_cache_object_type list_dir_perms))
+
+(macro files_read_all_cache_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 files_cache_object_type files_cache_object_type)))
+
+(macro files_read_all_cache_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 files_cache_object_type files_cache_object_type)))
+
+(macro files_read_all_cache ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_cache_object_type read_file_perms)
+    (allow ARG1 files_cache_object_type list_dir_perms)
+    (allow ARG1 files_cache_object_type read_fifo_file_perms)
+    (allow ARG1 files_cache_object_type read_sock_file_perms)
+    (allow ARG1 files_cache_object_type read_lnk_file_perms))
+
+(macro files_manage_all_cache ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 files_cache_object_type manage_file_perms)
+    (allow ARG1 files_cache_object_type manage_dir_perms)
+    (allow ARG1 files_cache_object_type manage_fifo_file_perms)
+    (allow ARG1 files_cache_object_type manage_sock_file_perms)
+    (allow ARG1 files_cache_object_type manage_lnk_file_perms))
+
+(macro files_search_config ((type ARG1))
+    (allow ARG1 config_t search_dir_perms))
+
+(macro files_list_config ((type ARG1))
+    (allow ARG1 config_t list_dir_perms))
+
+(macro files_read_config_files ((type ARG1))
+    (call read_files_pattern (ARG1 config_t config_t)))
+
+(macro files_read_config_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 config_t config_t)))
+
+(macro files_manage_config_lnk_files ((type ARG1))
+    (call manage_lnk_files_pattern (ARG1 config_t config_t)))
+
+(macro files_read_config ((type ARG1))
+    (allow ARG1 config_t read_file_perms)
+    (allow ARG1 config_t list_dir_perms)
+    (allow ARG1 config_t read_fifo_file_perms)
+    (allow ARG1 config_t read_sock_file_perms)
+    (allow ARG1 config_t read_lnk_file_perms))
+
+(macro files_manage_config ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 config_t manage_file_perms)
+    (allow ARG1 config_t manage_dir_perms)
+    (allow ARG1 config_t manage_fifo_file_perms)
+    (allow ARG1 config_t manage_sock_file_perms)
+    (allow ARG1 config_t manage_lnk_file_perms))
+
+(macro files_rw_config_dirs ((type ARG1))
+    (allow ARG1 config_t rw_dir_perms))
+
+(macro files_setattr_config_dirs ((type ARG1))
+    (allow ARG1 config_t (dir (setattr))))
+
+(macro files_search_all_config ((type ARG1))
+    (allow ARG1 files_config_object_type search_dir_perms))
+
+(macro files_list_all_config ((type ARG1))
+    (allow ARG1 files_config_object_type list_dir_perms))
+
+(macro files_read_all_config_files ((type ARG1))
+    (call read_files_pattern (ARG1 files_config_object_type files_config_object_type)))
+
+(macro files_read_all_config_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 files_config_object_type files_config_object_type)))
+
+(macro files_read_all_config ((type ARG1))
+    (allow ARG1 files_config_object_type read_file_perms)
+    (allow ARG1 files_config_object_type list_dir_perms)
+    (allow ARG1 files_config_object_type read_fifo_file_perms)
+    (allow ARG1 files_config_object_type read_sock_file_perms)
+    (allow ARG1 files_config_object_type read_lnk_file_perms))
+
+(macro files_manage_all_config ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 files_config_object_type manage_file_perms)
+    (allow ARG1 files_config_object_type manage_dir_perms)
+    (allow ARG1 files_config_object_type manage_fifo_file_perms)
+    (allow ARG1 files_config_object_type manage_sock_file_perms)
+    (allow ARG1 files_config_object_type manage_lnk_file_perms))
+
+(macro files_search_data ((type ARG1))
+    (allow ARG1 data_t search_dir_perms))
+
+(macro files_list_data ((type ARG1))
+    (allow ARG1 data_t list_dir_perms))
+
+(macro files_read_data_files ((type ARG1))
+    (call read_files_pattern (ARG1 data_t data_t)))
+
+(macro files_read_data_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 data_t data_t)))
+
+(macro files_read_data ((type ARG1))
+    (allow ARG1 data_t read_file_perms)
+    (allow ARG1 data_t list_dir_perms)
+    (allow ARG1 data_t read_fifo_file_perms)
+    (allow ARG1 data_t read_sock_file_perms)
+    (allow ARG1 data_t read_lnk_file_perms))
+
+(macro files_manage_data ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 data_t manage_file_perms)
+    (allow ARG1 data_t manage_dir_perms)
+    (allow ARG1 data_t manage_fifo_file_perms)
+    (allow ARG1 data_t manage_sock_file_perms)
+    (allow ARG1 data_t manage_lnk_file_perms))
+
+(macro files_rw_data_dirs ((type ARG1))
+    (allow ARG1 data_t rw_dir_perms))
+
+(macro files_search_all_data ((type ARG1))
+    (allow ARG1 files_data_object_type search_dir_perms))
+
+(macro files_list_all_data ((type ARG1))
+    (allow ARG1 files_data_object_type list_dir_perms))
+
+(macro files_read_all_data_files ((type ARG1))
+    (call read_files_pattern (ARG1 files_data_object_type files_data_object_type)))
+
+(macro files_read_all_data_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 files_data_object_type files_data_object_type)))
+
+(macro files_read_all_data ((type ARG1))
+    (allow ARG1 files_data_object_type read_file_perms)
+    (allow ARG1 files_data_object_type list_dir_perms)
+    (allow ARG1 files_data_object_type read_fifo_file_perms)
+    (allow ARG1 files_data_object_type read_sock_file_perms)
+    (allow ARG1 files_data_object_type read_lnk_file_perms))
+
+(macro files_manage_all_data ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 files_data_object_type manage_file_perms)
+    (allow ARG1 files_data_object_type manage_dir_perms)
+    (allow ARG1 files_data_object_type manage_fifo_file_perms)
+    (allow ARG1 files_data_object_type manage_sock_file_perms)
+    (allow ARG1 files_data_object_type manage_lnk_file_perms))
+
+(macro files_read_all_flag_files ((type ARG1))
+    (allow ARG1 files_flag_object_type read_file_perms))
+
+(macro files_manage_all_flag_files ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 files_flag_object_type manage_file_perms))
+
+(macro files_search_home ((type ARG1))
+    (allow ARG1 home_t search_dir_perms))
+
+(macro files_list_home ((type ARG1))
+    (allow ARG1 home_t list_dir_perms))
+
+(macro files_add_entry_home ((type ARG1))
+    (allow ARG1 home_t add_entry_dir_perms))
+
+(macro files_del_entry_home ((type ARG1))
+    (allow ARG1 home_t del_entry_dir_perms))
+
+(macro files_rw_home_dirs ((type ARG1))
+    (allow ARG1 home_t rw_dir_perms))
+
+(macro files_search_lib ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_lib_t search_dir_perms))
+
+(macro files_list_lib ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_lib_t list_dir_perms))
+
+(macro files_read_lib_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 var_lib_t var_lib_t)))
+
+(macro files_read_lib_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 var_lib_t var_lib_t)))
+
+(macro files_read_lib ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_lib_t read_file_perms)
+    (allow ARG1 var_lib_t list_dir_perms)
+    (allow ARG1 var_lib_t read_fifo_file_perms)
+    (allow ARG1 var_lib_t read_sock_file_perms)
+    (allow ARG1 var_lib_t read_lnk_file_perms))
+
+(macro files_manage_lib ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 var_lib_t manage_file_perms)
+    (allow ARG1 var_lib_t manage_dir_perms)
+    (allow ARG1 var_lib_t manage_fifo_file_perms)
+    (allow ARG1 var_lib_t manage_sock_file_perms)
+    (allow ARG1 var_lib_t manage_lnk_file_perms))
+
+(macro files_rw_lib_dirs ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_lib_t rw_dir_perms))
+
+(macro files_setattr_lib_dirs ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_lib_t (dir (setattr))))
+
+(macro files_search_all_lib ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_lib_object_type search_dir_perms))
+
+(macro files_list_all_lib ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_lib_object_type list_dir_perms))
+
+(macro files_read_all_lib_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 files_lib_object_type files_lib_object_type)))
+
+(macro files_read_all_lib_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 files_lib_object_type files_lib_object_type)))
+
+(macro files_read_all_lib ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_lib_object_type read_file_perms)
+    (allow ARG1 files_lib_object_type list_dir_perms)
+    (allow ARG1 files_lib_object_type read_fifo_file_perms)
+    (allow ARG1 files_lib_object_type read_sock_file_perms)
+    (allow ARG1 files_lib_object_type read_lnk_file_perms))
+
+(macro files_manage_all_lib ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 files_lib_object_type manage_file_perms)
+    (allow ARG1 files_lib_object_type manage_dir_perms)
+    (allow ARG1 files_lib_object_type manage_fifo_file_perms)
+    (allow ARG1 files_lib_object_type manage_sock_file_perms)
+    (allow ARG1 files_lib_object_type manage_lnk_file_perms))
+
+(macro files_search_lock ((type ARG1))
+    (call files_read_lock_lnk_files (ARG1))
+    (allow ARG1 lock_runtime_t search_dir_perms))
+
+(macro files_list_lock ((type ARG1))
+    (call files_read_lock_lnk_files (ARG1))
+    (allow ARG1 lock_runtime_t list_dir_perms))
+
+(macro files_read_lock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 lock_runtime_t lock_runtime_t)))
+
+(macro files_read_lock_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 lock_runtime_t lock_runtime_t)))
+
+(macro files_read_lock ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 lock_runtime_t read_file_perms)
+    (allow ARG1 lock_runtime_t list_dir_perms)
+    (allow ARG1 lock_runtime_t read_fifo_file_perms)
+    (allow ARG1 lock_runtime_t read_sock_file_perms)
+    (allow ARG1 lock_runtime_t read_lnk_file_perms))
+
+(macro files_manage_lock ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 lock_runtime_t manage_file_perms)
+    (allow ARG1 lock_runtime_t manage_dir_perms)
+    (allow ARG1 lock_runtime_t manage_fifo_file_perms)
+    (allow ARG1 lock_runtime_t manage_sock_file_perms)
+    (allow ARG1 lock_runtime_t manage_lnk_file_perms))
+
+(macro files_relabelto_lock_dirs ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 lock_runtime_t relabelto_dir_perms))
+
+(macro files_rw_lock_dirs ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 lock_runtime_t rw_dir_perms))
+
+(macro files_search_all_lock ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 files_lock_object_type search_dir_perms))
+
+(macro files_list_all_lock ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 files_lock_object_type list_dir_perms))
+
+(macro files_read_all_lock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 files_lock_object_type files_lock_object_type)))
+
+(macro files_read_all_lock_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 files_lock_object_type files_lock_object_type)))
+
+(macro files_read_all_lock ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_lock_object_type read_file_perms)
+    (allow ARG1 files_lock_object_type list_dir_perms)
+    (allow ARG1 files_lock_object_type read_fifo_file_perms)
+    (allow ARG1 files_lock_object_type read_sock_file_perms)
+    (allow ARG1 files_lock_object_type read_lnk_file_perms))
+
+(macro files_manage_all_lock ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 files_lock_object_type manage_file_perms)
+    (allow ARG1 files_lock_object_type manage_dir_perms)
+    (allow ARG1 files_lock_object_type manage_fifo_file_perms)
+    (allow ARG1 files_lock_object_type manage_sock_file_perms)
+    (allow ARG1 files_lock_object_type manage_lnk_file_perms))
+
+(macro files_search_log ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_log_t search_dir_perms))
+
+(macro files_list_log ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_log_t list_dir_perms))
+
+(macro files_read_log_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 var_log_t var_log_t)))
+
+(macro files_read_log_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 var_log_t var_log_t)))
+
+(macro files_read_log ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_log_t read_file_perms)
+    (allow ARG1 var_log_t list_dir_perms)
+    (allow ARG1 var_log_t read_fifo_file_perms)
+    (allow ARG1 var_log_t read_sock_file_perms)
+    (allow ARG1 var_log_t read_lnk_file_perms))
+
+(macro files_manage_log ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 var_log_t manage_file_perms)
+    (allow ARG1 var_log_t manage_dir_perms)
+    (allow ARG1 var_log_t manage_fifo_file_perms)
+    (allow ARG1 var_log_t manage_sock_file_perms)
+    (allow ARG1 var_log_t manage_lnk_file_perms))
+
+(macro files_add_entry_log ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_log_t add_entry_dir_perms))
+
+(macro files_rw_log_dirs ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_log_t rw_dir_perms))
+
+(macro files_search_all_log ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_log_object_type search_dir_perms))
+
+(macro files_list_all_log ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_log_object_type list_dir_perms))
+
+(macro files_read_all_log_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 files_log_object_type files_log_object_type)))
+
+(macro files_read_all_log_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 files_log_object_type files_log_object_type)))
+
+(macro files_read_all_log ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_log_object_type read_file_perms)
+    (allow ARG1 files_log_object_type list_dir_perms)
+    (allow ARG1 files_log_object_type read_fifo_file_perms)
+    (allow ARG1 files_log_object_type read_sock_file_perms)
+    (allow ARG1 files_log_object_type read_lnk_file_perms))
+
+(macro files_manage_all_log ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 files_log_object_type manage_file_perms)
+    (allow ARG1 files_log_object_type manage_dir_perms)
+    (allow ARG1 files_log_object_type manage_fifo_file_perms)
+    (allow ARG1 files_log_object_type manage_sock_file_perms)
+    (allow ARG1 files_log_object_type manage_lnk_file_perms))
+
+(macro files_search_mnt ((type ARG1))
+    (allow ARG1 mnt_t search_dir_perms))
+
+(macro files_list_mnt ((type ARG1))
+    (allow ARG1 mnt_t list_dir_perms))
+
+(macro files_read_mnt_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 mnt_t mnt_t)))
+
+(macro files_read_mnt ((type ARG1))
+    (allow ARG1 mnt_t list_dir_perms)
+    (allow ARG1 mnt_t read_lnk_file_perms))
+
+(macro files_manage_mnt ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 mnt_t manage_dir_perms)
+    (allow ARG1 mnt_t manage_lnk_file_perms))
+
+(macro files_rw_mnt_dirs ((type ARG1))
+    (allow ARG1 mnt_t rw_dir_perms))
+
+(macro files_search_runtime ((type ARG1))
+    (call files_read_runtime_lnk_files (ARG1))
+    (allow ARG1 runtime_t search_dir_perms))
+
+(macro files_list_runtime ((type ARG1))
+    (call files_read_runtime_lnk_files (ARG1))
+    (allow ARG1 runtime_t list_dir_perms))
+
+(macro files_read_runtime_files ((type ARG1))
+    (call read_files_pattern (ARG1 runtime_t runtime_t)))
+
+(macro files_read_runtime_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 runtime_t runtime_t)))
+
+(macro files_read_runtime ((type ARG1))
+    (allow ARG1 runtime_t read_file_perms)
+    (allow ARG1 runtime_t list_dir_perms)
+    (allow ARG1 runtime_t read_fifo_file_perms)
+    (allow ARG1 runtime_t read_sock_file_perms)
+    (allow ARG1 runtime_t read_lnk_file_perms))
+
+(macro files_manage_runtime ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 runtime_t manage_file_perms)
+    (allow ARG1 runtime_t manage_dir_perms)
+    (allow ARG1 runtime_t manage_fifo_file_perms)
+    (allow ARG1 runtime_t manage_sock_file_perms)
+    (allow ARG1 runtime_t manage_lnk_file_perms))
+
+(macro files_del_entry_runtime ((type ARG1))
+    (allow ARG1 runtime_t del_entry_dir_perms))
+
+(macro files_rw_runtime_dirs ((type ARG1))
+    (allow ARG1 runtime_t rw_dir_perms))
+
+(macro files_search_all_runtime ((type ARG1))
+    (allow ARG1 files_runtime_object_type search_dir_perms))
+
+(macro files_list_all_runtime ((type ARG1))
+    (allow ARG1 files_runtime_object_type list_dir_perms))
+
+(macro files_read_all_runtime_files ((type ARG1))
+    (call read_files_pattern (ARG1 files_runtime_object_type files_runtime_object_type)))
+
+(macro files_read_all_runtime_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 files_runtime_object_type files_runtime_object_type)))
+
+(macro files_read_all_runtime ((type ARG1))
+    (allow ARG1 files_runtime_object_type read_file_perms)
+    (allow ARG1 files_runtime_object_type list_dir_perms)
+    (allow ARG1 files_runtime_object_type read_fifo_file_perms)
+    (allow ARG1 files_runtime_object_type read_sock_file_perms)
+    (allow ARG1 files_runtime_object_type read_lnk_file_perms))
+
+(macro files_manage_all_runtime ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 files_runtime_object_type manage_file_perms)
+    (allow ARG1 files_runtime_object_type manage_dir_perms)
+    (allow ARG1 files_runtime_object_type manage_fifo_file_perms)
+    (allow ARG1 files_runtime_object_type manage_sock_file_perms)
+    (allow ARG1 files_runtime_object_type manage_lnk_file_perms))
+
+(macro files_relabel_all_runtime ((type ARG1))
+    (allow ARG1 files_runtime_object_type relabel_file_perms)
+    (allow ARG1 files_runtime_object_type relabel_dir_perms)
+    (allow ARG1 files_runtime_object_type relabel_fifo_file_perms)
+    (allow ARG1 files_runtime_object_type relabel_sock_file_perms)
+    (allow ARG1 files_runtime_object_type relabel_lnk_file_perms))
+
+(macro files_search_var ((type ARG1))
+    (allow ARG1 var_t search_dir_perms))
+
+(macro files_list_var ((type ARG1))
+    (allow ARG1 var_t list_dir_perms))
+
+(macro files_read_var_files ((type ARG1))
+    (call read_files_pattern (ARG1 var_t var_t)))
+
+(macro files_read_var_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 var_t var_t)))
+
+(macro files_read_var ((type ARG1))
+    (allow ARG1 var_t read_file_perms)
+    (allow ARG1 var_t list_dir_perms)
+    (allow ARG1 var_t read_fifo_file_perms)
+    (allow ARG1 var_t read_sock_file_perms)
+    (allow ARG1 var_t read_lnk_file_perms))
+
+(macro files_manage_var ((type ARG1))
+    (allow ARG1 var_t manage_file_perms)
+    (allow ARG1 var_t manage_dir_perms)
+    (allow ARG1 var_t manage_fifo_file_perms)
+    (allow ARG1 var_t manage_sock_file_perms)
+    (allow ARG1 var_t manage_lnk_file_perms))
+
+(macro files_rw_var_dirs ((type ARG1))
+    (allow ARG1 var_t rw_dir_perms))
+
+(macro files_setattr_var_dirs ((type ARG1))
+    (allow ARG1 var_t (dir (setattr))))
+
+(macro files_search_all_var ((type ARG1))
+    (allow ARG1 files_var_object_type search_dir_perms))
+
+(macro files_list_all_var ((type ARG1))
+    (allow ARG1 files_var_object_type list_dir_perms))
+
+(macro files_read_all_var_files ((type ARG1))
+    (call read_files_pattern (ARG1 files_var_object_type files_var_object_type)))
+
+(macro files_read_all_var_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 files_var_object_type files_var_object_type)))
+
+(macro files_read_all_var ((type ARG1))
+    (allow ARG1 files_var_object_type read_file_perms)
+    (allow ARG1 files_var_object_type list_dir_perms)
+    (allow ARG1 files_var_object_type read_fifo_file_perms)
+    (allow ARG1 files_var_object_type read_sock_file_perms)
+    (allow ARG1 files_var_object_type read_lnk_file_perms))
+
+(macro files_manage_all_var ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 files_var_object_type manage_file_perms)
+    (allow ARG1 files_var_object_type manage_dir_perms)
+    (allow ARG1 files_var_object_type manage_fifo_file_perms)
+    (allow ARG1 files_var_object_type manage_sock_file_perms)
+    (allow ARG1 files_var_object_type manage_lnk_file_perms))
+
+(macro files_search_spool ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_spool_t search_dir_perms))
+
+(macro files_list_spool ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_spool_t list_dir_perms))
+
+(macro files_read_spool_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 var_spool_t var_spool_t)))
+
+(macro files_read_spool_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 var_spool_t var_spool_t)))
+
+(macro files_read_spool ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_spool_t read_file_perms)
+    (allow ARG1 var_spool_t list_dir_perms)
+    (allow ARG1 var_spool_t read_fifo_file_perms)
+    (allow ARG1 var_spool_t read_sock_file_perms)
+    (allow ARG1 var_spool_t read_lnk_file_perms))
+
+(macro files_manage_spool ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 var_spool_t manage_file_perms)
+    (allow ARG1 var_spool_t manage_dir_perms)
+    (allow ARG1 var_spool_t manage_fifo_file_perms)
+    (allow ARG1 var_spool_t manage_sock_file_perms)
+    (allow ARG1 var_spool_t manage_lnk_file_perms))
+
+(macro files_rw_spool_dirs ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_spool_t rw_dir_perms))
+
+(macro files_search_all_spool ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_spool_object_type search_dir_perms))
+
+(macro files_list_all_spool ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_spool_object_type list_dir_perms))
+
+(macro files_read_all_spool_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 files_spool_object_type files_spool_object_type)))
+
+(macro files_read_all_spool_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 files_spool_object_type files_spool_object_type)))
+
+(macro files_read_all_spool ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_spool_object_type read_file_perms)
+    (allow ARG1 files_spool_object_type list_dir_perms)
+    (allow ARG1 files_spool_object_type read_fifo_file_perms)
+    (allow ARG1 files_spool_object_type read_sock_file_perms)
+    (allow ARG1 files_spool_object_type read_lnk_file_perms))
+
+(macro files_manage_all_spool ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 files_spool_object_type manage_file_perms)
+    (allow ARG1 files_spool_object_type manage_dir_perms)
+    (allow ARG1 files_spool_object_type manage_fifo_file_perms)
+    (allow ARG1 files_spool_object_type manage_sock_file_perms)
+    (allow ARG1 files_spool_object_type manage_lnk_file_perms))
+
+(macro files_search_tmp ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_tmp_t search_dir_perms))
+
+(macro files_list_tmp ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_tmp_t list_dir_perms))
+
+(macro files_read_tmp_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 var_tmp_t var_tmp_t)))
+
+(macro files_rw_tmp_dirs ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_tmp_t rw_dir_perms))
+
+(macro files_manage_tmp_dirs ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 var_tmp_t var_tmp_t)))
+
+(macro files_read_tmp_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 var_tmp_t var_tmp_t)))
+
+(macro files_manage_tmp_lnk_files ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (call manage_lnk_files_pattern (ARG1 var_tmp_t var_tmp_t)))
+
+(macro files_read_tmp ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 var_tmp_t read_file_perms)
+    (allow ARG1 var_tmp_t list_dir_perms)
+    (allow ARG1 var_tmp_t read_fifo_file_perms)
+    (allow ARG1 var_tmp_t read_sock_file_perms)
+    (allow ARG1 var_tmp_t read_lnk_file_perms))
+
+(macro files_manage_tmp ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 var_tmp_t manage_file_perms)
+    (allow ARG1 var_tmp_t manage_dir_perms)
+    (allow ARG1 var_tmp_t manage_fifo_file_perms)
+    (allow ARG1 var_tmp_t manage_sock_file_perms)
+    (allow ARG1 var_tmp_t manage_lnk_file_perms))
+
+(macro files_search_all_tmp ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_tmp_object_type search_dir_perms))
+
+(macro files_list_all_tmp ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_tmp_object_type list_dir_perms))
+
+(macro files_read_all_tmp_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 files_tmp_object_type files_tmp_object_type)))
+
+(macro files_read_all_tmp_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 files_tmp_object_type files_tmp_object_type)))
+
+(macro files_read_all_tmp ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 files_tmp_object_type read_file_perms)
+    (allow ARG1 files_tmp_object_type list_dir_perms)
+    (allow ARG1 files_tmp_object_type read_fifo_file_perms)
+    (allow ARG1 files_tmp_object_type read_sock_file_perms)
+    (allow ARG1 files_tmp_object_type read_lnk_file_perms))
+
+(macro files_manage_all_tmp ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 files_tmp_object_type manage_file_perms)
+    (allow ARG1 files_tmp_object_type manage_dir_perms)
+    (allow ARG1 files_tmp_object_type manage_fifo_file_perms)
+    (allow ARG1 files_tmp_object_type manage_sock_file_perms)
+    (allow ARG1 files_tmp_object_type manage_lnk_file_perms))
+
+(macro files_search_all_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 files_tmpfs_object_type search_dir_perms))
+
+(macro files_list_all_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 files_tmpfs_object_type list_dir_perms))
+
+(macro files_getattr_all_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call getattr_files_pattern (ARG1 files_tmpfs_object_type files_tmpfs_object_type)))
+
+(macro files_read_all_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 files_tmpfs_object_type files_tmpfs_object_type)))
+
+(macro files_read_all_tmpfs_lnk_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 files_tmpfs_object_type files_tmpfs_object_type)))
+
+(macro files_read_all_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 files_tmpfs_object_type read_file_perms)
+    (allow ARG1 files_tmpfs_object_type list_dir_perms)
+    (allow ARG1 files_tmpfs_object_type read_fifo_file_perms)
+    (allow ARG1 files_tmpfs_object_type read_sock_file_perms)
+    (allow ARG1 files_tmpfs_object_type read_lnk_file_perms))
+
+(macro files_manage_all_tmpfs ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 files_tmpfs_object_type manage_file_perms)
+    (allow ARG1 files_tmpfs_object_type manage_dir_perms)
+    (allow ARG1 files_tmpfs_object_type manage_fifo_perms)
+    (allow ARG1 files_tmpfs_object_type manage_sock_perms)
+    (allow ARG1 files_tmpfs_object_type manage_lnk_file_perms))
+
+(macro files_search_user_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 user_runtime_t search_dir_perms))
+
+(macro files_list_user_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 user_runtime_t list_dir_perms))
+
+(macro files_add_entry_user_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 user_runtime_t add_entry_dir_perms))
+
+(macro files_del_entry_user_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 user_runtime_t del_entry_dir_perms))
+
+(macro files_manage_user_runtime_dirs ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 user_runtime_t user_runtime_t)))
+
+(macro files_mounton_user_runtime_dirs ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 user_runtime_t (dir (mounton))))
+
+(macro files_rw_user_runtime_dirs ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 user_runtime_t rw_dir_perms))
+
+(macro files_getattr_all ((type ARG1))
+    (allow ARG1 files_object_type (all_file_objects (getattr))))
+
+(macro files_dontaudit_manage_all_files ((type ARG1))
+    (dontaudit ARG1 files_object_type manage_file_perms))
+
+(macro files_dontaudit_read_all_lnk_files ((type ARG1))
+    (dontaudit ARG1 files_object_type read_lnk_file_perms))
+
+(macro files_dontaudit_list_all ((type ARG1))
+    (dontaudit ARG1 files_object_type list_dir_perms))
+
+(macro files_dontaudit_relabel_all ((type ARG1))
+    (dontaudit ARG1 files_object_type (all_file_objects (relabel))))
+
+(macro files_mounton_all_except ((type ARG1))
+    (call files_dontaudit_audit_access_all_except (ARG1))
+    (call files_getattr_all_except (ARG1))
+    (call files_list_all_except (ARG1))
+    (call files_setattr_all_dirs_except (ARG1))
+    (allow ARG1 files_except (dir_file (mounton))))
+
+(macro files_dontaudit_audit_access_all_except ((type ARG1))
+    (dontaudit ARG1 files_except (all_file_objects (audit_access))))
+
+(macro files_getattr_all_except ((type ARG1))
+    (allow ARG1 files_except (all_file_objects (getattr))))
+
+(macro files_read_all_files_except ((type ARG1))
+    (allow ARG1 files_except read_file_perms))
+
+(macro files_relabel_all_except ((type ARG1))
+    (allow ARG1 files_except (all_file_objects (relabel))))
+
+(macro files_setattr_all_dirs_except ((type ARG1))
+    (allow ARG1 files_except (dir (setattr))))
+
+(macro files_list_all_except ((type ARG1))
+    (allow ARG1 files_except list_dir_perms))
+
+(macro files_spec_exception ((type ARG1)(type ARG2))
+    (typeattributeset ARG1 (and (files_object_type)
+        (not (files_auth_object_type files_sec_object_type files_exception_object_type ARG2)))))
+
+(macro files_exception_object_type ((type ARG1))
+    (typeattributeset files_exception_object_type ARG1))
+
+(macro files_execmod_all_except ((type ARG1))
+    (booleanif files_execmod_all_except
+        (true
+            (allow ARG1 files_except (file (execmod))))))
+
+(macro files_execmod_all_except_uncond ((type ARG1))
+    (allow ARG1 files_except (file (execmod))))
+
+(macro files_unconfined_subject_type ((type ARG1))
+    (typeattributeset files_unconfined_subject_type ARG1))

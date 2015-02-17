@@ -1,0 +1,55 @@
+(type binfmt_t)
+(type binfmt_exec_t)
+(call systemd_daemon (binfmt_t binfmt_exec_t))
+
+(context binfmt_exec (system_u object_r binfmt_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-binfmt" file binfmt_exec)
+
+(type binfmt_config_t)
+(call files_config_object_type (binfmt_config_t))
+
+(context binfmt_config (system_u object_r binfmt_config_t (systemlow systemlow)))
+(filecon "/etc/binfmt\.d(/.*)?" any binfmt_config)
+
+(call devices_read_urandom (binfmt_t))
+
+(call journal_client_subject_type (binfmt_t))
+
+(macro binfmt_exec ((type ARG1))
+    (call can_exec (ARG1 binfmt_exec_t)))
+
+(macro binfmt_auto_subject_type_transition ((type ARG1))
+    (call binfmt_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 binfmt_exec_t binfmt_t)))
+
+(macro binfmt_send_signal ((type ARG1))
+    (allow ARG1 binfmt_t (process (signal))))
+
+(macro binfmt_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 binfmt_config_t search_dir_perms))
+
+(macro binfmt_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 binfmt_config_t list_dir_perms))
+
+(macro binfmt_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 binfmt_config_t binfmt_config_t)))
+
+(macro binfmt_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 binfmt_config_t binfmt_config_t)))
+
+(macro binfmt_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 binfmt_config_t read_file_perms)
+    (allow ARG1 binfmt_config_t list_dir_perms)
+    (allow ARG1 binfmt_config_t read_lnk_file_perms))
+
+(macro binfmt_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 binfmt_config_t manage_file_perms)
+    (allow ARG1 binfmt_config_t manage_dir_perms)
+    (allow ARG1 binfmt_config_t manage_lnk_file_perms))

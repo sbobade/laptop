@@ -1,0 +1,32 @@
+(type utmp_t)
+(type utmp_exec_t)
+(call systemd_daemon (utmp_t utmp_exec_t))
+
+(context utmp_exec (system_u object_r utmp_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-update-utmp" file utmp_exec)
+
+(call files_search_config (utmp_t))
+
+(call audit_client_subject_type (utmp_t))
+
+(call auth_manage_utmp_runtime_files (utmp_t))
+(call auth_runtime_type_transition_utmp_runtime_files (utmp_t "utmp"))
+(call auth_write_wtmp_log_files (utmp_t))
+
+(call journal_client_subject_type (utmp_t))
+
+(call systemd_status_system_units (utmp_t))
+(call systemd_status_system (utmp_t))
+(call systemd_status_transient_systemd_units (utmp_t))
+(call systemd_stream_connect (utmp_t))
+
+(macro utmp_exec ((type ARG1))
+    (call can_exec (ARG1 utmp_exec_t)))
+
+(macro utmp_auto_subject_type_transition ((type ARG1))
+    (call utmp_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 utmp_exec_t utmp_t)))
+
+(macro utmp_send_signal ((type ARG1))
+    (allow ARG1 utmp_t (process (signal))))

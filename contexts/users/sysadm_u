@@ -1,0 +1,4 @@
+sysadm_u:sysadm_t sysadm_r:sysadm_t
+sysadm_r:sysadm_sudo_t sysadm_r:sysadm_t
+system_r:login_t sysadm_r:sysadm_t
+system_r:systemd_t sysadm_r:sysadm_systemd_t

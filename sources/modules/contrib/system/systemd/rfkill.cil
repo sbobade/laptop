@@ -1,0 +1,65 @@
+(type rfkill_t)
+(type rfkill_exec_t)
+(call systemd_daemon (rfkill_t rfkill_exec_t))
+
+(context rfkill_exec (system_u object_r rfkill_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-rfkill" file rfkill_exec)
+
+(type rfkill_systemd_lib_t)
+(call systemd_lib_object_type (rfkill_systemd_lib_t))
+
+(context rfkill_systemd_lib (system_u object_r rfkill_systemd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/systemd/rfkill(/.*)?" any rfkill_systemd_lib)
+
+(allow rfkill_t rfkill_systemd_lib_t manage_dir_perms)
+(allow rfkill_t rfkill_systemd_lib_t manage_file_perms)
+(call systemd_lib_object_type_transition (rfkill_t rfkill_systemd_lib_t dir "*"))
+
+(call devices_read_event (rfkill_t))
+
+(call filesystems_list_sysfs (rfkill_t))
+(call filesystems_rw_sysfs_files (rfkill_t))
+(call filesystems_read_sysfs_lnk_files (rfkill_t))
+
+(call journal_client_subject_type (rfkill_t))
+
+(call udev_client_subject_type (rfkill_t))
+
+(macro rfkill_exec ((type ARG1))
+    (call can_exec (ARG1 rfkill_exec_t)))
+
+(macro rfkill_auto_subject_type_transition ((type ARG1))
+    (call rfkill_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rfkill_exec_t rfkill_t)))
+
+(macro rfkill_send_signal ((type ARG1))
+    (allow ARG1 rfkill_t (process (signal))))
+
+(macro rfkill_search_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 rfkill_systemd_lib_t search_dir_perms))
+
+(macro rfkill_list_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 rfkill_systemd_lib_t list_dir_perms))
+
+(macro rfkill_read_systemd_lib_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_files_pattern (ARG1 rfkill_systemd_lib_t rfkill_systemd_lib_t)))
+
+(macro rfkill_read_systemd_lib_lnk_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 rfkill_systemd_lib_t rfkill_systemd_lib_t)))
+
+(macro rfkill_read_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 rfkill_systemd_lib_t read_file_perms)
+    (allow ARG1 rfkill_systemd_lib_t list_dir_perms)
+    (allow ARG1 rfkill_systemd_lib_t read_lnk_file_perms))
+
+(macro rfkill_manage_systemd_lib ((type ARG1))
+    (call systemd_rw_lib_dirs (ARG1))
+    (allow ARG1 rfkill_systemd_lib_t manage_file_perms)
+    (allow ARG1 rfkill_systemd_lib_t manage_dir_perms)
+    (allow ARG1 rfkill_systemd_lib_t manage_lnk_file_perms))

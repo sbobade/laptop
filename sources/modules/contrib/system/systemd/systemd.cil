@@ -1,0 +1,1218 @@
+(roleattribute systemd_systemctl_role)
+
+(typeattribute systemd_admin_subject_type)
+(typeattribute systemd_daemon_subject_type)
+(typeattribute systemd_session_subject_type)
+(typeattribute systemd_socket_activated_subject_type)
+(typeattribute systemd_system_service_admin_subject_type)
+
+(typeattribute systemd_systemctl_client_subject_type)
+
+(typeattribute systemd_object_type)
+(typeattribute systemd_socket_activated_object_type)
+(typeattribute systemd_pid_object_type)
+(typeattribute systemd_unit_object_type)
+(typeattribute systemd_session_unit_object_type)
+
+(typeattribute systemd_config_object_type)
+(typeattribute systemd_lib_object_type)
+(typeattribute systemd_runtime_object_type)
+
+(typeattribute systemd_unconfined_subject_type)
+
+(typeattributeset systemd_unit_object_type systemd_session_unit_object_type)
+
+(type systemd_t)
+(type systemd_exec_t)
+(call subject_common_type (systemd_t))
+(call subject_entry (systemd_t systemd_exec_t))
+(roletype system_r systemd_t)
+
+(context systemd_exec (system_u object_r systemd_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd" file systemd_exec)
+
+(type systemd_pam_config_t)
+(call auth_pam_config_object_type (systemd_pam_config_t))
+
+(typeattributeset systemd_object_type systemd_pam_config_t)
+
+(context systemd_pam_config (system_u object_r systemd_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/systemd-user" file systemd_pam_config)
+
+(type systemd_dbus_config_t)
+(call dbus_config_object_type (systemd_dbus_config_t))
+
+(typeattributeset systemd_object_type systemd_dbus_config_t)
+
+(context systemd_dbus_config (system_u object_r systemd_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.systemd1\.conf" file systemd_dbus_config)
+
+(type systemd_config_t)
+(call systemd_config_object_type (systemd_config_t))
+
+(typeattributeset systemd_object_type systemd_config_t)
+
+(context systemd_config (system_u object_r systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd(/.*)?" any systemd_config)
+(filecon "/etc/yum/protected\.d/systemd\.conf" file systemd_config)
+(filecon "/etc/xdg/systemd(/.*)?" any systemd_config)
+
+(type systemd_runtime_t)
+(call systemd_runtime_object_type (systemd_runtime_t))
+
+(typeattributeset systemd_object_type systemd_runtime_t)
+
+(context systemd_runtime (system_u object_r systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd(/.*)?" any systemd_runtime)
+
+(allow systemd_t systemd_runtime_t manage_file_perms)
+(allow systemd_t systemd_runtime_t manage_dir_perms)
+(allow systemd_t systemd_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (systemd_t systemd_runtime_t dir "systemd"))
+
+(type systemd_lib_t)
+(call systemd_lib_object_type (systemd_lib_t))
+
+(typeattributeset systemd_object_type systemd_lib_t)
+
+(context systemd_lib (system_u object_r systemd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/systemd(/.*)?" any systemd_lib)
+
+(allow systemd_t systemd_lib_t manage_file_perms)
+(allow systemd_t systemd_lib_t manage_dir_perms)
+(allow systemd_t systemd_lib_t manage_sock_file_perms)
+(call files_lib_object_type_transition (systemd_t systemd_lib_t dir "systemd"))
+
+(allow systemd_t self (process (getcap setfscreate setsockcreate
+    setrlimit setsched setcap getsched)))
+(allow systemd_t self (capability (dac_override net_admin sys_time
+    kill sys_tty_config sys_boot chown setgid setuid setpcap sys_resource
+    sys_admin fsetid fowner)))
+(allow systemd_t self (capability2 (block_suspend)))
+(allow systemd_t self (unix_dgram_socket (lock)))
+(allow systemd_t self (unix_stream_socket (listen accept)))
+(allow systemd_t self (netlink_route_socket (nlmsg_write)))
+(allow systemd_t self create_netlink_selinux_socket_perms)
+(allow systemd_t self rw_fifo_file_perms)
+(allow systemd_t self (key (search link write)))
+
+(allow systemd_t systemd_unit_t manage_dir_perms)
+(allow systemd_t systemd_unit_t manage_file_perms)
+(allow systemd_t systemd_unit_t manage_lnk_file_perms)
+
+(call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "generator"))
+(call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "generator.early"))
+(call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "generator.late"))
+(call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "system"))
+
+(allow systemd_t systemd_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
+(allow systemd_t systemd_socket_activated_subject_type create_unix_stream_stream_socket_perms)
+
+(allow systemd_t systemd_socket_activated_object_type manage_dir_perms)
+(allow systemd_t systemd_socket_activated_object_type manage_fifo_file_perms)
+(allow systemd_t systemd_socket_activated_object_type manage_sock_file_perms)
+
+(allow systemd_t systemd_pid_object_type manage_file_perms)
+
+(call system_link_keyring (systemd_t))
+(call system_mounton_mountpoint_dirs (systemd_t))
+(call system_read_kernel_sysctl (systemd_t))
+(call system_read_net_proc (systemd_t))
+(call system_read_net_sysctl (systemd_t))
+(call system_read_state_invalid (systemd_t))
+(call system_use_fd (systemd_t))
+
+(call devices_create_devtty (systemd_t))
+(call devices_create_null (systemd_t))
+(call devices_create_random (systemd_t))
+(call devices_create_urandom (systemd_t))
+(call devices_create_zero (systemd_t))
+(call devices_read_autofs (systemd_t))
+(call devices_read_memory (systemd_t))
+(call devices_read_urandom (systemd_t))
+(call devices_relabel_all (systemd_t))
+(call devices_write_kmsg (systemd_t))
+
+(call files_read_all_lock_files (systemd_t))
+(call files_read_all_config (systemd_t))
+(call files_relabel_all_runtime (systemd_t))
+(call files_relabelto_lock_dirs (systemd_t))
+(call files_manage_tmp_dirs (systemd_t))
+(call files_manage_tmp_lnk_files (systemd_t))
+
+(call filesystems_getattr_all_filesystems (systemd_t))
+(call filesystems_list_autofs (systemd_t))
+(call filesystems_list_binfmt_misc (systemd_t))
+(call filesystems_list_efivarfs (systemd_t))
+(call filesystems_list_pstore (systemd_t))
+(call filesystems_manage_cgroup_dirs (systemd_t))
+(call filesystems_manage_devtmpfs_dirs (systemd_t))
+(call filesystems_manage_devtmpfs_lnk_files (systemd_t))
+(call filesystems_manage_devtmpfs_chr_files (systemd_t))
+(call filesystems_manage_tmpfs_dirs (systemd_t))
+(call filesystems_manage_tmpfs_lnk_files (systemd_t))
+(call filesystems_mount_autofs (systemd_t))
+(call filesystems_mount_tmpfs (systemd_t))
+(call filesystems_read_tmpfs_files (systemd_t))
+(call filesystems_read_sysfs (systemd_t))
+(call filesystems_relabelfrom_devtmpfs_chr_files (systemd_t))
+(call filesystems_relabelfrom_devtmpfs_blk_files (systemd_t))
+(call filesystems_relabelfrom_tmpfs (systemd_t))
+(call filesystems_remount_devpts (systemd_t))
+(call filesystems_remount_dosfs (systemd_t))
+(call filesystems_remount_filesystems (systemd_t))
+(call filesystems_remount_hugetlbfs (systemd_t))
+(call filesystems_remount_tmpfs (systemd_t))
+(call filesystems_rw_cgroup_files (systemd_t))
+(call filesystems_setattr_cgroup_files (systemd_t))
+(call filesystems_unmount_all (systemd_t))
+(call filesystems_write_inherited_devpts_chr_files (systemd_t))
+
+(call selinux_compute_access_vector (systemd_t))
+(call selinux_compute_create_context (systemd_t))
+(call selinux_list_securityfs (systemd_t))
+
+(call subject_identity_change_exemption (systemd_t))
+(call subject_role_change_exemption (systemd_t))
+
+(call storage_read_fixed_disk (systemd_t))
+(call storage_read_removable (systemd_t))
+(call storage_read_scsi_generic (systemd_t))
+
+(call subject_getattr_all_common_subjects (systemd_t))
+(call subject_read_all_common_subjects_state (systemd_t))
+(call subject_send_sigkill_all_common_subjects (systemd_t))
+(call subject_send_signal_all_common_subjects (systemd_t))
+(call subject_send_signull_all_common_subjects (systemd_t))
+
+(call terminals_use_unallocated_ttys (systemd_t))
+
+(call askpwd_read_systemd_runtime (systemd_t))
+
+(call audit_client_subject_type (systemd_t))
+
+(call auth_nsswitch_client_subject_type (systemd_t))
+(call auth_rw_utmp_runtime_files (systemd_t))
+(call auth_write_wtmp_log_files (systemd_t))
+
+(call dbus_system_service (systemd_t))
+
+(call dracut_search_runtime (systemd_t))
+
+(call fsck_read_runtime (systemd_t))
+
+(call journal_list_log (systemd_t))
+(call journal_client_subject_type (systemd_t))
+(call journal_read_journald_systemd_runtime (systemd_t))
+(call journal_relabelto_log_dirs (systemd_t))
+(call journal_relabelto_log_files (systemd_t))
+
+(call login_read_logind_systemd_runtime (systemd_t))
+
+(call miscfiles_read_locale (systemd_t))
+(call miscfiles_read_modules (systemd_t))
+
+(call mount_read_runtime (systemd_t))
+
+(call plymouth_exec (systemd_t))
+(call plymouth_read_plymouthd_runtime (systemd_t))
+(call plymouth_use_fd_plymouthd (systemd_t))
+
+(call polkit_dbus_chat_polkitd (systemd_t))
+
+(call seutil_read_default_context_files (systemd_t))
+(call seutil_read_file_context_files (systemd_t))
+
+(call shutdown_share_state (systemd_t))
+
+(call systemd_exec (systemd_t))
+(call systemd_exec_systemdhelper (systemd_t))
+(call systemd_manage_all_unit_files (systemd_t))
+(call systemd_relabelto_unit_dirs (systemd_t))
+
+(call tmpfiles_read_runtime (systemd_t))
+
+(call udev_client_subject_type (systemd_t))
+(call udev_create_udevd_netlink_kobject_uevent_socket (systemd_t))
+
+(call updatedone_getattr_flag_files (systemd_t))
+
+(optional systemd_optional_dhcp
+    (call dhcp_read_dhclient_lib (systemd_t)))
+
+(optional systemd_optional_ntp
+    (call ntp_exec_ntphelper (systemd_t)))
+
+(type systemd_tmpfs_t)
+(call usersubject_tmpfs_object_type (systemd_tmpfs_t))
+
+(type systemd_config_home_t)
+(call usersubject_config_home_object_type (systemd_config_home_t))
+
+(call systemd_session_unit_object_type (systemd_config_home_t))
+
+(call commands_shell_exec_manual_subject_type_transition
+    (systemd_t systemd_session_subject_type))
+
+(allow systemd_t self (process (setkeycreate)))
+
+(call selinux_validate_context (systemd_t))
+(call selinux_compute_user_contexts (systemd_t))
+
+(allow systemd_t systemd_session_subject_type (process (noatsecure sigchld)))
+(allow systemd_t systemd_session_subject_type (key (create search link write)))
+
+(call systemd_read_config_home (systemd_t))
+
+(call usersubject_link_keyring_all_common_login_subjects (systemd_t))
+(call usersubject_mounton_home_dir (systemd_t))
+(call usersubject_use_terminals (systemd_t))
+
+(optional systemd_optional_unconfined
+    (call unconfined_noatsecure_all_user_subjects (systemd_t))
+    (call unconfined_send_sigchld_all_user_subjects (systemd_t))
+    (call unconfined_create_keyring_all_user_subjects (systemd_t))
+    (call unconfined_shell_exec_manual_subject_type_transition_all_user_subjects (systemd_t)))
+
+(type systemdhelper_exec_t)
+(call commands_exec_object_type (systemdhelper_exec_t))
+
+(context systemdhelper_exec (system_u object_r systemdhelper_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/[^/]*" file systemdhelper_exec)
+(filecon "/usr/lib/systemd/system-generators/[^/]*" file systemdhelper_exec)
+
+(type systemctl_t)
+(type systemctl_exec_t)
+(call applications_app (systemctl_t systemctl_exec_t))
+(call systemd_daemon (systemctl_t systemctl_exec_t))
+(roletype systemd_systemctl_role systemctl_t)
+
+(context systemctl_exec (system_u object_r systemctl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemctl" file systemctl_exec)
+
+(allow systemctl_t self (capability (dac_override net_admin)))
+
+(call systemd_control_all_units (systemctl_t))
+(call systemd_read_state_all_systemd_daemon_subjects (systemctl_t))
+(call systemd_systemctl_client_subject_type (systemctl_t))
+(call systemd_read_config_home (systemctl_t))
+(call systemd_read_state (systemctl_t))
+(call systemd_reboot_system (systemctl_t))
+(call systemd_reload_system (systemctl_t))
+(call systemd_status_system (systemctl_t))
+
+(call askpwd_run_askpwdagent (systemctl_t systemd_systemctl_role))
+
+(call usersubject_dontaudit_read_user_home_files (systemctl_t))
+
+(type systemd_generic_t)
+(call subject_common_type (systemd_generic_t))
+(roletype system_r systemd_generic_t)
+
+(typeattributeset systemd_daemon_subject_type systemd_generic_t)
+
+(call commands_exec_object_entry (systemd_generic_t))
+(call commands_shell_exec_object_entry (systemd_generic_t))
+
+(call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
+(call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
+
+(call systemd_send_signal (systemd_generic_t))
+(call systemd_send_signal_all_systemd_daemon_subjects (systemd_generic_t))
+
+(optional systemd_generic_optional_unconfined
+    (call unconfined_subject_type (systemd_generic_t)))
+
+(type systemd_unit_t)
+(call systemd_unit_object_type (systemd_unit_t))
+
+(typeattributeset systemd_object_type systemd_unit_t)
+
+(context systemd_unit (system_u object_r systemd_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/dracut/modules\.d/.*\.service" file systemd_unit)
+(filecon "/usr/lib/dracut/modules\.d/.*\.target" file systemd_unit)
+(filecon "/usr/lib/systemd/system(/.*)?" any systemd_unit)
+(filecon "/usr/lib/systemd/user(/.*)?" any systemd_unit)
+(filecon "/usr/lib/systemd/ntp-units\.d(/.*)?" any systemd_unit)
+
+(call filesystems_associate_tmpfs (systemd_unit_object_type))
+
+(type systemd_kexec_unit_t)
+(call systemd_unit_object_type (systemd_kexec_unit_t))
+
+(typeattributeset systemd_object_type systemd_kexec_unit_t)
+
+(context systemd_kexec_unit (system_u object_r systemd_kexec_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-kexec.*" file systemd_kexec_unit)
+
+(type systemd_power_unit_t)
+(call systemd_unit_object_type (systemd_power_unit_t))
+
+(typeattributeset systemd_object_type systemd_power_unit_t)
+
+(context systemd_power_unit (system_u object_r systemd_power_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*halt.*" file systemd_power_unit)
+(filecon "/usr/lib/systemd/system/[^/]*hibernate.*" file systemd_power_unit)
+(filecon "/usr/lib/systemd/system/[^/]*power.*" file systemd_power_unit)
+(filecon "/usr/lib/systemd/system/[^/]*reboot.*" file systemd_power_unit)
+(filecon "/usr/lib/systemd/system/[^/]*sleep.*" file systemd_power_unit)
+(filecon "/usr/lib/systemd/system/[^/]*shutdown.*" file systemd_power_unit)
+(filecon "/usr/lib/systemd/system/[^/]*suspend.*" file systemd_power_unit)
+
+(allow systemd_session_subject_type self (process (getsched setfscreate)))
+(allow systemd_session_subject_type self create_unix_stream_stream_socket_perms)
+(allow systemd_session_subject_type self create_netlink_selinux_socket_perms)
+
+(call system_read_kernel_sysctl (systemd_session_subject_type))
+
+(call devices_getattr_all (systemd_session_subject_type))
+(call devices_read_urandom (systemd_session_subject_type))
+
+(call files_read_data (systemd_session_subject_type))
+
+(call filesystems_manage_cgroup_dirs (systemd_session_subject_type))
+(call filesystems_read_sysfs (systemd_session_subject_type))
+(call filesystems_rw_cgroup_files (systemd_session_subject_type))
+
+(call selinux_compute_access_vector (systemd_session_subject_type))
+(call selinux_list_securityfs (systemd_session_subject_type))
+
+(call subject_common_type (systemd_session_subject_type))
+(call subject_entry (systemd_session_subject_type systemd_exec_t))
+(call subject_user_exemption_target (systemd_session_subject_type))
+
+(call audit_client_subject_type (systemd_session_subject_type))
+
+(call auth_nsswitch_client_subject_type (systemd_session_subject_type))
+
+(call journal_client_subject_type (systemd_session_subject_type))
+
+(call miscfiles_read_locale (systemd_session_subject_type))
+
+(call mount_read_runtime (systemd_session_subject_type))
+
+(call systemd_dgram_send (systemd_session_subject_type))
+(call systemd_read_all_unit (systemd_session_subject_type))
+(call systemd_read_config_files (systemd_session_subject_type))
+(call systemd_read_state (systemd_session_subject_type))
+(call systemd_rw_unix_stream_sockets (systemd_session_subject_type))
+(call systemd_send_signal (systemd_session_subject_type))
+
+(call systemd_config_home_object_type_transition_config_home_dirs (systemd_session_subject_type))
+(call systemd_manage_config_home_dirs (systemd_session_subject_type))
+(call systemd_manage_config_home_lnk_files (systemd_session_subject_type))
+(call systemd_manage_tmpfs (systemd_session_subject_type))
+(call systemd_tmpfs_object_type_transition_tmpfs_dirs (systemd_session_subject_type))
+(call systemd_read_config_home_files (systemd_session_subject_type))
+
+(call udev_client_subject_type (systemd_session_subject_type))
+
+(call usersubject_search_data_home (systemd_session_subject_type))
+
+(call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
+(call systemd_read_state (systemd_daemon_subject_type))
+
+(allow systemd_systemctl_client_subject_type self (capability (sys_resource ipc_lock)))
+(allow systemd_systemctl_client_subject_type self (process (setrlimit)))
+(allow systemd_systemctl_client_subject_type self rw_fifo_file_perms)
+
+(call system_read_crypto_sysctl (systemd_systemctl_client_subject_type))
+(call system_read_kernel_sysctl (systemd_systemctl_client_subject_type))
+(call system_use_fd (systemd_systemctl_client_subject_type))
+
+(call commands_exec (systemd_systemctl_client_subject_type))
+
+(call devices_read_urandom (systemd_systemctl_client_subject_type))
+
+(call filesystems_getattr_filesystems (systemd_systemctl_client_subject_type))
+(call filesystems_getattr_tmpfs_filesystems (systemd_systemctl_client_subject_type))
+(call filesystems_read_sysfs_files (systemd_systemctl_client_subject_type))
+(call filesystems_read_cgroup (systemd_systemctl_client_subject_type))
+
+(call dbus_system_client_subject_type (systemd_systemctl_client_subject_type))
+
+(call journal_read_log (systemd_systemctl_client_subject_type))
+
+(call machine_read_config_files (systemd_systemctl_client_subject_type))
+
+(call miscfiles_read_all_terminfo (systemd_systemctl_client_subject_type))
+(call miscfiles_read_locale (systemd_systemctl_client_subject_type))
+
+(call systemd_dbus_chat (systemd_systemctl_client_subject_type))
+(call systemd_dgram_send (systemd_systemctl_client_subject_type))
+(call systemd_dontaudit_read_state (systemd_systemctl_client_subject_type))
+(call systemd_search_unit (systemd_systemctl_client_subject_type))
+(call systemd_stream_connect (systemd_systemctl_client_subject_type))
+(call systemd_use_fd (systemd_systemctl_client_subject_type))
+
+(allow systemd_admin_subject_type systemd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (systemd_admin_subject_type systemd_t))
+
+(allow systemd_admin_subject_type systemd_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(allow systemd_unconfined_subject_type systemd_t (system (halt reboot
+    status start stop undefined enable disable reload)))
+
+(call systemd_control_transient_units (systemd_unconfined_subject_type))
+(call systemd_control_transient_systemd_units (systemd_unconfined_subject_type))
+(call systemd_control_all_units (systemd_unconfined_subject_type))
+
+(call systemd_exec_systemctl (systemd_system_service_admin_subject_type))
+(call systemd_reload_system (systemd_system_service_admin_subject_type))
+(call systemd_status_system (systemd_system_service_admin_subject_type))
+
+(macro systemd_exec ((type ARG1))
+    (call can_exec (ARG1 systemd_exec_t)))
+
+(macro systemd_getattr_exec_files ((type ARG1))
+    (allow ARG1 systemd_exec_t (file (getattr))))
+
+(macro systemd_exec_systemctl ((type ARG1))
+    (call can_exec (ARG1 systemctl_exec_t))
+    (call systemd_systemctl_client_subject_type (ARG1)))
+
+(macro systemd_systemctl_client_subject_type ((type ARG1))
+    (typeattributeset systemd_systemctl_client_subject_type ARG1))
+
+(macro systemd_exec_systemdhelper ((type ARG1))
+    (call can_exec (ARG1 systemdhelper_exec_t)))
+
+(macro systemd_auto_subject_type_transition ((type ARG1))
+    (call systemd_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 systemd_exec_t systemd_t)))
+
+(macro systemd_send_signal ((type ARG1))
+    (allow ARG1 systemd_t (process (signal))))
+
+(macro systemd_dynamic_subject_type_transition ((type ARG1))
+    (call subject_dynamic_subject_type_transition_subject (ARG1))
+    (call dynamic_subject_type_transition_pattern
+        (ARG1 systemd_t))
+    (typetransition ARG1 systemd_exec_t process "*" systemd_t))
+
+(macro systemd_auto_subject_type_transition_systemctl ((type ARG1))
+    (call systemd_send_signal_systemctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 systemctl_exec_t systemctl_t)))
+
+(macro systemd_send_signal_systemctl ((type ARG1))
+    (allow ARG1 systemctl_t (process (signal))))
+
+(macro systemd_run_systemctl ((type ARG1)(role ARG2))
+    (call systemd_auto_subject_type_transition (ARG1))
+    (roleattributeset systemd_systemctl_role ARG2))
+
+(macro systemd_session_subject_type ((type ARG1))
+    (typeattributeset systemd_session_subject_type ARG1))
+
+(macro systemd_session_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG2 ARG3 (process (signal)))
+    (allow ARG2 ARG3 rw_unix_stream_socket_perms)
+    (allow ARG2 ARG3 (unix_stream_socket (connectto)))
+    (allow ARG2 ARG3 (system (reload disable)))
+    (call ps_subject_pattern (ARG2 ARG3))
+    (call ps_subject_pattern (ARG3 ARG2))
+    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call filesystems_manage_cgroup_dirs (ARG3))
+    (call systemd_exec_systemctl (ARG2))
+    (call systemd_control_session_units (ARG2))
+    (call systemd_session_subject_type (ARG3)))
+
+(macro systemd_daemon_subject_type ((type ARG1))
+    (typeattributeset systemd_daemon_subject_type ARG1))
+
+(macro systemd_daemon ((type ARG1)(type ARG2))
+    (call subject_common_type (ARG1))
+    (call systemd_daemon_subject_type (ARG1))
+    (call subject_entry (ARG1 ARG2))
+    (roletype system_r ARG1)
+    (call auto_subject_type_transition_pattern (systemd_t ARG2 ARG1)))
+
+(macro systemd_pid_object_type ((type ARG1))
+    (typeattributeset systemd_pid_object_type ARG1))
+
+(macro systemd_config_object_type ((type ARG1))
+    (call files_config_object_type (ARG1))
+    (typeattributeset systemd_config_object_type ARG1))
+
+(macro systemd_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_t search_dir_perms))
+
+(macro systemd_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_t list_dir_perms))
+
+(macro systemd_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 systemd_config_t systemd_config_t)))
+
+(macro systemd_rw_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_t rw_dir_perms))
+
+(macro systemd_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_config_t systemd_config_t)))
+
+(macro systemd_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_t read_file_perms)
+    (allow ARG1 systemd_config_t list_dir_perms)
+    (allow ARG1 systemd_config_t read_lnk_file_perms))
+
+(macro systemd_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 systemd_config_t manage_file_perms)
+    (allow ARG1 systemd_config_t manage_dir_perms)
+    (allow ARG1 systemd_config_t manage_lnk_file_perms))
+
+(macro systemd_search_all_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_object_type search_dir_perms))
+
+(macro systemd_list_all_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_object_type list_dir_perms))
+
+(macro systemd_read_all_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 systemd_config_object_type systemd_config_object_type)))
+
+(macro systemd_rw_all_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_object_type rw_dir_perms))
+
+(macro systemd_read_all_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_config_object_type systemd_config_object_type)))
+
+(macro systemd_read_all_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 systemd_config_object_type read_file_perms)
+    (allow ARG1 systemd_config_object_type list_dir_perms)
+    (allow ARG1 systemd_config_object_type read_lnk_file_perms))
+
+(macro systemd_manage_all_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 systemd_config_object_type manage_file_perms)
+    (allow ARG1 systemd_config_object_type manage_dir_perms)
+    (allow ARG1 systemd_config_object_type manage_lnk_file_perms))
+
+(macro systemd_read_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 systemd_dbus_config_t read_file_perms))
+
+(macro systemd_manage_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 systemd_dbus_config_t manage_file_perms))
+
+(macro systemd_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 systemd_pam_config_t read_file_perms))
+
+(macro systemd_manage_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 systemd_pam_config_t manage_file_perms))
+
+(macro systemd_runtime_object_type ((type ARG1))
+    (call files_runtime_object_type (ARG1))
+    (typeattributeset systemd_runtime_object_type ARG1))
+
+(macro systemd_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_t search_dir_perms))
+
+(macro systemd_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_t list_dir_perms))
+
+(macro systemd_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 systemd_runtime_t systemd_runtime_t)))
+
+(macro systemd_rw_runtime_dirs ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_t rw_dir_perms))
+
+(macro systemd_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_runtime_t systemd_runtime_t)))
+
+(macro systemd_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_t read_file_perms)
+    (allow ARG1 systemd_runtime_t list_dir_perms)
+    (allow ARG1 systemd_runtime_t read_sock_file_perms)
+    (allow ARG1 systemd_runtime_t read_lnk_file_perms))
+
+(macro systemd_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 systemd_runtime_t manage_file_perms)
+    (allow ARG1 systemd_runtime_t manage_dir_perms)
+    (allow ARG1 systemd_runtime_t manage_sock_file_perms)
+    (allow ARG1 systemd_runtime_t manage_lnk_file_perms))
+
+(macro systemd_runtime_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_runtime (ARG1))
+    (call object_type_transition_pattern (ARG1 systemd_runtime_t ARG2 ARG3 ARG4)))
+
+(macro systemd_search_all_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_object_type search_dir_perms))
+
+(macro systemd_list_all_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_object_type list_dir_perms))
+
+(macro systemd_read_all_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 systemd_runtime_object_type systemd_runtime_object_type)))
+
+(macro systemd_rw_all_runtime_dirs ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_object_type rw_dir_perms))
+
+(macro systemd_read_all_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_runtime_object_type systemd_runtime_object_type)))
+
+(macro systemd_read_all_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 systemd_runtime_object_type read_file_perms)
+    (allow ARG1 systemd_runtime_object_type list_dir_perms)
+    (allow ARG1 systemd_runtime_object_type read_sock_file_perms)
+    (allow ARG1 systemd_runtime_object_type read_lnk_file_perms))
+
+(macro systemd_manage_all_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 systemd_runtime_object_type manage_file_perms)
+    (allow ARG1 systemd_runtime_object_type manage_dir_perms)
+    (allow ARG1 systemd_runtime_object_type manage_sock_file_perms)
+    (allow ARG1 systemd_runtime_object_type manage_lnk_file_perms))
+
+(macro systemd_lib_object_type ((type ARG1))
+    (call files_lib_object_type (ARG1))
+    (typeattributeset systemd_lib_object_type ARG1))
+
+(macro systemd_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_t search_dir_perms))
+
+(macro systemd_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_t list_dir_perms))
+
+(macro systemd_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 systemd_lib_t systemd_lib_t)))
+
+(macro systemd_rw_lib_dirs ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_t rw_dir_perms))
+
+(macro systemd_read_lib_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_lib_t systemd_lib_t)))
+
+(macro systemd_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_t read_file_perms)
+    (allow ARG1 systemd_lib_t list_dir_perms)
+    (allow ARG1 systemd_lib_t read_sock_file_perms)
+    (allow ARG1 systemd_lib_t read_lnk_file_perms))
+
+(macro systemd_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 systemd_lib_t manage_file_perms)
+    (allow ARG1 systemd_lib_t manage_dir_perms)
+    (allow ARG1 systemd_lib_t manage_sock_file_perms)
+    (allow ARG1 systemd_lib_t manage_lnk_file_perms))
+
+(macro systemd_lib_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_lib (ARG1))
+    (call object_type_transition_pattern (ARG1 systemd_lib_t ARG2 ARG3 ARG4)))
+
+(macro systemd_search_all_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_object_type search_dir_perms))
+
+(macro systemd_list_all_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_object_type list_dir_perms))
+
+(macro systemd_read_all_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 systemd_lib_object_type systemd_lib_object_type)))
+
+(macro systemd_rw_all_lib_dirs ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_object_type rw_dir_perms))
+
+(macro systemd_read_all_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_lib_object_type systemd_lib_object_type)))
+
+(macro systemd_read_all_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 systemd_lib_object_type read_file_perms)
+    (allow ARG1 systemd_lib_object_type list_dir_perms)
+    (allow ARG1 systemd_lib_object_type read_sock_file_perms)
+    (allow ARG1 systemd_lib_object_type read_lnk_file_perms))
+
+(macro systemd_manage_all_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 systemd_lib_object_type manage_file_perms)
+    (allow ARG1 systemd_lib_object_type manage_dir_perms)
+    (allow ARG1 systemd_lib_object_type manage_sock_file_perms)
+    (allow ARG1 systemd_lib_object_type manage_lnk_file_perms))
+
+(macro systemd_unit_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset systemd_unit_object_type ARG1))
+
+(macro systemd_search_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_t search_dir_perms))
+
+(macro systemd_list_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_t list_dir_perms))
+
+(macro systemd_read_unit_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call read_files_pattern (ARG1 systemd_unit_t systemd_unit_t)))
+
+(macro systemd_manage_unit_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call manage_files_pattern (ARG1 systemd_unit_t systemd_unit_t)))
+
+(macro systemd_getattr_unit_dirs ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_t (dir (getattr))))
+
+(macro systemd_relabelto_unit_dirs ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_t relabelto_dir_perms))
+
+(macro systemd_rw_unit_dirs ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_t rw_dir_perms))
+
+(macro systemd_read_unit_lnk_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_unit_t systemd_unit_t)))
+
+(macro systemd_read_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_t read_file_perms)
+    (allow ARG1 systemd_unit_t list_dir_perms)
+    (allow ARG1 systemd_unit_t read_lnk_file_perms))
+
+(macro systemd_manage_unit ((type ARG1))
+    (call libraries_rw_dirs (ARG1))
+    (allow ARG1 systemd_unit_t manage_file_perms)
+    (allow ARG1 systemd_unit_t manage_dir_perms)
+    (allow ARG1 systemd_unit_t manage_lnk_file_perms))
+
+(macro systemd_relabel_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_t relabel_file_perms)
+    (allow ARG1 systemd_unit_t relabel_dir_perms)
+    (allow ARG1 systemd_unit_t relabel_lnk_file_perms))
+
+(macro systemd_list_all_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemd_unit_object_type list_dir_perms))
+
+(macro systemd_rw_all_unit_dirs ((type ARG1))
+    (call libraries_search (ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemd_unit_object_type rw_dir_perms))
+
+(macro systemd_read_all_unit_files ((type ARG1))
+    (call systemd_list_all_unit (ARG1))
+    (allow ARG1 systemd_unit_object_type read_file_perms))
+
+(macro systemd_manage_all_unit_files ((type ARG1))
+    (call systemd_rw_all_unit_dirs (ARG1))
+    (allow ARG1 systemd_unit_object_type manage_file_perms))
+
+(macro systemd_relabel_all_unit_files ((type ARG1))
+    (call systemd_search_unit (ARG1))
+    (allow ARG1 systemd_unit_object_type relabel_file_perms))
+
+(macro systemd_read_all_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_object_type read_file_perms)
+    (allow ARG1 systemd_unit_t list_dir_perms)
+    (allow ARG1 systemd_unit_t read_lnk_file_perms))
+
+(macro systemd_session_unit_object_type ((type ARG1))
+    (call usersubject_config_home_object_type (ARG1))
+    (typeattributeset systemd_session_unit_object_type ARG1))
+
+(macro systemd_search_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemd_config_home_t search_dir_perms))
+
+(macro systemd_list_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemd_config_home_t list_dir_perms))
+
+(macro systemd_read_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_files_pattern (ARG1 systemd_config_home_t systemd_config_home_t)))
+
+(macro systemd_manage_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call manage_files_pattern (ARG1 systemd_config_home_t systemd_config_home_t)))
+
+(macro systemd_rw_config_home_dirs ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemd_config_home_t rw_dir_perms))
+
+(macro systemd_manage_config_home_dirs ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 systemd_config_home_t systemd_config_home_t)))
+
+(macro systemd_read_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_config_home_t systemd_config_home_t)))
+
+(macro systemd_manage_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call manage_lnk_files_pattern (ARG1 systemd_config_home_t systemd_config_home_t)))
+
+(macro systemd_read_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemd_config_home_t read_file_perms)
+    (allow ARG1 systemd_config_home_t list_dir_perms)
+    (allow ARG1 systemd_config_home_t read_lnk_file_perms))
+
+(macro systemd_manage_config_home ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
+    (allow ARG1 systemd_config_home_t manage_file_perms)
+    (allow ARG1 systemd_config_home_t manage_dir_perms)
+    (allow ARG1 systemd_config_home_t manage_lnk_file_perms))
+
+(macro systemd_relabel_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemd_config_home_t relabel_file_perms)
+    (allow ARG1 systemd_config_home_t relabel_dir_perms)
+    (allow ARG1 systemd_config_home_t relabel_lnk_file_perms))
+
+(macro systemd_config_home_object_type_transition_config_home_dirs ((type ARG1))
+    (call usersubject_config_home_object_type_transition (ARG1 systemd_config_home_t dir "systemd")))
+
+(macro systemd_search_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemd_tmpfs_t search_dir_perms))
+
+(macro systemd_list_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemd_tmpfs_t list_dir_perms))
+
+(macro systemd_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_files_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_delete_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_del_entry_tmpfs (ARG1))
+    (call delete_files_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_read_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_sock_files_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_manage_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call manage_sock_files_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_delete_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call delete_sock_files_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_manage_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_delete_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_del_entry_tmpfs (ARG1))
+    (call delete_dirs_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_relabel_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call relabel_dirs_pattern (ARG1 systemd_tmpfs_t systemd_tmpfs_t)))
+
+(macro systemd_rw_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemd_tmpfs_t rw_dir_perms))
+
+(macro systemd_read_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemd_tmpfs_t list_dir_perms)
+    (allow ARG1 systemd_tmpfs_t read_file_perms)
+    (allow ARG1 systemd_tmpfs_t read_sock_file_perms))
+
+(macro systemd_manage_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 systemd_tmpfs_t manage_dir_perms)
+    (allow ARG1 systemd_tmpfs_t manage_file_perms)
+    (allow ARG1 systemd_tmpfs_t manage_sock_file_perms))
+
+(macro systemd_relabel_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemd_tmpfs_t relabel_dir_perms)
+    (allow ARG1 systemd_tmpfs_t relabel_file_perms)
+    (allow ARG1 systemd_tmpfs_t relabel_sock_file_perms))
+
+(macro systemd_tmpfs_object_type_transition_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 systemd_tmpfs_t dir "systemd")))
+
+(macro systemd_tmpfs_object_type_transition_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 systemd_tmpfs_t file "*")))
+
+(macro systemd_system_service_admin_subject_type ((type ARG1))
+    (typeattributeset systemd_system_service_admin_subject_type ARG1))
+
+(macro systemd_dontaudit_read_state ((type ARG1))
+    (dontaudit ARG1 systemd_t read_file_perms)
+    (dontaudit ARG1 systemd_t list_dir_perms)
+    (dontaudit ARG1 systemd_t read_lnk_file_perms))
+
+(macro systemd_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 systemd_t read_file_perms)
+    (allow ARG1 systemd_t list_dir_perms)
+    (allow ARG1 systemd_t read_lnk_file_perms))
+
+(macro systemd_rw_unix_stream_sockets ((type ARG1))
+    (allow ARG1 systemd_t rw_unix_stream_socket_perms))
+
+(macro systemd_getpgid ((type ARG1))
+    (allow ARG1 systemd_t (process (getpgid))))
+
+(macro systemd_send_sigchld ((type ARG1))
+    (allow ARG1 systemd_t (process (sigchld))))
+
+(macro systemd_send_sigchld_all_session_subjects ((type ARG1))
+    (allow ARG1 systemd_session_subject_type (process (sigchld))))
+
+(macro systemd_link_keyring ((type ARG1))
+    (allow ARG1 systemd_t (key (search link))))
+
+(macro systemd_read_state_all_systemd_daemon_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 systemd_daemon_subject_type read_file_perms)
+    (allow ARG1 systemd_daemon_subject_type list_dir_perms)
+    (allow ARG1 systemd_daemon_subject_type read_lnk_file_perms))
+
+(macro systemd_send_signal_all_systemd_daemon_subjects ((type ARG1))
+    (allow ARG1 systemd_daemon_subject_type (process (signal))))
+
+(macro systemd_use_fd ((type ARG1))
+    (allow ARG1 systemd_t (fd (use))))
+
+(macro systemd_socket_activated_object_type ((type ARG1))
+    (typeattributeset systemd_socket_activated_object_type ARG1))
+
+(macro systemd_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemd_socket_activated_subject_type ARG1))
+
+(macro systemd_socket_activated ((type ARG1)(type ARG2))
+    (call systemd_socket_activated_subject_type (ARG1))
+    (call systemd_socket_activated_object_type (ARG2)))
+
+(macro systemd_reboot_system ((type ARG1))
+    (allow ARG1 systemd_t (system (reboot))))
+
+(macro systemd_reload_system ((type ARG1))
+    (allow ARG1 systemd_t (system (reload))))
+
+(macro systemd_status_system ((type ARG1))
+    (allow ARG1 systemd_t (system (status))))
+
+(macro systemd_start_system ((type ARG1))
+    (allow ARG1 systemd_t (system (start))))
+
+(macro systemd_stop_system ((type ARG1))
+    (allow ARG1 systemd_t (system (stop))))
+
+(macro systemd_stop_system_units ((type ARG1))
+    (allow ARG1 systemd_unit_t (service (stop))))
+
+(macro systemd_stop_session_units ((type ARG1))
+    (allow ARG1 systemd_config_home_t (service (stop))))
+
+(macro systemd_stop_transient_units ((type ARG1))
+    (allow ARG1 self (service (stop))))
+
+(macro systemd_stop_transient_systemd_units ((type ARG1))
+    (allow ARG1 systemd_t (service (stop))))
+
+(macro systemd_stop_all_units ((type ARG1))
+    (allow ARG1 systemd_unit_object_type (service (stop))))
+
+(macro systemd_status_system_units ((type ARG1))
+    (allow ARG1 systemd_unit_t (service (status))))
+
+(macro systemd_status_session_units ((type ARG1))
+    (allow ARG1 systemd_config_home_t (service (status))))
+
+(macro systemd_status_transient_units ((type ARG1))
+    (allow ARG1 self (service (status))))
+
+(macro systemd_status_transient_systemd_units ((type ARG1))
+    (allow ARG1 systemd_t (service (status))))
+
+(macro systemd_status_all_units ((type ARG1))
+    (allow ARG1 systemd_unit_object_type (service (status))))
+
+(macro systemd_disable_system_units ((type ARG1))
+    (allow ARG1 systemd_unit_t (service (disable))))
+
+(macro systemd_disable_session_units ((type ARG1))
+    (allow ARG1 systemd_config_home_t (service (disable))))
+
+(macro systemd_disable_transient_units ((type ARG1))
+    (allow ARG1 self (service (disable))))
+
+(macro systemd_disable_transient_systemd_units ((type ARG1))
+    (allow ARG1 systemd_t (service (disable))))
+
+(macro systemd_disable_all_units ((type ARG1))
+    (allow ARG1 systemd_unit_object_type (service (disable))))
+
+(macro systemd_enable_system_units ((type ARG1))
+    (allow ARG1 systemd_unit_t (service (enable))))
+
+(macro systemd_enable_session_units ((type ARG1))
+    (allow ARG1 systemd_config_home_t (service (enable))))
+
+(macro systemd_enable_transient_units ((type ARG1))
+    (allow ARG1 self (service (enable))))
+
+(macro systemd_enable_transient_systemd_units ((type ARG1))
+    (allow ARG1 systemd_t (service (enable))))
+
+(macro systemd_enable_all_units ((type ARG1))
+    (allow ARG1 systemd_unit_object_type (service (enable))))
+
+(macro systemd_reload_system_units ((type ARG1))
+    (allow ARG1 systemd_unit_t (service (reload))))
+
+(macro systemd_reload_session_units ((type ARG1))
+    (allow ARG1 systemd_config_home_t (service (reload))))
+
+(macro systemd_reload_transient_units ((type ARG1))
+    (allow ARG1 self (service (reload))))
+
+(macro systemd_reload_transient_systemd_units ((type ARG1))
+    (allow ARG1 systemd_t (service (reload))))
+
+(macro systemd_reload_all_units ((type ARG1))
+    (allow ARG1 systemd_unit_object_type (service (reload))))
+
+(macro systemd_start_system_units ((type ARG1))
+    (allow ARG1 systemd_unit_t (service (start))))
+
+(macro systemd_start_session_units ((type ARG1))
+    (allow ARG1 systemd_config_home_t (service (start))))
+
+(macro systemd_start_power_units ((type ARG1))
+    (allow ARG1 systemd_power_unit_t (service (start))))
+
+(macro systemd_start_transient_units ((type ARG1))
+    (allow ARG1 self (service (start))))
+
+(macro systemd_start_transient_systemd_units ((type ARG1))
+    (allow ARG1 systemd_t (service (start))))
+
+(macro systemd_start_all_units ((type ARG1))
+    (allow ARG1 systemd_unit_object_type (service (start))))
+
+(macro systemd_control_system_units ((type ARG1))
+    (call systemd_stop_system_units (ARG1))
+    (call systemd_status_system_units (ARG1))
+    (call systemd_disable_system_units (ARG1))
+    (call systemd_enable_system_units (ARG1))
+    (call systemd_reload_system_units (ARG1))
+    (call systemd_start_system_units (ARG1)))
+
+(macro systemd_control_session_units ((type ARG1))
+    (call systemd_stop_session_units (ARG1))
+    (call systemd_status_session_units (ARG1))
+    (call systemd_disable_session_units (ARG1))
+    (call systemd_enable_session_units (ARG1))
+    (call systemd_reload_session_units (ARG1))
+    (call systemd_start_session_units (ARG1)))
+
+(macro systemd_control_transient_units ((type ARG1))
+    (call systemd_stop_transient_units (ARG1))
+    (call systemd_status_transient_units (ARG1))
+    (call systemd_disable_transient_units (ARG1))
+    (call systemd_enable_transient_units (ARG1))
+    (call systemd_reload_transient_units (ARG1))
+    (call systemd_start_transient_units (ARG1)))
+
+(macro systemd_control_transient_systemd_units ((type ARG1))
+    (call systemd_stop_transient_systemd_units (ARG1))
+    (call systemd_status_transient_systemd_units (ARG1))
+    (call systemd_disable_transient_systemd_units (ARG1))
+    (call systemd_enable_transient_systemd_units (ARG1))
+    (call systemd_reload_transient_systemd_units (ARG1))
+    (call systemd_start_transient_systemd_units (ARG1)))
+
+(macro systemd_control_all_units ((type ARG1))
+    (call systemd_stop_all_units (ARG1))
+    (call systemd_status_all_units (ARG1))
+    (call systemd_disable_all_units (ARG1))
+    (call systemd_enable_all_units (ARG1))
+    (call systemd_reload_all_units (ARG1))
+    (call systemd_start_all_units (ARG1)))
+
+(macro systemd_dgram_send ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call dgram_send_pattern (ARG1 systemd_runtime_t systemd_runtime_t systemd_t)))
+
+(macro systemd_stream_connect ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 systemd_runtime_t systemd_runtime_t systemd_t)))
+
+(macro systemd_dbus_chat ((type ARG1))
+    (allow ARG1 systemd_t (dbus (send_msg)))
+    (allow systemd_t ARG1 (dbus (send_msg))))
+
+(macro systemd_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset systemd_admin_subject_type ARG1))
+
+(macro systemd_unconfined_subject_type ((type ARG1))
+    (typeattributeset systemd_unconfined_subject_type ARG1))

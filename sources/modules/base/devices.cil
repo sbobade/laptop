@@ -1,0 +1,462 @@
+(sid devnull)
+
+(typeattribute devices_object_type)
+(typeattribute devices_storage_object_type)
+(typeattribute devices_unconfined_subject_type)
+
+(type apm_dev_t)
+(call devices_object_type (apm_dev_t))
+
+(context apm_dev (system_u object_r apm_dev_t (systemlow systemlow)))
+(filecon "/dev/snapshot" char apm_dev)
+
+(type autofs_dev_t)
+(call devices_object_type (autofs_dev_t))
+
+(context autofs_dev (system_u object_r autofs_dev_t (systemlow systemlow)))
+(filecon "/dev/autofs" char autofs_dev)
+
+(type clock_dev_t)
+(call devices_object_type (clock_dev_t))
+
+(context clock_dev (system_u object_r clock_dev_t (systemlow systemlow)))
+(filecon "/dev/hpet" char clock_dev)
+(filecon "/dev/rtc[0-9]+" char clock_dev)
+
+(type cpu_dev_t)
+(call devices_object_type (cpu_dev_t))
+
+(context cpu_dev (system_u object_r cpu_dev_t (systemlow systemlow)))
+(filecon "/dev/cpu/.+" char cpu_dev)
+
+(type devtty_dev_t)
+(call devices_object_type (devtty_dev_t))
+(call filesystems_associate_tmpfs (devtty_dev_t))
+
+(context devtty_dev (system_u object_r devtty_dev_t (systemlow systemlow)))
+(filecon "/dev/tty" char devtty_dev)
+
+(type dri_dev_t)
+(call devices_object_type (dri_dev_t))
+
+(context dri_dev (system_u object_r dri_dev_t (systemlow systemlow)))
+(filecon "/dev/dri/.+" char dri_dev)
+
+(type event_dev_t)
+(call devices_object_type (event_dev_t))
+
+(context event_dev (system_u object_r event_dev_t (systemlow systemlow)))
+
+(filecon "/dev/input/event[0-9]+" char event_dev)
+(filecon "/dev/uinput" char event_dev)
+
+(type framebuf_dev_t)
+(call devices_object_type (framebuf_dev_t))
+
+(context framebuf_dev (system_u object_r framebuf_dev_t (systemlow systemlow)))
+(filecon "/dev/fb[0-9]+" char framebuf_dev)
+
+(type kmsg_dev_t)
+(call devices_object_type (kmsg_dev_t))
+
+(context kmsg_dev (system_u object_r kmsg_dev_t (mls_systemhigh mls_systemhigh)))
+(filecon "/dev/kmsg" char kmsg_dev)
+(filecon "/dev/mcelog" char kmsg_dev)
+
+(type loop_control_dev_t)
+(call devices_object_type (loop_control_dev_t))
+
+(context loop_control_dev (system_u object_r loop_control_dev_t (systemlow systemlow)))
+(filecon "/dev/loop-control" char loop_control_dev)
+
+(type lvm_control_dev_t)
+(call devices_object_type (lvm_control_dev_t))
+
+(context lvm_control_dev (system_u object_r lvm_control_dev_t (systemlow systemlow)))
+(filecon "/dev/btrfs-control" char lvm_control_dev)
+(filecon "/dev/mapper/control" char lvm_control_dev)
+
+(type memory_dev_t)
+(call devices_object_type (memory_dev_t))
+
+(context memory_dev (system_u object_r memory_dev_t (mls_systemhigh mls_systemhigh)))
+(filecon "/dev/mem" char memory_dev)
+(filecon "/dev/port" char memory_dev)
+
+(type mouse_dev_t)
+(call devices_object_type (mouse_dev_t))
+
+(context mouse_dev (system_u object_r mouse_dev_t (systemlow systemlow)))
+(filecon "/dev/input/mice" char mouse_dev)
+(filecon "/dev/input/mouse[0-9]+" char mouse_dev)
+
+(type net_control_dev_t)
+(call devices_object_type (net_control_dev_t))
+
+(context net_control_dev (system_u object_r net_control_dev_t (systemlow systemlow)))
+(filecon "/dev/cpu_dma_latency" char net_control_dev)
+(filecon "/dev/network_latency" char net_control_dev)
+(filecon "/dev/network_throughput" char net_control_dev)
+
+(type null_dev_t)
+(call devices_object_type (null_dev_t))
+(call filesystems_associate_tmpfs (null_dev_t))
+
+(context null_dev (system_u object_r null_dev_t (systemlow systemlow)))
+(sidcontext devnull null_dev)
+
+(filecon "/dev/full" char null_dev)
+(filecon "/dev/null" char null_dev)
+
+(type nvram_dev_t)
+(call devices_object_type (nvram_dev_t))
+
+(context nvram_dev (system_u object_r nvram_dev_t (mls_systemhigh mls_systemhigh)))
+(filecon "/dev/nvram" char nvram_dev)
+
+(type ppp_dev_t)
+(call devices_object_type (ppp_dev_t))
+
+(context ppp_dev (system_u object_r ppp_dev_t (systemlow systemlow)))
+(filecon "/dev/ppp" char ppp_dev)
+
+(type ptmx_dev_t)
+(call devices_object_type (ptmx_dev_t))
+
+(context ptmx_dev (system_u object_r ptmx_dev_t (systemlow systemlow)))
+(filecon "/dev/ptmx" char ptmx_dev)
+
+(type random_dev_t)
+(call devices_object_type (random_dev_t))
+(call filesystems_associate_tmpfs (random_dev_t))
+
+(context random_dev (system_u object_r random_dev_t (systemlow systemlow)))
+(filecon "/dev/random" char random_dev)
+
+(type sound_dev_t)
+(call devices_object_type (sound_dev_t))
+
+(context sound_dev (system_u object_r sound_dev_t (systemlow systemlow)))
+(filecon "/dev/snd/.+" char sound_dev)
+
+(type tun_tap_dev_t)
+(call devices_object_type (tun_tap_dev_t))
+
+(context tun_tap_dev (system_u object_r tun_tap_dev_t (systemlow systemlow)))
+(filecon "/dev/net/tun" char tun_tap_dev)
+
+(type uhid_dev_t)
+(call devices_object_type (uhid_dev_t))
+
+(context uhid_dev (system_u object_r uhid_dev_t (systemlow systemlow)))
+(filecon "/dev/uhid" char uhid_dev)
+
+(type urandom_dev_t)
+(call devices_object_type (urandom_dev_t))
+(call filesystems_associate_tmpfs (urandom_dev_t))
+
+(context urandom_dev (system_u object_r urandom_dev_t (systemlow systemlow)))
+(filecon "/dev/urandom" char urandom_dev)
+
+(type usb_dev_t)
+(call devices_object_type (usb_dev_t))
+
+(context usb_dev (system_u object_r usb_dev_t (systemlow systemlow)))
+(filecon "/dev/bus/usb/.+" char usb_dev)
+
+(type usbmon_dev_t)
+(call devices_object_type (usbmon_dev_t))
+(context usbmon_dev (system_u object_r usbmon_dev_t (systemlow systemlow)))
+(filecon "/dev/usbmon[0-9]+" char usbmon_dev)
+
+(type v4l_dev_t)
+(call devices_object_type (v4l_dev_t))
+
+(context v4l_dev (system_u object_r v4l_dev_t (systemlow systemlow)))
+(filecon "/dev/media[0-9]+" char v4l_dev)
+(filecon "/dev/video[0-9]+" char v4l_dev)
+
+(type vfio_dev_t)
+(call devices_object_type (vfio_dev_t))
+
+(context vfio_dev (system_u object_r vfio_dev_t (systemlow systemlow)))
+(filecon "/dev/vfio/.+" char vfio_dev)
+
+(type vhci_dev_t)
+(call devices_object_type (vhci_dev_t))
+
+(context vhci_dev (system_u object_r vhci_dev_t (systemlow systemlow)))
+(filecon "/dev/vhci" char vhci_dev)
+
+(type vhost_dev_t)
+(call devices_object_type (vhost_dev_t))
+
+(context vhost_dev (system_u object_r vhost_dev_t (systemlow systemlow)))
+(filecon "/dev/vhost-net" char vhost_dev)
+
+(type wireless_dev_t)
+(call devices_object_type (wireless_dev_t))
+
+(context wireless_dev (system_u object_r wireless_dev_t (systemlow systemlow)))
+(filecon "/dev/rfkill" char wireless_dev)
+
+(type xserver_misc_dev_t)
+(call devices_object_type (xserver_misc_dev_t))
+
+(context xserver_misc_dev (system_u object_r xserver_misc_dev_t (systemlow systemlow)))
+(filecon "/dev/vga_arbiter" char xserver_misc_dev)
+
+(type zero_dev_t)
+(call devices_object_type (zero_dev_t))
+(call filesystems_associate_tmpfs (zero_dev_t))
+
+(context zero_dev (system_u object_r zero_dev_t (systemlow systemlow)))
+(filecon "/dev/zero" char zero_dev)
+
+(typeattribute devices_can_read_memory)
+(typeattribute devices_can_not_read_memory_or_devices_unconfined_subject_type)
+(typeattributeset devices_can_not_read_memory_or_devices_unconfined_subject_type
+    (not (devices_can_read_memory devices_unconfined_subject_type)))
+(neverallow devices_can_not_read_memory_or_devices_unconfined_subject_type
+    memory_dev_t (chr_file (read)))
+
+(typeattribute devices_can_write_memory)
+(typeattribute devices_can_not_write_memory_or_devices_unconfined_subject_type)
+(typeattributeset devices_can_not_write_memory_or_devices_unconfined_subject_type
+    (not (devices_can_write_memory devices_unconfined_subject_type)))
+(neverallow devices_can_not_write_memory_or_devices_unconfined_subject_type
+    memory_dev_t (chr_file (append write)))
+
+(call system_object_type (devices_object_type))
+(call filesystems_associate_devtmpfs (devices_object_type))
+
+(allow devices_unconfined_subject_type self (capability (sys_rawio)))
+
+(typeattribute devices_except_storage)
+(typeattributeset devices_except_storage (and (devices_object_type)
+    (not (devices_storage_object_type))))
+(allow devices_unconfined_subject_type devices_except_storage
+    all_chr_file_perms_except_mounton_and_execmod)
+
+(macro devices_object_type ((type ARG1))
+    (typeattributeset devices_object_type ARG1))
+
+(macro devices_storage_object_type ((type ARG1))
+    (call devices_object_type (ARG1))
+    (typeattributeset devices_storage_object_type ARG1))
+
+(macro devices_getattr_all ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devices_except_storage (chr_file (getattr)))
+    (optional devices_getattr_all_optional_storage
+        (call storage_getattr_all (ARG1))))
+
+(macro devices_manage_all ((type ARG1))
+    (call filesystems_rw_devtmpfs_dirs (ARG1))
+    (allow ARG1 devices_except_storage manage_chr_file_perms)
+    (typeattributeset devices_can_read_memory ARG1)
+    (typeattributeset devices_can_write_memory ARG1)
+    (optional devices_manage_all_optional_storage
+        (call storage_manage_all (ARG1))))
+
+(macro devices_relabel_all ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devices_except_storage relabel_chr_file_perms)
+    (optional devices_relabel_all_optional_storage
+        (call storage_relabel_all (ARG1))))
+
+(macro devices_relabelto_all ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devices_except_storage relabelto_chr_file_perms)
+    (optional devices_relabelto_all_optional_storage
+        (call storage_relabelto_all (ARG1))))
+
+(macro devices_rw_all ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devices_except_storage rw_chr_file_perms)
+    (typeattributeset devices_can_read_memory ARG1)
+    (typeattributeset devices_can_write_memory ARG1)
+    (optional devices_rw_all_optional_storage
+        (call storage_rw_all (ARG1))))
+
+(macro devices_setattr_all ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devices_except_storage (chr_file (setattr)))
+    (optional devices_setattr_all_optional_storage
+        (call storage_setattr_all (ARG1))))
+
+(macro devices_getattr_dri ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 dri_dev_t (chr_file (getattr))))
+
+(macro devices_getattr_sound ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 sound_dev_t (chr_file (getattr))))
+
+(macro devices_getattr_wireless ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 wireless_dev_t (chr_file (getattr))))
+
+(macro devices_getattr_v4l ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 v4l_dev_t (chr_file (getattr))))
+
+(macro devices_create_devtty ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_add_entry_devtmpfs (ARG1))
+    (allow ARG1 devtty_dev_t create_chr_file_perms))
+
+(macro devices_create_null ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_add_entry_devtmpfs (ARG1))
+    (allow ARG1 null_dev_t create_chr_file_perms))
+
+(macro devices_create_random ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_add_entry_devtmpfs (ARG1))
+    (allow ARG1 random_dev_t create_chr_file_perms))
+
+(macro devices_create_urandom ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_add_entry_devtmpfs (ARG1))
+    (allow ARG1 urandom_dev_t create_chr_file_perms))
+
+(macro devices_create_zero ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_add_entry_devtmpfs (ARG1))
+    (allow ARG1 zero_dev_t create_chr_file_perms))
+
+(macro devices_read_autofs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 autofs_dev_t read_chr_file_perms))
+
+(macro devices_read_event ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 event_dev_t read_chr_file_perms))
+
+(macro devices_read_kmsg ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 kmsg_dev_t read_chr_file_perms))
+
+(macro devices_read_loop_control ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 loop_control_dev_t read_chr_file_perms))
+
+(macro devices_read_memory ((type ARG1))
+    (allow ARG1 self (capability (sys_rawio)))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 memory_dev_t read_chr_file_perms)
+    (typeattributeset devices_can_read_memory ARG1))
+
+(macro devices_read_random ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 random_dev_t read_chr_file_perms))
+
+(macro devices_read_urandom ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 urandom_dev_t read_chr_file_perms))
+
+(macro devices_read_usbmon ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usbmon_dev_t read_chr_file_perms))
+
+(macro devices_read_wireless ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 wireless_dev_t read_chr_file_perms))
+
+(macro devices_rw_devtty ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devtty_dev_t rw_chr_file_perms))
+
+(macro devices_rw_dri ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 dri_dev_t rw_chr_file_perms))
+
+(macro devices_rw_inherited_dri ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 dri_dev_t rw_inherited_chr_file_perms))
+
+(macro devices_rw_event ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 event_dev_t rw_chr_file_perms))
+
+(macro devices_rw_inherited_event ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 event_dev_t rw_inherited_chr_file_perms))
+
+(macro devices_rw_framebuf ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 framebuf_dev_t rw_chr_file_perms))
+
+(macro devices_rw_kmsg ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 kmsg_dev_t rw_chr_file_perms))
+
+(macro devices_rw_lvm_control ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 lvm_control_dev_t rw_chr_file_perms))
+
+(macro devices_rw_null ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 null_dev_t rw_chr_file_perms))
+
+(macro devices_rw_ptmx ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 ptmx_dev_t rw_chr_file_perms))
+
+(macro devices_rw_inherited_ptmx ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 ptmx_dev_t rw_inherited_chr_file_perms))
+
+(macro devices_rw_sound ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 sound_dev_t rw_chr_file_perms))
+
+(macro devices_rw_urandom ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 urandom_dev_t rw_chr_file_perms))
+
+(macro devices_rw_usb ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usb_dev_t rw_chr_file_perms))
+
+(macro devices_rw_wireless ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 wireless_dev_t rw_chr_file_perms))
+
+(macro devices_rw_xserver_misc ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 xserver_misc_dev_t rw_chr_file_perms))
+
+(macro devices_rw_zero ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 zero_dev_t rw_chr_file_perms))
+
+(macro devices_setattr_dri ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 dri_dev_t (chr_file (setattr))))
+
+(macro devices_setattr_sound ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 sound_dev_t (chr_file (setattr))))
+
+(macro devices_setattr_wireless ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 wireless_dev_t (chr_file (setattr))))
+
+(macro devices_setattr_v4l ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 v4l_dev_t (chr_file (setattr))))
+
+(macro devices_write_kmsg ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 kmsg_dev_t write_chr_file_perms))
+
+(macro devices_write_memory ((type ARG1))
+    (allow ARG1 self (capability (sys_rawio)))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 memory_dev_t write_chr_file_perms)
+    (typeattributeset devices_can_write_memory ARG1))
+
+(macro devices_unconfined_subject_type ((type ARG1))
+    (typeattributeset devices_unconfined_subject_type ARG1))

@@ -1,0 +1,3 @@
+cdrom system_u:system_r:removable_dev_t
+floppy system_u:system_r:removable_dev_t
+disk systemu:system_r:removable_dev_t

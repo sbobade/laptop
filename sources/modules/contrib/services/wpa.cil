@@ -1,0 +1,224 @@
+(roleattribute wpa_role)
+(roleattribute wpacli_role)
+
+(typeattribute wpa_admin_subject_type)
+(typeattribute wpa_subject_type)
+
+(typeattribute wpa_object_type)
+
+(type wpa_t)
+(type wpa_exec_t)
+(call applications_app (wpa_t wpa_exec_t))
+(roletype wpa_role wpa_t)
+
+(roleattributeset wpa_role system_r)
+
+(context wpa_exec (system_u object_r wpa_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/wpa_supplicant" file wpa_exec)
+
+(type wpa_config_t)
+(call files_config_object_type (wpa_config_t))
+
+(typeattributeset wpa_object_type wpa_config_t)
+
+(context wpa_config (system_u object_r wpa_config_t (systemlow systemlow)))
+(filecon "/etc/wpa_supplicant(/.*)?" any wpa_config)
+
+(type wpa_dbus_config_t)
+(call dbus_config_object_type (wpa_dbus_config_t))
+
+(typeattributeset wpa_object_type wpa_dbus_config_t)
+
+(context wpa_dbus_config (system_u object_r wpa_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/wpa_supplicant\.conf" any wpa_dbus_config)
+
+(type wpa_runtime_t)
+(call files_runtime_object_type (wpa_runtime_t))
+
+(typeattributeset wpa_object_type wpa_runtime_t)
+
+(context wpa_runtime (system_u object_r wpa_runtime_t (systemlow systemlow)))
+(filecon "/var/run/wpa_supplicant(/.*)?" any wpa_runtime)
+
+(allow wpa_t wpa_runtime_t manage_dir_perms)
+(allow wpa_t wpa_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (wpa_t wpa_runtime_t dir "*"))
+
+(type wpa_log_t)
+(call files_log_object_type (wpa_log_t))
+
+(typeattributeset wpa_object_type wpa_log_t)
+
+(context wpa_log (system_u object_r wpa_log_t (systemlow systemlow)))
+(filecon "/var/log/wpa_supplicant\.log.*" file wpa_log)
+
+(allow wpa_t wpa_log_t (file (setattr)))
+(allow wpa_t wpa_log_t append_file_perms)
+(allow wpa_t wpa_log_t create_file_perms)
+(allow wpa_t wpa_log_t read_file_perms)
+(call files_log_object_type_transition (wpa_t wpa_log_t file "*"))
+
+(allow wpa_t self (capability (net_raw net_admin)))
+(allow wpa_t self create_unix_dgram_socket_perms)
+(allow wpa_t self create_udp_socket_perms)
+(allow wpa_t self create_netlink_socket_perms)
+(allow wpa_t self create_netlink_route_socket_perms)
+(allow wpa_t self create_packet_socket_perms)
+
+(call system_load_kernel_module (wpa_t))
+(call system_request_load_module (wpa_t))
+(call system_read_net_proc (wpa_t))
+
+(call devices_read_random (wpa_t))
+(call devices_read_urandom (wpa_t))
+(call devices_read_wireless (wpa_t))
+
+(call files_read_config_files (wpa_t))
+
+(call filesystems_list_debugfs (wpa_t))
+(call filesystems_read_sysfs (wpa_t))
+
+(call dbus_system_service (wpa_t))
+
+(optional wpa_optional_logrotate
+    (call logrotate_log_object_type (wpa_log_t)))
+
+(optional wpa_optional_nm
+    (call nm_dbus_chat (wpa_t)))
+
+(optional wpa_optional_systemd
+    (call systemd_daemon (wpa_t wpa_exec_t))
+
+    (type wpa_unit_t)
+    (call systemd_unit_object_type (wpa_unit_t))
+
+    (typeattributeset wpa_object_type wpa_unit_t)
+
+    (context wpa_unit (system_u object_r wpa_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*wpa_supplicant.*" file wpa_unit)
+
+    (allow wpa_admin_subject_type wpa_unit_t (service (all))))
+
+(type wpacli_t)
+(type wpacli_exec_t)
+(call applications_app (wpacli_t wpacli_exec_t))
+(roletype wpacli_role wpacli_t)
+
+(roleattributeset wpacli_role system_r)
+
+(context wpacli_exec (system_u object_r wpacli_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/wpa_cli" file wpacli_exec)
+
+(allow wpa_admin_subject_type wpa_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (wpa_admin_subject_type wpa_t))
+
+(allow wpa_admin_subject_type wpa_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro wpa_exec ((type ARG1))
+    (call can_exec (ARG1 wpa_exec_t)))
+
+(macro wpa_exec_wpacli ((type ARG1))
+    (call can_exec (ARG1 wpacli_exec_t)))
+
+(macro wpa_auto_subject_type_transition ((type ARG1))
+    (call wpa_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 wpa_exec_t wpa_t)))
+
+(macro wpa_send_signal ((type ARG1))
+    (allow ARG1 wpa_t (process (signal))))
+
+(macro wpa_auto_subject_type_transition_wpacli ((type ARG1))
+    (call wpa_send_signal_wpacli (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 wpacli_exec_t wpacli_t)))
+
+(macro wpa_send_signal_wpacli ((type ARG1))
+    (allow ARG1 wpacli_t (process (signal))))
+
+(macro wpa_run_wpacli ((type ARG1)(role ARG2))
+    (call wpa_auto_subject_type_transition_wpacli (ARG1))
+    (roleattributeset wpacli_role ARG2))
+
+(macro wpa_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 wpa_config_t search_dir_perms))
+
+(macro wpa_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 wpa_config_t list_dir_perms))
+
+(macro wpa_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 wpa_config_t wpa_config_t)))
+
+(macro wpa_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 wpa_config_t wpa_config_t)))
+
+(macro wpa_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 wpa_config_t read_file_perms)
+    (allow ARG1 wpa_config_t list_dir_perms)
+    (allow ARG1 wpa_config_t read_lnk_file_perms))
+
+(macro wpa_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 wpa_config_t manage_file_perms)
+    (allow ARG1 wpa_config_t manage_dir_perms)
+    (allow ARG1 wpa_config_t manage_lnk_file_perms))
+
+(macro wpa_read_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 wpa_dbus_config_t read_file_perms))
+
+(macro wpa_manage_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 wpa_dbus_config_t manage_file_perms))
+
+(macro wpa_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 wpa_runtime_t search_dir_perms))
+
+(macro wpa_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 wpa_runtime_t list_dir_perms))
+
+(macro wpa_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 wpa_runtime_t wpa_runtime_t)))
+
+(macro wpa_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 wpa_runtime_t wpa_runtime_t)))
+
+(macro wpa_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 wpa_runtime_t read_file_perms)
+    (allow ARG1 wpa_runtime_t list_dir_perms)
+    (allow ARG1 wpa_runtime_t read_lnk_file_perms))
+
+(macro wpa_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 wpa_runtime_t manage_file_perms)
+    (allow ARG1 wpa_runtime_t manage_dir_perms)
+    (allow ARG1 wpa_runtime_t manage_lnk_file_perms))
+
+(macro wpa_read_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 wpa_log_t read_file_perms))
+
+(macro wpa_manage_log_files ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 wpa_log_t manage_file_perms))
+
+(macro wpa_dbus_chat ((type ARG1))
+    (allow ARG1 wpa_t (dbus (send_msg)))
+    (allow wpa_t ARG1 (dbus (send_msg))))
+
+(macro wpa_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset wpa_admin_subject_type ARG1)
+    (optional wpa_admin_optional_systemd
+    (call systemd_system_service_admin_subject_type (ARG1))))

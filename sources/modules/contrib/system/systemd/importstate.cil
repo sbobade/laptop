@@ -1,0 +1,47 @@
+(type importstate_t)
+(type importstate_exec_t)
+(call systemd_daemon (importstate_t importstate_exec_t))
+
+(context importstate_exec (system_u object_r importstate_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/fedora-import-state" file importstate_exec)
+
+(allow importstate_t self (capability (sys_admin)))
+(allow importstate_t self (process (setfscreate)))
+(allow importstate_t self rw_fifo_file_perms)
+
+(call commands_exec (importstate_t))
+(call commands_mprot_read_shell_exec_files (importstate_t))
+
+(call files_dontaudit_relabel_all (importstate_t))
+(call files_setattr_config_dirs (importstate_t))
+(call files_setattr_var_dirs (importstate_t))
+(call files_setattr_lib_dirs (importstate_t))
+
+(call filesystems_list_tmpfs (importstate_t))
+
+(call selinux_get_enforce_mode (importstate_t))
+
+(call auth_nsswitch_client_subject_type (importstate_t))
+
+(call dracut_search_runtime (importstate_t))
+
+(call miscfiles_read_locale (importstate_t))
+(call miscfiles_read_net_config (importstate_t))
+(call miscfiles_setattr_net_config (importstate_t))
+
+(call seutil_auto_subject_type_transition_setfiles (importstate_t))
+
+(optional importstate_optional_dhcp
+    (call dhcp_read_dhclient_lib (importstate_t))
+    (call dhcp_setattr_dhclient_lib (importstate_t)))
+
+(macro importstate_exec ((type ARG1))
+    (call can_exec (ARG1 importstate_exec_t)))
+
+(macro importstate_auto_subject_type_transition ((type ARG1))
+    (call importstate_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 importstate_exec_t importstate_t)))
+
+(macro importstate_send_signal ((type ARG1))
+    (allow ARG1 importstate_t (process (signal))))

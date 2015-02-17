@@ -1,0 +1,4 @@
+(policycap "network_peer_controls")
+(policycap "open_perms")
+
+; (policycap "always_check_network")

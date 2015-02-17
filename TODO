@@ -1,0 +1,21 @@
+* appropriately name: audit_test_for_journald()
+
+* pa depends on dbus , so everything that makes a sound (all pa_client()) depends on dbus (needs to be nested inside pa optional)
+
+    so globally you have two kinds:
+
+        apps that depend on xserver and pa:
+
+        xserver (
+            pa (
+                app(
+                )
+            )
+        )
+
+        apps that depend on pa:
+
+        pa (
+            app (
+            )
+        )

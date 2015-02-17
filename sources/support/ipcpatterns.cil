@@ -1,0 +1,11 @@
+(macro stream_connect_pattern ((type ARG1)(type ARG2)(type ARG3)
+    (type ARG4))
+    (call write_sock_files_pattern (ARG1 ARG2 ARG3))
+    (allow ARG1 self create_unix_stream_socket_perms)
+    (allow ARG1 ARG4 (unix_stream_socket (connectto))))
+
+(macro dgram_send_pattern ((type ARG1)(type ARG2)(type ARG3)
+    (type ARG4))
+    (call write_sock_files_pattern (ARG1 ARG2 ARG3))
+    (allow ARG1 self create_unix_dgram_socket_perms)
+    (allow ARG1 ARG4 (unix_dgram_socket (sendto))))

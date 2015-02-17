@@ -1,0 +1,99 @@
+(roleattribute sysusers_role)
+
+(type sysusers_t)
+(type sysusers_exec_t)
+(call applications_app (sysusers_t sysusers_exec_t))
+(call systemd_daemon (sysusers_t sysusers_exec_t))
+(roletype sysusers_role sysusers_t)
+
+(context sysusers_exec (system_u object_r sysusers_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-sysusers" file sysusers_exec)
+
+(type sysusers_config_t)
+(call files_config_object_type (sysusers_config_t))
+
+(context sysusers_config (system_u object_r sysusers_config_t (systemlow systemlow)))
+(filecon "/etc/sysusers\.d(/.*)?" any sysusers_config)
+
+(type sysusers_runtime_t)
+(call files_runtime_object_type (sysusers_runtime_t))
+
+(context sysusers_runtime (system_u object_r sysusers_runtime_t (systemlow systemlow)))
+(filecon "/var/run/sysusers\.d(/.*)?" any sysusers_runtime)
+
+(allow sysusers_t sysusers_runtime_t manage_dir_perms)
+(allow sysusers_t sysusers_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (sysusers_t sysusers_runtime_t dir "*"))
+
+(call auth_read_shadow (sysusers_t))
+
+(macro sysusers_exec ((type ARG1))
+    (call can_exec (ARG1 sysusers_exec_t)))
+
+(macro sysusers_auto_subject_type_transition ((type ARG1))
+    (call sysusers_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sysusers_exec_t sysusers_t)))
+
+(macro sysusers_send_signal ((type ARG1))
+    (allow ARG1 sysusers_t (process (signal))))
+
+(macro sysusers_run ((type ARG1)(role ARG2))
+    (call sysusers_auto_subject_type_transition (ARG1))
+    (roleattributeset sysusers_role ARG2))
+
+(macro sysusers_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 sysusers_config_t search_dir_perms))
+
+(macro sysusers_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 sysusers_config_t list_dir_perms))
+
+(macro sysusers_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 sysusers_config_t sysusers_config_t)))
+
+(macro sysusers_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 sysusers_config_t sysusers_config_t)))
+
+(macro sysusers_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 sysusers_config_t read_file_perms)
+    (allow ARG1 sysusers_config_t list_dir_perms)
+    (allow ARG1 sysusers_config_t read_lnk_file_perms))
+
+(macro sysusers_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 sysusers_config_t manage_file_perms)
+    (allow ARG1 sysusers_config_t manage_dir_perms)
+    (allow ARG1 sysusers_config_t manage_lnk_file_perms))
+
+(macro sysusers_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sysusers_runtime_t search_dir_perms))
+
+(macro sysusers_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sysusers_runtime_t list_dir_perms))
+
+(macro sysusers_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 sysusers_runtime_t sysusers_runtime_t)))
+
+(macro sysusers_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 sysusers_runtime_t sysusers_runtime_t)))
+
+(macro sysusers_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sysusers_runtime_t read_file_perms)
+    (allow ARG1 sysusers_runtime_t list_dir_perms)
+    (allow ARG1 sysusers_runtime_t read_lnk_file_perms))
+
+(macro sysusers_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 sysusers_runtime_t manage_file_perms)
+    (allow ARG1 sysusers_runtime_t manage_dir_perms)
+    (allow ARG1 sysusers_runtime_t manage_lnk_file_perms))

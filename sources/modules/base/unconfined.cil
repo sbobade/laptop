@@ -1,0 +1,116 @@
+(typeattribute unconfined_subject_type)
+(typeattribute unconfined_user_subject_type)
+
+(allow unconfined_subject_type self
+    all_capability_perms_except_sys_module_and_sys_nice)
+(allow unconfined_subject_type self
+    all_capability2_perms_except_mac_override_and_mac_admin)
+(allow unconfined_subject_type self (process
+    (transition dyntransition setcurrent)))
+(allow unconfined_subject_type self
+    all_fifo_file_perms_except_mounton_and_execmod)
+
+(call devices_unconfined_subject_type (unconfined_subject_type))
+(call files_unconfined_subject_type (unconfined_subject_type))
+(call filesystems_unconfined_subject_type (unconfined_subject_type))
+(call network_unconfined_subject_type (unconfined_subject_type))
+(call selinux_unconfined_subject_type (unconfined_subject_type))
+(call subject_unconfined_subject_type (unconfined_subject_type))
+(call system_unconfined_subject_type (unconfined_subject_type))
+
+(optional unconfined_subject_type_optional_audit
+    (call audit_manage_auditd_config (unconfined_subject_type))
+    (call audit_relabel_auditd_config (unconfined_subject_type))
+    (call audit_config_object_type_transition_auditd_config_dirs (unconfined_subject_type))
+
+    (call audit_manage_auditd_log (unconfined_subject_type))
+    (call audit_relabel_auditd_log (unconfined_subject_type))
+    (call audit_log_object_type_transition_auditd_log_dirs (unconfined_subject_type))
+
+    (call audit_manage_audispd_config (unconfined_subject_type))
+    (call audit_relabel_audispd_config (unconfined_subject_type))
+    (call audit_config_object_type_transition_audispd_config_dirs (unconfined_subject_type)))
+
+(optional unconfined_subject_type_optional_auth
+    (call auth_unconfined_subject_type (unconfined_subject_type)))
+
+(optional unconfined_subject_type_optional_dbus
+    (call dbus_unconfined_subject_type (unconfined_subject_type)))
+
+(optional unconfined_subject_type_optional_seutil
+    (call seutil_manage_policy_config_files (unconfined_subject_type))
+    (call seutil_manage_policy_config_dirs (unconfined_subject_type))
+    (call seutil_relabelto_policy_config_files (unconfined_subject_type))
+    (call seutil_config_object_type_transition_policy_config_dirs (unconfined_subject_type))
+
+    (call seutil_config_object_type_transition_default_context_dirs (unconfined_subject_type))
+    (call seutil_config_object_type_transition_policy_src_dirs (unconfined_subject_type))
+    (call seutil_config_object_type_transition_selinux_config_dirs (unconfined_subject_type))
+
+    (call seutil_default_context_object_type_transition_file_context_dirs (unconfined_subject_type)))
+
+(optional unconfined_subject_type_optional_storage
+    (call storage_unconfined_subject_type (unconfined_subject_type)))
+
+(optional unconfined_subject_type_optional_systemd
+    (call systemd_unconfined_subject_type (unconfined_subject_type)))
+
+(call unconfined_subject_type (unconfined_user_subject_type))
+
+(call usersubject_priv_login_subject_type (unconfined_user_subject_type))
+
+(macro unconfined_subject_type ((type ARG1))
+    (typeattributeset unconfined_subject_type ARG1))
+
+(macro unconfined_user_subject_type ((type ARG1))
+    (typeattributeset unconfined_user_subject_type ARG1))
+
+(macro unconfined_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
+    (call unconfined_user_subject_type (ARG3))
+    (call usersubject_common_login_subject_template (ARG1 ARG2 ARG3)))
+
+(macro unconfined_read_state_all_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 unconfined_subject_type read_file_perms)
+    (allow ARG1 unconfined_subject_type list_dir_perms)
+    (allow ARG1 unconfined_subject_type read_lnk_file_perms))
+
+(macro unconfined_send_signal_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type (process (signal))))
+
+(macro unconfined_send_signull_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type (process (signull))))
+
+(macro unconfined_getsched_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type (process (getsched))))
+
+(macro unconfined_setsched_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type (process (setsched))))
+
+(macro unconfined_rw_sem_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type rw_sem_perms))
+
+(macro unconfined_rw_shm_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type rw_shm_perms))
+
+(macro unconfined_use_fd_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type (fd (use))))
+
+(macro unconfined_create_keyring_all_user_subjects ((type ARG1))
+    (allow ARG1 unconfined_user_subject_type (process (setkeycreate)))
+    (allow ARG1 unconfined_user_subject_type (key (create search link write))))
+
+(macro unconfined_noatsecure_all_user_subjects ((type ARG1))
+    (allow ARG1 unconfined_user_subject_type (process (noatsecure))))
+
+(macro unconfined_read_state_all_user_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 unconfined_user_subject_type read_file_perms)
+    (allow ARG1 unconfined_user_subject_type list_dir_perms)
+    (allow ARG1 unconfined_user_subject_type read_lnk_file_perms))
+
+(macro unconfined_send_sigchld_all_user_subjects ((type ARG1))
+    (allow ARG1 unconfined_user_subject_type (process (sigchld))))
+
+(macro unconfined_shell_exec_manual_subject_type_transition_all_user_subjects ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 unconfined_user_subject_type)))

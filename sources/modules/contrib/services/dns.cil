@@ -1,0 +1,90 @@
+(typeattribute dns_resolve_client_subject_type)
+
+(type dns_port_t)
+(call network_reserved_port_object_type (dns_port_t))
+
+(context dns_port (system_u object_r dns_port_t (systemlow systemlow)))
+(portcon "tcp" 53 dns_port)
+(portcon "udp" 53 dns_port)
+
+(type dnssec_port_t)
+(call network_unreserved_port_object_type (dnssec_port_t))
+
+(context dnssec_port (system_u object_r dnssec_port_t (systemlow systemlow)))
+(portcon "tcp" 8955 dnssec_port)
+(portcon "udp" 8955 dnssec_port)
+
+(type mdns_port_t)
+(call network_unreserved_port_object_type (mdns_port_t))
+
+(context mdns_port (system_u object_r mdns_port_t (systemlow systemlow)))
+(portcon "tcp" 5353 mdns_port)
+(portcon "udp" 5353 mdns_port)
+
+(type resolve_config_t)
+(call files_config_object_type (resolve_config_t))
+
+(context resolve_config (system_u object_r resolve_config_t (systemlow systemlow)))
+(filecon "/etc/resolv\.conf.*" file resolve_config)
+
+(allow dns_resolve_client_subject_type self r_netlink_route_socket_perms)
+(allow dns_resolve_client_subject_type self create_tcp_socket_perms)
+(allow dns_resolve_client_subject_type self create_udp_socket_perms)
+
+(call dns_tcp_connect_dns_port (dns_resolve_client_subject_type))
+(call dns_tcp_connect_dnssec_port (dns_resolve_client_subject_type))
+(call dns_tcp_connect_mdns_port (dns_resolve_client_subject_type))
+
+(call dns_read_resolve_config_files (dns_resolve_client_subject_type))
+
+(macro dns_resolve_client_subject_type ((type ARG1))
+    (typeattributeset dns_resolve_client_subject_type ARG1))
+
+(macro dns_config_object_type_transition_resolve_config_files ((type ARG1))
+    (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf"))
+    (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf.tmp"))
+    (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf.fp-tmp"))
+    (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf.fp-saved")))
+
+(macro dns_manage_resolve_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 resolve_config_t manage_file_perms))
+
+(macro dns_read_resolve_config_files ((type ARG1))
+    (call files_read_config_lnk_files (ARG1))
+    (allow ARG1 resolve_config_t read_file_perms)
+    (optional dns_read_resolve_config_files_optional_nm
+        (call nm_read_runtime_files (ARG1))))
+
+(macro dns_tcp_connect_dns_port ((type ARG1))
+    (allow ARG1 dns_port_t (tcp_socket (name_connect))))
+
+(macro dns_tcp_bind_dns_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 dns_port_t (tcp_socket (name_bind))))
+
+(macro dns_udp_bind_dns_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 dns_port_t (udp_socket (name_bind))))
+
+(macro dns_tcp_connect_dnssec_port ((type ARG1))
+    (allow ARG1 dnssec_port_t (tcp_socket (name_connect))))
+
+(macro dns_tcp_bind_dnssec_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 dnssec_port_t (tcp_socket (name_bind))))
+
+(macro dns_udp_bind_dnssec_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 dnssec_port_t (udp_socket (name_bind))))
+
+(macro dns_tcp_connect_mdns_port ((type ARG1))
+    (allow ARG1 mdns_port_t (tcp_socket (name_connect))))
+
+(macro dns_tcp_bind_mdns_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 mdns_port_t (tcp_socket (name_bind))))
+
+(macro dns_udp_bind_mdns_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 mdns_port_t (udp_socket (name_bind))))

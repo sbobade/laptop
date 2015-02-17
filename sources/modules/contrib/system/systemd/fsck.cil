@@ -1,0 +1,75 @@
+(type fsck_t)
+(type fsck_exec_t)
+(call systemd_daemon (fsck_t fsck_exec_t))
+
+(context fsck_exec (system_u object_r fsck_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-fsck" file fsck_exec)
+
+(type fsck_runtime_t)
+(call files_runtime_object_type (fsck_runtime_t))
+
+(context fsck_runtime (system_u object_r fsck_runtime_t (systemlow systemlow)))
+(filecon "/var/run/fsck(/.*)?" any fsck_runtime)
+
+(allow fsck_t fsck_runtime_t manage_dir_perms)
+(allow fsck_t fsck_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (fsck_t fsck_runtime_t dir "*"))
+
+(allow fsck_t self rw_fifo_file_perms)
+
+(call filesystems_read_sysfs (fsck_t))
+
+(call devices_write_kmsg (fsck_t))
+
+(call storage_getattr_all (fsck_t))
+
+(call fstools_auto_subject_type_transition (fsck_t))
+
+(call journal_client_subject_type (fsck_t))
+
+(call plymouth_read_plymouthd_runtime_files (fsck_t))
+
+(call udev_client_subject_type (fsck_t))
+
+(macro fsck_exec ((type ARG1))
+    (call can_exec (ARG1 fsck_exec_t)))
+
+(macro fsck_auto_subject_type_transition ((type ARG1))
+    (call fsck_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 fsck_exec_t fsck_t)))
+
+(macro fsck_send_signal ((type ARG1))
+    (allow ARG1 fsck_t (process (signal))))
+
+(macro fsck_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 fsck_runtime_t search_dir_perms))
+
+(macro fsck_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 fsck_runtime_t list_dir_perms))
+
+(macro fsck_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 fsck_runtime_t fsck_runtime_t)))
+
+(macro fsck_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 fsck_runtime_t fsck_runtime_t)))
+
+(macro fsck_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 fsck_runtime_t fsck_runtime_t)))
+
+(macro fsck_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 fsck_runtime_t read_file_perms)
+    (allow ARG1 fsck_runtime_t list_dir_perms)
+    (allow ARG1 fsck_runtime_t read_lnk_file_perms))
+
+(macro fsck_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 fsck_runtime_t manage_file_perms)
+    (allow ARG1 fsck_runtime_t manage_dir_perms)
+    (allow ARG1 fsck_runtime_t manage_lnk_file_perms))

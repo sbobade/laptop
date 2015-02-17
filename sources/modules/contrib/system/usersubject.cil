@@ -1,0 +1,1117 @@
+(typeattribute usersubject_type)
+(typeattribute usersubject_common_type)
+
+(typeattribute usersubject_common_login_subject_type)
+(typeattribute usersubject_priv_login_subject_type)
+(typeattribute usersubject_unpriv_login_subject_type)
+
+(typeattribute usersubject_home_object_type)
+
+(typeattribute usersubject_cache_home_object_type)
+(typeattribute usersubject_config_home_object_type)
+(typeattribute usersubject_data_home_object_type)
+
+(typeattribute usersubject_mail_spool_object_type)
+
+(typeattribute usersubject_tmp_object_type)
+(typeattribute usersubject_tmpfs_object_type)
+
+(typeattribute usersubject_pty_object_type)
+(typeattribute usersubject_tty_object_type)
+
+(typeattributeset usersubject_unpriv_login_subject_type
+    (and (usersubject_common_login_subject_type)
+    (not (usersubject_priv_login_subject_type))))
+
+(type home_dir_t)
+(call files_object_type (home_dir_t))
+
+(type user_home_t)
+(call usersubject_home_object_type (user_home_t))
+
+(type cache_home_t)
+(call usersubject_cache_home_object_type (cache_home_t))
+
+(type config_home_t)
+(call usersubject_config_home_object_type (config_home_t))
+
+(type data_home_t)
+(call usersubject_data_home_object_type (data_home_t))
+
+(type exec_home_t)
+(call usersubject_home_object_type (exec_home_t))
+(call commands_exec_object_type (exec_home_t))
+
+(type cert_home_t)
+(call usersubject_home_object_type (cert_home_t))
+(call miscfiles_cert_object_type (cert_home_t))
+
+(type terminfo_home_t)
+(call usersubject_home_object_type (terminfo_home_t))
+(call miscfiles_terminfo_config_object_type (terminfo_home_t))
+
+(type user_tmp_t)
+(call usersubject_tmp_object_type (user_tmp_t))
+
+(type user_tmpfs_t)
+(call usersubject_tmpfs_object_type (user_tmpfs_t))
+
+(type user_tty_dev_t)
+(call usersubject_tty_object_type (user_tty_dev_t))
+
+(type user_pty_dev_t)
+(call usersubject_pty_object_type (user_pty_dev_t))
+
+(type user_mail_spool_t)
+(call usersubject_mail_spool_object_type (user_mail_spool_t))
+
+(allow usersubject_common_type self (process (setpgid getattr getsched)))
+(allow usersubject_common_type self create_unix_stream_socket_perms)
+(allow usersubject_common_type self rw_fifo_file_perms)
+
+(call system_dontaudit_list_all_proc (usersubject_common_type))
+(call system_dontaudit_getattr_all_proc_files (usersubject_common_type))
+(call system_dontaudit_list_all_sysctl (usersubject_common_type))
+(call system_dontaudit_getattr_all_sysctl_files (usersubject_common_type))
+
+(call commands_exec_object_entry (usersubject_common_type))
+(call commands_shell_exec_object_entry (usersubject_common_type))
+
+(call commands_exec (usersubject_common_type))
+(call commands_exec_shell (usersubject_common_type))
+
+(call files_dontaudit_manage_all_files (usersubject_common_type))
+(call files_dontaudit_read_all_lnk_files (usersubject_common_type))
+(call files_dontaudit_list_all (usersubject_common_type))
+
+(call filesystems_dontaudit_getattr_all_filesystems (usersubject_common_type))
+(call filesystems_dontaudit_manage_all_files (usersubject_common_type))
+(call filesystems_dontaudit_read_all_lnk_files (usersubject_common_type))
+(call filesystems_dontaudit_list_all (usersubject_common_type))
+
+(call filesystems_getattr_filesystems (usersubject_common_type))
+(call filesystems_list_proc (usersubject_common_type))
+
+(call subject_dontaudit_getattr_all_common_subjects (usersubject_common_type))
+(call subject_dontaudit_read_all_common_subjects_state (usersubject_common_type))
+
+(call subject_user_exemption_target (usersubject_common_type))
+
+(call network_dontaudit_udp_bind_all_ports (usersubject_common_type))
+(call network_dontaudit_tcp_bind_all_ports (usersubject_common_type))
+(call network_dontaudit_tcp_connect_all_ports (usersubject_common_type))
+
+(call applications_getattr_all_subjects (usersubject_common_type))
+(call applications_send_signal_all_subjects (usersubject_common_type))
+(call applications_send_signull_all_subjects (usersubject_common_type))
+(call applications_send_sigkill_all_subjects (usersubject_common_type))
+(call applications_send_sigstop_all_subjects (usersubject_common_type))
+(call applications_read_state_all_subjects (usersubject_common_type))
+
+(call auth_read_utmp_runtime_files (usersubject_common_type))
+
+(call miscfiles_read_all_terminfo (usersubject_common_type))
+(call miscfiles_read_locale (usersubject_common_type))
+
+(call usersubject_use_inherited_terminals (usersubject_common_type))
+
+(allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
+
+(call usersubject_common_login_user_object_template (usersubject_common_login_subject_type))
+
+(call system_read_net_proc (usersubject_common_login_subject_type))
+
+(call devices_rw_inherited_ptmx (usersubject_common_login_subject_type))
+
+(call files_list_mnt (usersubject_common_login_subject_type))
+(call files_search_user_runtime (usersubject_common_login_subject_type))
+
+(call files_read_config (usersubject_common_login_subject_type))
+(call files_read_data (usersubject_common_login_subject_type))
+
+(call filesystems_list_tmpfs (usersubject_common_login_subject_type))
+
+(call selinux_get_enforce_mode (usersubject_common_login_subject_type))
+
+(call auth_nsswitch_client_subject_type (usersubject_common_login_subject_type))
+
+(call hostname_exec (usersubject_common_login_subject_type))
+
+(call login_send_signull (usersubject_common_login_subject_type))
+
+(call miscfiles_read_man (usersubject_common_login_subject_type))
+(call miscfiles_read_net_config_files (usersubject_common_login_subject_type))
+
+(optional usersubject_optional_tmpfiles
+    (call tmpfiles_object_exception_type (usersubject_home_object_type))
+    (call tmpfiles_object_exception_type (usersubject_tmp_object_type))
+    (call tmpfiles_object_exception_type (usersubject_tmpfs_object_type)))
+
+(macro usersubject_home_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset usersubject_home_object_type ARG1))
+
+(macro usersubject_cache_home_object_type ((type ARG1))
+    (call usersubject_home_object_type (ARG1))
+    (typeattributeset usersubject_cache_home_object_type ARG1))
+
+(macro usersubject_config_home_object_type ((type ARG1))
+    (call usersubject_home_object_type (ARG1))
+    (typeattributeset usersubject_config_home_object_type ARG1))
+
+(macro usersubject_data_home_object_type ((type ARG1))
+    (call usersubject_home_object_type (ARG1))
+    (typeattributeset usersubject_data_home_object_type ARG1))
+
+(macro usersubject_tmp_object_type ((type ARG1))
+    (call files_tmp_object_type (ARG1))
+    (typeattributeset usersubject_tmp_object_type ARG1))
+
+(macro usersubject_tmpfs_object_type ((type ARG1))
+    (call files_tmpfs_object_type (ARG1))
+    (typeattributeset usersubject_tmpfs_object_type ARG1))
+
+(macro usersubject_tty_object_type ((type ARG1))
+    (call terminals_tty_object_type (ARG1))
+    (typeattributeset usersubject_tty_object_type ARG1))
+
+(macro usersubject_pty_object_type ((type ARG1))
+    (call terminals_pty_object_type (ARG1))
+    (typeattributeset usersubject_pty_object_type ARG1))
+
+(macro usersubject_mail_spool_object_type ((type ARG1))
+    (call files_spool_object_type (ARG1))
+    (typeattributeset usersubject_mail_spool_object_type ARG1))
+
+(macro usersubject_home_object_type_transition_home_dir ((type ARG1)(class ARG2)(name ARG3))
+    (call files_home_object_type_transition (ARG1 home_dir_t ARG2 ARG3)))
+
+(macro usersubject_home_dir_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call usersubject_search_home_dir (ARG1))
+    (call object_type_transition_pattern (ARG1 home_dir_t ARG2 ARG3 ARG4)))
+
+(macro usersubject_home_dir_object_type_transition_user_home ((type ARG1)(class ARG2)(name ARG3))
+    (call usersubject_search_home_dir (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t ARG2 ARG3)))
+
+(macro usersubject_cache_home_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call usersubject_search_home_dir (ARG1))
+    (call object_type_transition_pattern (ARG1 cache_home_t ARG2 ARG3 ARG4)))
+
+(macro usersubject_config_home_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call usersubject_search_home_dir (ARG1))
+    (call object_type_transition_pattern (ARG1 config_home_t ARG2 ARG3 ARG4)))
+
+(macro usersubject_data_home_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call usersubject_search_home_dir (ARG1))
+    (call object_type_transition_pattern (ARG1 data_home_t ARG2 ARG3 ARG4)))
+
+(macro usersubject_search_home_dir ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t search_dir_perms))
+
+(macro usersubject_mounton_home_dir ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t (dir (mounton))))
+
+(macro usersubject_list_home_dir ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t list_dir_perms))
+
+(macro usersubject_read_home_dir_lnk_files ((type ARG1))
+    (call files_search_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 home_dir_t home_dir_t)))
+
+(macro usersubject_manage_home_dir_lnk_files ((type ARG1))
+    (call files_rw_home_dirs (ARG1))
+    (allow ARG1 home_dir_t manage_lnk_file_perms))
+
+(macro usersubject_read_home_dir ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t list_dir_perms)
+    (allow ARG1 home_dir_t read_lnk_file_perms))
+
+(macro usersubject_manage_home_dir ((type ARG1))
+    (call files_rw_home_dirs (ARG1))
+    (allow ARG1 home_dir_t manage_dir_perms)
+    (allow ARG1 home_dir_t manage_lnk_file_perms))
+
+(macro usersubject_create_home_dir ((type ARG1))
+    (call files_add_entry_home (ARG1))
+    (allow ARG1 home_dir_t create_dir_perms))
+
+(macro usersubject_delete_home_dir ((type ARG1))
+    (call files_del_entry_home (ARG1))
+    (allow ARG1 home_dir_t delete_dir_perms))
+
+(macro usersubject_relabel_home_dir ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t relabel_dir_perms)
+    (allow ARG1 home_dir_t relabel_lnk_file_perms))
+
+(macro usersubject_del_entry_home_dir ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t del_entry_dir_perms))
+
+(macro usersubject_rw_home_dir_dirs ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t rw_dir_perms))
+
+(macro usersubject_search_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 user_home_t search_dir_perms))
+
+(macro usersubject_list_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 user_home_t list_dir_perms))
+
+(macro usersubject_read_user_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 user_home_t user_home_t)))
+
+(macro usersubject_dontaudit_read_user_home_files ((type ARG1))
+    (dontaudit ARG1 user_home_t read_file_perms))
+
+(macro usersubject_manage_user_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (call manage_files_pattern (ARG1 user_home_t user_home_t)))
+
+(macro usersubject_read_user_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 user_home_t user_home_t)))
+
+(macro usersubject_read_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 user_home_t (all_file_objects (read))))
+
+(macro usersubject_manage_user_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 user_home_t (all_file_objects (manage))))
+
+(macro usersubject_delete_user_home ((type ARG1))
+    (call usersubject_del_entry_home_dir (ARG1))
+    (allow ARG1 user_home_t del_entry_dir_perms)
+    (allow ARG1 user_home_t (all_file_objects (delete))))
+
+(macro usersubject_relabel_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 user_home_t (all_file_objects (relabel))))
+
+(macro usersubject_common_login_user_home_template ((type ARG1))
+    (call usersubject_manage_user_home (ARG1))
+    (call usersubject_relabel_user_home (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t file "*"))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t dir "*"))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t lnk_file "*"))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t fifo_file "*"))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t sock_file "*"))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t blk_file "*"))
+    (call usersubject_home_dir_object_type_transition (ARG1 user_home_t chr_file "*")))
+
+(macro usersubject_search_all_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 usersubject_home_object_type search_dir_perms))
+
+(macro usersubject_list_all_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 usersubject_home_object_type list_dir_perms))
+
+(macro usersubject_read_all_user_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 usersubject_home_object_type usersubject_home_object_type)))
+
+(macro usersubject_manage_all_user_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (call manage_files_pattern (ARG1 usersubject_home_object_type usersubject_home_object_type)))
+
+(macro usersubject_read_all_user_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 usersubject_home_object_type usersubject_home_object_type)))
+
+(macro usersubject_read_all_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 usersubject_home_object_type (all_file_objects (read))))
+
+(macro usersubject_manage_all_user_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 usersubject_home_object_type (all_file_objects (manage))))
+
+(macro usersubject_delete_all_user_home ((type ARG1))
+    (call usersubject_del_entry_home_dir (ARG1))
+    (allow ARG1 usersubject_home_object_type del_entry_dir_perms)
+    (allow ARG1 usersubject_home_object_type (all_file_objects (delete))))
+
+(macro usersubject_relabel_all_user_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 usersubject_home_object_type (all_file_objects (relabel))))
+
+(macro usersubject_search_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_t search_dir_perms))
+
+(macro usersubject_list_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_t list_dir_perms))
+
+(macro usersubject_read_cache_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 cache_home_t cache_home_t)))
+
+(macro usersubject_manage_cache_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 cache_home_t cache_home_t)))
+
+(macro usersubject_read_cache_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 cache_home_t cache_home_t)))
+
+(macro usersubject_read_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_t (all_file_objects (read))))
+
+(macro usersubject_manage_cache_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 cache_home_t (all_file_objects (manage))))
+
+(macro usersubject_relabel_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_t (all_file_objects (relabel))))
+
+(macro usersubject_common_login_user_cache_home_template ((type ARG1))
+    (call usersubject_manage_cache_home (ARG1))
+    (call usersubject_relabel_cache_home (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 cache_home_t dir ".cache")))
+
+(macro usersubject_search_all_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_object_type search_dir_perms))
+
+(macro usersubject_list_all_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_object_type list_dir_perms))
+
+(macro usersubject_read_all_cache_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 cache_home_object_type cache_home_object_type)))
+
+(macro usersubject_manage_all_cache_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 cache_home_object_type cache_home_object_type)))
+
+(macro usersubject_read_all_cache_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 cache_home_object_type cache_home_object_type)))
+
+(macro usersubject_read_all_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_object_type (all_file_objects (read))))
+
+(macro usersubject_manage_all_cache_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 cache_home_object_type (all_file_objects (manage))))
+
+(macro usersubject_relabel_all_cache_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_object_type (all_file_objects (relabel))))
+
+(macro usersubject_search_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_t search_dir_perms))
+
+(macro usersubject_list_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_t list_dir_perms))
+
+(macro usersubject_read_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 config_home_t config_home_t)))
+
+(macro usersubject_manage_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 config_home_t config_home_t)))
+
+(macro usersubject_rw_config_home_dirs ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_t rw_dir_perms))
+
+(macro usersubject_read_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 config_home_t config_home_t)))
+
+(macro usersubject_read_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_t (all_file_objects (read))))
+
+(macro usersubject_manage_config_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 config_home_t (all_file_objects (manage))))
+
+(macro usersubject_relabel_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_t (all_file_objects (relabel))))
+
+(macro usersubject_common_login_user_config_home_template ((type ARG1))
+    (call usersubject_manage_config_home (ARG1))
+    (call usersubject_relabel_config_home (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 config_home_t dir ".config")))
+
+(macro usersubject_search_all_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_object_type search_dir_perms))
+
+(macro usersubject_list_all_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_object_type list_dir_perms))
+
+(macro usersubject_read_all_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 config_home_object_type config_home_object_type)))
+
+(macro usersubject_manage_all_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 config_home_object_type config_home_object_type)))
+
+(macro usersubject_read_all_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 config_home_object_type config_home_object_type)))
+
+(macro usersubject_read_all_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_object_type (all_file_objects (read))))
+
+(macro usersubject_manage_all_config_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 config_home_object_type (all_file_objects (manage))))
+
+(macro usersubject_relabel_all_config_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_object_type (all_file_objects (relabel))))
+
+(macro usersubject_search_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_t search_dir_perms))
+
+(macro usersubject_list_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_t list_dir_perms))
+
+(macro usersubject_read_data_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 data_home_t data_home_t)))
+
+(macro usersubject_manage_data_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 data_home_t data_home_t)))
+
+(macro usersubject_rw_data_home_dirs ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_t rw_dir_perms))
+
+(macro usersubject_read_data_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 data_home_t data_home_t)))
+
+(macro usersubject_read_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_t (all_file_objects (read))))
+
+(macro usersubject_manage_data_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 data_home_t (all_file_objects (manage))))
+
+(macro usersubject_relabel_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_t (all_file_objects (relabel))))
+
+(macro usersubject_common_login_user_data_home_template ((type ARG1))
+    (call usersubject_manage_data_home (ARG1))
+    (call usersubject_relabel_data_home (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 data_home_t dir ".local")))
+
+(macro usersubject_search_all_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_object_type search_dir_perms))
+
+(macro usersubject_list_all_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_object_type list_dir_perms))
+
+(macro usersubject_read_all_data_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 data_home_object_type data_home_object_type)))
+
+(macro usersubject_manage_all_data_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 data_home_object_type data_home_object_type)))
+
+(macro usersubject_read_all_data_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 data_home_object_type data_home_object_type)))
+
+(macro usersubject_read_all_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_object_type (all_file_objects (read))))
+
+(macro usersubject_manage_all_data_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 data_home_object_type (all_file_objects (manage))))
+
+(macro usersubject_relabel_all_data_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_object_type (all_file_objects (relabel))))
+
+(macro usersubject_search_exec_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 exec_home_t search_dir_perms))
+
+(macro usersubject_list_exec_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 exec_home_t list_dir_perms))
+
+(macro usersubject_read_exec_home_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call read_files_pattern (ARG1 exec_home_t exec_home_t)))
+
+(macro usersubject_exec_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call exec_files_pattern (ARG1 exec_home_t exec_home_t)))
+
+(macro usersubject_manage_exec_home_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call manage_files_pattern (ARG1 exec_home_t exec_home_t)))
+
+(macro usersubject_read_exec_home_lnk_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 exec_home_t exec_home_t)))
+
+(macro usersubject_read_exec_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 exec_home_t read_file_perms)
+    (allow ARG1 exec_home_t list_dir_perms)
+    (allow ARG1 exec_home_t read_lnk_file_perms))
+
+(macro usersubject_manage_exec_home ((type ARG1))
+    (call usersubject_rw_data_home_dirs (ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 exec_home_t manage_file_perms)
+    (allow ARG1 exec_home_t manage_dir_perms)
+    (allow ARG1 exec_home_t manage_lnk_file_perms))
+
+(macro usersubject_relabel_exec_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 exec_home_t relabel_file_perms)
+    (allow ARG1 exec_home_t relabel_dir_perms)
+    (allow ARG1 exec_home_t relabel_lnk_file_perms))
+
+(macro usersubject_common_login_user_exec_home_template ((type ARG1))
+    (call usersubject_manage_exec_home (ARG1))
+    (call usersubject_relabel_exec_home (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 exec_home_t dir "bin"))
+    (call usersubject_data_home_object_type_transition (ARG1 exec_home_t dir "bin")))
+
+(macro usersubject_search_cert_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cert_home_t search_dir_perms))
+
+(macro usersubject_list_cert_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cert_home_t list_dir_perms))
+
+(macro usersubject_read_cert_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 cert_home_t cert_home_t)))
+
+(macro usersubject_manage_cert_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 cert_home_t cert_home_t)))
+
+(macro usersubject_read_cert_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 cert_home_t cert_home_t)))
+
+(macro usersubject_read_cert_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cert_home_t read_file_perms)
+    (allow ARG1 cert_home_t list_dir_perms)
+    (allow ARG1 cert_home_t read_lnk_file_perms))
+
+(macro usersubject_manage_cert_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 cert_home_t manage_file_perms)
+    (allow ARG1 cert_home_t manage_dir_perms)
+    (allow ARG1 cert_home_t manage_lnk_file_perms))
+
+(macro usersubject_relabel_cert_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cert_home_t relabel_file_perms)
+    (allow ARG1 cert_home_t relabel_dir_perms)
+    (allow ARG1 cert_home_t relabel_lnk_file_perms))
+
+(macro usersubject_common_login_user_cert_home_template ((type ARG1))
+    (call usersubject_manage_cert_home (ARG1))
+    (call usersubject_relabel_cert_home (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 cert_home_t dir ".pki")))
+
+(macro usersubject_read_terminfo_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 terminfo_home_t read_file_perms))
+
+(macro usersubject_manage_terminfo_config_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 terminfo_home_t manage_file_perms))
+
+(macro usersubject_relabel_terminfo_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 terminfo_home_t relabel_file_perms))
+
+(macro usersubject_common_login_user_terminfo_config_home_template ((type ARG1))
+    (call usersubject_manage_terminfo_config_home_files (ARG1))
+    (call usersubject_relabel_terminfo_config_home_files (ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 terminfo_home_t file ".terminfo")))
+
+(macro usersubject_tmp_object_type_transition_user_tmp ((type ARG1)(class ARG2)(name ARG3))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t ARG2 ARG3)))
+
+(macro usersubject_user_tmp_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_tmp (ARG1))
+    (call object_type_transition_pattern (ARG1 user_tmp_t ARG2 ARG3 ARG4)))
+
+(macro usersubject_search_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_t search_dir_perms))
+
+(macro usersubject_list_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_t list_dir_perms))
+
+(macro usersubject_read_tmp_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_files_pattern (ARG1 user_tmp_t user_tmp_t)))
+
+(macro usersubject_manage_tmp_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call manage_files_pattern (ARG1 user_tmp_t user_tmp_t)))
+
+(macro usersubject_read_tmp_lnk_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_lnk_files_pattern (ARG1 user_tmp_t user_tmp_t)))
+
+(macro usersubject_read_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_t (all_file_objects (read))))
+
+(macro usersubject_manage_tmp ((type ARG1))
+    (call files_rw_tmp_dirs (ARG1))
+    (allow ARG1 user_tmp_t (all_file_objects (manage))))
+
+(macro usersubject_relabel_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_t (all_file_objects (relabel))))
+
+(macro usersubject_common_login_user_tmp_template ((type ARG1))
+    (call usersubject_manage_tmp (ARG1))
+    (call usersubject_relabel_tmp (ARG1))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t file "*"))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t dir "*"))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t lnk_file "*"))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t fifo_file "*"))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t sock_file "*"))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t blk_file "*"))
+    (call files_tmp_object_type_transition (ARG1 user_tmp_t chr_file "*")))
+
+(macro usersubject_rw_tmp_dirs ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_t rw_dir_perms))
+
+(macro usersubject_search_all_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_object_type search_dir_perms))
+
+(macro usersubject_list_all_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_object_type list_dir_perms))
+
+(macro usersubject_read_all_tmp_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_files_pattern (ARG1 user_tmp_object_type user_tmp_object_type)))
+
+(macro usersubject_manage_all_tmp_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call manage_files_pattern (ARG1 user_tmp_object_type user_tmp_object_type)))
+
+(macro usersubject_read_all_tmp_lnk_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_lnk_files_pattern (ARG1 user_tmp_object_type user_tmp_object_type)))
+
+(macro usersubject_read_all_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_object_type (all_file_objects (read))))
+
+(macro usersubject_manage_all_tmp ((type ARG1))
+    (call files_rw_tmp_dirs (ARG1))
+    (allow ARG1 user_tmp_object_type (all_file_objects (manage))))
+
+(macro usersubject_relabel_all_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 user_tmp_object_type (all_file_objects (relabel))))
+
+(macro usersubject_tmpfs_object_type_transition_user_tmpfs ((type ARG1)(class ARG2)(name ARG3))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t ARG2 ARG3)))
+
+(macro usersubject_user_tmpfs_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call filesystems_search_tmpfs (ARG1))
+    (call object_type_transition_pattern (ARG1 user_tmpfs_t ARG2 ARG3 ARG4)))
+
+(macro usersubject_search_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 user_tmpfs_t search_dir_perms))
+
+(macro usersubject_list_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 user_tmpfs_t list_dir_perms))
+
+(macro usersubject_delete_tmpfs_files ((type ARG1))
+    (call filesystems_del_entry_tmpfs (ARG1))
+    (call delete_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
+
+(macro usersubject_read_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
+
+(macro usersubject_manage_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call manage_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
+
+(macro usersubject_read_tmpfs_lnk_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
+
+(macro usersubject_read_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 user_tmpfs_t (all_file_objects (read))))
+
+(macro usersubject_manage_tmpfs ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 user_tmpfs_t (all_file_objects (manage))))
+
+(macro usersubject_delete_tmpfs ((type ARG1))
+    (call filesystems_del_entry_tmpfs (ARG1))
+    (allow ARG1 user_tmpfs_t del_entry_dir_perms)
+    (allow ARG1 user_tmpfs_t (all_file_objects (delete))))
+
+(macro usersubject_relabel_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 user_tmpfs_t (all_file_objects (relabel))))
+
+(macro usersubject_rw_tmpfs_dirs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 user_tmpfs_t rw_dir_perms))
+
+(macro usersubject_common_login_user_tmpfs_template ((type ARG1))
+    (call usersubject_manage_tmpfs (ARG1))
+    (call usersubject_relabel_tmpfs (ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t file "*"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t dir "*"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t lnk_file "*"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t fifo_file "*"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t sock_file "*"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t blk_file "*"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t chr_file "*")))
+
+(macro usersubject_search_all_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 usersubject_tmpfs_object_type search_dir_perms))
+
+(macro usersubject_list_all_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 usersubject_tmpfs_object_type list_dir_perms))
+
+(macro usersubject_read_all_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 usersubject_tmpfs_object_type usersubject_tmpfs_object_type)))
+
+(macro usersubject_manage_all_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call manage_files_pattern (ARG1 usersubject_tmpfs_object_type usersubject_tmpfs_object_type)))
+
+(macro usersubject_read_all_tmpfs_lnk_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 usersubject_tmpfs_object_type usersubject_tmpfs_object_type)))
+
+(macro usersubject_read_all_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (read))))
+
+(macro usersubject_manage_all_tmpfs ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (manage))))
+
+(macro usersubject_delete_all_tmpfs ((type ARG1))
+    (call filesystems_del_entry_tmpfs (ARG1))
+    (allow ARG1 usersubject_tmpfs_object_type del_entry_dir_perms)
+    (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (delete))))
+
+(macro usersubject_relabel_all_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (relabel))))
+
+(macro usersubject_spool_object_type_transition_mail_spool_files ((type ARG1)(name ARG2))
+    (call files_spool_object_type_transition (ARG1 user_mail_spool_t file ARG2)))
+
+(macro usersubject_read_mail_spool_files ((type ARG1))
+    (call files_search_spool (ARG1))
+    (allow ARG1 user_mail_spool_t read_file_perms))
+
+(macro usersubject_rw_mail_spool_files ((type ARG1))
+    (call files_search_spool (ARG1))
+    (allow ARG1 user_mail_spool_t rw_file_perms))
+
+(macro usersubject_manage_mail_spool_files ((type ARG1))
+    (call files_rw_spool_dirs (ARG1))
+    (allow ARG1 user_mail_spool_t manage_file_perms))
+
+(macro usersubject_relabel_mail_spool_files ((type ARG1))
+    (call files_search_spool (ARG1))
+    (allow ARG1 user_mail_spool_t relabel_file_perms))
+
+(macro usersubject_use_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 user_pty_dev_t rw_term_perms))
+
+(macro usersubject_use_inherited_ptys ((type ARG1))
+    (allow ARG1 user_pty_dev_t rw_inherited_term_perms))
+
+(macro usersubject_setattr_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 user_pty_dev_t (chr_file (setattr))))
+
+(macro usersubject_relabel_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 user_pty_dev_t relabel_chr_file_perms))
+
+(macro usersubject_relabelto_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 user_pty_dev_t relabelto_chr_file_perms))
+
+(macro usersubject_relabelfrom_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 user_pty_dev_t relabelfrom_chr_file_perms))
+
+(macro usersubject_common_login_user_pty_template ((type ARG1))
+    (call terminals_user_pty (ARG1 user_pty_dev_t))
+    (call usersubject_use_ptys (ARG1)))
+
+(macro usersubject_use_all_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 usersubject_pty_object_type rw_term_perms))
+
+(macro usersubject_use_all_inherited_ptys ((type ARG1))
+    (allow ARG1 usersubject_pty_object_type rw_inherited_term_perms))
+
+(macro usersubject_setattr_all_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 usersubject_pty_object_type (chr_file (setattr))))
+
+(macro usersubject_relabel_all_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 usersubject_pty_object_type relabel_chr_file_perms))
+
+(macro usersubject_relabelto_all_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 usersubject_pty_object_type relabelto_chr_file_perms))
+
+(macro usersubject_relabelfrom_all_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 usersubject_pty_object_type relabelfrom_chr_file_perms))
+
+(macro usersubject_use_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 user_tty_dev_t rw_term_perms))
+
+(macro usersubject_use_inherited_ttys ((type ARG1))
+    (allow ARG1 user_tty_dev_t rw_inherited_term_perms))
+
+(macro usersubject_setattr_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 user_tty_dev_t (chr_file (setattr))))
+
+(macro usersubject_relabel_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 user_tty_dev_t relabel_chr_file_perms))
+
+(macro usersubject_relabelto_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 user_tty_dev_t relabelto_chr_file_perms))
+
+(macro usersubject_relabelfrom_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 user_tty_dev_t relabelfrom_chr_file_perms))
+
+(macro usersubject_common_login_user_tty_template ((type ARG1))
+    (call terminals_user_tty (ARG1 user_tty_dev_t))
+    (call usersubject_use_ttys (ARG1)))
+
+(macro usersubject_use_all_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usersubject_tty_object_type rw_term_perms))
+
+(macro usersubject_use_all_inherited_ttys ((type ARG1))
+    (allow ARG1 usersubject_tty_object_type rw_inherited_term_perms))
+
+(macro usersubject_setattr_all_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usersubject_tty_object_type (chr_file (setattr))))
+
+(macro usersubject_relabel_all_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usersubject_tty_object_type relabel_chr_file_perms))
+
+(macro usersubject_relabelto_all_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usersubject_tty_object_type relabelto_chr_file_perms))
+
+(macro usersubject_relabelfrom_all_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usersubject_tty_object_type relabelfrom_chr_file_perms))
+
+(macro usersubject_relabel_terminals ((type ARG1))
+    (call usersubject_relabel_ptys (ARG1))
+    (call usersubject_relabel_ttys (ARG1)))
+
+(macro usersubject_setattr_terminals ((type ARG1))
+    (call usersubject_setattr_ptys (ARG1))
+    (call usersubject_setattr_ttys (ARG1)))
+
+(macro usersubject_use_terminals ((type ARG1))
+    (call usersubject_use_ptys (ARG1))
+    (call usersubject_use_ttys (ARG1)))
+
+(macro usersubject_use_inherited_terminals ((type ARG1))
+    (call usersubject_use_inherited_ptys (ARG1))
+    (call usersubject_use_inherited_ttys (ARG1)))
+
+(macro usersubject_relabel_all_terminals ((type ARG1))
+    (call usersubject_relabel_all_ptys (ARG1))
+    (call usersubject_relabel_all_ttys (ARG1)))
+
+(macro usersubject_setattr_all_terminals ((type ARG1))
+    (call usersubject_setattr_all_ptys (ARG1))
+    (call usersubject_setattr_all_ttys (ARG1)))
+
+(macro usersubject_use_all_terminals ((type ARG1))
+    (call usersubject_use_all_ptys (ARG1))
+    (call usersubject_use_all_ttys (ARG1)))
+
+(macro usersubject_use_all_inherited_terminals ((type ARG1))
+    (call usersubject_use_all_inherited_ptys (ARG1))
+    (call usersubject_use_all_inherited_ttys (ARG1)))
+
+(macro usersubject_create_ptys ((type ARG1))
+    (call terminals_create_pty (ARG1 user_pty_dev_t)))
+
+(macro usersubject_base_subject_template ((role ARG1)(type ARG2))
+    (call subject_type (ARG2))
+    (call usersubject_type (ARG2))
+    (roletype ARG1 ARG2))
+
+(macro usersubject_base_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
+    (call usersubject_base_subject_template (ARG2 ARG3))
+    (call system_roleallow_role (ARG2))
+    (userrole ARG1 ARG2))
+
+(macro usersubject_type ((type ARG1))
+    (typeattributeset usersubject_type ARG1))
+
+(macro usersubject_base_common_subject_template ((role ARG1)(type ARG2))
+    (call subject_common_type (ARG2))
+    (call usersubject_common_type (ARG2))
+    (roletype ARG1 ARG2))
+
+(macro usersubject_base_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
+    (call usersubject_base_common_subject_template (ARG2 ARG3))
+    (call system_roleallow_role (ARG2))
+    (call system_object_userrole (ARG1))
+    (userrole ARG1 ARG2))
+
+(macro usersubject_common_type ((type ARG1))
+    (typeattributeset usersubject_common_type ARG1))
+
+(macro usersubject_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
+    (call usersubject_base_common_login_subject_template (ARG1 ARG2 ARG3))
+    (call usersubject_common_login_subject_type (ARG3))
+    (call usersubject_mls_template (ARG1 systemlow systemlow systemhigh)))
+
+(macro usersubject_common_login_subject_type ((type ARG1))
+    (typeattributeset usersubject_common_login_subject_type ARG1))
+
+(macro usersubject_priv_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
+    (call usersubject_common_login_subject_template (ARG1 ARG2 ARG3))
+    (call usersubject_priv_login_subject_type (ARG3)))
+
+(macro usersubject_priv_login_subject_type ((type ARG1))
+    (typeattributeset usersubject_priv_login_subject_type ARG1))
+
+(macro usersubject_mls_template ((user ARG1)(level ARG2)(level ARG3)(level ARG4))
+    (userlevel ARG1 ARG3)
+    (userrange ARG1 (ARG3 ARG4)))
+
+(macro usersubject_common_login_user_object_template ((type ARG1))
+    (call usersubject_exec_home (ARG1))
+    (call usersubject_common_login_user_exec_home_template (ARG1))
+    (call usersubject_common_login_user_cert_home_template (ARG1))
+    (call usersubject_common_login_user_terminfo_config_home_template (ARG1))
+    (call usersubject_common_login_user_home_template (ARG1))
+    (call usersubject_common_login_user_cache_home_template (ARG1))
+    (call usersubject_common_login_user_config_home_template (ARG1))
+    (call usersubject_common_login_user_data_home_template (ARG1))
+    (call usersubject_common_login_user_tmp_template (ARG1))
+    (call usersubject_common_login_user_tmpfs_template (ARG1))
+    (call usersubject_common_login_user_pty_template (ARG1))
+    (call usersubject_common_login_user_tty_template (ARG1))
+    (call usersubject_rw_mail_spool_files (ARG1)))
+
+(macro usersubject_dontaudit_dynamic_subject_type_transition_all_common_subjects ((type ARG1))
+    (dontaudit ARG1 usersubject_common_type (process (dyntransition))))
+
+(macro usersubject_dontaudit_manual_subject_type_transition_all_common_subjects ((type ARG1))
+    (dontaudit ARG1 usersubject_common_type (process (transition))))
+
+(macro usersubject_dynamic_subject_type_transition_all_common_login_subjects ((type ARG1))
+    (call dynamic_subject_type_transition_pattern (ARG1 usersubject_common_login_subject_type)))
+
+(macro usersubject_dynamic_subject_type_transition_all_unpriv_login_subjects ((type ARG1))
+    (call dynamic_subject_type_transition_pattern (ARG1 usersubject_unpriv_login_subject_type)))
+
+(macro usersubject_shell_exec_manual_subject_type_transition_all_common_login_subjects ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 usersubject_common_login_subject_type)))
+
+(macro usersubject_shell_exec_manual_subject_type_transition_all_unpriv_login_subjects ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 usersubject_unpriv_login_subject_type)))
+
+(macro usersubject_dontaudit_create_keyring_all_common_subjects ((type ARG1))
+    (dontaudit ARG1 usersubject_common_type (key (create))))
+
+(macro usersubject_rw_inherited_fifo_files_all_common_subjects ((type ARG1))
+    (allow ARG1 usersubject_common_type rw_inherited_fifo_file_perms))
+
+(macro usersubject_use_fd_all_common_subjects ((type ARG1))
+    (allow ARG1 usersubject_common_type (fd (use))))
+
+(macro usersubject_read_state_all_common_login_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 usersubject_common_login_subject_type read_file_perms)
+    (allow ARG1 usersubject_common_login_subject_type list_dir_perms)
+    (allow ARG1 usersubject_common_login_subject_type read_lnk_file_perms))
+
+(macro usersubject_create_keyring_all_common_login_subjects ((type ARG1))
+    (allow ARG1 self (process (setkeycreate)))
+    (allow ARG1 usersubject_common_login_subject_type (key (create search link write))))
+
+(macro usersubject_use_fd_all_common_login_subjects ((type ARG1))
+    (allow ARG1 usersubject_common_login_subject_type (fd (use))))
+
+(macro usersubject_link_keyring_all_common_login_subjects ((type ARG1))
+    (allow ARG1 usersubject_common_login_subject_type (key (search link))))
+
+(macro usersubject_send_signal_all_common_login_subjects ((type ARG1))
+    (allow ARG1 usersubject_common_login_subject_type (process (signal))))

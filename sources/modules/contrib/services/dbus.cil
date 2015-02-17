@@ -1,0 +1,301 @@
+(typeattribute dbus_admin_subject_type)
+(typeattribute dbus_system_client_subject_type)
+(typeattribute dbus_unconfined_subject_type)
+(typeattribute dbus_subject_type)
+
+(typeattribute dbus_object_type)
+(typeattribute dbus_config_object_type)
+
+(type dbusd_t)
+(type dbusd_exec_t)
+(call subject_common_type (dbusd_t))
+(call subject_entry (dbusd_t dbusd_exec_t))
+(roletype system_r dbusd_t)
+
+(typeattributeset dbus_subject_type dbusd_t)
+
+(context dbusd_exec (system_u object_r dbusd_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dbus-daemon" file dbusd_exec)
+
+(type dbus_config_t)
+(call dbus_config_object_type (dbus_config_t))
+
+(context dbus_config (system_u object_r dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1(/.*)?" any dbus_config)
+
+(type dbus_runtime_t)
+(call files_runtime_object_type (dbus_runtime_t))
+
+(typeattributeset dbus_object_type dbus_runtime_t)
+
+(context dbus_runtime (system_u object_r dbus_runtime_t (systemlow systemlow)))
+(filecon "/var/run/dbus(/.*)?" any dbus_runtime)
+
+(allow dbusd_t dbus_runtime_t manage_dir_perms)
+(allow dbusd_t dbus_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (dbusd_t dbus_runtime_t dir "*"))
+
+(type dbus_lib_t)
+(call files_lib_object_type (dbus_lib_t))
+
+(typeattributeset dbus_object_type dbus_lib_t)
+
+(context dbus_lib (system_u object_r dbus_lib_t (systemlow systemlow)))
+(filecon "/var/lib/dbus(/.*)?" any dbus_lib)
+
+(allow dbusd_t dbus_lib_t manage_dir_perms)
+(allow dbusd_t dbus_lib_t manage_file_perms)
+(call files_lib_object_type_transition (dbusd_t dbus_lib_t dir "*"))
+
+(allow dbusd_t self (process (getcap setcap setrlimit)))
+(allow dbusd_t self (capability (setgid setuid sys_resource)))
+
+(call system_read_kernel_sysctl (dbusd_t))
+
+(call devices_rw_inherited_dri (dbusd_t))
+(call devices_rw_inherited_event (dbusd_t))
+
+(call audit_client_subject_type (dbusd_t))
+
+(call auth_read_pam_console_runtime_files (dbusd_t))
+
+(call dbus_chat_all_system_client_subjects (dbusd_t))
+(call dbus_chat_all_unconfined_subjects (dbusd_t))
+
+(call dbus_read_all_config (dbusd_t))
+
+(call dbus_read_state_all_system_client_subjects (dbusd_t))
+(call dbus_read_state_all_unconfined_subjects (dbusd_t))
+
+(optional dbusd_optional_login_logind
+    (call login_use_fd_logind (dbusd_t))
+    (call login_write_inherited_logind_systemd_runtime_fifo_files (dbusd_t)))
+
+(optional dbusd_optional_systemd
+    (call systemd_daemon (dbusd_t dbusd_exec_t))
+
+    (call systemd_socket_activated (dbusd_t dbus_runtime_t))
+
+    (type dbusd_unit_t)
+    (call systemd_unit_object_type (dbusd_unit_t))
+
+    (typeattributeset dbus_object_type dbusd_unit_t)
+
+    (context dbusd_unit (system_u object_r dbusd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*dbus.*" file dbusd_unit)
+
+    (allow dbus_admin_subject_type dbusd_unit_t (service (all))))
+
+(optional dbusd_optional_unconfined
+    (call unconfined_use_fd_all_subjects (dbusd_t)))
+
+(allow dbus_subject_type self create_netlink_selinux_socket_perms)
+(allow dbus_subject_type self (unix_stream_socket (listen accept)))
+
+(call devices_read_urandom (dbus_subject_type))
+
+(call files_read_data (dbus_subject_type))
+
+(call selinux_compute_access_vector (dbus_subject_type))
+(call selinux_list_securityfs (dbus_subject_type))
+
+(call auth_nsswitch_client_subject_type (dbus_subject_type))
+
+(call miscfiles_read_locale (dbus_subject_type))
+
+(call seutil_read_selinux_config_files (dbus_subject_type))
+(call seutil_read_default_context_files (dbus_subject_type))
+
+(optional dbus_subject_type_optional_journal
+    (call journal_client_subject_type (dbus_subject_type)))
+
+(optional dbus_subject_type_optional_login_logind
+    (call login_read_logind_systemd_runtime (dbus_subject_type)))
+
+(optional dbus_subject_type_optional_systemd
+    (call systemd_getattr_unit_dirs (dbus_subject_type)))
+
+(allow dbus_system_client_subject_type self (dbus (send_msg)))
+(allow dbus_system_client_subject_type dbusd_t (dbus (send_msg)))
+
+(call dbus_read_config_files (dbus_system_client_subject_type))
+(call dbus_read_lib_files (dbus_system_client_subject_type))
+
+(call dbus_stream_connect_system (dbus_system_client_subject_type))
+
+(typeattributeset dbus_object_type dbus_config_object_type)
+
+(allow dbus_admin_subject_type dbusd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (dbus_admin_subject_type dbusd_t))
+
+(allow dbus_admin_subject_type dbus_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(allow dbus_unconfined_subject_type self (dbus (acquire_svc)))
+
+(call dbus_acquire_system_service (dbus_unconfined_subject_type))
+
+(call dbus_chat_all_unconfined_subjects (dbus_unconfined_subject_type))
+(call dbus_chat_all_system_client_subjects (dbus_unconfined_subject_type))
+
+(macro dbus_exec_dbusd ((type ARG1))
+    (call can_exec (ARG1 dbusd_exec_t)))
+
+(macro dbus_auto_subject_type_transition_system ((type ARG1))
+    (call dbus_send_signal_system (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dbusd_exec_t dbusd_t)))
+
+(macro dbus_send_signal_system ((type ARG1))
+    (allow ARG1 dbusd_t (process (signal))))
+
+(macro dbus_entry_subject ((type ARG1))
+    (call subject_entry (ARG1 dbusd_exec_t)))
+
+(macro dbus_config_object_type ((type ARG1))
+    (call files_config_object_type (ARG1))
+    (typeattributeset dbus_config_object_type ARG1))
+
+(macro dbus_acquire_system_service ((type ARG1))
+    (allow ARG1 dbusd_t (dbus (acquire_svc))))
+
+(macro dbus_system_service ((type ARG1))
+    (call dbus_acquire_system_service (ARG1))
+    (call dbus_system_client_subject_type (ARG1)))
+
+(macro dbus_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dbus_config_t search_dir_perms))
+
+(macro dbus_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dbus_config_t list_dir_perms))
+
+(macro dbus_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 dbus_config_t dbus_config_t)))
+
+(macro dbus_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 dbus_config_t dbus_config_t)))
+
+(macro dbus_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dbus_config_t read_file_perms)
+    (allow ARG1 dbus_config_t list_dir_perms)
+    (allow ARG1 dbus_config_t read_lnk_file_perms))
+
+(macro dbus_read_all_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dbus_config_object_type read_file_perms)
+    (allow ARG1 dbus_config_object_type list_dir_perms)
+    (allow ARG1 dbus_config_object_type read_lnk_file_perms))
+
+(macro dbus_manage_all_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 dbus_config_object_type manage_file_perms)
+    (allow ARG1 dbus_config_object_type manage_dir_perms)
+    (allow ARG1 dbus_config_object_type manage_lnk_file_perms))
+
+(macro dbus_rw_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dbus_config_t rw_dir_perms))
+
+(macro dbus_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dbus_runtime_t search_dir_perms))
+
+(macro dbus_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dbus_runtime_t list_dir_perms))
+
+(macro dbus_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 dbus_runtime_t dbus_runtime_t)))
+
+(macro dbus_read_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_sock_files_pattern (ARG1 dbus_runtime_t dbus_runtime_t)))
+
+(macro dbus_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 dbus_runtime_t dbus_runtime_t)))
+
+(macro dbus_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dbus_runtime_t read_file_perms)
+    (allow ARG1 dbus_runtime_t list_dir_perms)
+    (allow ARG1 dbus_runtime_t read_sock_file_perms)
+    (allow ARG1 dbus_runtime_t read_lnk_file_perms))
+
+(macro dbus_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 dbus_runtime_t manage_file_perms)
+    (allow ARG1 dbus_runtime_t manage_dir_perms)
+    (allow ARG1 dbus_runtime_t manage_sock_file_perms)
+    (allow ARG1 dbus_runtime_t manage_lnk_file_perms))
+
+(macro dbus_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dbus_lib_t search_dir_perms))
+
+(macro dbus_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dbus_lib_t list_dir_perms))
+
+(macro dbus_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 dbus_lib_t dbus_lib_t)))
+
+(macro dbus_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 dbus_lib_t dbus_lib_t)))
+
+(macro dbus_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dbus_lib_t read_file_perms)
+    (allow ARG1 dbus_lib_t list_dir_perms)
+    (allow ARG1 dbus_lib_t read_lnk_file_perms))
+
+(macro dbus_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 dbus_lib_t manage_file_perms)
+    (allow ARG1 dbus_lib_t manage_dir_perms)
+    (allow ARG1 dbus_lib_t manage_lnk_file_perms))
+
+(macro dbus_chat_all_unconfined_subjects ((type ARG1))
+    (allow ARG1 dbus_unconfined_subject_type (dbus (send_msg)))
+    (allow dbus_unconfined_subject_type ARG1 (dbus (send_msg))))
+
+(macro dbus_read_state_all_unconfined_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 dbus_unconfined_subject_type list_dir_perms)
+    (allow ARG1 dbus_unconfined_subject_type read_file_perms)
+    (allow ARG1 dbus_unconfined_subject_type read_lnk_file_perms))
+
+(macro dbus_chat_all_system_client_subjects ((type ARG1))
+    (allow ARG1 dbus_system_client_subject_type (dbus (send_msg)))
+    (allow dbus_system_client_subject_type ARG1 (dbus (send_msg))))
+
+(macro dbus_read_state_all_system_client_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 dbus_system_client_subject_type list_dir_perms)
+    (allow ARG1 dbus_system_client_subject_type read_file_perms)
+    (allow ARG1 dbus_system_client_subject_type read_lnk_file_perms))
+
+(macro dbus_stream_connect_system ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern
+        (ARG1 dbus_runtime_t dbus_runtime_t dbusd_t)))
+
+(macro dbus_system_client_subject_type ((type ARG1))
+    (typeattributeset dbus_system_client_subject_type ARG1))
+
+(macro dbus_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset dbus_admin_subject_type ARG1)
+    (optional dbus_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
+
+(macro dbus_unconfined_subject_type ((type ARG1))
+    (typeattributeset dbus_unconfined_subject_type ARG1))

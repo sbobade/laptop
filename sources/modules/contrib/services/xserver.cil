@@ -1,0 +1,374 @@
+(roleattribute xserver_role)
+
+(typeattribute xserver_client_subject_type)
+
+(type xserver_t)
+(type xserver_exec_t)
+(call applications_app (xserver_t xserver_exec_t))
+(roletype xserver_role xserver_t)
+
+(roleattributeset xserver_role system_r)
+
+(context xserver_exec (system_u object_r xserver_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/Xorg" file xserver_exec)
+(filecon "/usr/libexec/Xorg\.bin" file xserver_exec)
+
+(type xserver_config_t)
+(call files_config_object_type (xserver_config_t))
+
+(context xserver_config (system_u object_r xserver_config_t (systemlow systemlow)))
+(filecon "/etc/X11(/.*)?" any xserver_config)
+(filecon "/etc/X.*\.hosts" file xserver_config)
+
+(type xserver_log_t)
+(call files_log_object_type (xserver_log_t))
+
+(context xserver_log (system_u object_r xserver_log_t (systemlow systemlow)))
+(filecon "/var/log/Xorg.*\.log.*" file xserver_log)
+
+(allow xserver_t xserver_log_t (file (setattr)))
+(allow xserver_t xserver_log_t create_file_perms)
+(allow xserver_t xserver_log_t append_file_perms)
+(allow xserver_t xserver_log_t delete_file_perms)
+(allow xserver_t xserver_log_t read_file_perms)
+(call files_log_object_type_transition (xserver_t xserver_log_t file "*"))
+
+(type xserver_home_t)
+(call usersubject_home_object_type (xserver_home_t))
+
+(type xserver_lib_t)
+(call files_lib_object_type (xserver_lib_t))
+
+(context xserver_lib (system_u object_r xserver_lib_t (systemlow systemlow)))
+(filecon "/var/lib/xkb(/.*)?" any xserver_lib)
+
+(allow xserver_t xserver_lib_t manage_dir_perms)
+(allow xserver_t xserver_lib_t manage_file_perms)
+(call files_lib_object_type_transition (xserver_t xserver_lib_t dir "*"))
+
+(type xserver_tmpfs_t)
+(call files_tmpfs_object_type (xserver_tmpfs_t))
+
+(allow xserver_t xserver_tmpfs_t manage_file_perms)
+(allow xserver_t xserver_tmpfs_t manage_sock_file_perms)
+(call filesystems_tmpfs_object_type_transition (xserver_t xserver_tmpfs_t file "*"))
+(call filesystems_tmpfs_object_type_transition (xserver_t xserver_tmpfs_t sock_file "*"))
+
+(type xserver_port_t)
+(call network_unreserved_port_object_type (xserver_port_t))
+
+(context xserver_port (system_u object_r xserver_port_t (systemlow systemlow)))
+(portcon "tcp" 6000 xserver_port)
+(portcon "udp" 6000 xserver_port)
+
+(allow xserver_t self (capability (dac_override setgid setuid sys_admin
+    sys_rawio ipc_owner sys_ptrace)))
+(allow xserver_t self (process (getpgid setpgid)))
+(allow xserver_t self (unix_stream_socket (accept listen)))
+(allow xserver_t self rw_fifo_file_perms)
+
+(allow xserver_t xserver_client_subject_type rw_shm_perms)
+
+(allow xserver_t xserver_client_subject_type read_file_perms)
+(allow xserver_t xserver_client_subject_type list_dir_perms)
+(allow xserver_t xserver_client_subject_type read_lnk_file_perms)
+
+(call system_write_mtrr_proc (xserver_t))
+
+(call commands_exec (xserver_t))
+(call commands_exec_shell (xserver_t))
+
+(call devices_rw_xserver_misc (xserver_t))
+(call devices_rw_framebuf (xserver_t))
+(call devices_rw_dri (xserver_t))
+(call devices_rw_event (xserver_t))
+
+(call files_read_config_files (xserver_t))
+(call files_read_data (xserver_t))
+
+(call filesystems_list_sysfs (xserver_t))
+(call filesystems_rw_sysfs_files (xserver_t))
+(call filesystems_read_sysfs_lnk_files (xserver_t))
+(call filesystems_rw_inherited_tmpfs_files (xserver_t))
+
+(call network_tcp_bind_generic_node (xserver_t))
+
+(call auth_nsswitch_client_subject_type (xserver_t))
+
+(call miscfiles_read_net_config_files (xserver_t))
+(call miscfiles_read_fonts_data_files (xserver_t))
+(call miscfiles_read_locale (xserver_t))
+
+(call udev_client_subject_type (xserver_t))
+
+(call xserver_tcp_bind_xserver_port (xserver_t))
+(call xserver_auto_subject_type_transition_wrap (xserver_t))
+
+(optional xserver_optional_dbus
+    (call dbus_system_client_subject_type (xserver_t)))
+
+(optional xserver_optional_login_logind
+    (call login_logind_client_subject_type (xserver_t)))
+
+(optional xserver_optional_unconfined
+    (call unconfined_rw_shm_all_subjects (xserver_t))
+    (call unconfined_read_state_all_subjects (xserver_t)))
+
+(call xserver_stream_connect (xserver_client_subject_type))
+
+(type xserver_wrap_t)
+(type xserver_wrap_exec_t)
+(call applications_app (xserver_wrap_t xserver_wrap_exec_t))
+(roletype xserver_role xserver_wrap_t)
+
+(context xserver_wrap_exec (system_u object_r xserver_wrap_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/Xorg\.wrap" file xserver_wrap_exec)
+
+(call xserver_auto_subject_type_transition (xserver_wrap_t))
+(call xserver_read_config_files (xserver_wrap_t))
+
+(type xsession_exec_t)
+(call commands_exec_object_type (xsession_exec_t))
+
+(context xsession_exec (system_u object_r xsession_exec_t (systemlow systemlow)))
+(filecon "/etc/X11/xinit/Xsession" any xsession_exec)
+
+(type xinit_t)
+(type xinit_exec_t)
+(call applications_app (xinit_t xinit_exec_t))
+(roletype xserver_role xinit_t)
+
+(context xinit_exec (system_u object_r xinit_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xinit" file xinit_exec)
+
+(allow xinit_t self (process (setpgid)))
+
+(call commands_exec (xinit_t))
+(call commands_exec_shell (xinit_t))
+
+(call filesystems_search_tmpfs (xinit_t))
+
+(call auth_nsswitch_client_subject_type (xinit_t))
+
+(call miscfiles_read_net_config_files (xinit_t))
+(call miscfiles_read_locale (xinit_t))
+
+(call xserver_tcp_connect_xserver_port (xinit_t))
+
+(type xauth_t)
+(type xauth_exec_t)
+(call subject_common_type (xauth_t))
+(call applications_app (xauth_t xauth_exec_t))
+(roletype xserver_role xauth_t)
+
+(context xauth_exec (system_u object_r xauth_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xauth" file xauth_exec)
+
+(allow xauth_t self create_unix_dgram_socket_perms)
+
+(call filesystems_getattr_filesystems (xauth_t))
+(call filesystems_read_sysfs_files (xauth_t))
+
+(call auth_nsswitch_client_subject_type (xauth_t))
+
+(call miscfiles_read_net_config_files (xauth_t))
+
+(type xauth_home_t)
+(call usersubject_home_object_type (xauth_home_t))
+
+(allow xauth_t xauth_home_t manage_file_perms)
+(call usersubject_home_dir_object_type_transition (xauth_t xauth_home_t file "*"))
+
+(macro xserver_exec ((type ARG1))
+    (call can_exec (ARG1 xserver_exec_t)))
+
+(macro xserver_exec_wrap ((type ARG1))
+    (call can_exec (ARG1 xserver_wrap_exec_t)))
+
+(macro xserver_exec_xsession ((type ARG1))
+    (call can_exec (ARG1 xsession_exec_t)))
+
+(macro xserver_exec_xinit ((type ARG1))
+    (call can_exec (ARG1 xinit_exec_t)))
+
+(macro xserver_exec_xauth ((type ARG1))
+    (call can_exec (ARG1 xauth_exec_t)))
+
+(macro xserver_auto_subject_type_transition ((type ARG1))
+    (call xserver_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xserver_exec_t xserver_t)))
+
+(macro xserver_send_signal ((type ARG1))
+    (allow ARG1 xserver_t (process (signal))))
+
+(macro xserver_run ((type ARG1)(role ARG2))
+    (call xserver_auto_subject_type_transition (ARG1))
+    (roleattributeset xserver_role ARG2))
+
+(macro xserver_auto_subject_type_transition_wrap ((type ARG1))
+    (call xserver_send_signal_wrap (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xserver_wrap_exec_t xserver_wrap_t)))
+
+(macro xserver_send_signal_wrap ((type ARG1))
+    (allow ARG1 xserver_wrap_t (process (signal))))
+
+(macro xserver_auto_subject_type_transition_xinit ((type ARG1))
+    (call xserver_send_signal_xinit (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xinit_exec_t xinit_t)))
+
+(macro xserver_send_signal_xinit ((type ARG1))
+    (allow ARG1 xinit_t (process (signal))))
+
+(macro xserver_auto_subject_type_transition_xauth ((type ARG1))
+    (call xserver_send_signal_xauth (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xauth_exec_t xauth_t)))
+
+(macro xserver_send_signal_xauth ((type ARG1))
+    (allow ARG1 xauth_t (process (signal))))
+
+(macro xserver_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 xserver_config_t search_dir_perms))
+
+(macro xserver_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 xserver_config_t list_dir_perms))
+
+(macro xserver_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 xserver_config_t xserver_config_t)))
+
+(macro xserver_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 xserver_config_t xserver_config_t)))
+
+(macro xserver_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 xserver_config_t read_file_perms)
+    (allow ARG1 xserver_config_t list_dir_perms)
+    (allow ARG1 xserver_config_t read_lnk_file_perms))
+
+(macro xserver_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 xserver_config_t manage_file_perms)
+    (allow ARG1 xserver_config_t manage_dir_perms)
+    (allow ARG1 xserver_config_t manage_lnk_file_perms))
+
+(macro xserver_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 xserver_lib_t search_dir_perms))
+
+(macro xserver_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 xserver_lib_t list_dir_perms))
+
+(macro xserver_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 xserver_lib_t xserver_lib_t)))
+
+(macro xserver_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 xserver_lib_t xserver_lib_t)))
+
+(macro xserver_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 xserver_lib_t read_file_perms)
+    (allow ARG1 xserver_lib_t list_dir_perms)
+    (allow ARG1 xserver_lib_t read_lnk_file_perms))
+
+(macro xserver_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 xserver_lib_t manage_file_perms)
+    (allow ARG1 xserver_lib_t manage_dir_perms)
+    (allow ARG1 xserver_lib_t manage_lnk_file_perms))
+
+(macro xserver_read_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 xserver_log_t read_file_perms))
+
+(macro xserver_manage_log_files ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 xserver_log_t manage_file_perms))
+
+(macro xserver_read_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 xserver_tmpfs_t read_file_perms))
+
+(macro xserver_manage_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 xserver_tmpfs_t manage_file_perms))
+
+(macro xserver_relabel_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 xserver_tmpfs_t relabel_file_perms))
+
+(macro xserver_read_tmpfs_sock_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 xserver_tmpfs_t read_sock_file_perms))
+
+(macro xserver_manage_tmpfs_sock_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 xserver_tmpfs_t manage_sock_file_perms))
+
+(macro xserver_relabel_tmpfs_sock_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 xserver_tmpfs_t relabel_sock_file_perms))
+
+(macro xserver_manage_tmpfs ((type ARG1))
+    (call xserver_manage_tmpfs_files (ARG1))
+    (call xserver_manage_tmpfs_sock_files (ARG1)))
+
+(macro xserver_relabel_tmpfs ((type ARG1))
+    (call xserver_relabel_tmpfs_files (ARG1))
+    (call xserver_relabel_tmpfs_sock_files (ARG1)))
+
+(macro xserver_tcp_bind_xserver_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 xserver_port_t (tcp_socket (name_bind))))
+
+(macro xserver_tcp_connect_xserver_port ((type ARG1))
+    (allow ARG1 xserver_port_t (tcp_socket (name_connect))))
+
+(macro xserver_read_xauth_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xauth_home_t read_file_perms))
+
+(macro xserver_manage_xauth_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 xauth_home_t manage_file_perms))
+
+(macro xserver_relabel_xauth_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xauth_home_t relabel_file_perms))
+
+(macro xserver_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xserver_home_t read_file_perms))
+
+(macro xserver_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 xserver_home_t manage_file_perms))
+
+(macro xserver_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xserver_home_t relabel_file_perms))
+
+(macro xserver_client_subject ((type ARG1))
+    (typeattributeset xserver_client_subject_type ARG1))
+
+(macro xserver_signal_all_client_subjects ((type ARG1))
+    (allow ARG1 xserver_client_subject_type (process (signal))))
+
+(macro xserver_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 xserver_t read_file_perms)
+    (allow ARG1 xserver_t list_dir_perms)
+    (allow ARG1 xserver_t read_lnk_file_perms))
+
+(macro xserver_stream_connect ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call stream_connect_pattern (ARG1 xserver_tmpfs_t xserver_tmpfs_t xserver_t)))

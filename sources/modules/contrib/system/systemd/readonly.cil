@@ -1,0 +1,34 @@
+(type readonly_t)
+(type readonly_exec_t)
+(call systemd_daemon (readonly_t readonly_exec_t))
+
+(context readonly_exec (system_u object_r readonly_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/fedora-readonly" file readonly_exec)
+
+(allow readonly_t self rw_fifo_file_perms)
+
+(call system_search_invalid (readonly_t))
+
+(call commands_exec (readonly_t))
+(call commands_mprot_read_shell_exec_files (readonly_t))
+
+(call filesystems_read_devtmpfs_lnk_files (readonly_t))
+
+(call files_read_config (readonly_t))
+
+(call selinux_get_enforce_mode (readonly_t))
+
+(call auth_nsswitch_client_subject_type (readonly_t))
+
+(call miscfiles_read_locale (readonly_t))
+
+(macro readonly_exec ((type ARG1))
+    (call can_exec (ARG1 readonly_exec_t)))
+
+(macro readonly_auto_subject_type_transition ((type ARG1))
+    (call readonly_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 readonly_exec_t readonly_t)))
+
+(macro readonly_send_signal ((type ARG1))
+    (allow ARG1 readonly_t (process (signal))))

@@ -1,0 +1,336 @@
+(roleattribute pa_role)
+(roleattribute pa_client_role)
+(roleattribute pactl_role)
+
+(typeattribute pa_client_subject_type)
+
+(typeattribute pa_tmpfs_object_type)
+
+(type pa_t)
+(type pa_exec_t)
+(call applications_app (pa_t pa_exec_t))
+(roletype pa_role pa_t)
+
+(roleattributeset pa_role system_r)
+
+(context pa_exec (system_u object_r pa_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/pulseaudio" file pa_exec)
+
+(type pa_config_t)
+(call files_config_object_type (pa_config_t))
+
+(context pa_config (system_u object_r pa_config_t (systemlow systemlow)))
+(filecon "/etc/pulse(/.*)?" any pa_config)
+
+(type pa_dbus_config_t)
+(call dbus_config_object_type (pa_dbus_config_t))
+
+(context pa_dbus_config (system_u object_r pa_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/pulseaudio-system\.conf" file pa_dbus_config)
+
+(type pa_lib_t)
+(call files_lib_object_type (pa_lib_t))
+
+(context pa_lib (system_u object_r pa_lib_t (systemlow systemlow)))
+(filecon "/var/lib/pulse(/.*)?" any pa_lib)
+
+(type pa_home_t)
+(call usersubject_home_object_type (pa_home_t))
+
+(type pa_config_home_t)
+(call usersubject_config_home_object_type (pa_config_home_t))
+
+(type pa_tmpfs_t)
+(call usersubject_tmpfs_object_type (pa_tmpfs_t))
+
+(allow pa_t self (process (setcap setsched setrlimit)))
+(allow pa_t self (unix_stream_socket (listen accept)))
+
+(call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t file "*"))
+(call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t dir "*"))
+
+(call devices_rw_sound (pa_t))
+
+(call files_read_data (pa_t))
+
+(call filesystems_getattr_proc_filesystems (pa_t))
+(call filesystems_list_devtmpfs (pa_t))
+(call filesystems_list_proc (pa_t))
+
+(call dbus_system_client_subject_type (pa_t))
+
+(call miscfiles_read_locale (pa_t))
+
+(call pa_exec (pa_t))
+(call pa_client (pa_t pa_role))
+
+(call rtkit_client_subject_type (pa_t))
+
+(call udev_client_subject_type (pa_t))
+
+(optional pa_optional_journal
+    (call journal_client_subject_type (pa_t)))
+
+(optional pa_optional_login_logind
+    (call login_read_logind_systemd_runtime (pa_t)))
+
+(type pactl_t)
+(type pactl_exec_t)
+(call applications_app (pactl_t pactl_exec_t))
+(roletype pactl_role pactl_t)
+
+(roleattributeset pactl_role system_r)
+
+(context pactl_exec (system_u object_r pactl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/pactl" file pactl_exec)
+(filecon "/usr/bin/pacmd" file pactl_exec)
+
+(call filesystems_tmpfs_object_type_transition (pactl_t pa_tmpfs_t file "*"))
+
+(call miscfiles_read_locale (pactl_t))
+
+(call pa_client (pactl_t pactl_role))
+(call pa_stream_connect (pactl_t))
+
+(allow pa_client_subject_type self (process (getsched)))
+(allow pa_client_subject_type self rw_fifo_file_perms)
+
+(allow pa_client_subject_type pa_client_subject_type (process (signal signull)))
+
+(allow pa_client_subject_type pa_tmpfs_object_type delete_file_perms)
+(allow pa_client_subject_type pa_tmpfs_object_type read_file_perms)
+
+(call devices_read_urandom (pa_client_subject_type))
+
+(call filesystems_getattr_tmpfs_filesystems (pa_client_subject_type))
+(call filesystems_read_sysfs (pa_client_subject_type))
+
+(call alsa_read_config (pa_client_subject_type))
+
+(call pa_manage_home_files (pa_client_subject_type))
+(call pa_home_dir_object_type_transition_home_files (pa_client_subject_type))
+
+(call pa_manage_config_home (pa_client_subject_type))
+(call pa_config_home_object_type_transition_config_home_dirs (pa_client_subject_type))
+
+(call pa_manage_tmpfs (pa_client_subject_type))
+(call pa_tmpfs_object_type_transition_tmpfs_dirs (pa_client_subject_type))
+
+(call pa_run (pa_client_subject_type pa_client_role))
+(call pa_read_config (pa_client_subject_type))
+
+(call usersubject_delete_tmpfs_files (pa_client_subject_type))
+(call usersubject_read_tmpfs_files (pa_client_subject_type))
+
+(optional pa_client_subject_type_optional_machine
+    (call machine_read_config_files (pa_client_subject_type)))
+
+(optional pa_client_subject_type_optional_unconfined
+    (call unconfined_send_signal_all_subjects (pa_client_subject_type))
+    (call unconfined_send_signull_all_subjects (pa_client_subject_type)))
+
+(macro pa_client ((type ARG1)(role ARG2))
+    (typeattributeset pa_client_subject_type ARG1)
+    (roleattributeset pa_client_role ARG2))
+
+(macro pa_tmpfs_object_type ((type ARG1))
+    (typeattributeset pa_tmpfs_object_type ARG1))
+
+(macro pa_exec ((type ARG1))
+    (call can_exec (ARG1 pa_exec_t)))
+
+(macro pa_exec_pactl ((type ARG1))
+    (call can_exec (ARG1 pactl_exec_t)))
+
+(macro pa_auto_subject_type_transition ((type ARG1))
+    (call pa_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pa_exec_t pa_t)))
+
+(macro pa_send_signal ((type ARG1))
+    (allow ARG1 pa_t (process (signal))))
+
+(macro pa_run ((type ARG1)(role ARG2))
+    (call pa_auto_subject_type_transition (ARG1))
+    (roleattributeset pa_role ARG2))
+
+(macro pa_auto_subject_type_transition_pactl ((type ARG1))
+    (call pa_send_signal_pactl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pactl_exec_t pactl_t)))
+
+(macro pa_send_signal_pactl ((type ARG1))
+    (allow ARG1 pactl_t (process (signal))))
+
+(macro pa_run_pactl ((type ARG1)(role ARG2))
+    (call pa_auto_subject_type_transition_pactl (ARG1))
+    (roleattributeset pactl_role ARG2))
+
+(macro pa_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 pa_config_t search_dir_perms))
+
+(macro pa_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 pa_config_t list_dir_perms))
+
+(macro pa_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 pa_config_t pa_config_t)))
+
+(macro pa_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 pa_config_t pa_config_t)))
+
+(macro pa_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 pa_config_t read_file_perms)
+    (allow ARG1 pa_config_t list_dir_perms)
+    (allow ARG1 pa_config_t read_lnk_file_perms))
+
+(macro pa_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 pa_config_t manage_file_perms)
+    (allow ARG1 pa_config_t manage_dir_perms)
+    (allow ARG1 pa_config_t manage_lnk_file_perms))
+
+(macro pa_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 pa_lib_t search_dir_perms))
+
+(macro pa_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 pa_lib_t list_dir_perms))
+
+(macro pa_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 pa_lib_t pa_lib_t)))
+
+(macro pa_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 pa_lib_t pa_lib_t)))
+
+(macro pa_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 pa_lib_t read_file_perms)
+    (allow ARG1 pa_lib_t list_dir_perms)
+    (allow ARG1 pa_lib_t read_lnk_file_perms))
+
+(macro pa_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 pa_lib_t manage_file_perms)
+    (allow ARG1 pa_lib_t manage_dir_perms)
+    (allow ARG1 pa_lib_t manage_lnk_file_perms))
+
+(macro pa_read_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 pa_dbus_config_t read_file_perms))
+
+(macro pa_manage_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 pa_dbus_config_t manage_file_perms))
+
+(macro pa_search_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 pa_tmpfs_t search_dir_perms))
+
+(macro pa_list_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 pa_tmpfs_t list_dir_perms))
+
+(macro pa_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 pa_tmpfs_t pa_tmpfs_t)))
+
+(macro pa_read_tmpfs_lnk_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 pa_tmpfs_t pa_tmpfs_t)))
+
+(macro pa_read_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 pa_tmpfs_t read_file_perms)
+    (allow ARG1 pa_tmpfs_t list_dir_perms)
+    (allow ARG1 pa_tmpfs_t read_sock_file_perms)
+    (allow ARG1 pa_tmpfs_t read_lnk_file_perms))
+
+(macro pa_manage_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 pa_tmpfs_t manage_file_perms)
+    (allow ARG1 pa_tmpfs_t manage_dir_perms)
+    (allow ARG1 pa_tmpfs_t manage_sock_file_perms)
+    (allow ARG1 pa_tmpfs_t manage_lnk_file_perms))
+
+(macro pa_relabel_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 pa_tmpfs_t relabel_file_perms)
+    (allow ARG1 pa_tmpfs_t relabel_dir_perms)
+    (allow ARG1 pa_tmpfs_t relabel_sock_file_perms)
+    (allow ARG1 pa_tmpfs_t relabel_lnk_file_perms))
+
+(macro pa_search_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 pa_config_home_t search_dir_perms))
+
+(macro pa_list_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 pa_config_home_t list_dir_perms))
+
+(macro pa_read_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_files_pattern (ARG1 pa_config_home_t pa_config_home_t)))
+
+(macro pa_read_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 pa_config_home_t pa_config_home_t)))
+
+(macro pa_read_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 pa_config_home_t read_file_perms)
+    (allow ARG1 pa_config_home_t list_dir_perms)
+    (allow ARG1 pa_config_home_t read_lnk_file_perms))
+
+(macro pa_manage_config_home ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
+    (allow ARG1 pa_config_home_t manage_file_perms)
+    (allow ARG1 pa_config_home_t manage_dir_perms)
+    (allow ARG1 pa_config_home_t manage_lnk_file_perms))
+
+(macro pa_relabel_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 pa_config_home_t relabel_file_perms)
+    (allow ARG1 pa_config_home_t relabel_dir_perms)
+    (allow ARG1 pa_config_home_t relabel_lnk_file_perms))
+
+(macro pa_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 pa_home_t read_file_perms))
+
+(macro pa_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 pa_home_t manage_file_perms))
+
+(macro pa_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 pa_home_t relabel_file_perms))
+
+(macro pa_tmpfs_object_type_transition_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 pa_tmpfs_t dir "pulse")))
+
+(macro pa_config_home_object_type_transition_config_home_dirs ((type ARG1))
+    (call usersubject_config_home_object_type_transition (ARG1 pa_config_home_t dir "pulse")))
+
+(macro pa_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 pa_home_t file ".esd_auth")))
+
+(macro pa_stream_connect ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call stream_connect_pattern (ARG1 pa_tmpfs_t pa_tmpfs_t pa_t)))

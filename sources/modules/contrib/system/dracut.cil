@@ -1,0 +1,152 @@
+(typeattribute dracut_admin_subject_type)
+(typeattribute dracut_subject_type)
+
+(typeattribute dracut_object_type)
+
+(type dracut_initramfs_restore_t)
+(type dracut_initramfs_restore_exec_t)
+(call subject_common_type (dracut_initramfs_restore_t))
+(call subject_entry (dracut_initramfs_restore_t dracut_initramfs_restore_exec_t))
+(roletype system_r dracut_initramfs_restore_t)
+
+(typeattributeset dracut_subject_type dracut_initramfs_restore_t)
+
+(context dracut_initramfs_restore_exec (system_u object_r dracut_initramfs_restore_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/dracut/dracut-initramfs-restore" file dracut_initramfs_restore_exec)
+
+(type dracut_lib_t)
+(call files_lib_object_type (dracut_lib_t))
+
+(typeattributeset dracut_object_type dracut_lib_t)
+
+(context dracut_lib_t (system_u object_r dracut_lib_t (systemlow systemlow)))
+(filecon "/var/lib/initramfs(/.*)?" any dracut_lib_t)
+
+(type dracut_runtime_t)
+(call files_runtime_object_type (dracut_runtime_t))
+(call system_mountpoint_object_type (dracut_runtime_t))
+
+(typeattributeset dracut_object_type dracut_runtime_t)
+
+(context dracut_runtime_t (system_u object_r dracut_runtime_t (systemlow systemlow)))
+(filecon "/var/run/initramfs" dir dracut_runtime_t)
+(filecon "/var/run/initramfs/.*" any ())
+
+(allow dracut_initramfs_restore_t self rw_fifo_file_perms)
+
+(call system_read_invalid_files (dracut_initramfs_restore_t)) ; FIXME
+
+(call commands_exec (dracut_initramfs_restore_t))
+(call commands_exec_shell (dracut_initramfs_restore_t))
+
+(call files_read_boot (dracut_initramfs_restore_t))
+
+(call filesystems_manage_tmpfs_files (dracut_initramfs_restore_t))
+
+(call dracut_manage_runtime (dracut_initramfs_restore_t))
+
+(call auth_nsswitch_client_subject_type (dracut_initramfs_restore_t))
+
+(call miscfiles_read_locale (dracut_initramfs_restore_t))
+
+(optional dracut_initramfs_restore_optional_machine
+    (call machine_read_config_files (dracut_initramfs_restore_t)))
+
+(optional dracut_initramfs_restore_optional_systemd
+    (call systemd_daemon (dracut_initramfs_restore_t dracut_initramfs_restore_exec_t))
+
+    (type dracut_initramfs_restore_unit_t)
+    (call systemd_unit_object_type (dracut_initramfs_restore_unit_t))
+
+    (typeattributeset dracut_object_type dracut_initramfs_restore_unit_t)
+
+    (context dracut_initramfs_restore_unit (system_u object_r dracut_initramfs_restore_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/dracut/modules\.d/.*/dracut-shutdown\.service" file dracut_initramfs_restore_unit)
+
+    (allow dracut_admin_subject_type dracut_initramfs_restore_unit_t (service (all))))
+
+(allow dracut_admin_subject_type dracut_initramfs_restore_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (dracut_admin_subject_type dracut_initramfs_restore_t))
+
+(allow dracut_admin_subject_type dracut_object_type
+    (all_file_objects (not_mounton_entrypoint_and_execmod)))
+
+(macro dracut_exec_initramfs_restore ((type ARG1))
+    (call can_exec (ARG1 dracut_initramfs_restore_exec_t)))
+
+(macro dracut_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dracut_runtime_t search_dir_perms))
+
+(macro dracut_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dracut_runtime_t list_dir_perms))
+
+(macro dracut_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 dracut_runtime_t dracut_runtime_t)))
+
+(macro dracut_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 dracut_runtime_t dracut_runtime_t)))
+
+(macro dracut_exec_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call exec_files_pattern (ARG1 dracut_runtime_t dracut_runtime_t)))
+
+(macro dracut_manage_runtime_chr_files ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call files_search_runtime (ARG1))
+    (call manage_chr_files_pattern (ARG1 dracut_runtime_t dracut_runtime_t)))
+
+(macro dracut_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 dracut_runtime_t dracut_runtime_t)))
+
+(macro dracut_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dracut_runtime_t read_file_perms)
+    (allow ARG1 dracut_runtime_t list_dir_perms)
+    (allow ARG1 dracut_runtime_t read_lnk_file_perms)
+    (allow ARG1 dracut_runtime_t read_fifo_file_perms)
+    (allow ARG1 dracut_runtime_t read_sock_file_perms)
+    (allow ARG1 dracut_runtime_t read_chr_file_perms)
+    (allow ARG1 dracut_runtime_t read_blk_file_perms))
+
+(macro dracut_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 dracut_runtime_t manage_file_perms)
+    (allow ARG1 dracut_runtime_t manage_dir_perms)
+    (allow ARG1 dracut_runtime_t manage_lnk_file_perms)
+    (allow ARG1 dracut_runtime_t manage_fifo_file_perms)
+    (allow ARG1 dracut_runtime_t manage_sock_file_perms)
+    (allow ARG1 dracut_runtime_t manage_chr_file_perms)
+    (allow ARG1 dracut_runtime_t manage_blk_file_perms))
+
+(macro dracut_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dracut_lib_t search_dir_perms))
+
+(macro dracut_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dracut_lib_t list_dir_perms))
+
+(macro dracut_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 dracut_lib_t dracut_lib_t)))
+
+(macro dracut_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 dracut_lib_t dracut_lib_t)))
+
+(macro dracut_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dracut_lib_t read_file_perms)
+    (allow ARG1 dracut_lib_t list_dir_perms)
+    (allow ARG1 dracut_lib_t read_lnk_file_perms))
+
+(macro dracut_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset dracut_admin_subject_type ARG1)
+    (optional dracut_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

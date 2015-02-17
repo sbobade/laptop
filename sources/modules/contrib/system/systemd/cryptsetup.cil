@@ -1,0 +1,64 @@
+(type cryptsetup_t)
+(type cryptsetup_exec_t)
+(call systemd_daemon (cryptsetup_t cryptsetup_exec_t))
+
+(context cryptsetup_exec (system_u object_r cryptsetup_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-cryptsetup" file cryptsetup_exec)
+
+(allow cryptsetup_t self (capability (net_admin sys_admin ipc_lock)))
+(allow cryptsetup_t self (process (setfscreate)))
+(allow cryptsetup_t self create_socket_perms)
+(allow cryptsetup_t self (socket (accept)))
+(allow cryptsetup_t self create_sem_perms)
+
+(call system_get_sysvipc_info (cryptsetup_t))
+(call system_read_crypto_sysctl (cryptsetup_t))
+
+(call devices_read_random (cryptsetup_t))
+(call devices_read_urandom (cryptsetup_t))
+(call devices_rw_lvm_control (cryptsetup_t))
+
+(call filesystems_getattr_devtmpfs_filesystems (cryptsetup_t))
+(call filesystems_list_debugfs (cryptsetup_t))
+(call filesystems_list_devtmpfs (cryptsetup_t))
+(call filesystems_read_sysfs (cryptsetup_t))
+
+(call files_read_config_files (cryptsetup_t))
+
+(call storage_rw_fixed_disk (cryptsetup_t))
+(call storage_rw_removable (cryptsetup_t))
+(call storage_rw_scsi_generic (cryptsetup_t))
+
+(call askpwd_manage_systemd_runtime_files (cryptsetup_t))
+(call askpwd_manage_systemd_runtime_sock_files (cryptsetup_t))
+
+(call seutil_search_selinux_config (cryptsetup_t))
+
+(call journal_client_subject_type (cryptsetup_t))
+
+(call udev_client_subject_type (cryptsetup_t))
+
+(macro cryptsetup_exec ((type ARG1))
+    (call can_exec (ARG1 cryptsetup_exec_t)))
+
+(macro cryptsetup_auto_subject_type_transition ((type ARG1))
+    (call cryptsetup_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 cryptsetup_exec_t cryptsetup_t)))
+
+(macro cryptsetup_send_signal ((type ARG1))
+    (allow ARG1 cryptsetup_t (process (signal))))
+
+(macro cryptsetup_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 cryptsetup_t read_file_perms)
+    (allow ARG1 cryptsetup_t list_dir_perms)
+    (allow ARG1 cryptsetup_t read_lnk_file_perms))
+
+(macro cryptsetup_rw_sem ((type ARG1))
+    (allow ARG1 cryptsetup_t rw_sem_perms))
+
+(macro cryptsetup_dgram_send ((type ARG1))
+    (allow ARG1 self create_unix_dgram_socket_perms)
+    (allow ARG1 cryptsetup_t (unix_dgram_socket (sendto)))
+    (call askpwd_write_systemd_runtime_sock_files (ARG1)))

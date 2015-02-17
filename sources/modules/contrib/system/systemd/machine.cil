@@ -1,0 +1,121 @@
+(roleattribute machine_machinectl_role)
+
+(typeattribute machine_machinectl_client_subject_type)
+
+(type machinectl_t)
+(type machinectl_exec_t)
+(call applications_app (machinectl_t machinectl_exec_t))
+(roletype machine_machinectl_role machinectl_t)
+
+(call machine_machinectl_client_subject_type (machinectl_t))
+
+(context machinectl_exec (system_u object_r machinectl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/machinectl" file machinectl_exec)
+
+(type machined_t)
+(type machined_exec_t)
+(call systemd_daemon (machined_t machined_exec_t))
+
+(context machined_exec (system_u object_r machined_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-machined" file machined_exec)
+
+(type machine_config_t)
+(call files_config_object_type (machine_config_t))
+
+(context machine_config (system_u object_r machine_config_t (systemlow systemlow)))
+(filecon "/etc/machine-id" file machine_config)
+(filecon "/etc/machine-info" file machine_config)
+
+(type machined_dbus_config_t)
+(call dbus_config_object_type (machined_dbus_config_t))
+
+(context machined_dbus_config (system_u object_r machined_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.machine1\.conf" file machined_dbus_config)
+
+(type machined_systemd_runtime_t)
+(call systemd_runtime_object_type (machined_systemd_runtime_t))
+
+(context machined_systemd_runtime (system_u object_r machined_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/machines(/.*)?" any machined_systemd_runtime)
+
+(allow machined_t machined_systemd_runtime_t manage_dir_perms)
+(allow machined_t machined_systemd_runtime_t manage_file_perms)
+(call systemd_runtime_object_type_transition (machined_t machined_systemd_runtime_t dir "*"))
+
+(macro machine_exec_machinectl ((type ARG1))
+    (call can_exec (ARG1 machinectl_exec_t))
+    (call machine_machinectl_client_subject_type (ARG1)))
+
+(macro machine_machinectl_client_subject_type ((type ARG1))
+    (typeattributeset machine_machinectl_client_subject_type ARG1))
+
+(macro machine_exec_machined ((type ARG1))
+    (call can_exec (ARG1 machined_exec_t)))
+
+(macro machine_auto_subject_type_transition_machined ((type ARG1))
+    (call machine_send_signal_machined (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 machined_exec_t machined_t)))
+
+(macro machine_send_signal_machined ((type ARG1))
+    (allow ARG1 machined_t (process (signal))))
+
+(macro machine_auto_subject_type_transition_machinectl ((type ARG1))
+    (call machine_send_signal_machinectl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 machinectl_exec machinectl_t)))
+
+(macro machine_send_signal_machinectl ((type ARG1))
+    (allow ARG1 machinectl_t (process (signal))))
+
+(macro machine_run_machinectl ((type ARG1)(role ARG2))
+    (call machine_auto_subject_type_transition_machinectl (ARG1))
+    (roleattributeset machine_machinectl_role ARG2))
+
+(macro machine_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 machine_config_t read_file_perms))
+
+(macro machine_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 machine_config_t manage_file_perms))
+
+(macro machine_read_machined_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 machined_dbus_config_t read_file_perms))
+
+(macro machine_manage_machined_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 machined_dbus_config_t manage_file_perms))
+
+(macro machine_search_machined_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 machined_systemd_runtime_t search_dir_perms))
+
+(macro machine_list_machined_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 machined_systemd_runtime_t list_dir_perms))
+
+(macro machine_read_machined_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 machined_systemd_runtime_t machined_systemd_runtime_t)))
+
+(macro machine_read_machined_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 machined_systemd_runtime_t machined_systemd_runtime_t)))
+
+(macro machine_read_machined_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 machined_systemd_runtime_t read_file_perms)
+    (allow ARG1 machined_systemd_runtime_t list_dir_perms)
+    (allow ARG1 machined_systemd_runtime_t read_lnk_file_perms))
+
+(macro machine_manage_machined_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 machined_systemd_runtime_t manage_file_perms)
+    (allow ARG1 machined_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 machined_systemd_runtime_t manage_lnk_file_perms))
+
+(macro machine_config_object_type_transition_machine_config_files ((type ARG1))
+    (call files_config_object_type_transition (ARG1 machine_config_t file "machine-id"))
+    (call files_config_object_type_transition (ARG1 machine_config_t file "machine-info")))

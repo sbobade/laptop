@@ -1,0 +1,62 @@
+(typeattribute applications_subject_type)
+(typeattribute applications_exec_object_type)
+
+(call terminals_use_inherited_unallocated_ttys (applications_subject_type))
+
+(call auth_use_login_program_fd (applications_subject_type))
+
+(call login_use_fd_sulogin (applications_subject_type))
+
+(optional applications_optional_sudo
+    (call sudo_send_sigchld (applications_subject_type))
+    (call sudo_use_fd (applications_subject_type))
+    (call sudo_rw_inherited_fifo_files (applications_subject_type))
+
+    (optional applications_optional_usersubject
+        (call usersubject_rw_inherited_fifo_files_all_common_subjects (applications_subject_type))
+        (call usersubject_use_inherited_terminals (applications_subject_type))
+        (call usersubject_use_fd_all_common_subjects (applications_subject_type))))
+
+(macro applications_subject_type ((type ARG1))
+    (typeattributeset applications_subject_type ARG1))
+
+(macro applications_subject_common_type ((type ARG1))
+    (call subject_common_type (ARG1))
+    (typeattributeset applications_subject_type ARG1))
+
+(macro applications_exec_object_type ((type ARG1))
+    (call subject_entry_object_type (ARG1))
+    (typeattributeset applications_exec_object_type ARG1))
+
+(macro applications_execute_all ((type ARG1))
+    (call can_exec (ARG1 applications_exec_object_type)))
+
+(macro applications_getattr_all_subjects ((type ARG1))
+    (allow ARG1 applications_subject_type (process (getattr))))
+
+(macro applications_send_signal_all_subjects ((type ARG1))
+    (allow ARG1 applications_subject_type (process (signal))))
+
+(macro applications_send_signull_all_subjects ((type ARG1))
+    (allow ARG1 applications_subject_type (process (signull))))
+
+(macro applications_send_sigkill_all_subjects ((type ARG1))
+    (allow ARG1 applications_subject_type (process (sigkill))))
+
+(macro applications_send_sigstop_all_subjects ((type ARG1))
+    (allow ARG1 applications_subject_type (process (sigstop))))
+
+(macro applications_read_state_all_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 applications_subject_type read_file_perms)
+    (allow ARG1 applications_subject_type list_dir_perms)
+    (allow ARG1 applications_subject_type read_lnk_file_perms))
+
+(macro applications_app ((type ARG1)(type ARG2))
+    (call applications_subject_common_type (ARG1))
+    (call applications_exec_object_type (ARG2))
+    (call subject_entry (ARG1 ARG2)))
+
+(macro applications_subject_entry ((type ARG1)(type ARG2))
+    (call applications_exec_object_type (ARG2))
+    (call subject_entry (ARG1 ARG2)))

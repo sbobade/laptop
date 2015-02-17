@@ -1,0 +1,48 @@
+(type updatedone_t)
+(type updatedone_exec_t)
+(call systemd_daemon (updatedone_t updatedone_exec_t))
+
+(context updatedone_exec (system_u object_r updatedone_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-update-done" file updatedone_exec)
+
+(type updatedone_flag_t)
+(call files_flag_object_type (updatedone_flag_t))
+
+(context updatedone_flag (system_u object_r updatedone_flag_t (systemlow systemlow)))
+(filecon "/etc/\.updated" file updatedone_flag)
+(filecon "/var/\.updated" file updatedone_flag)
+
+(allow updatedone_t updatedone_flag_t manage_file_perms)
+(call files_config_object_type_transition (updatedone_t updatedone_flag_t file "*"))
+(call files_var_object_type_transition (updatedone_t updatedone_flag_t file "*"))
+
+(call journal_client_subject_type (updatedone_t))
+
+(call seutil_read_selinux_config_files (updatedone_t))
+(call seutil_read_file_context_files (updatedone_t))
+
+(macro updatedone_exec ((type ARG1))
+    (call can_exec (ARG1 updatedone_exec_t)))
+
+(macro updatedone_auto_subject_type_transition ((type ARG1))
+    (call updatedone_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 updatedone_exec_t updatedone_t)))
+
+(macro updatedone_send_signal ((type ARG1))
+    (allow ARG1 updatedone_t (process (signal))))
+
+(macro updatedone_getattr_flag_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 updatedone_flag_t (file (getattr))))
+
+(macro updatedone_read_flag_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 updatedone_flag_t read_file_perms))
+
+(macro updatedone_manage_flag_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 updatedone_flag_t manage_file_perms))

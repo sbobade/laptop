@@ -1,0 +1,2 @@
+system_r:login_t staff_r:staff_t
+system_r:sulogin_t sysadm_t:sysadm_t

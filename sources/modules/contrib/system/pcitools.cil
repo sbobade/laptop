@@ -1,0 +1,36 @@
+(roleattribute pcitools_role)
+
+(type pcitools_t)
+(type pcitools_exec_t)
+(call applications_app (pcitools_t pcitools_exec_t))
+(roletype pcitools_role pcitools_t)
+
+(roleattributeset pcitools_role system_r)
+
+(context pcitools_exec (system_u object_r pcitools_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/lspci" file pcitools_exec)
+(filecon "/usr/sbin/setpci" file pcitools_exec)
+(filecon "/usr/sbin/update-pciids" file pcitools_exec)
+
+(allow pcitools_t self (capability (sys_admin)))
+
+(call filesystems_read_sysfs (pcitools_t))
+
+(call auth_nsswitch_client_subject_type (pcitools_t))
+
+(call miscfiles_read_hwdata (pcitools_t))
+
+(macro pcitools_exec ((type ARG1))
+    (call can_exec (ARG1 pcitools_exec_t)))
+
+(macro pcitools_auto_subject_type_transition ((type ARG1))
+    (call pcitools_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pcitools_exec_t pcitools_t)))
+
+(macro pcitools_run ((type ARG1)(role ARG2))
+    (call pcitools_auto_subject_type_transition (ARG1))
+    (roleattributeset pcitools_role (ARG2)))
+
+(macro pcitools_send_signal ((type ARG1))
+    (allow ARG1 pcitools_t (process (signal))))

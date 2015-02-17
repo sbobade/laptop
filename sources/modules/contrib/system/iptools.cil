@@ -1,0 +1,81 @@
+(roleattribute iptools_role)
+
+(type iptools_t)
+(type iptools_exec_t)
+(call applications_app (iptools_t iptools_exec_t))
+(roletype iptools_role iptools_t)
+
+(roleattributeset iptools_role system_r)
+
+(context iptools_exec (system_u object_r iptools_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/ethtool" file iptools_exec)
+(filecon "/usr/sbin/ifconfig" file iptools_exec)
+(filecon "/usr/sbin/ip" file iptools_exec)
+(filecon "/usr/sbin/iw" file iptools_exec)
+(filecon "/usr/sbin/iwconfig" file iptools_exec)
+(filecon "/usr/sbin/iwpriv" file iptools_exec)
+(filecon "/usr/sbin/tc" file iptools_exec)
+
+(type iptools_config_t)
+(call files_config_object_type (iptools_config_t))
+
+(context iptools_config (system_u object_r iptools_config_t (systemlow systemlow)))
+(filecon "/etc/iproute2(/.*)?" any iptools_config)
+
+(allow iptools_t self (capability (net_admin)))
+(allow iptools_t self create_udp_socket_perms)
+(allow iptools_t self create_netlink_route_socket_perms)
+(allow iptools_t self create_unix_dgram_socket_perms)
+
+(call system_read_net_sysctl (iptools_t))
+(call system_read_net_proc (iptools_t))
+
+(call iptools_read_config (iptools_t))
+
+(call miscfiles_read_locale (iptools_t))
+
+(optional iptools_optional_systemd
+    (call systemd_daemon (iptools_t iptools_exec_t)))
+
+(macro iptools_exec ((type ARG1))
+    (call can_exec (ARG1 iptools_exec_t)))
+
+(macro iptools_auto_subject_type_transition ((type ARG1))
+    (call iptools_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 iptools_exec_t iptools_t)))
+
+(macro iptools_run ((type ARG1)(role ARG2))
+    (call iptools_auto_subject_type_transition (ARG1))
+    (roleattributeset iptools_role (ARG2)))
+
+(macro iptools_send_signal ((type ARG1))
+    (allow ARG1 iptools_t (process (signal))))
+
+(macro iptools_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 iptools_config_t search_dir_perms))
+
+(macro iptools_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 iptools_config_t list_dir_perms))
+
+(macro iptools_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 iptools_config_t iptools_config_t)))
+
+(macro iptools_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 iptools_config_t iptools_config_t)))
+
+(macro iptools_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 iptools_config_t read_file_perms)
+    (allow ARG1 iptools_config_t list_dir_perms)
+    (allow ARG1 iptools_config_t read_lnk_file_perms))
+
+(macro iptools_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 iptools_config_t manage_file_perms)
+    (allow ARG1 iptools_config_t manage_dir_perms)
+    (allow ARG1 iptools_config_t manage_lnk_file_perms))

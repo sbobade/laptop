@@ -1,0 +1,510 @@
+(roleattribute load_policy_role)
+(roleattribute secilc_role)
+(roleattribute setfiles_role)
+(roleattribute setools_role)
+
+(roleattribute getsebool_role)
+(roleattribute setsebool_role)
+
+(roleattribute getenforce_role)
+(roleattribute setenforce_role)
+
+(type load_policy_t)
+(type load_policy_exec_t)
+(call applications_app (load_policy_t load_policy_exec_t))
+(roletype load_policy_role load_policy_t)
+
+(roleattributeset load_policy_role system_r)
+
+(context load_policy_exec (system_u object_r load_policy_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/load_policy" file load_policy_exec)
+
+(call selinux_load_policy (load_policy_t))
+
+(call seutil_read_selinux_config_files (load_policy_t))
+(call seutil_read_policy_config_files (load_policy_t))
+
+(call miscfiles_read_locale (load_policy_t))
+
+(type secilc_t)
+(type secilc_exec_t)
+(call applications_app (secilc_t secilc_exec_t))
+(roletype secilc_role secilc_t)
+
+(roleattributeset secilc_role system_r)
+
+(context secilc_exec (system_u object_r secilc_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/secilc" file secilc_exec)
+
+(allow secilc_t self (capability (dac_override)))
+
+(call seutil_manage_file_context_files (secilc_t))
+(call seutil_manage_policy_config_files (secilc_t))
+
+(call seutil_read_policy_src_files (secilc_t))
+
+(type setfiles_t)
+(type setfiles_exec_t)
+(call applications_app (setfiles_t setfiles_exec_t))
+(roletype setfiles_role setfiles_t)
+
+(roleattributeset setfiles_role system_r)
+
+(context setfiles_exec (system_u object_r setfiles_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/setfiles" file setfiles_exec)
+
+(allow setfiles_t self (capability (dac_override fowner)))
+
+(call system_list_mountpoints (setfiles_t))
+
+(call devices_relabel_all (setfiles_t))
+
+(call files_relabel_all_except (setfiles_t))
+
+(call filesystems_getattr_all_filesystems (setfiles_t))
+(call filesystems_read_cgroup_files (setfiles_t))
+(call filesystems_relabel_all (setfiles_t))
+
+(call selinux_get_enforce_mode (setfiles_t))
+(call selinux_validate_context (setfiles_t))
+
+(call subject_object_identity_change_exemption (setfiles_t))
+
+(call terminals_use_inherited_console (setfiles_t))
+
+(call audit_client_subject_type (setfiles_t))
+
+(call audit_relabel_auditd_config (setfiles_t))
+(call audit_relabel_auditd_log (setfiles_t))
+(call audit_relabel_audispd_config (setfiles_t))
+
+(call auth_relabel_shadow (setfiles_t))
+
+(call seutil_read_selinux_config_files (setfiles_t))
+(call seutil_read_file_context_files (setfiles_t))
+(call seutil_relabel_policy_config (setfiles_t))
+
+(optional setfiles_optional_systemd
+    (call systemd_use_fd (setfiles_t))
+    (call systemd_rw_unix_stream_sockets (setfiles_t)))
+
+(type getsebool_t)
+(type getsebool_exec_t)
+(call applications_app (getsebool_t getsebool_exec_t))
+(roletype getsebool_role getsebool_t)
+
+(roleattributeset getsebool_role system_r)
+
+(context getsebool_exec (system_u object_r getsebool_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/getsebool" file getsebool_exec)
+
+(type setsebool_t)
+(type setsebool_exec_t)
+(call applications_app (setsebool_t setsebool_exec_t))
+(roletype setsebool_role setsebool_t)
+
+(roleattributeset setsebool_role system_r)
+
+(context setsebool_exec (system_u object_r setsebool_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/setsebool" file setsebool_exec)
+
+(call selinux_list_securityfs (setsebool_t))
+(call selinux_set_all_booleans (setsebool_t))
+
+(call auth_nsswitch_client_subject_type (setsebool_t))
+
+(call seutil_read_selinux_config_files (setsebool_t))
+
+(call miscfiles_read_locale (setsebool_t))
+
+(optional setsebool_optional_journal
+    (call journal_client_subject_type (setsebool_t)))
+
+(type getenforce_t)
+(type getenforce_exec_t)
+(call applications_app (getenforce_t getenforce_exec_t))
+(roletype getenforce_role getenforce_t)
+
+(roleattributeset getenforce_role system_r)
+
+(context getenforce_exec (system_u object_r getenforce_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/getenforce" file getenforce_exec)
+
+(type setenforce_t)
+(type setenforce_exec_t)
+(call applications_app (setenforce_t setenforce_exec_t))
+(roletype setenforce_role setenforce_t)
+
+(roleattributeset setenforce_role system_r)
+
+(context setenforce_exec (system_u object_r setenforce_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/setenforce" file setenforce_exec)
+
+(call selinux_set_enforce_mode (setenforce_t))
+
+(call seutil_read_selinux_config_files (setenforce_t))
+
+(type setools_t)
+(type setools_exec_t)
+(call applications_app (setools_t setools_exec_t))
+(roletype setools_role setools_t)
+
+(roleattributeset setools_role system_r)
+
+(context setools_exec (system_u object_r setools_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/seinfo" file setools_exec)
+(filecon "/usr/bin/sesearch" file setools_exec)
+
+(call selinux_read_policy (setools_t))
+
+(call seutil_read_selinux_config_files (setools_t))
+
+(type default_context_t)
+(call files_object_type (default_context_t))
+
+(context default_context (system_u object_r default_context_t (systemlow systemlow)))
+(filecon "/etc/selinux/([^/]*/)?contexts(/.*)?" any default_context)
+
+(type file_context_t)
+(call files_object_type (file_context_t))
+
+(context file_context (system_u object_r file_context_t (systemlow systemlow)))
+(filecon "/etc/selinux/([^/]*/)?contexts/files(/.*)?" any file_context)
+
+(type policy_config_t)
+(call files_sec_object_type (policy_config_t))
+
+(context policy_config (system_u object_r policy_config_t (mls_systemhigh mls_systemhigh)))
+(filecon "/etc/selinux/([^/]*/)?policy(/.*)?" any policy_config)
+
+(type policy_src_t)
+(call files_object_type (policy_src_t))
+
+(context policy_src (system_u object_r policy_src_t (systemlow systemlow)))
+(filecon "/etc/selinux/([^/]*/)?source(/.*)?" any policy_src)
+
+(type selinux_config_t)
+(call files_config_object_type (selinux_config_t))
+
+(context selinux_config (system_u object_r selinux_config_t (systemlow systemlow)))
+(filecon "/etc/selinux(/.*)?" any selinux_config)
+(filecon "/etc/selinux/([^/]*/)?seusers"
+    file (system_u object_r selinux_config_t (mls_systemhigh mls_systemhigh)))
+(filecon "/etc/selinux/([^/]*/)?users(/.*)?"
+    file (system_u object_r selinux_config_t (mls_systemhigh mls_systemhigh)))
+
+(typeattribute can_relabelto_binary_policy)
+(typeattribute can_not_relabelto_binary_policy)
+(typeattributeset can_not_relabelto_binary_policy
+    (not (can_relabelto_binary_policy)))
+(neverallow can_not_relabelto_binary_policy policy_config_t (file (relabelto)))
+
+(typeattribute can_write_binary_policy)
+(typeattribute can_not_write_binary_policy)
+(typeattributeset can_not_write_binary_policy
+    (not (can_write_binary_policy)))
+(neverallow can_not_write_binary_policy policy_config_t (file (create write)))
+
+(macro seutil_exec_load_policy ((type ARG1))
+    (call can_exec (ARG1 load_policy_exec_t)))
+
+(macro seutil_exec_secilc ((type ARG1))
+    (call can_exec (ARG1 secilc_exec_t)))
+
+(macro seutil_exec_setfiles ((type ARG1))
+    (call can_exec (ARG1 setfiles_exec_t)))
+
+(macro seutil_exec_setools ((type ARG1))
+    (call can_exec (ARG1 setools_exec_t)))
+
+(macro seutil_exec_getsebool ((type ARG1))
+    (call can_exec (ARG1 getsebool_exec_t)))
+
+(macro seutil_exec_setsebool ((type ARG1))
+    (call can_exec (ARG1 setsebool_exec_t)))
+
+(macro seutil_exec_getenforce ((type ARG1))
+    (call can_exec (ARG1 getenforce_exec_t)))
+
+(macro seutil_exec_setenforce ((type ARG1))
+    (call can_exec (ARG1 setenforce_exec_t)))
+
+(macro seutil_auto_subject_type_transition_load_policy ((type ARG1))
+    (call seutil_send_signal_load_policy (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 load_policy_exec_t load_policy_t)))
+
+(macro seutil_send_signal_load_policy ((type ARG1))
+    (allow ARG1 load_policy_t (process (signal))))
+
+(macro seutil_run_load_policy ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_load_policy (ARG1))
+    (roleattributeset load_policy_role ARG2))
+
+(macro seutil_auto_subject_type_transition_secilc ((type ARG1))
+    (call seutil_send_signal_secilc (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 secilc_exec_t secilc_t)))
+
+(macro seutil_send_signal_secilc ((type ARG1))
+    (allow ARG1 secilc_t (process (signal))))
+
+(macro seutil_run_secilc ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_secilc (ARG1))
+    (roleattributeset secilc_role ARG2))
+
+(macro seutil_auto_subject_type_transition_setfiles ((type ARG1))
+    (call seutil_send_signal_setfiles (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 setfiles_exec_t setfiles_t)))
+
+(macro seutil_send_signal_setfiles ((type ARG1))
+    (allow ARG1 setfiles_t (process (signal))))
+
+(macro seutil_run_setfiles ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_setfiles (ARG1))
+    (roleattributeset setfiles_role ARG2))
+
+(macro seutil_auto_subject_type_transition_setools ((type ARG1))
+    (call seutil_send_signal_setools (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 setools_exec_t setools_t)))
+
+(macro seutil_send_signal_setools ((type ARG1))
+    (allow ARG1 setools_t (process (signal))))
+
+(macro seutil_run_setools ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_setools (ARG1))
+    (roleattributeset setools_role ARG2))
+
+(macro seutil_auto_subject_type_transition_getsebool ((type ARG1))
+    (call seutil_send_signal_getsebool (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 getsebool_exec_t getsebool_t)))
+
+(macro seutil_send_signal_getsebool ((type ARG1))
+    (allow ARG1 getsebool_t (process (signal))))
+
+(macro seutil_run_getsebool ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_getsebool (ARG1))
+    (roleattributeset getsebool_role ARG2))
+
+(macro seutil_auto_subject_type_transition_setsebool ((type ARG1))
+    (call seutil_send_signal_setsebool (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 setsebool_exec_t setsebool_t)))
+
+(macro seutil_send_signal_setsebool ((type ARG1))
+    (allow ARG1 setsebool_t (process (signal))))
+
+(macro seutil_run_setsebool ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_setsebool (ARG1))
+    (roleattributeset setsebool_role ARG2))
+
+(macro seutil_auto_subject_type_transition_getenforce ((type ARG1))
+    (call seutil_send_signal_getenforce (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 getenforce_exec_t getenforce_t)))
+
+(macro seutil_send_signal_getenforce ((type ARG1))
+    (allow ARG1 getenforce_t (process (signal))))
+
+(macro seutil_run_getenforce ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_getenforce (ARG1))
+    (roleattributeset getenforce_role ARG2))
+
+(macro seutil_auto_subject_type_transition_setenforce ((type ARG1))
+    (call seutil_send_signal_setenforce (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 setenforce_exec_t setenforce_t)))
+
+(macro seutil_send_signal_setenforce ((type ARG1))
+    (allow ARG1 setenforce_t (process (signal))))
+
+(macro seutil_run_setenforce ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_setenforce (ARG1))
+    (roleattributeset setenforce_role ARG2))
+
+(macro seutil_search_selinux_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 selinux_config_t search_dir_perms))
+
+(macro seutil_list_selinux_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 selinux_config_t list_dir_perms))
+
+(macro seutil_read_selinux_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 selinux_config_t selinux_config_t)))
+
+(macro seutil_read_selinux_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 selinux_config_t selinux_config_t)))
+
+(macro seutil_read_selinux_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 selinux_config_t read_file_perms)
+    (allow ARG1 selinux_config_t list_dir_perms)
+    (allow ARG1 selinux_config_t read_lnk_file_perms))
+
+(macro seutil_rw_selinux_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 selinux_config_t rw_dir_perms))
+
+(macro seutil_search_default_context ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 default_context_t search_dir_perms))
+
+(macro seutil_list_default_context ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 default_context_t list_dir_perms))
+
+(macro seutil_read_default_context_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call read_files_pattern (ARG1 default_context_t default_context_t)))
+
+(macro seutil_read_default_context_lnk_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 default_context_t default_context_t)))
+
+(macro seutil_read_default_context ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 default_context_t read_file_perms)
+    (allow ARG1 default_context_t list_dir_perms)
+    (allow ARG1 default_context_t read_lnk_file_perms))
+
+(macro seutil_rw_default_context_dirs ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 default_context_t rw_dir_perms))
+
+(macro seutil_search_file_context ((type ARG1))
+    (call seutil_search_default_context (ARG1))
+    (allow ARG1 file_context_t search_dir_perms))
+
+(macro seutil_list_file_context ((type ARG1))
+    (call seutil_search_default_context (ARG1))
+    (allow ARG1 file_context_t list_dir_perms))
+
+(macro seutil_read_file_context_files ((type ARG1))
+    (call seutil_search_default_context (ARG1))
+    (call read_files_pattern (ARG1 file_context_t file_context_t)))
+
+(macro seutil_manage_file_context_files ((type ARG1))
+    (call seutil_search_default_context (ARG1))
+    (call manage_files_pattern (ARG1 file_context_t file_context_t)))
+
+(macro seutil_read_file_context_lnk_files ((type ARG1))
+    (call seutil_search_default_context (ARG1))
+    (call read_lnk_files_pattern (ARG1 file_context_t file_context_t)))
+
+(macro seutil_read_file_context ((type ARG1))
+    (call seutil_search_default_context (ARG1))
+    (allow ARG1 file_context_t read_file_perms)
+    (allow ARG1 file_context_t list_dir_perms)
+    (allow ARG1 file_context_t read_lnk_file_perms))
+
+(macro seutil_manage_file_context ((type ARG1))
+    (call seutil_rw_default_context_dirs (ARG1))
+    (allow ARG1 file_context_t manage_file_perms)
+    (allow ARG1 file_context_t manage_dir_perms)
+    (allow ARG1 file_context_t manage_lnk_file_perms))
+
+(macro seutil_search_policy_config ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 policy_config_t search_dir_perms))
+
+(macro seutil_list_policy_config ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 policy_config_t list_dir_perms))
+
+(macro seutil_read_policy_config_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call read_files_pattern (ARG1 policy_config_t policy_config_t)))
+
+(macro seutil_read_policy_config_lnk_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 policy_config_t policy_config_t)))
+
+(macro seutil_read_policy_config ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 policy_config_t read_file_perms)
+    (allow ARG1 policy_config_t list_dir_perms)
+    (allow ARG1 policy_config_t read_lnk_file_perms))
+
+(macro seutil_manage_policy_config ((type ARG1))
+    (call seutil_rw_selinux_config_dirs (ARG1))
+    (allow ARG1 policy_config_t manage_file_perms)
+    (allow ARG1 policy_config_t manage_dir_perms)
+    (allow ARG1 policy_config_t manage_lnk_file_perms)
+    (typeattributeset can_write_binary_policy ARG1))
+
+(macro seutil_manage_policy_config_dirs ((type ARG1))
+    (call seutil_rw_selinux_config_dirs (ARG1))
+    (allow ARG1 policy_config_t manage_dir_perms))
+
+(macro seutil_manage_policy_config_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call manage_files_pattern (ARG1 policy_config_t policy_config_t))
+    (typeattributeset can_write_binary_policy ARG1))
+
+(macro seutil_relabel_policy_config ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 policy_config_t relabel_file_perms)
+    (allow ARG1 policy_config_t relabel_dir_perms)
+    (allow ARG1 policy_config_t relabel_lnk_file_perms)
+    (typeattributeset can_relabelto_binary_policy ARG1))
+
+(macro seutil_relabel_policy_config_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call relabel_files_pattern (ARG1 policy_config_t policy_config_t))
+    (typeattributeset can_relabelto_binary_policy ARG1))
+
+(macro seutil_relabelto_policy_config_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call relabelto_files_pattern (ARG1 policy_config_t policy_config_t))
+    (typeattributeset can_relabelto_binary_policy ARG1))
+
+(macro seutil_search_policy_src ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 policy_src_t search_dir_perms))
+
+(macro seutil_list_policy_src ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 policy_src_t list_dir_perms))
+
+(macro seutil_read_policy_src_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call read_files_pattern (ARG1 policy_src_t policy_src_t)))
+
+(macro seutil_read_policy_src_lnk_files ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 policy_src_t policy_src_t)))
+
+(macro seutil_read_policy_src ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (allow ARG1 policy_src_t read_file_perms)
+    (allow ARG1 policy_src_t list_dir_perms)
+    (allow ARG1 policy_src_t read_lnk_file_perms))
+
+(macro seutil_config_object_type_transition_policy_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (call object_type_transition_pattern (ARG1 selinux_config_t policy_config_t dir "policy")))
+
+(macro seutil_config_object_type_transition_default_context_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (call object_type_transition_pattern (ARG1 selinux_config_t default_context_t dir "contexts")))
+
+(macro seutil_config_object_type_transition_policy_src_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (call object_type_transition_pattern (ARG1 selinux_config_t policy_src_t dir "sources")))
+
+(macro seutil_config_object_type_transition_selinux_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (call files_config_object_type_transition (ARG1 selinux_config_t dir "selinux")))
+
+(macro seutil_default_context_object_type_transition_file_context_dirs ((type ARG1))
+    (call seutil_search_selinux_config (ARG1))
+    (call object_type_transition_pattern (ARG1 default_context_t file_context_t dir "files")))
+
+(macro seutil_dontaudit_audit_access_load_policy_exec_files ((type ARG1))
+    (dontaudit ARG1 load_policy_exec_t (file (audit_access))))

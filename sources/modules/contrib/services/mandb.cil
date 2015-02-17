@@ -1,0 +1,122 @@
+(roleattribute mandb_role)
+
+(typeattribute mandb_admin_subject_type)
+
+(typeattribute mandb_object_type)
+
+(type mandb_t)
+(type mandb_exec_t)
+(call applications_app (mandb_t mandb_exec_t))
+(roletype mandb_role mandb_t)
+
+(roleattributeset mandb_role system_r)
+
+(context mandb_exec (system_u object_r mandb_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/mandb" file mandb_exec)
+
+(type mandb_config_t)
+(call files_config_object_type (mandb_config_t))
+
+(typeattributeset mandb_object_type mandb_config_t)
+
+(context mandb_config (system_u object_r mandb_config_t (systemlow systemlow)))
+(filecon "/etc/man_db\.conf" file mandb_config)
+(filecon "/etc/sysconfig/man-db" file mandb_config)
+
+(type mandb_cache_t)
+(call files_cache_object_type (mandb_cache_t))
+
+(typeattributeset mandb_object_type mandb_cache_t)
+
+(context mandb_cache (system_u object_r mandb_cache_t (systemlow systemlow)))
+(filecon "/var/cache/man(/.*)?" any mandb_cache)
+
+(allow mandb_t mandb_cache_t manage_dir_perms)
+(allow mandb_t mandb_cache_t manage_file_perms)
+(call files_cache_object_type_transition (mandb_t mandb_cache_t dir "*"))
+
+(allow mandb_t self (capability (fsetid)))
+(allow mandb_t self rw_fifo_file_perms)
+
+(call files_read_config (mandb_t))
+
+(call filesystems_getattr_filesystems (mandb_t))
+
+(call miscfiles_read_man_data (mandb_t))
+(call miscfiles_read_locale (mandb_t))
+
+(optional mandb_optional_systemd
+    (call systemd_daemon (mandb_t mandb_exec_t))
+
+    (type mandb_unit_t)
+    (call systemd_unit_object_type (mandb_unit_t))
+
+    (typeattributeset mandb_object_type mandb_unit_t)
+
+    (context mandb_unit (system_u object_r mandb_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*man-db.*" file mandb_unit)
+
+    (allow mandb_admin_subject_type mandb_unit_t (service (all))))
+
+(allow mandb_admin_subject_type mandb_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (mandb_admin_subject_type mandb_t))
+
+(allow mandb_admin_subject_type mandb_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro mandb_exec ((type ARG1))
+    (call can_exec (ARG1 mandb_exec_t)))
+
+(macro mandb_auto_subject_type_transition ((type ARG1))
+    (call mandb_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 mandb_exec_t mandb_t)))
+
+(macro mandb_send_signal ((type ARG1))
+    (allow ARG1 mandb_t (process (signal))))
+
+(macro mandb_run ((type ARG1)(role ARG2))
+    (call mandb_auto_subject_type_transition (ARG1))
+    (roleattributeset mandb_role ARG2))
+
+(macro mandb_search_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 mandb_cache_t search_dir_perms))
+
+(macro mandb_list_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 mandb_cache_t list_dir_perms))
+
+(macro mandb_read_cache_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_files_pattern (ARG1 mandb_cache_t mandb_cache_t)))
+
+(macro mandb_read_cache_lnk_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_lnk_files_pattern (ARG1 mandb_cache_t mandb_cache_t)))
+
+(macro mandb_read_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 mandb_cache_t read_file_perms)
+    (allow ARG1 mandb_cache_t list_dir_perms)
+    (allow ARG1 mandb_cache_t read_lnk_file_perms))
+
+(macro mandb_manage_cache ((type ARG1))
+    (call files_rw_cache_dirs (ARG1))
+    (allow ARG1 mandb_cache_t manage_file_perms)
+    (allow ARG1 mandb_cache_t manage_dir_perms)
+    (allow ARG1 mandb_cache_t manage_lnk_file_perms))
+
+(macro mandb_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 mandb_config_t read_file_perms))
+
+(macro mandb_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 mandb_config_t manage_file_perms))
+
+(macro mandb_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset mandb_admin_subject_type ARG1)
+    (optional mandb_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

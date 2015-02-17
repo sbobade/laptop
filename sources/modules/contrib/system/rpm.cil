@@ -1,0 +1,382 @@
+(roleattribute rpm_role)
+
+(typeattribute rpm_admin_subject_type)
+(typeattribute rpm_subject_type)
+
+(typeattribute rpm_object_type)
+
+(type rpm_t)
+(type rpm_exec_t)
+(call applications_app (rpm_t rpm_exec_t))
+(roletype rpm_role rpm_t)
+
+(roleattributeset rpm_role system_r)
+
+(typeattributeset rpm_subject_type rpm_t)
+
+(context rpm_exec (system_u object_r rpm_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/rpm" file rpm_exec)
+(filecon "/usr/bin/dnf" file rpm_exec)
+(filecon "/usr/bin/yum" file rpm_exec)
+
+(type rpm_config_t)
+(call files_config_object_type (rpm_config_t))
+
+(typeattributeset rpm_object_type rpm_config_t)
+
+(context rpm_config (system_u object_r rpm_config_t (systemlow systemlow)))
+(filecon "/etc/rpm(/.*)?" any rpm_config)
+(filecon "/etc/yum(/.*)?" any rpm_config)
+(filecon "/etc/yum\.conf" file rpm_config)
+(filecon "/etc/yum\.repos\.d(/.*)?" any rpm_config)
+
+(type rpm_cache_t)
+(call files_cache_object_type (rpm_cache_t))
+
+(typeattributeset rpm_object_type rpm_cache_t)
+
+(context rpm_cache (system_u object_r rpm_cache_t (systemlow systemlow)))
+(filecon "/var/cache/yum(/.*)?" any rpm_cache)
+(filecon "/var/cache/dnf(/.*)?" any rpm_cache)
+
+(type rpm_lib_t)
+(call files_lib_object_type (rpm_lib_t))
+
+(typeattributeset rpm_object_type rpm_lib_t)
+
+(context rpm_lib (system_u object_r rpm_lib_t (systemlow systemlow)))
+(filecon "/var/lib/rpm(/.*)?" any rpm_lib)
+(filecon "/var/lib/dnf(/.*)?" any rpm_lib)
+(filecon "/var/lib/rpm-state(/.*)?" any rpm_lib)
+(filecon "/var/lib/rpmrebuilddb.*(/.*)?" any rpm_lib)
+(filecon "/var/lib/yum(/.*)?" any rpm_lib)
+
+(type rpm_log_t)
+(call files_log_object_type (rpm_log_t))
+
+(typeattributeset rpm_object_type rpm_log_t)
+
+(context rpm_log (system_u object_r rpm_log_t (systemlow systemlow)))
+(filecon "/var/log/yum\.log.*" file rpm_log)
+(filecon "/var/log/dnf\.log.*" file rpm_log)
+(filecon "/var/log/dnf\.plugin\.log.*" file rpm_log)
+(filecon "/var/log/dnf\.rpm\.log.*" file rpm_log)
+
+(type rpm_tmp_t)
+(call files_tmp_object_type (rpm_tmp_t))
+
+(typeattributeset rpm_object_type rpm_tmp_t)
+
+(type rpm_tmpfs_t)
+(call files_tmpfs_object_type (rpm_tmpfs_t))
+
+(typeattributeset rpm_object_type rpm_tmpfs_t)
+
+(call filesystems_rootfs_object_type_transition (rpm_t rpm_lib_t lnk_file "*"))
+
+(call auth_manage_shadow (rpm_t))
+(call auth_relabel_shadow (rpm_t))
+
+(call rpm_shell_manual_subject_type_transition_rpm_script (rpm_t))
+
+(call seutil_manage_policy_config (rpm_t))
+(call seutil_relabel_policy_config (rpm_t))
+
+(call audit_manage_auditd_config (rpm_t))
+(call audit_relabel_auditd_config (rpm_t))
+(call audit_manage_audispd_config (rpm_t))
+(call audit_relabel_audispd_config (rpm_t))
+(call audit_manage_auditd_log (rpm_t))
+(call audit_relabel_auditd_log (rpm_t))
+
+(optional rpm_optional_logrotate
+    (call logrotate_log_object_type (rpm_cache_t))
+    (call logrotate_log_object_type (rpm_log_t)))
+
+(optional rpm_optional_systemd
+    (call systemd_daemon (rpm_t rpm_exec_t))
+
+    (type rpm_unit_t)
+    (call systemd_unit_object_type (rpm_unit_t))
+
+    (typeattributeset rpm_object_type rpm_unit_t)
+
+    (context rpm_unit (system_u object_r rpm_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*yum-makecache.*" file rpm_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*dnf-makecache.*" file rpm_unit)
+
+    (allow rpm_admin_subject_type rpm_unit_t (service (all))))
+
+(type rpm_script_t)
+(call subject_common_type (rpm_script_t))
+(roletype rpm_role rpm_script_t)
+
+(roleattributeset rpm_role system_r)
+
+(typeattributeset rpm_subject_type rpm_script_t)
+
+(allow rpm_subject_type self all_capability_perms_except_sys_module_and_sys_nice)
+(allow rpm_subject_type self all_capability2_perms_except_mac_override_and_mac_admin)
+(allow rpm_subject_type self (process (execmem execheap execstack transition dyntransition
+    setcurrent setsched ptrace)))
+(allow rpm_subject_type self all_fifo_file_perms_except_mounton_and_execmod)
+
+(call files_tmp_object_type_transition (rpm_subject_type rpm_tmp_t dir "*"))
+(call files_tmp_object_type_transition (rpm_subject_type rpm_tmp_t file "*"))
+(call files_tmp_object_type_transition (rpm_subject_type rpm_tmp_t lnk_file "*"))
+(call files_tmp_object_type_transition (rpm_subject_type rpm_tmp_t fifo_file "*"))
+(call files_tmp_object_type_transition (rpm_subject_type rpm_tmp_t sock_file "*"))
+(call files_tmp_object_type_transition (rpm_subject_type rpm_tmp_t blk_file "*"))
+(call files_tmp_object_type_transition (rpm_subject_type rpm_tmp_t chr_file "*"))
+
+(call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t dir "*"))
+(call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t file "*"))
+(call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t lnk_file "*"))
+(call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t fifo_file "*"))
+(call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t sock_file "*"))
+(call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t blk_file "*"))
+(call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t chr_file "*"))
+
+(call devices_unconfined_subject_type (rpm_subject_type))
+(call files_unconfined_subject_type (rpm_subject_type))
+(call filesystems_unconfined_subject_type (rpm_subject_type))
+(call network_unconfined_subject_type (rpm_subject_type))
+(call selinux_unconfined_subject_type (rpm_subject_type))
+(call storage_unconfined_subject_type (rpm_subject_type))
+(call subject_unconfined_subject_type (rpm_subject_type))
+(call system_unconfined_subject_type (rpm_subject_type))
+
+(call libraries_config_object_type_transition_ld_so_cache_files (rpm_script_t))
+
+(optional rpm_script_optional_auth
+    (call auth_unconfined_subject_type (rpm_script_t)))
+
+(optional rpm_script_optional_bootloader
+    (call bootloader_run (rpm_script_t rpm_role)))
+
+(optional rpm_subject_optional_dbus
+    (call dbus_unconfined_subject_type (rpm_subject_type)))
+
+(optional rpm_script_optional_ld
+    (call ld_run_ldconfig (rpm_script_t rpm_role)))
+
+(optional rpm_script_optional_systemd
+    (call systemd_unconfined_subject_type (rpm_script_t)))
+
+(optional rpm_script_optional_usermanage
+    (call usermanage_run_groupadd (rpm_script_t rpm_role))
+    (call usermanage_run_useradd (rpm_script_t rpm_role)))
+
+(allow rpm_admin_subject_type rpm_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (rpm_admin_subject_type rpm_subject_type))
+
+(allow rpm_admin_subject_type rpm_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro rpm_exec ((type ARG1))
+    (call can_exec (ARG1 rpm_exec_t)))
+
+(macro rpm_auto_subject_type_transition ((type ARG1))
+    (call rpm_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rpm_exec_t rpm_t)))
+
+(macro rpm_send_signal ((type ARG1))
+    (allow ARG1 rpm_t (process (signal))))
+
+(macro rpm_run ((type ARG1)(role ARG2))
+    (call rpm_auto_subject_type_transition (ARG1))
+    (roleattributeset rpm_role ARG2))
+
+(macro rpm_shell_manual_subject_type_transition_rpm_script ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 rpm_script_t)))
+
+(macro rpm_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 rpm_config_t search_dir_perms))
+
+(macro rpm_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 rpm_config_t list_dir_perms))
+
+(macro rpm_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 rpm_config_t rpm_config_t)))
+
+(macro rpm_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 rpm_config_t rpm_config_t)))
+
+(macro rpm_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 rpm_config_t read_file_perms)
+    (allow ARG1 rpm_config_t list_dir_perms)
+    (allow ARG1 rpm_config_t read_lnk_file_perms))
+
+(macro rpm_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 rpm_config_t manage_file_perms)
+    (allow ARG1 rpm_config_t manage_dir_perms)
+    (allow ARG1 rpm_config_t manage_lnk_file_perms))
+
+(macro rpm_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 rpm_lib_t search_dir_perms))
+
+(macro rpm_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 rpm_lib_t list_dir_perms))
+
+(macro rpm_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 rpm_lib_t lib_t)))
+
+(macro rpm_manage_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call manage_files_pattern (ARG1 rpm_lib_t lib_t)))
+
+(macro rpm_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 rpm_lib_t rpm_lib_t)))
+
+(macro rpm_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 rpm_lib_t read_file_perms)
+    (allow ARG1 rpm_lib_t list_dir_perms)
+    (allow ARG1 rpm_lib_t read_lnk_file_perms))
+
+(macro rpm_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 rpm_lib_t manage_file_perms)
+    (allow ARG1 rpm_lib_t manage_dir_perms)
+    (allow ARG1 rpm_lib_t manage_lnk_file_perms))
+
+(macro rpm_read_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 rpm_log_t read_file_perms))
+
+(macro rpm_manage_log_files ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 rpm_log_t manage_file_perms))
+
+(macro rpm_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 rpm_runtime_t search_dir_perms))
+
+(macro rpm_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 rpm_runtime_t list_dir_perms))
+
+(macro rpm_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 rpm_runtime_t rpm_runtime_t)))
+
+(macro rpm_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 rpm_runtime_t rpm_runtime_t)))
+
+(macro rpm_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 rpm_runtime_t rpm_runtime_t)))
+
+(macro rpm_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 rpm_runtime_t read_file_perms)
+    (allow ARG1 rpm_runtime_t list_dir_perms)
+    (allow ARG1 rpm_runtime_t read_lnk_file_perms))
+
+(macro rpm_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 rpm_runtime_t manage_file_perms)
+    (allow ARG1 rpm_runtime_t manage_dir_perms)
+    (allow ARG1 rpm_runtime_t manage_lnk_file_perms))
+
+(macro rpm_search_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 rpm_tmp_t search_dir_perms))
+
+(macro rpm_list_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 rpm_tmp_t list_dir_perms))
+
+(macro rpm_read_tmp_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_files_pattern (ARG1 rpm_tmp_t rpm_tmp_t)))
+
+(macro rpm_manage_tmp_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call manage_files_pattern (ARG1 rpm_tmp_t rpm_tmp_t)))
+
+(macro rpm_read_tmp_lnk_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_lnk_files_pattern (ARG1 rpm_tmp_t rpm_tmp_t)))
+
+(macro rpm_write_tmp_fifo_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_fifo_files_pattern (ARG1 rpm_tmp_t rpm_tmp_t)))
+
+(macro rpm_rw_inherited_tmp_fifo_files ((type ARG1))
+    (call rpm_use_fd (ARG1))
+    (allow ARG1 rpm_t rw_inherited_fifo_file_perms))
+
+(macro rpm_read_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 rpm_tmp_t read_file_perms)
+    (allow ARG1 rpm_tmp_t list_dir_perms)
+    (allow ARG1 rpm_tmp_t read_fifo_file_perms)
+    (allow ARG1 rpm_tmp_t read_lnk_file_perms))
+
+(macro rpm_manage_tmp ((type ARG1))
+    (call files_rw_tmp_dirs (ARG1))
+    (allow ARG1 rpm_tmp_t manage_file_perms)
+    (allow ARG1 rpm_tmp_t manage_dir_perms)
+    (allow ARG1 rpm_tmp_t manage_fifo_file_perms)
+    (allow ARG1 rpm_tmp_t manage_lnk_file_perms))
+
+(macro rpm_search_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 rpm_tmpfs_t search_dir_perms))
+
+(macro rpm_list_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 rpm_tmpfs_t list_dir_perms))
+
+(macro rpm_read_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 rpm_tmpfs_t rpm_tmpfs_t)))
+
+(macro rpm_manage_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call manage_files_pattern (ARG1 rpm_tmpfs_t rpm_tmpfs_t)))
+
+(macro rpm_rw_inherited_tmpfs_files ((type ARG1))
+    (call rpm_use_fd (ARG1))
+    (allow ARG1 rpm_tmpfs_t rw_inherited_file_perms))
+
+(macro rpm_read_tmpfs_lnk_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 rpm_tmpfs_t rpm_tmpfs_t)))
+
+(macro rpm_read_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 rpm_tmpfs_t read_file_perms)
+    (allow ARG1 rpm_tmpfs_t list_dir_perms)
+    (allow ARG1 rpm_tmpfs_t read_lnk_file_perms))
+
+(macro rpm_manage_tmpfs ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 rpm_tmpfs_t manage_file_perms)
+    (allow ARG1 rpm_tmpfs_t manage_dir_perms)
+    (allow ARG1 rpm_tmpfs_t manage_lnk_file_perms))
+
+(macro rpm_use_fd ((type ARG1))
+    (allow ARG1 rpm_t (fd (use))))
+
+(macro rpm_rw_inherited_fifo_files ((type ARG1))
+    (allow ARG1 rpm_t rw_inherited_fifo_file_perms))
+
+(macro rpm_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset rpm_admin_subject_type ARG1)
+    (optional rpm_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

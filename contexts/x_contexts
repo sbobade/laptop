@@ -1,0 +1,10 @@
+# Support for X object manager is currently unavailable.
+# Use the below Xorg configuration drop-in to disable the X object manager.
+
+# /bin/cat > /etc/X11/xorg.conf.d/99-selinux.conf <<EOF
+# Section "Module"
+# Subsection "extmod"
+# Option "SELinux mode disabled"
+# EndSubSection
+# EndSection
+# EOF

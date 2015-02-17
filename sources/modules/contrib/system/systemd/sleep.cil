@@ -1,0 +1,28 @@
+(type sleep_t)
+(type sleep_exec_t)
+(call systemd_daemon (sleep_t sleep_exec_t))
+
+(context sleep_exec (system_u object_r sleep_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-sleep" file sleep_exec)
+
+(call filesystems_list_debugfs (sleep_t))
+(call filesystems_list_sysfs (sleep_t))
+(call filesystems_rw_sysfs_files (sleep_t))
+(call filesystems_read_sysfs_lnk_files (sleep_t))
+
+(call devices_read_urandom (sleep_t))
+
+(call journal_client_subject_type (sleep_t))
+
+(call systemd_search_config (sleep_t))
+
+(macro sleep_exec ((type ARG1))
+    (call can_exec (ARG1 sleep_exec_t)))
+
+(macro sleep_auto_subject_type_transition ((type ARG1))
+    (call sleep_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sleep_exec_t sleep_t)))
+
+(macro sleep_send_signal ((type ARG1))
+    (allow ARG1 sleep_t (process (signal))))

@@ -1,0 +1,110 @@
+(user staff_u)
+(role staff_r)
+(type staff_t)
+(call usersubject_common_login_subject_template (staff_u staff_r staff_t))
+
+(context staff_home_dir (staff_u object_r home_dir_t (systemlow mls_systemhigh)))
+(filecon "/home/kcinimod" dir staff_home_dir)
+
+(context staff_exec_home (staff_u object_r exec_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/bin(/.*)?" any staff_exec_home)
+(filecon "/home/kcinimod/\.local/bin(/.*)?" any staff_exec_home)
+
+(context staff_cert_home (staff_u object_r cert_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/\.pki(/.*)?" any staff_cert_home)
+
+(context staff_terminfo_home (staff_u object_r terminfo_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/\.terminfo" file staff_terminfo_home)
+
+(context staff_user_home (staff_u object_r user_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/.*" any staff_user_home)
+
+(context staff_cache_home (staff_u object_r cache_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/\.cache(/.*)?" any staff_cache_home)
+
+(context staff_config_home (staff_u object_r config_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/\.config(/.*)?" any staff_config_home)
+
+(context staff_data_home (staff_u object_r data_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/\.local(/.*)?" any staff_data_home)
+
+(context staff_mail_spool (staff_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
+(filecon "/var/spool/mail/kcinimod" file staff_mail_spool)
+
+(call usersubject_setattr_ptys (staff_t))
+(call usersubject_create_ptys (staff_t))
+
+(type staff_chfn_t)
+(call usermanage_role_template_chfn (staff_r staff_t staff_chfn_t))
+
+(type staff_passwd_t)
+(call usermanage_role_template_passwd (staff_r staff_t staff_passwd_t))
+
+(optional staff_optional_pa
+    (call pa_run (staff_t staff_r))
+    (call pa_run_pactl (staff_t staff_r))
+
+    (call pa_manage_tmpfs (staff_t))
+    (call pa_relabel_tmpfs (staff_t))
+    (call pa_tmpfs_object_type_transition_tmpfs_dirs (staff_t))
+
+    (call pa_manage_config_home (staff_t))
+    (call pa_relabel_config_home (staff_t))
+    (call pa_config_home_object_type_transition_config_home_dirs (staff_t))
+
+    (context staff_pa_config_home (staff_u object_r pa_config_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.config/pulse(/.*)?" any staff_pa_config_home)
+
+    (call pa_manage_home_files (staff_t))
+    (call pa_relabel_home_files (staff_t))
+    (call pa_home_dir_object_type_transition_home_files (staff_t))
+
+    (context staff_pa_home (staff_u object_r pa_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home)
+)
+
+(optional staff_optional_sudo
+    (type staff_sudo_t)
+    (call sudo_role_template (staff_r staff_t staff_sudo_t))
+
+    (optional staff_optional_sysadm
+        (call sysadm_manage_keyring (staff_sudo_t))
+        (call sysadm_send_signal (staff_sudo_t))
+        (call sysadm_shell_exec_manual_subject_type_transition (staff_sudo_t))
+        (call sysadm_userrole (staff_u))
+        (call sysadm_roleallow (staff_r))
+        (call sysadm_send_signal (staff_t))
+    )
+)
+
+(optional staff_optional_systemd
+    (type staff_systemd_t)
+    (call systemd_session_role_template (staff_r staff_t staff_systemd_t))
+
+    (call systemd_manage_tmpfs (staff_t))
+    (call systemd_relabel_tmpfs (staff_t))
+    (call systemd_tmpfs_object_type_transition_tmpfs_dirs (staff_t))
+
+    (call systemd_manage_config_home (staff_t))
+    (call systemd_relabel_config_home (staff_t))
+    (call systemd_config_home_object_type_transition_config_home_dirs (staff_t))
+
+    (context staff_systemd_config_home (staff_u object_r systemd_config_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemd_config_home)
+
+    (optional staff_optional_askpwd
+        (call askpwd_exec_askpwdagent (staff_t)))
+
+    (optional staff_optional_journal
+        (call journal_exec_journalctl (staff_t)))
+)
+
+(optional staff_optional_unconfined
+    (call unconfined_subject_type (staff_t))
+)
+
+(macro staff_rw_inherited_fifo_files ((type ARG1))
+    (allow ARG1 staff_t rw_inherited_fifo_file_perms))
+
+(macro staff_use_fd ((type ARG1))
+    (allow ARG1 staff_t (fd (use))))

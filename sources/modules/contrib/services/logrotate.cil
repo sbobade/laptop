@@ -1,0 +1,136 @@
+(roleattribute logrotate_role)
+
+(typeattribute logrotate_admin_subject_type)
+
+(typeattribute logrotate_object_type)
+(typeattribute logrotate_log_object_type)
+
+(type logrotate_t)
+(type logrotate_exec_t)
+(call applications_app (logrotate_t logrotate_exec_t))
+(roletype logrotate_role logrotate_t)
+
+(roleattributeset logrotate_role system_r)
+
+(context logrotate_exec (system_u object_r logrotate_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/logrotate" file logrotate_exec)
+
+(type logrotate_config_t)
+(call files_config_object_type (logrotate_config_t))
+
+(typeattributeset logrotate_object_type logrotate_config_t)
+
+(context logrotate_config (system_u object_r logrotate_config_t (systemlow systemlow)))
+(filecon "/etc/logrotate\.conf" file logrotate_config)
+(filecon "/etc/logrotate\.d(/.*)?" any logrotate_config)
+
+(type logrotate_lib_t)
+(call files_lib_object_type (logrotate_lib_t))
+
+(typeattributeset logrotate_object_type logrotate_lib_t)
+
+(context logrotate_lib (system_u object_r logrotate_lib_t (systemlow systemlow)))
+(filecon "/var/lib/logrotate\.status" file logrotate_lib)
+
+(allow logrotate_t logrotate_lib_t manage_file_perms)
+(call files_lib_object_type_transition (logrotate_t logrotate_lib_t file "*"))
+
+(allow logrotate_t self (process (setfscreate)))
+(allow logrotate_t self (capability (chown fsetid dac_override)))
+(allow logrotate_t self create_unix_stream_socket_perms)
+
+(call files_read_config (logrotate_t))
+(call files_rw_log_dirs (logrotate_t))
+
+(call filesystems_list_rootfs (logrotate_t))
+
+(call selinux_get_enforce_mode (logrotate_t))
+
+(call auth_nsswitch_client_subject_type (logrotate_t))
+
+(call miscfiles_read_locale (logrotate_t))
+
+(optional logrotate_optional_ntp
+    (call ntp_auto_subject_type_transition (logrotate_t)))
+
+(optional logrotate_optional_systemd
+    (call systemd_daemon (logrotate_t logrotate_exec_t))
+
+    (type logrotate_unit_t)
+    (call systemd_unit_object_type (logrotate_unit_t))
+
+    (typeattributeset logrotate_object_type logrotate_unit_t)
+
+    (context logrotate_unit (system_u object_r logrotate_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*logrotate.*" file logrotate_unit)
+
+    (allow logrotate_admin_subject_type logrotate_unit_t (service (all))))
+
+(allow logrotate_t logrotate_log_object_type rw_dir_perms)
+(allow logrotate_t logrotate_log_object_type manage_file_perms)
+
+(allow logrotate_admin_subject_type logrotate_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (logrotate_admin_subject_type logrotate_t))
+
+(allow logrotate_admin_subject_type logrotate_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro logrotate_log_object_type ((type ARG1))
+    (typeattributeset logrotate_log_object_type ARG1))
+
+(macro logrotate_exec ((type ARG1))
+    (call can_exec (ARG1 logrotate_exec_t)))
+
+(macro logrotate_auto_subject_type_transition ((type ARG1))
+    (call logrotate_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 logrotate_exec_t logrotate_t)))
+
+(macro logrotate_send_signal ((type ARG1))
+    (allow ARG1 logrotate_t (process (signal))))
+
+(macro logrotate_run ((type ARG1)(role ARG2))
+    (call logrotate_auto_subject_type_transition (ARG1))
+    (roleattributeset logrotate_role ARG2))
+
+(macro logrotate_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 logrotate_config_t search_dir_perms))
+
+(macro logrotate_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 logrotate_config_t list_dir_perms))
+
+(macro logrotate_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 logrotate_config_t logrotate_config_t)))
+
+(macro logrotate_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 logrotate_config_t logrotate_config_t)))
+
+(macro logrotate_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 logrotate_config_t read_file_perms)
+    (allow ARG1 logrotate_config_t list_dir_perms)
+    (allow ARG1 logrotate_config_t read_lnk_file_perms))
+
+(macro logrotate_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 logrotate_config_t manage_file_perms)
+    (allow ARG1 logrotate_config_t manage_dir_perms)
+    (allow ARG1 logrotate_config_t manage_lnk_file_perms))
+
+(macro logrotate_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 logrotate_lib_t read_file_perms))
+
+(macro logrotate_manage_lib_files ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 logrotate_lib_t manage_file_perms))
+
+(macro logrotate_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset logrotate_admin_subject_type ARG1)
+    (optional logrotate_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

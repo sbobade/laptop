@@ -1,0 +1,111 @@
+(boolean terminals_console_login true)
+
+(typeattribute terminals_pty_object_type)
+(typeattribute terminals_serial_object_type)
+(typeattribute terminals_server_pty_object_type)
+(typeattribute terminals_tty_object_type)
+
+(type terminals_console_login_t)
+(call selinux_bool_object_type (terminals_console_login_t))
+
+(context terminals_console_login (system_u object_r terminals_console_login_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/terminals_console_login" terminals_console_login)
+
+(type console_dev_t)
+(call devices_object_type (console_dev_t))
+
+(context console_dev (system_u object_r console_dev_t (systemlow systemlow)))
+(filecon "/dev/console" char console_dev)
+
+(type tty_dev_t)
+(call terminals_serial_object_type (tty_dev_t))
+
+(context tty_dev (system_u object_r tty_dev_t (systemlow systemlow)))
+(filecon "/dev/hvc[0-9]+" char tty_dev)
+(filecon "/dev/tty.+" char tty_dev)
+(filecon "/dev/vcs[^/]*" char tty_dev)
+
+(call filesystems_associate_devpts (terminals_pty_object_type))
+
+(macro terminals_pty_object_type ((type ARG1))
+    (call devices_object_type (ARG1))
+    (typeattributeset terminals_pty_object_type ARG1))
+
+(macro terminals_login_pty_object_type ((type ARG1))
+    (call terminals_pty_object_type (ARG1))
+    (typeattributeset terminals_server_pty_object_type ARG1))
+
+(macro terminals_serial_object_type ((type ARG1))
+    (call devices_object_type (ARG1))
+    (typeattributeset terminals_serial_object_type ARG1))
+
+(macro terminals_tty_object_type ((type ARG1))
+    (call terminals_serial_object_type (ARG1))
+    (typeattributeset terminals_tty_object_type ARG1))
+
+(macro terminals_create_pty ((type ARG1)(type ARG2))
+    (call devices_rw_ptmx (ARG1))
+    (call filesystems_getattr_devpts_filesystems (ARG1))
+    (call filesystems_devpts_object_type_transition (ARG1 ARG2 chr_file "*")))
+
+(macro terminals_dontaudit_use_console ((type ARG1))
+    (dontaudit ARG1 console_dev_t rw_term_perms))
+
+(macro terminals_use_console ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 console_dev_t rw_term_perms))
+
+(macro terminals_use_inherited_console ((type ARG1))
+    (allow ARG1 console_dev_t rw_inherited_term_perms))
+
+(macro terminals_relabel_console ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 console_dev_t relabel_chr_file_perms))
+
+(macro terminals_relabelfrom_console ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 console_dev_t relabelfrom_chr_file_perms))
+
+(macro terminals_relabelto_console ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 console_dev_t relabelto_chr_file_perms))
+
+(macro terminals_setattr_console ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 console_dev_t (chr_file (setattr))))
+
+(macro terminals_write_console ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 console_dev_t write_chr_file_perms))
+
+(macro terminals_relabel_unallocated_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tty_dev_t relabel_chr_file_perms))
+
+(macro terminals_relabelfrom_unallocated_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tty_dev_t relabelfrom_chr_file_perms))
+
+(macro terminals_relabelto_unallocated_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tty_dev_t relabelto_chr_file_perms))
+
+(macro terminals_setattr_unallocated_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tty_dev_t (chr_file (setattr))))
+
+(macro terminals_use_inherited_unallocated_ttys ((type ARG1))
+    (allow ARG1 tty_dev_t rw_inherited_term_perms))
+
+(macro terminals_use_unallocated_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tty_dev_t rw_term_perms))
+
+(macro terminals_user_pty ((type ARG1)(type ARG2))
+    (typechange ARG1 terminals_server_pty_object_type chr_file ARG2))
+
+(macro terminals_user_tty ((type ARG1)(type ARG2))
+    (typechange ARG1 tty_dev_t chr_file ARG2)
+    (booleanif terminals_console_login
+        (true
+            (typechange ARG1 console_dev_t chr_file ARG2))))

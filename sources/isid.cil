@@ -1,0 +1,41 @@
+(sid file_labels)
+(sid init)
+(sid any_socket)
+(sid igmp_packet)
+(sid icmp_socket)
+(sid tcp_socket)
+(sid sysctl_modprobe)
+(sid sysctl_fs)
+(sid sysctl_kernel)
+(sid sysctl_net)
+(sid sysctl_net_unix)
+(sid sysctl_vm)
+(sid sysctl_dev)
+(sid kmod)
+(sid policy)
+(sid scmp_packet)
+
+(sidorder (kernel security unlabeled fs file file_labels init
+    any_socket port netif netmsg node igmp_packet icmp_socket
+    tcp_socket sysctl_modprobe sysctl sysctl_fs sysctl_kernel
+    sysctl_net sysctl_net_unix sysctl_vm sysctl_dev kmod policy
+    scmp_packet devnull))
+
+(context isid (system_u object_r unlabeled_t (systemlow systemlow)))
+
+(sidcontext file_labels isid)
+(sidcontext init isid)
+(sidcontext any_socket isid)
+(sidcontext igmp_packet isid)
+(sidcontext icmp_socket isid)
+(sidcontext tcp_socket isid)
+(sidcontext sysctl_modprobe isid)
+(sidcontext sysctl_fs isid)
+(sidcontext sysctl_kernel isid)
+(sidcontext sysctl_net isid)
+(sidcontext sysctl_net_unix isid)
+(sidcontext sysctl_vm isid)
+(sidcontext sysctl_dev isid)
+(sidcontext kmod isid)
+(sidcontext policy isid)
+(sidcontext scmp_packet isid)

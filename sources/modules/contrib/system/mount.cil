@@ -1,0 +1,106 @@
+(boolean mount_any_file false)
+
+(roleattribute mount_role)
+
+(type mount_any_file_t)
+(call selinux_bool_object_type (mount_any_file_t))
+
+(context mount_any_file (system_u object_r mount_any_file_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/mount_any_file" mount_any_file)
+
+(type mount_t)
+(type mount_exec_t)
+(call applications_app (mount_t mount_exec_t))
+(roletype mount_role mount_t)
+
+(roleattributeset mount_role system_r)
+
+(context mount_exec (system_u object_r mount_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/mount.*" file mount_exec)
+(filecon "/usr/bin/umount.*" file mount_exec)
+(filecon "/usr/sbin/mount.*" file mount_exec)
+(filecon "/usr/sbin/umount.*" file mount_exec)
+
+(type mount_runtime_t)
+(call files_runtime_object_type (mount_runtime_t))
+
+(context mount_runtime (system_u object_r mount_runtime_t (systemlow systemlow)))
+(filecon "/var/run/mount(/.*)?" any mount_runtime)
+
+(allow mount_t mount_runtime_t manage_dir_perms)
+(allow mount_t mount_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (mount_t mount_runtime_t dir "*"))
+
+(allow mount_t self (capability (dac_override sys_admin)))
+
+(call system_mounton_mountpoint_dirs (mount_t))
+(call system_request_load_module (mount_t))
+(call system_setsched (mount_t))
+
+(call files_read_config_files (mount_t))
+
+(call filesystems_getattr_all_filesystems (mount_t))
+(call filesystems_mount_all (mount_t))
+(call filesystems_read_devtmpfs_lnk_files (mount_t))
+(call filesystems_read_sysfs (mount_t))
+(call filesystems_remount_all (mount_t))
+(call filesystems_unmount_all (mount_t))
+
+(call storage_read_fixed_disk (mount_t))
+(call storage_read_removable (mount_t))
+(call storage_read_scsi_generic (mount_t))
+
+(call miscfiles_read_locale (mount_t))
+
+(booleanif (mount_any_file)
+    (true
+        (call files_read_all_files_except (mount_t))
+        (call files_mounton_all_except (mount_t))))
+
+(optional mount_optional_systemd
+    (call systemd_daemon (mount_t mount_exec_t)))
+
+(macro mount_exec ((type ARG1))
+    (call can_exec (ARG1 mount_exec_t)))
+
+(macro mount_auto_subject_type_transition ((type ARG1))
+    (call mount_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 mount_exec_t mount_t)))
+
+(macro mount_send_signal ((type ARG1))
+    (allow ARG1 mount_t (process (signal))))
+
+(macro mount_run ((type ARG1)(role ARG2))
+    (call mount_auto_subject_type_transition (ARG1))
+    (roleattributeset mount_role (ARG2)))
+
+(macro mount_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 mount_runtime_t search_dir_perms))
+
+(macro mount_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 mount_runtime_t list_dir_perms))
+
+(macro mount_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 mount_runtime_t mount_runtime_t)))
+
+(macro mount_rw_runtime_files ((type ARG1))
+    (call mount_search_runtime (ARG1))
+    (allow ARG1 mount_runtime_t rw_file_perms))
+
+(macro mount_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 mount_runtime_t mount_runtime_t)))
+
+(macro mount_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 mount_runtime_t mount_runtime_t)))
+
+(macro mount_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 mount_runtime_t read_file_perms)
+    (allow ARG1 mount_runtime_t list_dir_perms)
+    (allow ARG1 mount_runtime_t read_lnk_file_perms))

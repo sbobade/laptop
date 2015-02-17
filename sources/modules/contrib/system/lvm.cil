@@ -1,0 +1,330 @@
+(roleattribute lvm_role)
+
+(typeattribute lvm_admin_subject_type)
+
+(typeattribute lvm_object_type)
+
+(type lvm_t)
+(type lvm_exec_t)
+(call applications_app (lvm_t lvm_exec_t))
+(roletype lvm_role lvm_t)
+
+(roleattributeset lvm_role system_r)
+
+(context lvm_exec (system_u object_r lvm_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system-generators/lvm2-activation-generator" file lvm_exec)
+(filecon "/usr/sbin/lvm" file lvm_exec)
+(filecon "/usr/sbin/lvmconf" file lvm_exec)
+(filecon "/usr/sbin/lvmdump" file lvm_exec)
+(filecon "/usr/sbin/vgimportclone" file lvm_exec)
+
+(type lvm_config_t)
+(call files_config_object_type (lvm_config_t))
+
+(typeattributeset lvm_object_type lvm_config_t)
+
+(context lvm_config (system_u object_r lvm_config_t (systemlow systemlow)))
+(filecon "/etc/lvm(/.*)?" any lvm_config)
+
+(type lvm_metadata_t)
+(call files_config_object_type (lvm_metadata_t))
+
+(typeattributeset lvm_object_type lvm_metadata_t)
+
+(context lvm_metadata (system_u object_r lvm_metadata_t (systemlow systemlow)))
+(filecon "/etc/lvm/cache(/.*)?" any lvm_metadata)
+(filecon "/etc/lvm/archive(/.*)?" any lvm_metadata)
+(filecon "/etc/lvm/backup(/.*)?" any lvm_metadata)
+(filecon "/etc/lvm/profile(/.*)?" any lvm_metadata)
+
+(type lvm_lock_t)
+(call files_lock_object_type (lvm_lock_t))
+
+(typeattributeset lvm_object_type lvm_lock_t)
+
+(context lvm_lock (system_u object_r lvm_lock_t (systemlow systemlow)))
+(filecon "/var/run/lock/lvm(/.*)?" any lvm_lock)
+
+(allow lvm_t self (capability (ipc_lock sys_nice sys_admin)))
+(allow lvm_t self (process (setfscreate setsched)))
+(allow lvm_t self create_sem_perms)
+
+(allow lvm_t lvm_lock_t manage_dir_perms)
+(allow lvm_t lvm_lock_t manage_file_perms)
+(call files_lock_object_type_transition (lvm_t lvm_lock_t dir "*"))
+
+(call system_get_sysvipc_info (lvm_t))
+(call system_getattr_core_if (lvm_t))
+(call system_use_fd (lvm_t))
+
+(call devices_getattr_all (lvm_t))
+(call devices_read_urandom (lvm_t))
+(call devices_rw_lvm_control (lvm_t))
+(call devices_write_kmsg (lvm_t))
+
+(call filesystems_list_debugfs (lvm_t))
+(call filesystems_getattr_devpts_chr_files (lvm_t))
+(call filesystems_list_tmpfs (lvm_t))
+(call filesystems_list_hugetlbfs (lvm_t))
+(call filesystems_read_sysfs (lvm_t))
+(call filesystems_read_devtmpfs_lnk_files (lvm_t))
+
+(call selinux_get_enforce_mode (lvm_t))
+
+(call subject_object_identity_change_exemption (lvm_t))
+
+(call seutil_read_selinux_config_files (lvm_t))
+(call seutil_read_file_context_files (lvm_t))
+
+(call storage_manage_fixed_disk (lvm_t))
+(call storage_manage_removable (lvm_t))
+(call storage_manage_scsi_generic (lvm_t))
+
+(call lvm_read_config (lvm_t))
+(call lvm_manage_metadata (lvm_t))
+(call lvm_stream_connect_lvmetad (lvm_t))
+
+(call miscfiles_read_locale (lvm_t))
+
+(call udev_client_subject_type (lvm_t))
+
+(optional lvm_optional_systemd
+    (call systemd_daemon (lvm_t lvm_exec_t))
+
+    (type lvm_unit_t)
+    (call systemd_unit_object_type (lvm_unit_t))
+
+    (typeattributeset lvm_object_type lvm_unit_t)
+
+    (context lvm_unit (system_u object_r lvm_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/blk-availability.*" file lvm_unit)
+    (filecon "/usr/lib/systemd/system/lvm2-.*" file lvm_unit)
+
+    (allow lvm_admin_subject_type lvm_unit_t (service (all))))
+
+(type lvmetad_t)
+(type lvmetad_exec_t)
+(call subject_common_type (lvmetad_t))
+(call subject_entry (lvmetad_t lvmetad_exec_t))
+(roletype system_r lvmetad_t)
+
+(context lvmetad_exec (system_u object_r lvmetad_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/lvmetad" file lvmetad_exec)
+
+(type lvmetad_runtime_t)
+(call files_runtime_object_type (lvmetad_runtime_t))
+
+(typeattributeset lvm_object_type lvmetad_runtime_t)
+
+(context lvmetad_runtime (system_u object_r lvmetad_runtime_t (systemlow systemlow)))
+(filecon "/var/run/lvm(/.*)?" any lvmetad_runtime)
+(filecon "/var/run/lvmetad\.pid" file lvmetad_runtime)
+
+(allow lvmetad_t self (process (setfscreate)))
+(allow lvmetad_t self create_unix_stream_stream_socket_perms)
+
+(allow lvmetad_t lvmetad_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (lvmetad_t lvmetad_runtime_t file "*"))
+
+(allow lvmetad_t lvmetad_runtime_t manage_dir_perms)
+(allow lvmetad_t lvmetad_runtime_t  manage_sock_file_perms)
+(call files_runtime_object_type_transition (lvmetad_t lvmetad_runtime_t dir "*"))
+
+(call selinux_get_enforce_mode (lvmetad_t))
+
+(call seutil_read_selinux_config_files (lvmetad_t))
+(call seutil_read_file_context_files (lvmetad_t))
+
+(optional lvmetad_optional_systemd
+    (call systemd_daemon (lvmetad_t lvmetad_exec_t))
+
+    (type lvmetad_unit_t)
+    (call systemd_unit_object_type (lvmetad_unit_t))
+
+    (typeattributeset lvm_object_type lvmetad_unit_t)
+
+    (context lvmetad_unit (system_u object_r lvmetad_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/lvm2-lvmetad.*" file lvmetad_unit)
+
+    (call systemd_pid_object_type (lvmetad_runtime_t))
+    (call systemd_socket_activated (lvmetad_t lvmetad_runtime_t))
+
+    (allow lvm_admin_subject_type lvmetad_unit_t (service (all))))
+
+(allow lvm_admin_subject_type lvmetad_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (lvm_admin_subject_type lvmetad_t))
+
+(allow lvm_admin_subject_type lvm_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro lvm_exec ((type ARG1))
+    (call can_exec (ARG1 lvm_exec_t)))
+
+(macro lvm_exec_lvmetad ((type ARG1))
+    (call can_exec (ARG1 lvmetad_exec_t)))
+
+(macro lvm_auto_subject_type_transition ((type ARG1))
+    (call lvm_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 lvm_exec_t lvm_t)))
+
+(macro lvm_send_signal ((type ARG1))
+    (allow ARG1 lvm_t (process (signal))))
+
+(macro lvm_run ((type ARG1)(role ARG2))
+    (call lvm_auto_subject_type_transition (ARG1))
+    (roleattributeset lvm_role ARG2))
+
+(macro lvm_auto_subject_type_transition_lvmetad ((type ARG1))
+    (call lvm_send_signal_lvmetad (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 lvmetad_exec_t lvmetad_t)))
+
+(macro lvm_send_signal_lvmetad ((type ARG1))
+    (allow ARG1 lvmetad_t (process (signal))))
+
+(macro lvm_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 lvm_config_t search_dir_perms))
+
+(macro lvm_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 lvm_config_t list_dir_perms))
+
+(macro lvm_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 lvm_config_t lvm_config_t)))
+
+(macro lvm_manage_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call manage_files_pattern (ARG1 lvm_config_t lvm_config_t)))
+
+(macro lvm_rw_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 lvm_config_t rw_dir_perms))
+
+(macro lvm_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 lvm_config_t lvm_config_t)))
+
+(macro lvm_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 lvm_config_t read_file_perms)
+    (allow ARG1 lvm_config_t list_dir_perms)
+    (allow ARG1 lvm_config_t read_lnk_file_perms))
+
+(macro lvm_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 lvm_config_t manage_file_perms)
+    (allow ARG1 lvm_config_t manage_dir_perms)
+    (allow ARG1 lvm_config_t manage_lnk_file_perms))
+
+(macro lvm_search_metadata ((type ARG1))
+    (call lvm_search_config (ARG1))
+    (allow ARG1 lvm_metadata_t search_dir_perms))
+
+(macro lvm_list_metadata ((type ARG1))
+    (call lvm_search_config (ARG1))
+    (allow ARG1 lvm_metadata_t list_dir_perms))
+
+(macro lvm_read_metadata_files ((type ARG1))
+    (call lvm_search_config (ARG1))
+    (call read_files_pattern (ARG1 lvm_metadata_t lvm_metadata_t)))
+
+(macro lvm_manage_metadata_files ((type ARG1))
+    (call lvm_search_config (ARG1))
+    (call manage_files_pattern (ARG1 lvm_metadata_t lvm_metadata_t)))
+
+(macro lvm_read_metadata_lnk_files ((type ARG1))
+    (call lvm_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 lvm_metadata_t lvm_metadata_t)))
+
+(macro lvm_read_metadata ((type ARG1))
+    (call lvm_search_config (ARG1))
+    (allow ARG1 lvm_metadata_t read_file_perms)
+    (allow ARG1 lvm_metadata_t list_dir_perms)
+    (allow ARG1 lvm_metadata_t read_lnk_file_perms))
+
+(macro lvm_manage_metadata ((type ARG1))
+    (call lvm_rw_config_dirs (ARG1))
+    (allow ARG1 lvm_metadata_t manage_file_perms)
+    (allow ARG1 lvm_metadata_t manage_dir_perms)
+    (allow ARG1 lvm_metadata_t manage_lnk_file_perms))
+
+(macro lvm_search_lock ((type ARG1))
+    (call files_search_lock (ARG1))
+    (allow ARG1 lvm_lock_t search_dir_perms))
+
+(macro lvm_list_lock ((type ARG1))
+    (call files_search_lock (ARG1))
+    (allow ARG1 lvm_lock_t list_dir_perms))
+
+(macro lvm_read_lock_files ((type ARG1))
+    (call files_search_lock (ARG1))
+    (call read_files_pattern (ARG1 lvm_lock_t lvm_lock_t)))
+
+(macro lvm_read_lock_lnk_files ((type ARG1))
+    (call files_search_lock (ARG1))
+    (call read_lnk_files_pattern (ARG1 lvm_lock_t lvm_lock_t)))
+
+(macro lvm_read_lock ((type ARG1))
+    (call files_search_lock (ARG1))
+    (allow ARG1 lvm_lock_t read_file_perms)
+    (allow ARG1 lvm_lock_t list_dir_perms)
+    (allow ARG1 lvm_lock_t read_lnk_file_perms))
+
+(macro lvm_search_lvmetad_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 lvmetad_runtime_t search_dir_perms))
+
+(macro lvm_list_lvmetad_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 lvmetad_runtime_t list_dir_perms))
+
+(macro lvm_read_lvmetad_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
+(macro lvm_read_lvmetad_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_sock_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
+(macro lvm_manage_lvmetad_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
+(macro lvm_manage_lvmetad_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_sock_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
+(macro lvm_read_lvmetad_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
+(macro lvm_read_lvmetad_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 lvm_runtime_t read_file_perms)
+    (allow ARG1 lvm_runtime_t list_dir_perms)
+    (allow ARG1 lvm_runtime_t read_lnk_file_perms)
+    (allow ARG1 lvm_runtime_t read_sock_file_perms))
+
+(macro lvm_manage_lvmetad_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 lvm_runtime_t manage_file_perms)
+    (allow ARG1 lvm_runtime_t manage_dir_perms)
+    (allow ARG1 lvm_runtime_t manage_lnk_file_perms)
+    (allow ARG1 lvm_runtime_t manage_sock_file_perms))
+
+(macro lvm_stream_connect_lvmetad ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern
+        (ARG1 lvmetad_runtime_t lvmetad_runtime_t lvmetad_t)))
+
+(macro lvm_rw_lvm_sem ((type ARG1))
+    (allow ARG1 lvm_t rw_sem_perms))
+
+(macro lvm_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset lvm_admin_subject_type ARG1)
+    (optional lvm_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

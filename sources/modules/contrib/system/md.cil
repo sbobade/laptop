@@ -1,0 +1,143 @@
+(roleattribute mdadm_role)
+
+(typeattribute md_admin_subject_type)
+(typeattribute md_subject_type)
+
+(typeattribute md_object_type)
+(typeattribute md_unit_object_type)
+
+(type mdadm_t)
+(type mdadm_exec_t)
+(call applications_app (mdadm_t mdadm_exec_t))
+(roletype mdadm_role mdadm_t)
+
+(roleattributeset mdadm_role system_r)
+
+(typeattributeset md_subject_type mdadm_t)
+
+(context mdadm_exec (system_u object_r mdadm_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/mdadm" file mdadm_exec)
+(filecon "/usr/sbin/raid-check" file mdadm_exec)
+
+(type mdadm_runtime_t)
+(call files_runtime_object_type (mdadm_runtime_t))
+
+(typeattributeset md_object_type mdadm_runtime_t)
+
+(context mdadm_runtime (system_u object_r mdadm_runtime_t (systemlow systemlow)))
+(filecon "/var/run/mdadm(/.*)?" any mdadm_runtime)
+
+(allow mdadm_t mdadm_runtime_t manage_dir_perms)
+(allow mdadm_t mdadm_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (mdadm_t mdadm_runtime_t dir "*"))
+
+(optional mdadm_optional_systemd
+    (call systemd_daemon (mdadm_t mdadm_exec_t))
+
+    (type mdadm_unit_t)
+    (call systemd_unit_object_type (mdadm_unit_t))
+
+    (typeattributeset md_object_type mdadm_unit_t)
+
+    (context mdadm_unit (system_u object_r mdadm_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*mdadm-.*" file mdadm_unit)
+
+    (allow md_admin_subject_type mdadm_unit_t (service (all))))
+
+(type mdmon_t)
+(type mdmon_exec_t)
+(call subject_common_type (mdmon_t))
+(call subject_entry (mdmon_t mdmon_exec_t))
+(roletype system_r mdmon_t)
+
+(typeattributeset md_subject_type mdmon_t)
+
+(context mdmon_exec (system_u object_r mdmon_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/mdmon" file mdmon_exec)
+
+(optional mdmon_optional_systemd
+    (call systemd_daemon (mdmon_t mdmon_exec_t))
+
+    (type mdmon_unit_t)
+    (call systemd_unit_object_type (mdmon_unit_t))
+
+    (typeattributeset md_object_type mdmon_unit_t)
+
+    (context mdmon_unit (system_u object_r mdmon_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*mdmon.*" file mdmon_unit)
+
+    (allow md_admin_subject_type mdmon_unit_t (service (all))))
+
+(allow md_admin_subject_type md_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (md_admin_subject_type md_subject_type))
+
+(allow md_admin_subject_type md_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro md_exec_mdadm ((type ARG1))
+    (call can_exec (ARG1 mdadm_exec_t)))
+
+(macro md_exec_mdmon ((type ARG1))
+    (call can_exec (ARG1 mdmon_exec_t)))
+
+(macro md_auto_subject_type_transition_mdadm ((type ARG1))
+    (call md_send_signal_mdadm (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 mdadm_exec_t mdadm_t)))
+
+(macro md_send_signal_mdadm ((type ARG1))
+    (allow ARG1 mdadm_t (process (signal))))
+
+(macro md_run_mdadm ((type ARG1)(role ARG2))
+    (call md_auto_subject_type_transition_mdadm (ARG1))
+    (roleattributeset mdadm_role ARG2))
+
+(macro md_auto_subject_type_transition_mdmon ((type ARG1))
+    (call md_send_signal_mdmon (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 mdmon_exec_t mdmon_t)))
+
+(macro md_send_signal_mdmon ((type ARG1))
+    (allow ARG1 mdmon_t (process (signal))))
+
+(macro md_search_mdadm_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 mdadm_runtime_t search_dir_perms))
+
+(macro md_list_mdadm_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 mdadm_runtime_t list_dir_perms))
+
+(macro md_read_mdadm_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 mdadm_runtime_t mdadm_runtime_t)))
+
+(macro md_rw_mdadm_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 mdadm_runtime_t rw_file_perms))
+
+(macro md_manage_mdadm_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (call manage_files_pattern (ARG1 mdadm_runtime_t mdadm_runtime_t)))
+
+(macro md_read_mdadm_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 mdadm_runtime_t mdadm_runtime_t)))
+
+(macro md_read_mdadm_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 mdadm_runtime_t read_file_perms)
+    (allow ARG1 mdadm_runtime_t list_dir_perms)
+    (allow ARG1 mdadm_runtime_t read_lnk_file_perms))
+
+(macro md_manage_mdadm_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 mdadm_runtime_t manage_file_perms)
+    (allow ARG1 mdadm_runtime_t manage_dir_perms)
+    (allow ARG1 mdadm_runtime_t manage_lnk_file_perms))
+
+(macro md_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset md_admin_subject_type ARG1)
+    (optional md_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

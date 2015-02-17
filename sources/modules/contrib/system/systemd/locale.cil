@@ -1,0 +1,104 @@
+(roleattribute locale_localectl_role)
+
+(typeattribute locale_localectl_client_subject_type)
+
+(type localectl_t)
+(type localectl_exec_t)
+(call applications_app (localectl_t localectl_exec_t))
+(roletype locale_localectl_role localectl_t)
+
+(call locale_localectl_client_subject_type (localectl_t))
+
+(context localectl_exec (system_u object_r localectl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/localectl" file localectl_exec)
+
+(type localed_t)
+(type localed_exec_t)
+(call systemd_daemon (localed_t localed_exec_t))
+
+(context localed_exec (system_u object_r localed_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-localed" file localed_exec)
+
+(type locale_config_t)
+(call files_config_object_type (locale_config_t))
+
+(context locale_config (system_u object_r locale_config_t (systemlow systemlow)))
+(filecon "/etc/locale\.conf" file locale_config)
+
+(type localed_dbus_config_t)
+(call dbus_config_object_type (localed_dbus_config_t))
+
+(context localed_dbus_config (system_u object_r localed_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.locale1\.conf" file localed_dbus_config)
+
+(call system_read_kernel_sysctl (localed_t))
+
+(call devices_read_urandom (localed_t))
+
+(call filesystems_search_tmpfs (localed_t))
+
+(call dbus_system_service (localed_t))
+
+(call journal_client_subject_type (localed_t))
+
+(call polkit_dbus_chat_polkitd (localed_t))
+
+(call seutil_read_selinux_config_files (localed_t))
+(call seutil_read_file_context_files (localed_t))
+
+(call systemd_stream_connect (localed_t))
+
+(call vconsole_read_config_files (localed_t))
+
+(optional localed_optional_xserver
+    (call xserver_read_config_files (localed_t)))
+
+(macro locale_exec_localectl ((type ARG1))
+    (call can_exec (ARG1 localectl_exec_t))
+    (call locale_localectl_client_subject_type (ARG1)))
+
+(macro locale_localectl_client_subject_type ((type ARG1))
+    (typeattributeset locale_localectl_client_subject_type ARG1))
+
+(macro locale_exec_localed ((type ARG1))
+    (call can_exec (ARG1 localed_exec_t)))
+
+(macro locale_auto_subject_type_transition_localed ((type ARG1))
+    (call locale_send_signal_localed (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 localed_exec_t localed_t)))
+
+(macro locale_send_signal_localed ((type ARG1))
+    (allow ARG1 localed_t (process (signal))))
+
+(macro locale_auto_subject_type_transition_localectl ((type ARG1))
+    (call locale_send_signal_localectl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 localectl_exec_t localectl_t)))
+
+(macro locale_send_signal_localectl ((type ARG1))
+    (allow ARG1 localectl_t (process (signal))))
+
+(macro locale_run_localectl ((type ARG1)(role ARG2))
+    (call locale_auto_subject_type_transition_localectl (ARG1))
+    (roleattributeset locale_localectl_role ARG2))
+
+(macro locale_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 locale_config_t read_file_perms))
+
+(macro locale_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 locale_config_t manage_file_perms))
+
+(macro locale_read_localed_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 localed_dbus_config_t read_file_perms))
+
+(macro locale_manage_localed_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 localed_dbus_config_t manage_file_perms))
+
+(macro locale_dbus_chat_localed ((type ARG1))
+    (allow ARG1 localed_t (dbus (send_msg)))
+    (allow localed_t ARG1 (dbus (send_msg))))

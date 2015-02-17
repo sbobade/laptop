@@ -1,0 +1,271 @@
+(roleattribute pkladm_role)
+(roleattribute pklauth_role)
+
+(typeattribute polkit_admin_subject_type)
+(typeattribute polkit_subject_type)
+
+(typeattribute polkit_pkladm_client_subject_type)
+(typeattribute polkit_pklauth_client_subject_type)
+
+(typeattribute polkit_object_type)
+
+(type polkitd_t)
+(type polkitd_exec_t)
+(call subject_common_type (polkitd_t))
+(call subject_entry (polkitd_t polkitd_exec_t))
+(roletype system_r polkitd_t)
+
+(typeattributeset polkit_subject_type polkitd_t)
+
+(context polkitd_exec (system_u object_r polkitd_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/polkit-1/polkitd" file polkitd_exec)
+
+(type polkit_config_t)
+(call files_config_object_type (polkit_config_t))
+
+(typeattributeset polkit_object_type polkit_config_t)
+
+(context polkit_config (system_u object_r polkit_config_t (systemlow systemlow)))
+(filecon "/etc/polkit-1(/.*)?" any polkit_config)
+
+(type polkit_dbus_config_t)
+(call dbus_config_object_type (polkit_dbus_config_t))
+
+(typeattributeset polkit_object_type polkit_dbus_config_t)
+
+(context polkit_dbus_config (system_u object_r polkit_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.PolicyKit1\.conf" file polkit_dbus_config)
+
+(type polkit_pam_config_t)
+(call auth_pam_config_object_type (polkit_pam_config_t))
+
+(typeattributeset polkit_object_type polkit_pam_config_t)
+
+(context polkit_pam_config (system_u object_r polkit_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/polkit-1" file polkit_pam_config)
+
+(type polkitd_lib_t)
+(call files_lib_object_type (polkitd_lib_t))
+
+(typeattributeset polkit_object_type polkitd_lib_t)
+
+(context polkitd_lib (system_u object_r polkitd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/polkit-1(/.*)?" any polkitd_lib)
+
+(allow polkitd_t polkitd_lib_t manage_dir_perms)
+(allow polkitd_t polkitd_lib_t manage_file_perms)
+(call files_lib_object_type_transition (polkitd_t polkitd_lib_t dir "*"))
+
+(allow polkitd_t self (process (getsched setsched)))
+(allow polkitd_t self (capability (setuid setgid)))
+(allow polkitd_t self rw_fifo_file_perms)
+
+(call system_read_kernel_sysctl (polkitd_t))
+
+(call devices_read_urandom (polkitd_t))
+
+(call filesystems_getattr_filesystems (polkitd_t))
+(call filesystems_read_sysfs_files (polkitd_t))
+
+(call files_read_data (polkitd_t))
+
+(call subject_read_all_common_subjects_state (polkitd_t))
+
+(call auth_nsswitch_client_subject_type (polkitd_t))
+
+(call dbus_system_service (polkitd_t))
+
+(call miscfiles_read_locale (polkitd_t))
+
+(call polkit_exec_pkladm (polkitd_t))
+(call polkit_exec_pklauth (polkitd_t))
+
+(call polkit_read_config (polkitd_t))
+(call polkit_read_dbus_config_files (polkitd_t))
+(call polkit_read_pam_config_files (polkitd_t))
+
+(optional polkitd_optional_journal
+    (call journal_client_subject_type (polkitd_t)))
+
+(optional polkitd_optional_login_logind
+    (call login_read_logind_systemd_runtime (polkitd_t)))
+
+(optional polkitd_optional_machine
+    (call machine_read_machined_systemd_runtime (polkitd_t)))
+
+(optional polkitd_optional_systemd
+    (call systemd_daemon (polkitd_t polkitd_exec_t))
+
+    (type polkitd_unit_t)
+    (call systemd_unit_object_type (polkitd_unit_t))
+
+    (typeattributeset polkit_object_type polkitd_unit_t)
+
+    (context polkitd_unit (system_u object_r polkitd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*polkit.*" file polkitd_unit)
+
+    (allow polkit_admin_subject_type polkitd_unit_t (service (all))))
+
+(type pkladm_t)
+(type pkladm_exec_t)
+(call applications_app (pkladm_t pkladm_exec_t))
+(roletype pkladm_role pkladm_t)
+
+(roleattributeset pkladm_role system_r)
+
+(typeattributeset polkit_subject_type pkladm_t)
+(typeattributeset polkit_pkladm_client_subject_type pkladm_t)
+
+(context pkladm_exec (system_u object_r pkladm_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/pkla-admin-identities" file pkladm_exec)
+
+(optional pkladm_optional_systemd
+    (call systemd_daemon (pkladm_t pkladm_exec_t)))
+
+(type pklauth_t)
+(type pklauth_exec_t)
+(call applications_app (pklauth_t pklauth_exec_t))
+(roletype pklauth_role pklauth_t)
+
+(roleattributeset pklauth_role system_r)
+
+(typeattributeset polkit_subject_type pklauth_t)
+(typeattributeset polkit_pklauth_client_subject_type pklauth_t)
+
+(context pklauth_exec (system_u object_r pklauth_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/pkla-check-authorization" file pklauth_exec)
+
+(optional pklauth_optional_systemd
+    (call systemd_daemon (pklauth_t pklauth_exec_t)))
+
+(type polkit_helper_exec_t)
+(call commands_exec_object_type (polkit_helper_exec_t))
+
+(context polkit_helper_exec (system_u object_r polkit_helper_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/polkit-1/polkit-agent-helper-1" file polkit_helper_exec)
+
+(allow polkit_admin_subject_type polkit_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (polkit_admin_subject_type polkit_subject_type))
+
+(allow polkit_admin_subject_type polkit_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro polkit_exec_polkitd ((type ARG1))
+    (call can_exec (ARG1 polkitd_exec_t)))
+
+(macro polkit_exec_pkladm ((type ARG1))
+    (call can_exec (ARG1 pkladm_exec_t))
+    (call polkit_pkladm_client_subject_type (ARG1)))
+
+(macro polkit_pkladm_client_subject_type ((type ARG1))
+    (typeattributeset polkit_pkladm_client_subject_type ARG1))
+
+(macro polkit_exec_pklauth ((type ARG1))
+    (call can_exec (ARG1 pklauth_exec_t))
+    (call polkit_pklauth_client_subject_type (ARG1)))
+
+(macro polkit_pklauth_client_subject_type ((type ARG1))
+    (typeattributeset polkit_pklauth_client_subject_type ARG1))
+
+(macro polkit_exec_polkit_helper ((type ARG1))
+    (call can_exec (ARG1 polkit_helper_exec_t)))
+
+(macro polkit_auto_subject_type_transition_pattern_polkitd ((type ARG1))
+    (call polkit_send_signal_polkitd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 polkitd_exec_t polkitd_t)))
+
+(macro polkit_send_signal_polkitd ((type ARG1))
+    (allow ARG1 polkitd_t (process (signal))))
+
+(macro polkit_auto_subject_type_transition_pkladm ((type ARG1))
+    (call polkit_send_signal_pkladm (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pkladm_exec_t pkladm_t)))
+
+(macro polkit_send_signal_pkladm ((type ARG1))
+    (allow ARG1 pkladm_t (process (signal))))
+
+(macro polkit_run_pkladm ((type ARG1)(role ARG2))
+    (call polkit_auto_subject_type_transition_pkladm (ARG1))
+    (roleattributeset pkladm_role ARG2))
+
+(macro polkit_auto_subject_type_transition_pklauth ((type ARG1))
+    (call polkit_send_signal_pklauth (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pklauth_exec_t pklauth_t)))
+
+(macro polkit_send_signal_pklauth ((type ARG1))
+    (allow ARG1 pklauth_t (process (signal))))
+
+(macro polkit_run_pklauth ((type ARG1)(role ARG2))
+    (call polkit_auto_subject_type_transition_pklauth (ARG1))
+    (roleattributeset pklauth_role ARG2))
+
+(macro polkit_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 polkit_config_t search_dir_perms))
+
+(macro polkit_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 polkit_config_t list_dir_perms))
+
+(macro polkit_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 polkit_config_t polkit_config_t)))
+
+(macro polkit_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 polkit_config_t polkit_config_t)))
+
+(macro polkit_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 polkit_config_t read_file_perms)
+    (allow ARG1 polkit_config_t list_dir_perms)
+    (allow ARG1 polkit_config_t read_lnk_file_perms))
+
+(macro polkit_read_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 polkit_dbus_config_t read_file_perms))
+
+(macro polkit_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 polkit_pam_config_t read_file_perms))
+
+(macro polkit_search_polkid_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 polkitd_lib_t search_dir_perms))
+
+(macro polkit_list_polkitd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 polkitd_lib_t list_dir_perms))
+
+(macro polkit_read_polkitd_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 polkitd_lib_t polkitd_lib_t)))
+
+(macro polkit_read_polkid_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 polkitd_lib_t polkitd_lib_t)))
+
+(macro polkit_read_polkitd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 polkitd_lib_t read_file_perms)
+    (allow ARG1 polkitd_lib_t list_dir_perms)
+    (allow ARG1 polkitd_lib_t read_lnk_file_perms))
+
+(macro polkit_manage_polkitd_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 polkitd_lib_t manage_file_perms)
+    (allow ARG1 polkitd_lib_t manage_dir_perms)
+    (allow ARG1 polkitd_lib_t manage_lnk_file_perms))
+
+(macro polkit_dbus_chat_polkitd ((type ARG1))
+    (allow ARG1 polkitd_t (dbus (send_msg)))
+    (allow polkitd_t ARG1 (dbus (send_msg))))
+
+(macro polkit_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset polkit_admin_type ARG1)
+    (optional polkit_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

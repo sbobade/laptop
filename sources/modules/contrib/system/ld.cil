@@ -1,0 +1,104 @@
+(roleattribute ldconfig_role)
+
+(typeattribute ld_object_type)
+(typeattribute ld_admin_subject_type)
+
+(type ldconfig_t)
+(type ldconfig_exec_t)
+(call applications_app (ldconfig_t ldconfig_exec_t))
+(roletype ldconfig_role ldconfig_t)
+
+(roleattributeset ldconfig_role system_r)
+
+(context ldconfig_exec (system_u object_r ldconfig_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/ldconfig" file ldconfig_exec)
+
+(type ldconfig_cache_t)
+(call files_cache_object_type (ldconfig_cache_t))
+
+(typeattributeset ld_object_type ldconfig_cache_t)
+
+(context ldconfig_cache (system_u object_r ldconfig_cache_t (systemlow systemlow)))
+(filecon "/var/cache/ldconfig(/.*)?" any ldconfig_cache)
+
+(allow ldconfig_t self (capability (dac_override sys_chroot)))
+
+(allow ldconfig_t ldconfig_cache_t manage_dir_perms)
+(allow ldconfig_t ldconfig_cache_t manage_file_perms)
+(call files_cache_object_type_transition (ldconfig_t ldconfig_cache_t dir "*"))
+
+(call files_read_config (ldconfig_t))
+
+(call libraries_create_lnk_files (ldconfig_t))
+(call libraries_manage_ld_so_cache_files (ldconfig_t))
+(call libraries_config_object_type_transition_ld_so_cache_files (ldconfig_t))
+
+(call miscfiles_read_locale (ldconfig_t))
+
+(optional ldconfig_optional_rpm
+    (call rpm_manage_tmp_files (ldconfig_t))
+    (call rpm_read_tmp_lnk_files (ldconfig_t))
+    (call rpm_rw_inherited_tmp_fifo_files (ldconfig_t))
+    (call rpm_rw_inherited_tmpfs_files (ldconfig_t)))
+
+(optional ldconfig_optional_systemd
+    (call systemd_daemon (ldconfig_t ldconfig_exec_t))
+
+    (type ldconfig_unit_t)
+    (call systemd_unit_object_type (ldconfig_unit_t))
+
+    (typeattributeset ld_object_type ldconfig_unit_t)
+
+    (context ldconfig_unit (system_u object_r ldconfig_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*ldconfig.*" file ldconfig_unit)
+
+    (allow ld_admin_subject_type ldconfig_unit_t (service (all))))
+
+(allow ld_admin_subject_type ldconfig_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (ld_admin_subject_type ldconfig_t))
+
+(allow ld_admin_subject_type ld_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro ld_exec_ldconfig ((type ARG1))
+    (call can_exec (ARG1 ldconfig_exec_t)))
+
+(macro ld_auto_subject_type_transition_ldconfig ((type ARG1))
+    (call ld_send_signal_ldconfig (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 ldconfig_exec_t ldconfig_t)))
+
+(macro ld_run_ldconfig ((type ARG1)(role ARG2))
+    (call ld_auto_subject_type_transition_ldconfig (ARG1))
+    (roleattributeset ldconfig_role (ARG2)))
+
+(macro ld_send_signal_ldconfig ((type ARG1))
+    (allow ARG1 ldconfig_t (process (signal))))
+
+(macro ld_search_ldconfig_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 ldconfig_cache_t search_dir_perms))
+
+(macro ld_list_ldconfig_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 ldconfig_cache_t list_dir_perms))
+
+(macro ld_read_ldconfig_cache_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_files_pattern (ARG1 ldconfig_cache_t ldconfig_cache_t)))
+
+(macro ld_read_ldconfig_cache_lnk_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_lnk_files_pattern (ARG1 ldconfig_cache_t ldconfig_cache_t)))
+
+(macro ld_read_ldconfig_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 ldconfig_cache_t read_file_perms)
+    (allow ARG1 ldconfig_cache_t list_dir_perms)
+    (allow ARG1 ldconfig_cache_t read_lnk_file_perms))
+
+(macro ld_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset ld_admin_subject_type ARG1)
+    (optional ld_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

@@ -1,0 +1,190 @@
+(roleattribute arp_role)
+(roleattribute nettools_role)
+(roleattribute ping_role)
+(roleattribute traceroute_role)
+
+(typeattribute nettools_admin_subject_type)
+
+(type nettools_t)
+(type nettools_exec_t)
+(call applications_app (nettools_t nettools_exec_t))
+(roletype nettools_role nettools_t)
+
+(roleattributeset nettools_role system_r)
+
+(context nettools_exec (system_u object_r nettools_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/netstat" file nettools_exec)
+(filecon "/usr/sbin/arping" file nettools_exec)
+(filecon "/usr/sbin/tcpdump" file nettools_exec)
+
+(allow nettools_t self (capability (sys_ptrace dac_override
+    net_raw net_admin setgid setuid)))
+(allow nettools_t self (process (getcap setcap)))
+(allow nettools_t self create_netlink_socket_perms)
+(allow nettools_t self create_packet_socket_perms)
+(allow nettools_t self create_socket_perms)
+(allow nettools_t self create_unix_dgram_socket_perms)
+
+(call system_read_kernel_sysctl (nettools_t))
+(call system_request_load_module (nettools_t))
+(call system_read_net_proc (nettools_t))
+
+(call filesystems_list_proc (nettools_t))
+(call filesystems_list_devtmpfs (nettools_t))
+(call filesystems_read_sysfs (nettools_t))
+
+(call devices_read_usbmon (nettools_t))
+(call devices_rw_usb (nettools_t))
+
+(call network_udp_bind_generic_node (nettools_t))
+
+(call selinux_get_enforce_mode (nettools_t))
+
+(call auth_nsswitch_client_subject_type (nettools_t))
+
+(call miscfiles_read_locale (nettools_t))
+
+(type ping_t)
+(type ping_exec_t)
+(call applications_app (ping_t ping_exec_t))
+(roletype ping_role ping_t)
+
+(roleattributeset ping_role system_r)
+
+(context ping_exec (system_u object_r ping_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/ping" file ping_exec)
+
+(allow ping_t self (capability (net_raw)))
+(allow ping_t self (process (getcap setcap)))
+(allow ping_t self create_rawip_socket_perms)
+
+(call auth_nsswitch_client_subject_type (ping_t))
+
+(call miscfiles_read_net_config_files (ping_t))
+(call miscfiles_read_locale (ping_t))
+
+(type traceroute_t)
+(type traceroute_exec_t)
+(call applications_app (traceroute_t traceroute_exec_t))
+(roletype traceroute_role traceroute_t)
+
+(roleattributeset traceroute_role system_r)
+
+(context traceroute_exec (system_u object_r traceroute_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/traceroute" file traceroute_exec)
+(filecon "/usr/bin/tcptraceroute" file traceroute_exec)
+(filecon "/usr/bin/nmap" file traceroute_exec)
+
+(allow traceroute_t self (capability (dac_override net_raw)))
+(allow traceroute_t self (capability2 (block_suspend)))
+(allow traceroute_t self create_packet_socket_perms)
+(allow traceroute_t self create_rawip_socket_perms)
+(allow traceroute_t self create_unix_dgram_socket_perms)
+
+(call system_read_net_proc (traceroute_t))
+
+(call devices_read_urandom (traceroute_t))
+
+(call files_read_data_files (traceroute_t))
+
+(call network_udp_bind_generic_node (traceroute_t))
+
+(call auth_nsswitch_client_subject_type (traceroute_t))
+
+(call miscfiles_read_net_config_files (traceroute_t))
+(call miscfiles_read_locale (traceroute_t))
+
+(type arp_t)
+(type arp_exec_t)
+(call subject_common_type (arp_t))
+(call subject_entry (arp_t arp_exec_t))
+(roletype arp_role arp_t)
+
+(roleattributeset arp_role system_r)
+
+(context arp_exec (system_u object_r arp_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/arp" file arp_exec)
+
+(optional arp_optional_systemd
+    (call systemd_daemon (arp_t arp_exec_t))
+
+    (type arp_unit_t)
+    (call systemd_unit_object_type (arp_unit_t))
+
+    (context arp_unit (system_u object_r arp_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*arp-ethers.*" file arp_unit)
+
+    (allow nettools_admin_subject_type arp_unit_t (service (all)))
+
+    (allow nettools_admin_subject_type arp_unit_t (all_file_objects
+        (not_mounton_entrypoint_and_execmod))))
+
+(allow nettools_admin_subject_type arp_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (nettools_admin_subject_type arp_t))
+
+(macro nettools_exec ((type ARG1))
+    (call can_exec (ARG1 nettools_exec_t)))
+
+(macro nettools_exec_ping ((type ARG1))
+    (call can_exec (ARG1 ping_exec_t)))
+
+(macro nettools_exec_traceroute ((type ARG1))
+    (call can_exec (ARG1 traceroute_exec_t)))
+
+(macro nettools_exec_arp ((type ARG1))
+    (call can_exec (ARG1 arp_exec_t)))
+
+(macro nettools_auto_subject_type_transition ((type ARG1))
+    (call nettools_send_signal (ARG1))
+    (call ps_subject_pattern (nettools_t ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nettools_exec_t nettools_t)))
+
+(macro nettools_send_signal ((type ARG1))
+    (allow ARG1 nettools_t (process (signal))))
+
+(macro nettools_run ((type ARG1)(role ARG2))
+    (call nettools_auto_subject_type_transition (ARG1))
+    (roleattributeset nettools_role ARG2))
+
+(macro nettools_auto_subject_type_transition_ping ((type ARG1))
+    (call nettools_send_signal_ping (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 ping_exec_t ping_t)))
+
+(macro nettools_send_signal_ping ((type ARG1))
+    (allow ARG1 ping_t (process (signal))))
+
+(macro nettools_run_ping ((type ARG1)(role ARG2))
+    (call nettools_auto_subject_type_transition_ping (ARG1))
+    (roleattributeset ping_role ARG2))
+
+(macro nettools_auto_subject_type_transition_traceroute ((type ARG1))
+    (call nettools_send_signal_traceroute (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 traceroute_exec_t traceroute_t)))
+
+(macro nettools_send_signal_traceroute ((type ARG1))
+    (allow ARG1 traceroute_t (process (signal))))
+
+(macro nettools_run_traceroute ((type ARG1)(role ARG2))
+    (call nettools_auto_subject_type_transition_traceroute (ARG1))
+    (roleattributeset traceroute_role ARG2))
+
+(macro nettools_auto_subject_type_transition_arp ((type ARG1))
+    (call nettools_send_signal_arp (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 arp_exec_t arp_t)))
+
+(macro nettools_send_signal_arp ((type ARG1))
+    (allow ARG1 arp_t (process (signal))))
+
+(macro nettools_run_arp ((type ARG1)(role ARG2))
+    (call nettools_auto_subject_type_transition_arp (ARG1))
+    (roleattributeset arp_role ARG2))
+
+(macro nettools_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset nettools_admin_subject_type ARG1)
+    (optional nettools_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

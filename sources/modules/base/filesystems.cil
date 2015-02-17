@@ -1,0 +1,608 @@
+(sid fs)
+
+(typeattribute filesystems_object_type)
+(typeattribute filesystems_unconfined_subject_type)
+
+(type aio_fs_t)
+(call filesystems_object_type (aio_fs_t))
+
+(context aio_fs (system_u object_r aio_fs_t (systemlow systemlow)))
+(genfscon "aio" "/" aio_fs)
+
+(type anon_inodefs_fs_t)
+(call filesystems_object_type (anon_inodefs_fs_t))
+
+(context anon_inodefs_fs (system_u object_r anon_inodefs_fs_t (systemlow systemlow)))
+(genfscon "anon_inodefs" "/" anon_inodefs_fs)
+
+(type autofs_fs_t)
+(call filesystems_object_type (autofs_fs_t))
+
+(context autofs_fs (system_u object_r autofs_fs_t (systemlow systemlow)))
+(genfscon "autofs" "/" autofs_fs)
+
+(type bdev_fs_t)
+(call filesystems_object_type (bdev_fs_t))
+
+(context bdev_fs (system_u object_r bdev_fs_t (systemlow systemlow)))
+(genfscon "bdev" "/" bdev_fs)
+
+(type binfmt_misc_fs_t)
+(call filesystems_object_type (binfmt_misc_fs_t))
+
+(context binfmt_misc_fs (system_u object_r binfmt_misc_fs_t (systemlow systemlow)))
+(genfscon "binfmt_misc" "/" binfmt_misc_fs)
+
+(type cgroup_fs_t)
+(call filesystems_object_type (cgroup_fs_t))
+
+(context cgroup_fs (system_u object_r cgroup_fs_t (systemlow systemlow)))
+(genfscon "cgroup" "/" cgroup_fs)
+
+(type configfs_fs_t)
+(call filesystems_object_type (configfs_fs_t))
+(call system_mountpoint_object_type (configfs_fs_t))
+
+(context configfs_fs (system_u object_r configfs_fs_t (systemlow systemlow)))
+(genfscon "configfs" "/" configfs_fs)
+
+(type debugfs_fs_t)
+(call filesystems_object_type (debugfs_fs_t))
+(call system_mountpoint_object_type (debugfs_fs_t))
+
+(context debugfs_fs (system_u object_r debugfs_fs_t (systemlow systemlow)))
+(genfscon "debugfs" "/" debugfs_fs)
+
+(type devpts_fs_t)
+(call filesystems_object_type (devpts_fs_t))
+
+(context devpts_fs (system_u object_r devpts_fs_t (systemlow systemlow)))
+(fsuse trans "devpts" devpts_fs)
+
+(type devtmpfs_fs_t)
+(call filesystems_object_type (devtmpfs_fs_t))
+(call system_mountpoint_object_type (devtmpfs_fs_t))
+
+(context devtmpfs_fs (system_u object_r devtmpfs_fs_t (systemlow systemlow)))
+(fsuse trans "devtmpfs" devtmpfs_fs)
+
+(filecon "/dev(/.*)?" any ())
+
+(type dosfs_fs_t)
+(call filesystems_object_type (dosfs_fs_t))
+(call system_mountpoint_object_type (dosfs_fs_t))
+
+(context dosfs_fs (system_u object_r dosfs_fs_t (systemlow systemlow)))
+(genfscon "vfat" "/" dosfs_fs)
+
+(type drm_fs_t)
+(call filesystems_object_type (drm_fs_t))
+
+(context drm_fs (system_u object_r drm_fs_t (systemlow systemlow)))
+(genfscon "drm" "/" drm_fs)
+
+(type efivarfs_fs_t)
+(call filesystems_object_type (efivarfs_fs_t))
+
+(context efivarfs_fs (system_u object_r efivarfs_fs_t (systemlow systemlow)))
+(genfscon "efivarfs" "/" efivarfs_fs)
+
+(type fs_t)
+(call filesystems_object_type (fs_t))
+
+(context fs (system_u object_r fs_t (systemlow systemlow)))
+(sidcontext fs fs)
+
+(fsuse task "pipefs" fs)
+(fsuse task "sockfs" fs)
+
+(fsuse xattr "ext4" fs)
+
+(type fuse_fs_t)
+(call filesystems_object_type (fuse_fs_t))
+(call system_mountpoint_object_type (fuse_fs_t))
+
+(context fuse_fs (system_u object_r fuse_fs_t (systemlow systemlow)))
+(genfscon "fuse" "/" fuse_fs)
+(genfscon "fuseblk" "/" fuse_fs)
+(genfscon "fusectl" "/" fuse_fs)
+
+(type hugetlbfs_fs_t)
+(call filesystems_object_type (hugetlbfs_fs_t))
+(call system_mountpoint_object_type (hugetlbfs_fs_t))
+
+(context hugetlbfs_fs (system_u object_r hugetlbfs_fs_t (systemlow systemlow)))
+(fsuse trans "hugetlbfs" hugetlbfs_fs)
+
+(type proc_fs_t)
+(call filesystems_object_type (proc_fs_t))
+
+(context proc_fs (system_u object_r proc_fs_t (systemlow systemlow)))
+(genfscon "proc" "/" proc_fs)
+(genfscon "proc" "/sysvipc" proc_fs) ; BUG
+
+(filecon "/proc(/.*)?" any ())
+
+(type pstore_fs_t)
+(call filesystems_object_type (pstore_fs_t))
+
+(context pstore_fs (system_u object_r pstore_fs_t (systemlow systemlow)))
+(genfscon "pstore" "/" pstore_fs)
+
+(type removable_fs_t)
+(call filesystems_object_type (removable_fs_t))
+
+(type rootfs_fs_t)
+(call filesystems_object_type (rootfs_fs_t))
+(call system_mountpoint_object_type (rootfs_fs_t))
+
+(context rootfs_fs (system_u object_r rootfs_fs_t (systemlow systemlow)))
+(genfscon "rootfs" "/" rootfs_fs)
+
+(filecon "/" dir rootfs_fs)
+
+(type sysfs_fs_t)
+(call filesystems_object_type (sysfs_fs_t))
+(call system_mountpoint_object_type (sysfs_fs_t))
+
+(context sysfs_fs (system_u object_r sysfs_fs_t (systemlow systemlow)))
+(genfscon "sysfs" "/" sysfs_fs)
+
+(filecon "/sys(/.*)?" any ())
+
+(type tmpfs_fs_t)
+(call filesystems_object_type (tmpfs_fs_t))
+(call system_mountpoint_object_type (tmpfs_fs_t))
+
+(context tmpfs_fs (system_u object_r tmpfs_fs_t (systemlow systemlow)))
+(fsuse trans "mqueue" tmpfs_fs)
+(fsuse trans "tmpfs" tmpfs_fs)
+
+(filecon "/tmp(/.*)?" any ())
+
+(filecon "/var/run/user(/.*)?" any ())
+(filecon "/var/run/initramfs/\.need_shutdown" file ())
+
+(call system_object_type (filesystems_object_type))
+
+(allow filesystems_object_type self (filesystem (associate)))
+
+(allow filesystems_unconfined_subject_type filesystems_object_type
+    (all_file_objects (not_mounton_entrypoint_and_execmod)))
+(allow filesystems_unconfined_subject_type filesystems_object_type
+    (filesystem (all)))
+
+(macro filesystems_object_type ((type ARG1))
+    (typeattributeset filesystems_object_type ARG1))
+
+(macro filesystems_associate_devpts ((type ARG1))
+    (allow ARG1 devpts_fs_t (filesystem (associate))))
+
+(macro filesystems_associate_devtmpfs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t (filesystem (associate))))
+
+(macro filesystems_associate_fs ((type ARG1))
+    (allow ARG1 fs_t (filesystem (associate))))
+
+(macro filesystems_associate_tmpfs ((type ARG1))
+    (allow ARG1 tmpfs_fs_t (filesystem (associate))))
+
+(macro filesystems_tmpfs_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call object_type_transition_pattern (ARG1 tmpfs_fs_t ARG2 ARG3 ARG4)))
+
+(macro filesystems_devpts_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call object_type_transition_pattern (ARG1 devpts_fs_t ARG2 ARG3 ARG4)))
+
+(macro filesystems_devtmpfs_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 devtmpfs_fs_t ARG2 ARG3 ARG4)))
+
+(macro filesystems_rootfs_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 rootfs_fs_t ARG2 ARG3 ARG4)))
+
+(macro filesystems_list_autofs ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 autofs_fs_t list_dir_perms))
+
+(macro filesystems_search_binfmt_misc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 binfmt_misc_fs_t search_dir_perms))
+
+(macro filesystems_list_binfmt_misc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 binfmt_misc_fs_t list_dir_perms))
+
+(macro filesystems_read_binfmt_misc_files ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call read_files_pattern (ARG1 binfmt_misc_fs_t binfmt_misc_fs_t)))
+
+(macro filesystems_read_binfmt_misc_lnk_files ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call read_lnk_files_pattern (ARG1 binfmt_misc_fs_t binfmt_misc_fs_t)))
+
+(macro filesystems_read_binfmt_misc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 binfmt_misc_fs_t read_file_perms)
+    (allow ARG1 binfmt_misc_fs_t list_dir_perms)
+    (allow ARG1 binfmt_misc_fs_t read_lnk_file_perms))
+
+(macro filesystems_search_cgroup ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (allow ARG1 cgroup_fs_t search_dir_perms))
+
+(macro filesystems_list_cgroup ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (allow ARG1 cgroup_fs_t list_dir_perms))
+
+(macro filesystems_getattr_cgroup_filesystems ((type ARG1))
+    (allow ARG1 cgroup_fs_t (filesystem (getattr))))
+
+(macro filesystems_read_cgroup_files ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (call read_files_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
+
+(macro filesystems_setattr_cgroup_files ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (call setattr_files_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
+
+(macro filesystems_rw_cgroup_files ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (call rw_files_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
+
+(macro filesystems_delete_cgroup_dirs ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (call delete_dirs_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
+
+(macro filesystems_manage_cgroup_dirs ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (call manage_dirs_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
+
+(macro filesystems_read_cgroup_lnk_files ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (call read_lnk_files_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
+
+(macro filesystems_read_cgroup ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (allow ARG1 cgroup_fs_t read_file_perms)
+    (allow ARG1 cgroup_fs_t list_dir_perms)
+    (allow ARG1 cgroup_fs_t read_lnk_file_perms))
+
+(macro filesystems_search_debugfs ((type ARG1))
+    (allow ARG1 debugfs_fs_t search_dir_perms))
+
+(macro filesystems_list_debugfs ((type ARG1))
+    (allow ARG1 debugfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_debugfs_filesystems ((type ARG1))
+    (allow ARG1 debugfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_search_devtmpfs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t search_dir_perms))
+
+(macro filesystems_list_devtmpfs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_devtmpfs_filesystems ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_read_devtmpfs_files ((type ARG1))
+    (call read_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_read_devtmpfs_chr_files ((type ARG1))
+    (call read_chr_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_read_devtmpfs_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_read_devtmpfs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t read_file_perms)
+    (allow ARG1 devtmpfs_fs_t list_dir_perms)
+    (allow ARG1 devtmpfs_fs_t read_lnk_file_perms))
+
+(macro filesystems_manage_devtmpfs_dirs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t manage_dir_perms))
+
+(macro filesystems_rw_devtmpfs_dirs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t rw_dir_perms))
+
+(macro filesystems_manage_devtmpfs_files ((type ARG1))
+    (call manage_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_manage_devtmpfs_chr_files ((type ARG1))
+    (call manage_chr_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_add_entry_devtmpfs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t add_entry_dir_perms))
+
+(macro filesystems_create_devtmpfs_chr_files ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_add_entry_devtmpfs (ARG1))
+    (allow ARG1 devtmpfs_fs_t create_chr_file_perms))
+
+(macro filesystems_setattr_devtmpfs_chr_files ((type ARG1))
+    (call setattr_chr_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_relabelfrom_devtmpfs_chr_files ((type ARG1))
+    (call relabelfrom_chr_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_relabelfrom_devtmpfs_blk_files ((type ARG1))
+    (call relabelfrom_blk_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_dontaudit_getattr_devtmpfs_chr_files ((type ARG1))
+    (dontaudit ARG1 devtmpfs_fs_t (chr_file (getattr))))
+
+(macro filesystems_dontaudit_getattr_devtmpfs_blk_files ((type ARG1))
+    (dontaudit ARG1 devtmpfs_fs_t (blk_file (getattr))))
+
+(macro filesystems_manage_devtmpfs_blk_files ((type ARG1))
+    (call manage_blk_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_manage_devtmpfs_lnk_files ((type ARG1))
+    (call manage_lnk_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_search_devpts ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devpts_fs_t search_dir_perms))
+
+(macro filesystems_list_devpts ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devpts_fs_t list_dir_perms))
+
+(macro filesystems_getattr_devpts_filesystems ((type ARG1))
+    (allow ARG1 devpts_fs_t (filesystem (getattr))))
+
+(macro filesystems_getattr_devpts_chr_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call getattr_chr_files_pattern (ARG1 devpts_fs_t devpts_fs_t)))
+
+(macro filesystems_rw_devpts_chr_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call rw_chr_files_pattern (ARG1 devpts_fs_t devpts_fs_t)))
+
+(macro filesystems_write_inherited_devpts_chr_files ((type ARG1))
+    (allow ARG1 devpts_fs_t write_inherited_chr_file_perms))
+
+(macro filesystems_search_dosfs ((type ARG1))
+    (allow ARG1 dosfs_fs_t search_dir_perms))
+
+(macro filesystems_list_dosfs ((type ARG1))
+    (allow ARG1 dosfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_dosfs_filesystems ((type ARG1))
+    (allow ARG1 dosfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_read_dosfs_files ((type ARG1))
+    (call read_files_pattern (ARG1 dosfs_fs_t dosfs_fs_t)))
+
+(macro filesystems_manage_dosfs_files ((type ARG1))
+    (call manage_files_pattern (ARG1 dosfs_fs_t dosfs_fs_t)))
+
+(macro filesystems_read_dosfs_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 dosfs_fs_t dosfs_fs_t)))
+
+(macro filesystems_read_dosfs ((type ARG1))
+    (allow ARG1 dosfs_fs_t read_file_perms)
+    (allow ARG1 dosfs_fs_t list_dir_perms)
+    (allow ARG1 dosfs_fs_t read_lnk_file_perms))
+
+(macro filesystems_search_efivarfs ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 efivarfs_fs_t search_dir_perms))
+
+(macro filesystems_list_efivarfs ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 efivarfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_filesystems ((type ARG1))
+    (allow ARG1 fs_t (filesystem (getattr))))
+
+(macro filesystems_mount_fuse ((type ARG1))
+    (allow ARG1 fuse_fs_t (filesystem (mount))))
+
+(macro filesystems_unmount_fuse ((type ARG1))
+    (allow ARG1 fuse_fs_t (filesystem (unmount))))
+
+(macro filesystesm_search_hugetlbfs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 hugetlbfs_fs_t search_dir_perms))
+
+(macro filesystems_list_hugetlbfs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 hugetlbfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_hugetlbfs_filesystems ((type ARG1))
+    (allow ARG1 hugetlbfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_search_proc ((type ARG1))
+    (allow ARG1 proc_fs_t search_dir_perms))
+
+(macro filesystems_list_proc ((type ARG1))
+    (allow ARG1 proc_fs_t list_dir_perms))
+
+(macro filesystems_getattr_proc_filesystems ((type ARG1))
+    (allow ARG1 proc_fs_t (filesystem (getattr))))
+
+(macro filesystems_read_proc_files ((type ARG1))
+    (call read_files_pattern (ARG1 proc_fs_t proc_fs_t)))
+
+(macro filesystems_read_proc_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 proc_fs_t proc_fs_t)))
+
+(macro filesystems_read_proc ((type ARG1))
+    (allow ARG1 proc_fs_t read_file_perms)
+    (allow ARG1 proc_fs_t list_dir_perms)
+    (allow ARG1 proc_fs_t read_lnk_file_perms))
+
+(macro filesystems_list_pstore ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 pstore_fs_t list_dir_perms))
+
+(macro filesystems_search_rootfs ((type ARG1))
+    (allow ARG1 rootfs_fs_t search_dir_perms))
+
+(macro filesystems_list_rootfs ((type ARG1))
+    (allow ARG1 rootfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_rootfs_filesystems ((type ARG1))
+    (allow ARG1 rootfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_mounton_rootfs_dirs ((type ARG1))
+    (call filesystems_list_rootfs (ARG1))
+    (call filesystems_setattr_rootfs_dirs (ARG1))
+    (allow ARG1 rootfs_fs_t (dir_file (mounton))))
+
+(macro filesystems_setattr_rootfs_dirs ((type ARG1))
+    (allow ARG1 rootfs_fs_t (dir (setattr))))
+
+(macro filesystems_rw_rootfs_dirs ((type ARG1))
+    (allow ARG1 rootfs_fs_t rw_dir_perms))
+
+(macro filesystems_mprot_write_rootfs_dirs ((type ARG1))
+    (allow ARG1 rootfs_fs_t (dir (write))))
+
+(macro filesystems_search_sysfs ((type ARG1))
+    (allow ARG1 sysfs_fs_t search_dir_perms))
+
+(macro filesystems_list_sysfs ((type ARG1))
+    (allow ARG1 sysfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_sysfs_filesystems ((type ARG1))
+    (allow ARG1 sysfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_read_sysfs_files ((type ARG1))
+    (call read_files_pattern (ARG1 sysfs_fs_t sysfs_fs_t)))
+
+(macro filesystems_rw_sysfs_files ((type ARG1))
+    (call rw_files_pattern (ARG1 sysfs_fs_t sysfs_fs_t)))
+
+(macro filesystems_read_sysfs_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 sysfs_fs_t sysfs_fs_t)))
+
+(macro filesystems_read_sysfs ((type ARG1))
+    (allow ARG1 sysfs_fs_t read_file_perms)
+    (allow ARG1 sysfs_fs_t list_dir_perms)
+    (allow ARG1 sysfs_fs_t read_lnk_file_perms))
+
+(macro filesystems_search_tmpfs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tmpfs_fs_t search_dir_perms))
+
+(macro filesystems_list_tmpfs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tmpfs_fs_t list_dir_perms))
+
+(macro filesystems_getattr_tmpfs_filesystems ((type ARG1))
+    (allow ARG1 tmpfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_read_tmpfs_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call read_files_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
+(macro filesystems_rw_tmpfs_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call rw_files_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
+(macro filesystems_rw_inherited_tmpfs_files ((type ARG1))
+    (allow ARG1 tmpfs_fs_t rw_inherited_file_perms))
+
+(macro filesystems_manage_tmpfs_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call manage_files_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
+(macro filesystems_read_tmpfs_lnk_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
+(macro filesystems_manage_tmpfs_lnk_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call manage_lnk_files_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
+(macro filesystems_read_tmpfs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tmpfs_fs_t read_file_perms)
+    (allow ARG1 tmpfs_fs_t list_dir_perms)
+    (allow ARG1 tmpfs_fs_t read_lnk_file_perms))
+
+(macro filesystems_relabelfrom_tmpfs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tmpfs_fs_t (all_file_objects (relabelfrom))))
+
+(macro filesystems_del_entry_tmpfs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tmpfs_fs_t del_entry_dir_perms))
+
+(macro filesystems_rw_tmpfs_dirs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tmpfs_fs_t rw_dir_perms))
+
+(macro filesystems_manage_tmpfs_dirs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call manage_dirs_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
+(macro filesystems_dontaudit_getattr_all_filesystems ((type ARG1))
+    (dontaudit ARG1 filesystems_object_type (filesystem (getattr))))
+
+(macro filesystems_getattr_all_filesystems ((type ARG1))
+    (allow ARG1 filesystems_object_type (filesystem (getattr))))
+
+(macro filesystems_dontaudit_manage_all_files ((type ARG1))
+    (dontaudit ARG1 filesystems_object_type manage_file_perms))
+
+(macro filesystems_dontaudit_read_all_lnk_files ((type ARG1))
+    (dontaudit ARG1 filesystems_object_type read_lnk_file_perms))
+
+(macro filesystems_dontaudit_list_all ((type ARG1))
+    (dontaudit ARG1 filesystems_object_type list_dir_perms))
+
+(macro filesystems_mount_autofs ((type ARG1))
+    (allow ARG1 autofs_fs_t (filesystem (mount))))
+
+(macro filesystems_mount_tmpfs ((type ARG1))
+    (allow ARG1 tmpfs_fs_t (filesystem (mount))))
+
+(macro filesystems_mount_all ((type ARG1))
+    (allow ARG1 filesystems_object_type (filesystem (mount))))
+
+(macro filesystems_remount_devpts ((type ARG1))
+    (allow ARG1 devpts_fs_t (filesystem (remount))))
+
+(macro filesystems_remount_dosfs ((type ARG1))
+    (allow ARG1 dosfs_fs_t (filesystem (remount))))
+
+(macro filesystems_remount_filesystems ((type ARG1))
+    (allow ARG1 fs_t (filesystem (remount))))
+
+(macro filesystems_remount_hugetlbfs ((type ARG1))
+    (allow ARG1 hugetlbfs_fs_t (filesystem (remount))))
+
+(macro filesystems_remount_tmpfs ((type ARG1))
+    (allow ARG1 tmpfs_fs_t (filesystem (remount))))
+
+(macro filesystems_remount_all ((type ARG1))
+    (allow ARG1 filesystems_object_type (filesystem (remount))))
+
+(macro filesystems_unmount_tmpfs ((type ARG1))
+    (allow ARG1 tmpfs_fs_t (filesystem (unmount))))
+
+(macro filesystems_unmount_all ((type ARG1))
+    (allow ARG1 filesystems_object_type (filesystem (unmount))))
+
+(macro filesystems_relabel_all ((type ARG1))
+    (allow ARG1 filesystems_object_type (all_file_objects (relabel))))
+
+(macro filesystems_unconfined_subject_type ((type ARG1))
+    (typeattributeset filesystems_unconfined_subject_type ARG1))

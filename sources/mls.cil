@@ -1,0 +1,11 @@
+(sensitivity s0)
+(sensitivityorder (s0))
+
+(category c0)
+(categoryorder (c0))
+
+(sensitivitycategory s0 (c0))
+
+(level systemhigh (s0 (c0)))
+(level systemlow (s0))
+(level mls_systemhigh (s0 (c0)))

@@ -1,0 +1,494 @@
+(typeattribute miscfiles_cert_object_type)
+(typeattribute miscfiles_terminfo_config_object_type)
+
+(type cert_t)
+(call files_object_type (cert_t))
+(call miscfiles_cert_object_type (cert_t))
+
+(context cert (system_u object_r cert_t (systemlow systemlow)))
+(filecon "/etc/pki(/.*)?" any cert)
+
+(type locale_t)
+(call files_object_type (locale_t))
+
+(context locale (system_u object_r locale_t (systemlow systemlow)))
+(filecon "/usr/lib/locale(/.*)?" any locale)
+(filecon "/usr/share/locale(/.*)?" any locale)
+(filecon "/usr/share/X11/locale(/.*)?" any locale)
+(filecon "/usr/share/zoneinfo(/.*)?" any locale)
+
+(type modules_t)
+(call files_object_type (modules_t))
+
+(context modules (system_u object_r modules_t (systemlow systemlow)))
+(filecon "/usr/lib/modules(/.*)?" any modules)
+
+(type tetex_lib_t)
+(call files_lib_object_type (tetex_lib_t))
+
+(context tetex_lib (system_u object_r tetex_lib_t (systemlow systemlow)))
+(filecon "/var/lib/texmf(/.*)?" any tetex_lib)
+
+(type tetex_spool_t)
+(call files_spool_object_type (tetex_spool_t))
+
+(context tetex_spool (system_u object_r tetex_spool_t (systemlow systemlow)))
+(filecon "/var/spool/texmf(/.*)?" any tetex_spool)
+
+(type fonts_cache_t)
+(call files_cache_object_type (fonts_cache_t))
+
+(context fonts_cache (system_u object_r fonts_cache_t (systemlow systemlow)))
+(filecon "/var/cache/fontconfig(/.*)?" any fonts_cache)
+
+(type fonts_config_t)
+(call files_config_object_type (fonts_config_t))
+
+(context fonts_config (system_u object_r fonts_config_t (systemlow systemlow)))
+(filecon "/etc/fonts(/.*)?" any fonts_config)
+
+(type fonts_data_t)
+(call files_data_object_type (fonts_data_t))
+
+(context fonts_data (system_u object_r fonts_data_t (systemlow systemlow)))
+(filecon "/usr/share/fonts(/.*)?" any fonts_data)
+(filecon "/usr/share/ghostscript/fonts(/.*)?" any fonts_data)
+
+(type factory_data_t)
+(call files_data_object_type (factory_data_t))
+
+(context factory_data (system_u object_r factory_data_t (systemlow systemlow)))
+(filecon "/usr/share/factory(/.*)?" any factory_data)
+
+(type hwdata_data_t)
+(call files_data_object_type (hwdata_data_t))
+
+(context hwdata_data (system_u object_r hwdata_data_t (systemlow systemlow)))
+(filecon "/usr/share/hwdata(/.*)?" any hwdata_data)
+
+(type man_data_t)
+(call files_data_object_type (man_data_t))
+
+(context man_data (system_u object_r man_data_t (systemlow systemlow)))
+(filecon "/usr/share/man(/.*)?" any man_data)
+
+(type net_config_t)
+(call files_config_object_type (net_config_t))
+
+(context net_config (system_u object_r net_config_t (systemlow systemlow)))
+(filecon "/etc/hosts" file net_config)
+(filecon "/etc/host\.conf" file net_config)
+(filecon "/etc/sysconfig/network" file net_config)
+(filecon "/etc/sysconfig/network-scripts(/.*)?" file net_config)
+
+(type terminfo_config_t)
+(call files_config_object_type (terminfo_config_t))
+(call miscfiles_terminfo_config_object_type (terminfo_config_t))
+
+(context terminfo_config (system_u object_r terminfo_config_t (systemlow systemlow)))
+(filecon "/etc/terminfo(/.*)?" any terminfo_config)
+
+(type terminfo_data_t)
+(call files_data_object_type (terminfo_data_t))
+
+(context terminfo_data (system_u object_r terminfo_data_t (systemlow systemlow)))
+(filecon "/usr/share/terminfo(/.*)?" any terminfo_data)
+
+(macro miscfiles_cert_object_type ((type ARG1))
+    (typeattributeset miscfiles_cert_object_type ARG1))
+
+(macro miscfiles_search_cert ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 cert_t search_dir_perms))
+
+(macro miscfiles_list_cert ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 cert_t list_dir_perms))
+
+(macro miscfiles_read_cert_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 cert_t cert_t)))
+
+(macro miscfiles_read_cert_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 cert_t cert_t)))
+
+(macro miscfiles_read_cert ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 cert_t read_file_perms)
+    (allow ARG1 cert_t list_dir_perms)
+    (allow ARG1 cert_t read_lnk_file_perms))
+
+(macro miscfiles_search_all_certs ((type ARG1))
+    (allow ARG1 miscfiles_cert_object_type search_dir_perms))
+
+(macro miscfiles_list_all_certs ((type ARG1))
+    (allow ARG1 miscfiles_cert_object_type list_dir_perms))
+
+(macro miscfiles_read_all_cert_files ((type ARG1))
+    (call read_files_pattern (ARG1 miscfiles_cert_object_type miscfiles_cert_object_type)))
+
+(macro miscfiles_read_all_cert_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 miscfiles_cert_object_type miscfiles_cert_object_type)))
+
+(macro miscfiles_read_all_certs ((type ARG1))
+    (allow ARG1 miscfiles_cert_object_type read_file_perms)
+    (allow ARG1 miscfiles_cert_object_type list_dir_perms)
+    (allow ARG1 miscfiles_cert_object_type read_lnk_file_perms))
+
+(macro miscfiles_search_locale ((type ARG1))
+    (call files_read_config_lnk_files (ARG1))
+    (call files_search_data (ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 locale_t search_dir_perms))
+
+(macro miscfiles_list_locale ((type ARG1))
+    (call files_read_config_lnk_files (ARG1))
+    (call files_search_data (ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 locale_t list_dir_perms))
+
+(macro miscfiles_read_locale_files ((type ARG1))
+    (call files_read_config_lnk_files (ARG1))
+    (call files_search_data (ARG1))
+    (call libraries_search (ARG1))
+    (call read_files_pattern (ARG1 locale_t locale_t))
+    (optional miscfiles_read_locale_files_optional_locale
+        (call locale_read_config_files (ARG1))))
+
+(macro miscfiles_read_locale_lnk_files ((type ARG1))
+    (call files_read_config_lnk_files (ARG1))
+    (call files_search_data (ARG1))
+    (call libraries_search (ARG1))
+    (call read_lnk_files_pattern (ARG1 locale_t locale_t)))
+
+(macro miscfiles_read_locale ((type ARG1))
+    (call files_read_config_lnk_files (ARG1))
+    (call files_search_data (ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 locale_t read_file_perms)
+    (allow ARG1 locale_t list_dir_perms)
+    (allow ARG1 locale_t read_lnk_file_perms)
+    (optional miscfiles_read_locale_optional_locale
+        (call locale_read_config_files (ARG1))))
+
+(macro miscfiles_search_modules ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 modules_t search_dir_perms))
+
+(macro miscfiles_list_modules ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 modules_t list_dir_perms))
+
+(macro miscfiles_read_modules_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call read_files_pattern (ARG1 modules_t modules_t)))
+
+(macro miscfiles_read_modules_lnk_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call read_lnk_files_pattern (ARG1 modules_t modules_t)))
+
+(macro miscfiles_read_modules ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 modules_t read_file_perms)
+    (allow ARG1 modules_t list_dir_perms)
+    (allow ARG1 modules_t read_lnk_file_perms))
+
+(macro miscfiles_search_tetex_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tetex_lib_t search_dir_perms))
+
+(macro miscfiles_list_tetex_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tetex_lib_t list_dir_perms))
+
+(macro miscfiles_read_tetex_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 tetex_lib_t tetex_lib_t)))
+
+(macro miscfiles_read_tetex_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 tetex_lib_t tetex_lib_t)))
+
+(macro miscfiles_read_tetex_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tetex_lib_t read_file_perms)
+    (allow ARG1 tetex_lib_t list_dir_perms)
+    (allow ARG1 tetex_lib_t read_lnk_file_perms))
+
+(macro miscfiles_search_tetex_spool ((type ARG1))
+    (call files_search_spool (ARG1))
+    (allow ARG1 tetex_spool_t search_dir_perms))
+
+(macro miscfiles_list_tetex_spool ((type ARG1))
+    (call files_search_spool (ARG1))
+    (allow ARG1 tetex_spool_t list_dir_perms))
+
+(macro miscfiles_read_tetex_spool_files ((type ARG1))
+    (call files_search_spool (ARG1))
+    (call read_files_pattern (ARG1 tetex_spool_t tetex_spool_t)))
+
+(macro miscfiles_read_tetex_spool_lnk_files ((type ARG1))
+    (call files_search_spool (ARG1))
+    (call read_lnk_files_pattern (ARG1 tetex_spool_t tetex_spool_t)))
+
+(macro miscfiles_read_tetex_spool ((type ARG1))
+    (call files_search_spool (ARG1))
+    (allow ARG1 tetex_spool_t read_file_perms)
+    (allow ARG1 tetex_spool_t list_dir_perms)
+    (allow ARG1 tetex_spool_t read_lnk_file_perms))
+
+(macro miscfiles_read_tetex ((type ARG1))
+    (call miscfiles_read_tetex_lib (ARG1))
+    (call miscfiles_read_tetex_spool (ARG1)))
+
+(macro miscfiles_search_fonts_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 fonts_cache_t search_dir_perms))
+
+(macro miscfiles_list_fonts_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 fonts_cache_t list_dir_perms))
+
+(macro miscfiles_read_fonts_cache_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_files_pattern (ARG1 fonts_cache_t fonts_cache_t)))
+
+(macro miscfiles_read_fonts_cache_lnk_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_lnk_files_pattern (ARG1 fonts_cache_t fonts_cache_t)))
+
+(macro miscfiles_read_fonts_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 fonts_cache_t read_file_perms)
+    (allow ARG1 fonts_cache_t list_dir_perms)
+    (allow ARG1 fonts_cache_t read_lnk_file_perms))
+
+(macro miscfiles_search_fonts_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 fonts_config_t search_dir_perms))
+
+(macro miscfiles_list_fonts_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 fonts_config_t list_dir_perms))
+
+(macro miscfiles_read_fonts_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 fonts_config_t fonts_config_t)))
+
+(macro miscfiles_read_fonts_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 fonts_config_t fonts_config_t)))
+
+(macro miscfiles_read_fonts_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 fonts_config_t read_file_perms)
+    (allow ARG1 fonts_config_t list_dir_perms)
+    (allow ARG1 fonts_config_t read_lnk_file_perms))
+
+(macro miscfiles_search_fonts_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 fonts_data_t search_dir_perms))
+
+(macro miscfiles_list_fonts_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 fonts_data_t list_dir_perms))
+
+(macro miscfiles_read_fonts_data_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 fonts_data_t fonts_data_t)))
+
+(macro miscfiles_read_fonts_data_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 fonts_data_t fonts_data_t)))
+
+(macro miscfiles_read_fonts_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 fonts_data_t read_file_perms)
+    (allow ARG1 fonts_data_t list_dir_perms)
+    (allow ARG1 fonts_data_t read_lnk_file_perms))
+
+(macro miscfiles_read_fonts ((type ARG1))
+    (call miscfiles_read_fonts_cache (ARG1))
+    (call miscfiles_read_fonts_config (ARG1))
+    (call miscfiles_read_fonts_data (ARG1)))
+
+(macro miscfiles_search_factory_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 factory_data_t search_dir_perms))
+
+(macro miscfiles_list_factory_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 factory_data_t list_dir_perms))
+
+(macro miscfiles_read_factory_data_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 factory_data_t factory_data_t)))
+
+(macro miscfiles_read_factory_data_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 factory_data_t factory_data_t)))
+
+(macro miscfiles_read_factory_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 factory_data_t read_file_perms)
+    (allow ARG1 factory_data_t list_dir_perms)
+    (allow ARG1 factory_data_t read_lnk_file_perms))
+
+(macro miscfiles_search_man_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 man_data_t search_dir_perms))
+
+(macro miscfiles_list_man_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 man_data_t list_dir_perms))
+
+(macro miscfiles_read_man_data_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 man_data_t man_data_t)))
+
+(macro miscfiles_read_man_data_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 man_data_t man_data_t)))
+
+(macro miscfiles_read_man_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 man_data_t read_file_perms)
+    (allow ARG1 man_data_t list_dir_perms)
+    (allow ARG1 man_data_t read_lnk_file_perms))
+
+(macro miscfiles_read_man ((type ARG1))
+    (call miscfiles_read_man_data (ARG1))
+    (optional miscfiles_read_man_optional_mandb
+        (call mandb_read_cache (ARG1))))
+
+(macro miscfiles_search_hwdata ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 hwdata_data_t search_dir_perms))
+
+(macro miscfiles_list_hwdata ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 hedata_data_t list_dir_perms))
+
+(macro miscfiles_read_hwdata_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 hwdata_data_t hwdata_data_t)))
+
+(macro miscfiles_read_hwdata_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 hedata_data_t hwdata_data_t)))
+
+(macro miscfiles_read_hwdata ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 hwdata_data_t read_file_perms)
+    (allow ARG1 hwdata_data_t list_dir_perms)
+    (allow ARG1 hwdata_data_t read_lnk_file_perms))
+
+(macro miscfiles_search_net_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 net_config_t search_dir_perms))
+
+(macro miscfiles_list_net_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 net_config_t list_dir_perms))
+
+(macro miscfiles_read_net_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 net_config_t net_config_t)))
+
+(macro miscfiles_manage_net_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (call manage_files_pattern (ARG1 net_config_t net_config_t)))
+
+(macro miscfiles_read_net_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 net_config_t net_config_t)))
+
+(macro miscfiles_read_net_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 net_config_t read_file_perms)
+    (allow ARG1 net_config_t list_dir_perms)
+    (allow ARG1 net_config_t read_lnk_file_perms))
+
+(macro miscfiles_setattr_net_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 net_config_t (file (setattr)))
+    (allow ARG1 net_config_t (dir (setattr)))
+    (allow ARG1 net_config_t (lnk_file (setattr))))
+
+(macro miscfiles_config_object_type_transition_net_config ((type ARG1)(class ARG2)(name ARG3))
+    (call files_config_object_type_transition (ARG1 net_config_t ARG2 ARG3)))
+
+(macro miscfiles_terminfo_config_object_type ((type ARG1))
+    (typeattributeset miscfiles_terminfo_config_object_type ARG1))
+
+(macro miscfiles_search_terminfo_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 terminfo_config_t search_dir_perms))
+
+(macro miscfiles_list_terminfo_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 terminfo_config_t list_dir_perms))
+
+(macro miscfiles_read_terminfo_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 terminfo_config_t terminfo_config_t)))
+
+(macro miscfiles_read_terminfo_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 terminfo_config_t terminfo_config_t)))
+
+(macro miscfiles_read_terminfo_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 terminfo_config_t read_file_perms)
+    (allow ARG1 terminfo_config_t list_dir_perms)
+    (allow ARG1 terminfo_config_t read_lnk_file_perms))
+
+(macro miscfiles_search_all_terminfo_config ((type ARG1))
+    (allow ARG1 miscfiles_terminfo_config_object_type search_dir_perms))
+
+(macro miscfiles_list_all_terminfo_config ((type ARG1))
+    (allow ARG1 miscfiles_terminfo_config_object_type list_dir_perms))
+
+(macro miscfiles_read_all_terminfo_config_files ((type ARG1))
+    (call read_files_pattern (ARG1 miscfiles_terminfo_config_object_type
+        miscfiles_terminfo_config_object_type)))
+
+(macro miscfiles_read_all_terminfo_config_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 miscfiles_terminfo_config_object_type
+        miscfiles_terminfo_config_object_type)))
+
+(macro miscfiles_read_all_terminfo_config ((type ARG1))
+    (allow ARG1 miscfiles_terminfo_config_object_type read_file_perms)
+    (allow ARG1 miscfiles_terminfo_config_object_type list_dir_perms)
+    (allow ARG1 miscfiles_terminfo_config_object_type read_lnk_file_perms))
+
+(macro miscfiles_search_terminfo_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 terminfo_data_t search_dir_perms))
+
+(macro miscfiles_list_terminfo_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 terminfo_data_t list_dir_perms))
+
+(macro miscfiles_read_terminfo_data_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 terminfo_data_t terminfo_data_t)))
+
+(macro miscfiles_read_terminfo_data_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 terminfo_data_t terminfo_data_t)))
+
+(macro miscfiles_read_terminfo_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 terminfo_data_t read_file_perms)
+    (allow ARG1 terminfo_data_t list_dir_perms)
+    (allow ARG1 terminfo_data_t read_lnk_file_perms))
+
+(macro miscfiles_read_terminfo ((type ARG1))
+    (call miscfiles_read_terminfo_config (ARG1))
+    (call miscfiles_read_terminfo_data (ARG1)))
+
+(macro miscfiles_read_all_terminfo ((type ARG1))
+    (call miscfiles_read_all_terminfo_config (ARG1))
+    (call miscfiles_read_terminfo_data (ARG1)))

@@ -1,0 +1,89 @@
+(user sysadm_u)
+(role sysadm_r)
+(type sysadm_t)
+(call usersubject_priv_login_subject_template (sysadm_u sysadm_r sysadm_t))
+
+(context sysadm_home_dir (sysadm_u object_r home_dir_t (systemlow mls_systemhigh)))
+(filecon "/root" dir sysadm_home_dir)
+
+(context sysadm_exec_home (sysadm_u object_r exec_home_t (systemlow systemlow)))
+(filecon "/root/bin(/.*)?" any sysadm_exec_home)
+(filecon "/root/\.local/bin(/.*)?" any sysadm_exec_home)
+
+(context sysadm_cert_home (sysadm_u object_r cert_home_t (systemlow systemlow)))
+(filecon "/root/\.pki(/.*)?" any sysadm_cert_home)
+
+(context sysadm_terminfo_home (sysadm_u object_r terminfo_home_t (systemlow systemlow)))
+(filecon "/root/\.terminfo" file sysadm_terminfo_home)
+
+(context sysadm_user_home (sysadm_u object_r user_home_t (systemlow systemlow)))
+(filecon "/root/.*" any sysadm_user_home)
+
+(context sysadm_cache_home (sysadm_u object_r cache_home_t (systemlow systemlow)))
+(filecon "/root/\.cache(/.*)?" any sysadm_cache_home)
+
+(context sysadm_config_home (sysadm_u object_r config_home_t (systemlow systemlow)))
+(filecon "/root/\.config(/.*)?" any sysadm_config_home)
+
+(context sysadm_data_home (sysadm_u object_r data_home_t (systemlow systemlow)))
+(filecon "/root/\.local(/.*)?" any sysadm_data_home)
+
+(context sysadm_mail_spool (sysadm_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
+(filecon "/var/spool/mail/root" file sysadm_mail_spool)
+
+(type sysadm_chfn_t)
+(call usermanage_role_template_chfn (sysadm_r sysadm_t sysadm_chfn_t))
+
+(type sysadm_passwd_t)
+(call usermanage_role_template_passwd (sysadm_r sysadm_t sysadm_passwd_t))
+
+(optional sysadm_optional_sudo
+    (call sudo_send_signal (sysadm_t))
+
+    (optional sysadm_optional_staff
+        (call staff_rw_inherited_fifo_files (sysadm_t))
+        (call staff_use_fd (sysadm_t))
+    )
+)
+
+(optional sysadm_optional_systemd
+    (type sysadm_systemd_t)
+    (call systemd_session_role_template (sysadm_r sysadm_t sysadm_systemd_t))
+
+    (allow sysadm_systemd_t self (capability (dac_override)))
+
+    (call systemd_manage_tmpfs (sysadm_t))
+    (call systemd_relabel_tmpfs (sysadm_t))
+    (call systemd_tmpfs_object_type_transition_tmpfs_dirs (sysadm_t))
+
+    (call systemd_manage_config_home (sysadm_t))
+    (call systemd_relabel_config_home (sysadm_t))
+    (call systemd_config_home_object_type_transition_config_home_dirs (sysadm_t))
+
+    (context sysadm_systemd_config_home (sysadm_u object_r systemd_config_home_t (systemlow systemlow)))
+    (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemd_config_home)
+
+    (optional sysadm_optional_askpwd
+        (call askpwd_run_askpwdagent (sysadm_t sysadm_r)))
+
+    (optional sysadm_optional_journal
+        (call journal_run_journalctl (sysadm_t sysadm_r))))
+
+(optional sysadm_optional_unconfined
+    (call unconfined_subject_type (sysadm_t)))
+
+(macro sysadm_roleallow ((role ARG1))
+    (roleallow ARG1 sysadm_r))
+
+(macro sysadm_userrole ((user ARG1))
+    (userrole ARG1 sysadm_r))
+
+(macro sysadm_send_signal ((type ARG1))
+    (allow ARG1 sysadm_t (process (signal))))
+
+(macro sysadm_manage_keyring ((type ARG1))
+    (allow ARG1 self (process (setkeycreate)))
+    (allow ARG1 sysadm_t (key (create search link write))))
+
+(macro sysadm_shell_exec_manual_subject_type_transition ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 sysadm_t)))

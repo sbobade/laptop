@@ -1,0 +1,186 @@
+(roleattribute askpwd_role)
+(roleattribute askpwdagent_role)
+
+(typeattribute askpwd_client_subject_type)
+
+(typeattribute askpwd_askpwdagent_client_subject_type)
+
+(type askpwd_t)
+(type askpwd_exec_t)
+(call applications_app (askpwd_t askpwd_exec_t))
+(call systemd_daemon (askpwd_t askpwd_exec_t))
+(roletype askpwd_role askpwd_t)
+
+(call askpwd_client_subject_type (askpwd_t))
+
+(context askpwd_exec (system_u object_r askpwd_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-ask-password" file askpwd_exec)
+
+(type askpwd_systemd_runtime_t)
+(call systemd_runtime_object_type (askpwd_systemd_runtime_t))
+
+(context askpwd_systemd_runtime (system_u object_r askpwd_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/ask-password(/.*)?" any askpwd_systemd_runtime)
+
+(allow askpwd_t askpwd_systemd_runtime_t manage_dir_perms)
+(allow askpwd_t askpwd_systemd_runtime_t manage_file_perms)
+(call systemd_runtime_object_type_transition (askpwd_t askpwd_systemd_runtime_t dir "*"))
+
+(type askpwdagent_t)
+(type askpwdagent_exec_t)
+(call applications_app (askpwdagent_t askpwdagent_exec_t))
+(call systemd_daemon (askpwdagent_t askpwdagent_exec_t))
+(roletype askpwdagent_role askpwdagent_t)
+
+(call askpwd_askpwdagent_client_subject_type (askpwdagent_t))
+
+(context askpwdagent_exec (system_u object_r askpwdagent_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-tty-ask-password-agent" file askpwdagent_exec)
+
+(type askpwdagent_systemd_runtime_t)
+(call systemd_runtime_object_type (askpwdagent_systemd_runtime_t))
+
+(context askpwdagent_systemd_runtime (system_u object_r askpwdagent_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/ask-password-block(/.*)?" any askpwdagent_systemd_runtime)
+
+(allow askpwdagent_t askpwdagent_systemd_runtime_t manage_dir_perms)
+(allow askpwdagent_t askpwdagent_systemd_runtime_t manage_fifo_file_perms)
+(call systemd_runtime_object_type_transition (askpwdagent_t askpwdagent_systemd_runtime_t dir "*"))
+
+(allow askpwdagent_t self (capability (net_admin)))
+(allow askpwdagent_t self (process (setfscreate)))
+(allow askpwdagent_t self create_unix_stream_socket_perms)
+
+(call files_search_config (askpwdagent_t))
+
+(call terminals_use_console (askpwdagent_t))
+
+(call askpwd_manage_systemd_runtime (askpwdagent_t))
+
+(call cryptsetup_dgram_send (askpwdagent_t))
+(call cryptsetup_read_state (askpwdagent_t))
+
+(call journal_client_subject_type (askpwdagent_t))
+
+(call systemd_use_fd (askpwdagent_t))
+
+(macro askpwd_exec ((type ARG1))
+    (call can_exec (ARG1 askpwd_exec_t))
+    (call askpwd_client_subject_type (ARG1)))
+
+(macro askpwd_client_subject_type ((type ARG1))
+    (typeattributeset askpwd_client_subject_type ARG1))
+
+(macro askpwd_exec_askpwdagent ((type ARG1))
+    (call can_exec (ARG1 askpwdagent_exec_t))
+    (call askpwd_askpwdagent_client_subject_type (ARG1)))
+
+(macro askpwd_askpwdagent_client_subject_type ((type ARG1))
+    (typeattributeset askpwd_askpwdagent_client_subject_type ARG1))
+
+(macro askpwd_auto_subject_type_transition ((type ARG1))
+    (call askpwd_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 askpwd_exec_t askpwd_t)))
+
+(macro askpwd_send_signal ((type ARG1))
+    (allow ARG1 askpwd_t (process (signal))))
+
+(macro askpwd_run ((type ARG1)(role ARG2))
+    (call askpwd_auto_subject_type_transition (ARG1))
+    (roleattributeset askpwd_role ARG2))
+
+(macro askpwd_auto_subject_type_transition_askpwdagent ((type ARG1))
+    (call askpwd_send_signal_askpwdagent (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 askpwdagent_exec_t askpwdagent_t)))
+
+(macro askpwd_send_signal_askpwdagent ((type ARG1))
+    (allow ARG1 askpwdagent_t (process (signal))))
+
+(macro askpwd_run_askpwdagent ((type ARG1)(role ARG2))
+    (call askpwd_auto_subject_type_transition_askpwdagent (ARG1))
+    (roleattributeset askpwdagent_role ARG2))
+
+(macro askpwd_search_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 askpwd_systemd_runtime_t search_dir_perms))
+
+(macro askpwd_list_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 askpwd_systemd_runtime_t list_dir_perms))
+
+(macro askpwd_read_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 askpwd_systemd_runtime_t askpwd_systemd_runtime_t)))
+
+(macro askpwd_rw_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call rw_files_pattern (ARG1 askpwd_systemd_runtime_t askpwd_systemd_runtime_t)))
+
+(macro askpwd_manage_systemd_runtime_sock_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call manage_sock_files_pattern (ARG1 askpwd_systemd_runtime_t askpwd_systemd_runtime_t)))
+
+(macro askpwd_write_systemd_runtime_sock_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call write_sock_files_pattern (ARG1 askpwd_systemd_runtime_t askpwd_systemd_runtime_t)))
+
+(macro askpwd_manage_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 askpwd_systemd_runtime_t askpwd_systemd_runtime_t)))
+
+(macro askpwd_read_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 askpwd_systemd_runtime_t askpwd_systemd_runtime_t)))
+
+(macro askpwd_read_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 askpwd_systemd_runtime_t read_file_perms)
+    (allow ARG1 askpwd_systemd_runtime_t list_dir_perms)
+    (allow ARG1 askpwd_systemd_runtime_t read_sock_file_perms)
+    (allow ARG1 askpwd_systemd_runtime_t read_lnk_file_perms))
+
+(macro askpwd_manage_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 askpwd_systemd_runtime_t manage_file_perms)
+    (allow ARG1 askpwd_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 askpwd_systemd_runtime_t manage_sock_file_perms)
+    (allow ARG1 askpwd_systemd_runtime_t manage_lnk_file_perms))
+
+(macro askpwd_search_askpwdagent_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 askpwdagent_systemd_runtime_t search_dir_perms))
+
+(macro askpwd_list_askpwdagent_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 askpwdagent_systemd_runtime_t list_dir_perms))
+
+(macro askpwd_read_askpwdagent_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 askpwdagent_systemd_runtime_t askpwdagent_systemd_runtime_t)))
+
+(macro askpwd_read_askpwdagent_systemd_runtime_fifo_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_fifo_files_pattern (ARG1 askpwdagent_systemd_runtime_t askpwdagent_systemd_runtime_t)))
+
+(macro askpwd_read_askpwdagent_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 askpwdagent_systemd_runtime_t askpwdagent_systemd_runtime_t)))
+
+(macro askpwd_read_askpwdagent_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 askpwdagent_systemd_runtime_t read_file_perms)
+    (allow ARG1 askpwdagent_systemd_runtime_t list_dir_perms)
+    (allow ARG1 askpwdagent_systemd_runtime_t read_fifo_file_perms)
+    (allow ARG1 askpwdagent_systemd_runtime_t read_lnk_file_perms))
+
+(macro askpwd_manage_askpwdagent_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 askpwdagent_systemd_runtime_t manage_file_perms)
+    (allow ARG1 askpwdagent_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 askpwdagent_systemd_runtime_t manage_fifo_file_perms)
+    (allow ARG1 askpwdagent_systemd_runtime_t manage_lnk_file_perms))
+
+(macro askpwd_systemd_runtime_object_type_transition_askpwdagent_systemd_runtime_dirs ((type ARG1))
+    (call systemd_runtime_object_type_transition (ARG2 askpwdagent_systemd_runtime_t dir "ask-password-block")))

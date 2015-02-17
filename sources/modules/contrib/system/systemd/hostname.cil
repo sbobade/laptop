@@ -1,0 +1,92 @@
+(roleattribute hostname_hostnamectl_role)
+
+(typeattribute hostname_hostnamectl_client_subject_type)
+
+(type hostnamectl_t)
+(type hostnamectl_exec_t)
+(call applications_app (hostnamectl_t hostnamectl_exec_t))
+(call systemd_daemon (hostnamectl_t hostnamectl_exec_t))
+(roletype hostname_hostnamectl_role hostnamectl_t)
+
+(call hostname_hostnamectl_client_subject_type (hostnamectl_t))
+
+(context hostnamectl_exec (system_u object_r hostnamectl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/hostnamectl" file hostnamectl_exec)
+
+(type hostnamed_t)
+(type hostnamed_exec_t)
+(call systemd_daemon (hostnamed_t hostnamed_exec_t))
+
+(context hostnamed_exec (system_u object_r hostnamed_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-hostnamed" file hostnamed_exec)
+
+(type hostnamed_dbus_config_t)
+(call dbus_config_object_type (hostnamed_dbus_config_t))
+
+(context hostnamed_dbus_config (system_u object_r hostnamed_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.hostname1\.conf" file hostnamed_dbus_config)
+
+(call system_read_kernel_sysctl (hostnamed_t))
+
+(call devices_read_urandom (hostnamed_t))
+
+(call filesystems_read_sysfs (hostnamed_t))
+(call filesystems_search_tmpfs (hostnamed_t))
+
+(call files_read_config_files (hostnamed_t))
+
+(call dbus_system_service (hostnamed_t))
+
+(call journal_client_subject_type (hostnamed_t))
+
+(call machine_manage_config_files (hostnamed_t))
+(call machine_config_object_type_transition_machine_config_files (hostnamed_t))
+
+(call polkit_dbus_chat_polkitd (hostnamed_t))
+
+(call seutil_read_selinux_config_files (hostnamed_t))
+(call seutil_read_file_context_files (hostnamed_t))
+
+(call systemd_stream_connect (hostnamed_t))
+
+(macro hostname_exec_hostnamed ((type ARG1))
+    (call can_exec (ARG1 hostnamed_exec_t)))
+
+(macro hostname_exec_hostnamectl ((type ARG1))
+    (call can_exec (ARG1 hostnamectl_exec_t))
+    (call hostname_hostnamectl_client_subject_type (ARG1)))
+
+(macro hostname_hostnamectl_client_subject_type ((type ARG1))
+    (typeattributeset hostname_hostnamectl_client_subject_type ARG1))
+
+(macro hostname_auto_subject_type_transition_hostnamed ((type ARG1))
+    (call hostname_send_signal_hostnamed (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 hostnamed_exec_t hostnamed_t)))
+
+(macro hostname_send_signal_hostnamed ((type ARG1))
+    (allow ARG1 hostnamed_t (process (signal))))
+
+(macro hostname_auto_subject_type_transition_hostnamectl ((type ARG1))
+    (call hostname_send_signal_hostnamectl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 hostnamectl_exec_t hostnamectl_t)))
+
+(macro hostname_send_signal_hostnamectl ((type ARG1))
+    (allow ARG1 hostnamectl_t (process (signal))))
+
+(macro hostname_run_hostnamectl ((type ARG1)(role ARG2))
+    (call hostname_auto_subject_type_transition_hostnamectl (ARG1))
+    (roleattributeset hostname_hostnamectl_role ARG2))
+
+(macro hostname_read_hostnamed_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 hostnamed_dbus_config_t read_file_perms))
+
+(macro hostname_manage_hostnamed_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 hostnamed_dbus_config_t manage_file_perms))
+
+(macro hostname_dbus_chat_hostnamed ((type ARG1))
+    (allow ARG1 hostnamed_t (dbus (send_msg)))
+    (allow hostnamed_t ARG1 (dbus (send_msg))))

@@ -1,0 +1,85 @@
+(typeattribute libraries_object_type)
+
+(type lib_t)
+(call libraries_object_type (lib_t))
+
+(context lib (system_u object_r lib_t (systemlow systemlow)))
+(filecon "/usr/lib(/.*)?" any lib)
+(filecon "/usr/lib" symlink lib)
+
+(filecon "/usr/libexec/sudo/.*" any lib)
+
+(type textrel_shlib_t)
+(call libraries_object_type (textrel_shlib_t))
+
+(type ld_so_t)
+(call files_object_type (ld_so_t))
+
+(context ld_so (system_u object_r ld_so_t (systemlow systemlow)))
+(filecon "/usr/lib/ld-[^/]*\.so(\.[^/]*)*" file ld_so)
+
+(type ld_so_cache_t)
+(call files_object_type (ld_so_cache_t))
+
+(context ld_so_cache (system_u object_r ld_so_cache_t (systemlow systemlow)))
+(filecon "/etc/ld\.so\.cache.*" file ld_so_cache)
+(filecon "/etc/ld\.so\.preload.*" file ld_so_cache)
+
+(macro libraries_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset libraries_object_type ARG1))
+
+(macro libraries_read_lib ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 lib_t read_file_perms)
+    (allow ARG1 lib_t list_dir_perms)
+    (allow ARG1 lib_t read_lnk_file_perms))
+
+(macro libraries_read_lib_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 lib_t lib_t)))
+
+(macro libraries_read_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 lib_t lib_t)))
+
+(macro libraries_search ((type ARG1))
+    (call files_search_data (ARG1))
+    (call libraries_read_lnk_files (ARG1))
+    (allow ARG1 lib_t search_dir_perms))
+
+(macro libraries_rw_dirs ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 lib_t rw_dir_perms))
+
+(macro libraries_list ((type ARG1))
+    (call files_search_data (ARG1))
+    (call libraries_read_lnk_files (ARG1))
+    (allow ARG1 lib_t list_dir_perms))
+
+(macro libraries_create_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call create_lnk_files_pattern (ARG1 lib_t lib_t)))
+
+(macro libraries_use_ld_so ((type ARG1))
+    (call libraries_list (ARG1))
+    (call libraries_read_lnk_files (ARG1))
+    (allow ARG1 ld_so_t mmap_file_perms)
+    (call libraries_read_ld_so_cache_files (ARG1)))
+
+(macro libraries_read_ld_so_cache_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ld_so_cache_t read_file_perms))
+
+(macro libraries_manage_ld_so_cache_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 ld_so_cache_t manage_file_perms))
+
+(macro libraries_config_object_type_transition_ld_so_cache_files ((type ARG1))
+    (call files_config_object_type_transition (ARG1 ld_so_cache_t file "*")))
+
+(macro libraries_use_shared_libs ((type ARG1))
+    (call libraries_list (ARG1))
+    (call libraries_read_lnk_files (ARG1))
+    (allow ARG1 libraries_object_type mmap_file_perms)
+    (allow ARG1 textrel_shlib_t (file (execmod))))

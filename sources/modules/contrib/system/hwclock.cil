@@ -1,0 +1,45 @@
+(roleattribute hwclock_role)
+
+(type hwclock_t)
+(type hwclock_exec_t)
+(call applications_app (hwclock_t hwclock_exec_t))
+(roletype hwclock_role hwclock_t)
+
+(roleattributeset hwclock_role system_r)
+
+(context hwclock_exec (system_u object_r hwclock_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/hwclock" file hwclock_exec)
+
+(type hwclock_config_t)
+(call files_config_object_type (hwclock_config_t))
+
+(context hwclock_config (system_u object_r hwclock_config_t (systemlow systemlow)))
+(filecon "/etc/adjtime" file hwclock_config)
+
+(call hwclock_read_config_files (hwclock_t))
+
+(optional hwclock_optional_systemd
+    (call systemd_daemon (hwclock_t hwclock_exec_t)))
+
+(macro hwclock_exec ((type ARG1))
+    (call can_exec (ARG1 hwclock_exec_t)))
+
+(macro hwclock_auto_subject_type_transition ((type ARG1))
+    (call hwclock_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 hwclock_exec_t hwclock_t)))
+
+(macro hwclock_run ((type ARG1)(role ARG2))
+    (call hwclock_auto_subject_type_transition (ARG1))
+    (roleattributeset hwclock_role (ARG2)))
+
+(macro hwclock_send_signal ((type ARG1))
+    (allow ARG1 hwclock_t (process (signal))))
+
+(macro hwclock_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 hwclock_config_t read_file_perms))
+
+(macro hwclock_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 hwclock_config_t manage_file_perms))

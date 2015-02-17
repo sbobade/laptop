@@ -1,0 +1,314 @@
+(roleattribute ntp_role)
+
+(typeattribute ntp_admin_subject_type)
+
+(typeattribute ntp_object_type)
+
+(type ntp_t)
+(type ntp_exec_t)
+(call applications_app (ntp_t ntp_exec_t))
+(roletype ntp_role ntp_t)
+
+(roleattributeset ntp_role system_r)
+
+(context ntp_exec (system_u object_r ntp_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/chronyc" file ntp_exec)
+
+(call system_read_crypto_sysctl (ntp_t))
+
+(call commands_mprot_read_shell_exec_files (ntp_t))
+
+(call auth_nsswitch_client_subject_type (ntp_t))
+
+(call miscfiles_read_locale (ntp_t))
+
+(call ntp_read_config_files (ntp_t))
+
+(optional ntp_optional_dhcp
+    (call dhcp_list_dhclient_lib (ntp_t)))
+
+(optional ntp_optional_systemd
+    (call systemd_daemon (ntp_t ntp_exec_t)))
+
+(type ntp_config_t)
+(call files_config_object_type (ntp_config_t))
+
+(typeattributeset ntp_object_type ntp_config_t)
+
+(context ntp_config (system_u object_r ntp_config_t (systemlow systemlow)))
+(filecon "/etc/chrony\.conf" file ntp_config)
+(filecon "/etc/chrony\.keys" file ntp_config)
+(filecon "/etc/sysconfig/chronyd" file ntp_config)
+
+(type ntp_port_t)
+(call network_reserved_port_object_type (ntp_port_t))
+
+(context ntp_port (system_u object_r ntp_port_t (systemlow systemlow)))
+(portcon "tcp" 123 ntp_port)
+(portcon "udp" 123 ntp_port)
+
+(type ntp_cmdmon_port_t)
+(call network_reserved_port_object_type (ntp_cmdmon_port_t))
+
+(context ntp_cmdmon_port (system_u object_r ntp_cmdmon_port_t (systemlow systemlow)))
+(portcon "tcp" 323 ntp_cmdmon_port)
+(portcon "udp" 323 ntp_cmdmon_port)
+
+(type ntphelper_exec_t)
+(call commands_exec_object_type (ntphelper_exec_t))
+
+(context ntphelper_exec (system_u object_r ntphelper_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/chrony-helper" file ntphelper_exec)
+
+(type ntpd_t)
+(type ntpd_exec_t)
+(call subject_common_type (ntpd_t))
+(call subject_entry (ntpd_t ntpd_exec_t))
+(roletype system_r ntpd_t)
+
+(context ntpd_exec (system_u object_r ntpd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/chronyd" file ntpd_exec)
+
+(type ntpd_runtime_t)
+(call files_runtime_object_type (ntpd_runtime_t))
+
+(typeattributeset ntp_object_type ntpd_runtime_t)
+
+(allow ntpd_t ntpd_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (ntpd_t ntpd_runtime_t file "*"))
+
+(context ntpd_runtime (system_u object_r ntpd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/chronyd\.pid" file ntpd_runtime)
+
+(type ntpd_lib_t)
+(call files_lib_object_type (ntpd_lib_t))
+
+(typeattributeset ntp_object_type ntpd_lib_t)
+
+(context ntpd_lib (system_u object_r ntpd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/chrony(/.*)?" any ntpd_lib)
+
+(allow ntpd_t ntpd_lib_t manage_dir_perms)
+(allow ntpd_t ntpd_lib_t manage_file_perms)
+(call files_lib_object_type_transition (ntpd_t ntpd_lib_t dir "*"))
+
+(type ntpd_log_t)
+(call files_log_object_type (ntpd_log_t))
+
+(typeattributeset ntp_object_type ntpd_log_t)
+
+(context ntpd_log (system_u object_r ntpd_log_t (systemlow systemlow)))
+(filecon "/var/log/chrony(/.*)?" any ntpd_log)
+
+(allow ntpd_t ntpd_log_t (file (setattr)))
+(allow ntpd_t ntpd_log_t append_file_perms)
+(allow ntpd_t ntpd_log_t create_file_perms)
+(allow ntpd_t ntpd_log_t delete_file_perms)
+(allow ntpd_t ntpd_log_t read_file_perms)
+
+(allow ntpd_t ntpd_log_t manage_dir_perms)
+(call files_log_object_type_transition (ntpd_t ntpd_log_t file "*"))
+
+(allow ntpd_t self (capability (sys_time setuid setgid fsetid)))
+(allow ntpd_t self (process (setcap)))
+(allow ntpd_t self rw_fifo_file_perms)
+
+(call system_read_crypto_sysctl (ntpd_t))
+
+(call network_udp_bind_generic_node (ntpd_t))
+
+(call commands_exec_shell (ntpd_t))
+
+(call devices_read_urandom (ntpd_t))
+
+(call auth_nsswitch_client_subject_type (ntpd_t))
+
+(call ntp_append_config_files (ntpd_t))
+(call ntp_read_config_files (ntpd_t))
+(call ntp_setattr_config_files (ntpd_t))
+(call ntp_udp_bind_ntp_port (ntpd_t))
+(call ntp_udp_bind_ntp_cmdmon_port (ntpd_t))
+
+(call miscfiles_read_locale (ntpd_t))
+(call miscfiles_read_net_config_files (ntpd_t))
+
+(optional ntpd_optional_dhcp
+    (call dhcp_list_dhclient_lib (ntpd_t)))
+
+(optional ntpd_optional_journal
+    (call journal_client_subject_type (ntpd_t)))
+
+(optional ntpd_optional_logrotate
+    (call logrotate_log_object_type (ntpd_log_t)))
+
+(optional ntpd_optional_machine
+    (call machine_read_machined_systemd_runtime_files (ntpd_t)))
+
+(optional ntpd_optional_systemd
+    (call systemd_daemon (ntpd_t ntpd_exec_t))
+
+    (type ntpd_unit_t)
+    (call systemd_unit_object_type (ntpd_unit_t))
+
+    (typeattributeset ntp_object_type ntpd_unit_t)
+
+    (context ntpd_unit (system_u object_r ntpd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*chrony-wait.*" file ntpd_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*chronyd.*" file ntpd_unit)
+
+    (allow ntp_admin_subject_type ntpd_unit_t (service (all)))
+
+    (call systemd_pid_object_type (ntpd_runtime_t)))
+
+(allow ntp_admin_subject_type ntpd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (ntp_admin_subject_type ntpd_t))
+
+(allow ntp_admin_subject_type ntp_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro ntp_exec ((type ARG1))
+    (call can_exec (ARG1 ntp_exec_t)))
+
+(macro ntp_exec_ntpd ((type ARG1))
+    (call can_exec (ARG1 ntpd_exec_t)))
+
+(macro ntp_exec_ntphelper ((type ARG1))
+    (call can_exec (ARG1 ntphelper_exec_t)))
+
+(macro ntp_auto_subject_type_transition ((type ARG1))
+    (call ntp_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 ntp_exec_t ntp_t)))
+
+(macro ntp_send_signal ((type ARG1))
+    (allow ARG1 ntp_t (process (signal))))
+
+(macro ntp_run ((type ARG1)(role ARG2))
+    (call ntp_auto_subject_type_transition (ARG1))
+    (roleattributeset ntp_role ARG2))
+
+(macro ntp_auto_subject_type_transition_ntpd ((type ARG1))
+    (call ntp_send_signal_ntpd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 ntpd_exec_t ntpd_t)))
+
+(macro ntp_send_signal_ntpd ((type ARG1))
+    (allow ARG1 ntpd_t (process (signal))))
+
+(macro ntp_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ntp_config_t search_dir_perms))
+
+(macro ntp_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ntp_config_t list_dir_perms))
+
+(macro ntp_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 ntp_config_t ntp_config_t)))
+
+(macro ntp_append_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call append_files_pattern (ARG1 ntp_config_t ntp_config_t)))
+
+(macro ntp_setattr_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call setattr_files_pattern (ARG1 ntp_config_t ntp_config_t)))
+
+(macro ntp_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 ntp_config_t ntp_config_t)))
+
+(macro ntp_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ntp_config_t read_file_perms)
+    (allow ARG1 ntp_config_t list_dir_perms)
+    (allow ARG1 ntp_config_t read_lnk_file_perms))
+
+(macro ntp_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 ntp_config_t manage_file_perms)
+    (allow ARG1 ntp_config_t manage_dir_perms)
+    (allow ARG1 ntp_config_t manage_lnk_file_perms))
+
+(macro ntp_search_ntpd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 ntpd_lib_t search_dir_perms))
+
+(macro ntp_list_ntpd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 ntpd_lib_t list_dir_perms))
+
+(macro ntp_read_ntpd_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 ntpd_lib_t ntpd_lib_t)))
+
+(macro ntp_read_ntpd_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 ntpd_lib_t ntpd_lib_t)))
+
+(macro ntp_read_ntpd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 ntpd_lib_t read_file_perms)
+    (allow ARG1 ntpd_lib_t list_dir_perms)
+    (allow ARG1 ntpd_lib_t read_lnk_file_perms))
+
+(macro ntp_manage_ntpd_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 ntpd_lib_t manage_file_perms)
+    (allow ARG1 ntpd_lib_t manage_dir_perms)
+    (allow ARG1 ntpd_lib_t manage_lnk_file_perms))
+
+(macro ntp_search_ntpd_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 ntpd_log_t search_dir_perms))
+
+(macro ntp_list_ntpd_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 ntpd_log_t list_dir_perms))
+
+(macro ntp_read_ntpd_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_files_pattern (ARG1 ntpd_log_t ntpd_log_t)))
+
+(macro ntp_read_ntpd_log_lnk_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_lnk_files_pattern (ARG1 ntpd_log_t ntpd_log_t)))
+
+(macro ntp_rw_ntpd_log_dirs ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 ntpd_log_t rw_dir_perms))
+
+(macro ntp_read_ntpd_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 ntpd_log_t read_file_perms)
+    (allow ARG1 ntpd_log_t list_dir_perms)
+    (allow ARG1 ntpd_log_t read_lnk_file_perms))
+
+(macro ntp_manage_ntpd_log ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 ntpd_log_t manage_file_perms)
+    (allow ARG1 ntpd_log_t manage_dir_perms)
+    (allow ARG1 ntpd_log_t manage_lnk_file_perms))
+
+(macro ntp_read_ntpd_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 ntpd_runtime_t read_file_perms))
+
+(macro ntp_manage_ntpd_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 ntpd_runtime_t manage_file_perms))
+
+(macro ntp_udp_bind_ntp_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 ntp_port_t (udp_socket (name_bind))))
+
+(macro ntp_udp_bind_ntp_cmdmon_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 ntp_cmdmon_port_t (udp_socket (name_bind))))
+
+(macro ntp_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset ntp_admin_subject_type ARG1)
+    (optional ntp_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

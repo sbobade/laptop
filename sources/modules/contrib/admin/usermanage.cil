@@ -1,0 +1,272 @@
+(roleattribute usermanage_cracklib_role)
+(roleattribute usermanage_groupadd_role)
+(roleattribute usermanage_useradd_role)
+
+(typeattribute usermanage_chfn_subject_type)
+(typeattribute usermanage_passwd_subject_type)
+
+(type chfn_exec_t)
+(call applications_app (usermanage_chfn_subject_type chfn_exec_t))
+
+(context chfn_exec (system_u object_r chfn_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/chfn" file chfn_exec)
+(filecon "/usr/bin/chsh" file chfn_exec)
+
+(type chfn_pam_config_t)
+(call auth_pam_config_object_type (chfn_pam_config_t))
+
+(context chfn_pam_config (system_u object_r chfn_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/chfn" file chfn_pam_config)
+(filecon "/etc/pam\.d/chsh" file chfn_pam_config)
+
+(type passwd_exec_t)
+(call applications_app (usermanage_passwd_subject_type passwd_exec_t))
+
+(context passwd_exec (system_u object_r passwd_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/passwd" file passwd_exec)
+
+(type passwd_pam_config_t)
+(call auth_pam_config_object_type (passwd_pam_config_t))
+
+(context passwd_pam_config (system_u object_r passwd_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/passwd" file passwd_pam_config)
+
+(call applications_subject_type (usermanage_chfn_subject_type))
+
+(allow usermanage_passwd_subject_type self (capability (setuid dac_override chown fsetid)))
+(allow usermanage_passwd_subject_type self (process (setfscreate)))
+(allow usermanage_passwd_subject_type self create_netlink_selinux_socket_perms)
+(allow usermanage_passwd_subject_type self rw_fifo_file_perms)
+
+(call system_read_crypto_sysctl (usermanage_passwd_subject_type))
+
+(call applications_subject_type (usermanage_passwd_subject_type))
+
+(call devices_read_urandom (usermanage_passwd_subject_type))
+
+(call filesystems_list_devtmpfs (usermanage_passwd_subject_type))
+(call filesystems_search_devpts (usermanage_passwd_subject_type))
+
+(call files_read_config_files (usermanage_passwd_subject_type))
+(call files_read_data_files (usermanage_passwd_subject_type))
+
+(call selinux_list_securityfs (usermanage_passwd_subject_type))
+(call selinux_compute_access_vector (usermanage_passwd_subject_type))
+
+(call subject_object_identity_change_exemption (usermanage_passwd_subject_type))
+
+(call audit_client_subject_type (usermanage_passwd_subject_type))
+
+(call auth_nsswitch_client_subject_type (usermanage_passwd_subject_type))
+(call auth_manage_shadow (usermanage_passwd_subject_type))
+(call auth_manage_passwd_config_files (usermanage_passwd_subject_type))
+(call auth_read_authconfig_pam_config (usermanage_passwd_subject_type))
+(call auth_read_pam_config_files (usermanage_passwd_subject_type))
+
+(call miscfiles_read_locale (usermanage_passwd_subject_type))
+
+(call usermanage_read_passwd_pam_config_files (usermanage_passwd_subject_type))
+
+(optional passwd_subject_type_optional_journal
+    (call journal_client_subject_type (usermanage_passwd_subject_type)))
+
+(type cracklib_t)
+(type cracklib_exec_t)
+(call applications_app (cracklib_t cracklib_exec_t))
+(roletype usermanage_cracklib_role cracklib_t)
+
+(roleattributeset usermanage_cracklib_role system_r)
+
+(context cracklib_exec (system_u object_r cracklib_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/cracklib-check" file cracklib_exec)
+(filecon "/usr/sbin/cracklib-format" file cracklib_exec)
+(filecon "/usr/sbin/cracklib-packer" file cracklib_exec)
+(filecon "/usr/sbin/cracklib-unpacker" file cracklib_exec)
+(filecon "/usr/sbin/create-cracklib-dict" file cracklib_exec)
+
+(type cracklib_cache_t)
+(call files_cache_object_type (cracklib_cache_t))
+
+(context cracklib_cache (system_u object_r cracklib_cache_t (systemlow systemlow)))
+(filecon "/var/cache/cracklib(/.*)?" any cracklib_cache)
+
+(allow cracklib_t cracklib_cache_t manage_dir_perms)
+(allow cracklib_t cracklib_cache_t manage_file_perms)
+(call files_cache_object_type_transition (cracklib_t cracklib_cache_t dir "*"))
+
+(type useradd_t)
+(type useradd_exec_t)
+(call applications_app (useradd_t useradd_exec_t))
+(roletype usermanage_useradd_role useradd_t)
+
+(roleattributeset usermanage_useradd_role system_r)
+
+(context useradd_exec (system_u object_r useradd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/useradd" file useradd_exec)
+(filecon "/usr/sbin/userdel" file useradd_exec)
+(filecon "/usr/sbin/usermod" file useradd_exec)
+(filecon "/usr/sbin/newusers" file useradd_exec)
+
+(allow useradd_t self (capability (chown fsetid fowner sys_ptrace dac_override)))
+(allow useradd_t self (process (setfscreate)))
+
+(call system_read_kernel_sysctl (useradd_t))
+
+(call filesystems_list_proc (useradd_t))
+(call filesystems_list_devtmpfs (useradd_t))
+(call filesystems_search_devpts (useradd_t))
+
+(call files_read_config_files (useradd_t))
+
+(call selinux_validate_context (useradd_t))
+
+(call subject_object_identity_change_exemption (useradd_t))
+(call subject_read_all_common_subjects_state (useradd_t))
+
+(call audit_client_subject_type (useradd_t))
+
+(call auth_rw_lastlog_log_files (useradd_t))
+(call auth_manage_shadow (useradd_t))
+(call auth_manage_passwd_config_files (useradd_t))
+(call auth_config_object_type_transition_passwd_config_files (useradd_t "*"))
+(call auth_nsswitch_client_subject_type (useradd_t))
+
+(call miscfiles_read_locale (useradd_t))
+
+(call seutil_read_selinux_config_files (useradd_t))
+(call seutil_read_file_context_files (useradd_t))
+
+(call usersubject_manage_home_dir (useradd_t))
+(call usersubject_manage_mail_spool_files (useradd_t))
+(call usersubject_spool_object_type_transition_mail_spool_files (useradd_t "*"))
+(call usersubject_list_all_user_home (useradd_t))
+(call usersubject_delete_all_user_home (useradd_t))
+(call usersubject_manage_user_home_files (useradd_t))
+
+(optional useradd_optional_journal
+    (call journal_client_subject_type (useradd_t)))
+
+(optional useradd_optional_rpm
+    (call rpm_rw_inherited_fifo_files (useradd_t))
+    (call rpm_rw_inherited_tmpfs_files (useradd_t)))
+
+(type groupadd_t)
+(type groupadd_exec_t)
+(call applications_app (groupadd_t groupadd_exec_t))
+(roletype usermanage_groupadd_role groupadd_t)
+
+(roleattributeset usermanage_groupadd_role system_r)
+
+(context groupadd_exec (system_u object_r groupadd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/groupadd" file groupadd_exec)
+(filecon "/usr/sbin/groupdel" file groupadd_exec)
+(filecon "/usr/sbin/groupmod" file groupadd_exec)
+(filecon "/usr/bin/gpasswd" file groupadd_exec)
+
+(allow groupadd_t self (capability (dac_override)))
+(allow groupadd_t self (process (setfscreate)))
+
+(call files_read_config_files (groupadd_t))
+
+(call selinux_validate_context (groupadd_t))
+
+(call subject_object_identity_change_exemption (groupadd_t))
+
+(call audit_client_subject_type (groupadd_t))
+
+(call auth_manage_shadow (groupadd_t))
+(call auth_manage_passwd_config_files (groupadd_t))
+(call auth_config_object_type_transition_passwd_config_files (groupadd_t "*"))
+(call auth_nsswitch_client_subject_type (groupadd_t))
+
+(call miscfiles_read_locale (groupadd_t))
+
+(call seutil_read_selinux_config_files (groupadd_t))
+(call seutil_read_file_context_files (groupadd_t))
+
+(optional groupadd_optional_journal
+    (call journal_client_subject_type (groupadd_t)))
+
+(optional groupadd_optional_rpm
+    (call rpm_rw_inherited_fifo_files (groupadd_t))
+    (call rpm_rw_inherited_tmpfs_files (groupadd_t)))
+
+(macro usermanage_exec_chfn ((type ARG1))
+    (call can_exec (ARG1 chfn_exec_t)))
+
+(macro usermanage_exec_passwd ((type ARG1))
+    (call can_exec (ARG1 passwd_exec_t)))
+
+(macro usermanage_exec_cracklib ((type ARG1))
+    (call can_exec (ARG1 cracklib_exec_t)))
+
+(macro usermanage_exec_useradd ((type ARG1))
+    (call can_exec (ARG1 useradd_exec_t)))
+
+(macro usermanage_exec_groupadd ((type ARG1))
+    (call can_exec (ARG1 groupadd_exec_t)))
+
+(macro usermanage_chfn_subject_type ((type ARG1))
+    (typeattributeset usermanage_chfn_subject_type ARG1))
+
+(macro usermanage_passwd_subject_type ((type ARG1))
+    (typeattributeset usermanage_passwd_subject_type ARG1))
+
+(macro usermanage_auto_subject_type_transition_cracklib ((type ARG1))
+    (call usermanage_send_signal_cracklib (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 cracklib_exec_t cracklib_t)))
+
+(macro usermanage_send_signal_cracklib ((type ARG1))
+    (allow ARG1 cracklib_t (process (signal))))
+
+(macro usermanage_run_cracklib ((type ARG1)(role ARG2))
+    (call usermanage_auto_subject_type_transition_cracklib (ARG1))
+    (roleattributeset usermanage_cracklib_role ARG2))
+
+(macro usermanage_auto_subject_type_transition_useradd ((type ARG1))
+    (call usermanage_send_signal_useradd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 useradd_exec_t useradd_t)))
+
+(macro usermanage_send_signal_useradd ((type ARG1))
+    (allow ARG1 useradd_t (process (signal))))
+
+(macro usermanage_run_useradd ((type ARG1)(role ARG2))
+    (call usermanage_auto_subject_type_transition_useradd (ARG1))
+    (roleattributeset usermanage_useradd_role ARG2))
+
+(macro usermanage_auto_subject_type_transition_groupadd ((type ARG1))
+    (call usermanage_send_signal_groupadd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 groupadd_exec_t groupadd_t)))
+
+(macro usermanage_send_signal_groupadd ((type ARG1))
+    (allow ARG1 groupadd_t (process (signal))))
+
+(macro usermanage_run_groupadd ((type ARG1)(role ARG2))
+    (call usermanage_auto_subject_type_transition_groupadd (ARG1))
+    (roleattributeset usermanage_groupadd_role ARG2))
+
+(macro usermanage_role_template_chfn ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 chfn_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call usermanage_chfn_subject_type (ARG3)))
+
+(macro usermanage_role_template_passwd ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 passwd_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call usermanage_passwd_subject_type (ARG3))
+    (call auth_run_chkpwd (ARG3 ARG1)))
+
+(macro usermanage_read_chfn_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 chfn_pam_config_t read_file_perms))
+
+(macro usermanage_read_passwd_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 passwd_pam_config_t read_file_perms))

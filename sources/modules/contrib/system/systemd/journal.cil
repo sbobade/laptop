@@ -1,0 +1,330 @@
+(roleattribute journal_journalctl_role)
+
+(typeattribute journal_journalctl_client_subject_type)
+
+(typeattribute journal_admin_subject_type)
+(typeattribute journal_client_subject_type)
+
+(typeattribute journal_object_type)
+
+(type journalctl_t)
+(type journalctl_exec_t)
+(call applications_app (journalctl_t journalctl_exec_t))
+(call systemd_daemon (journalctl_t journalctl_exec_t))
+(roletype journal_journalctl_role journalctl_t)
+
+(call journal_journalctl_client_subject_type (journalctl_t))
+
+(context journalctl_exec (system_u object_r journalctl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/journalctl" file journalctl_exec)
+
+(allow journalctl_t self (capability (dac_override net_admin)))
+
+(call devices_read_random (journalctl_t))
+
+(call journal_manage_log (journalctl_t))
+(call journal_manage_journald_systemd_lib_files (journalctl_t))
+(call journal_read_journald_systemd_runtime (journalctl_t))
+(call journal_stop_journald_units (journalctl_t))
+
+(type journald_t)
+(type journald_exec_t)
+(call systemd_daemon (journald_t journald_exec_t))
+
+(context journald_exec (system_u object_r journald_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-journald" file journald_exec)
+(filecon "/usr/lib/systemd/systemd-kmsg-syslogd" file journald_exec)
+
+(type journald_unit_t)
+(call systemd_unit_object_type (journald_unit_t))
+
+(typeattributeset journal_object_type journald_unit_t)
+
+(context journald_unit (system_u object_r journald_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*syslog.*" file journald_unit)
+(filecon "/usr/lib/systemd/system/[^/]*systemd-journal.*" file journald_unit)
+
+(type journald_systemd_config_t)
+(call systemd_config_object_type (journald_systemd_config_t))
+
+(typeattributeset journal_object_type journald_systemd_config_t)
+
+(context journald_systemd_config (system_u object_r journald_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/journald\.conf" file journald_systemd_config)
+
+(type journal_log_t)
+(call files_log_object_type (journal_log_t))
+
+(call system_mountpoint_object_type (journal_log_t))
+(call filesystems_associate_tmpfs (journal_log_t))
+
+(typeattributeset journal_object_type journal_log_t)
+
+(context journal_log (system_u object_r journal_log_t (systemlow mls_systemhigh)))
+(filecon "/var/log/journal(/.*)?" any journal_log)
+(filecon "/var/run/log(/.*)?" any journal_log)
+
+(allow journald_t journal_log_t manage_dir_perms)
+(allow journald_t journal_log_t manage_file_perms)
+(call files_log_object_type_transition (journald_t journal_log_t dir "*"))
+(call files_runtime_object_type_transition (journald_t journal_log_t dir "log"))
+
+(type journald_systemd_runtime_t)
+(call systemd_runtime_object_type (journald_systemd_runtime_t))
+
+(typeattributeset journal_object_type journald_systemd_runtime_t)
+
+(context journald_systemd_runtime (system_u object_r journald_systemd_runtime_t (systemlow mls_systemhigh)))
+(filecon "/var/run/systemd/journal(/.*)?" any journald_systemd_runtime)
+
+(allow journald_t journald_systemd_runtime_t manage_dir_perms)
+(allow journald_t journald_systemd_runtime_t manage_file_perms)
+(allow journald_t journald_systemd_runtime_t manage_sock_file_perms)
+(call systemd_runtime_object_type_transition (journald_t journald_systemd_runtime_t dir "*"))
+
+(type journald_systemd_lib_t)
+(call systemd_lib_object_type (journald_systemd_lib_t))
+
+(typeattributeset journal_object_type journald_systemd_lib_t)
+
+(context journald_systemd_lib (system_u object_r journald_systemd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/systemd/catalog(/.*)?" any journald_systemd_lib)
+
+(allow journald_t journald_systemd_lib_t manage_dir_perms)
+(allow journald_t journald_systemd_lib_t manage_file_perms)
+(call systemd_lib_object_type_transition (journald_t journald_systemd_lib_t dir "*"))
+
+(allow journald_t self (capability (setgid setuid sys_admin sys_ptrace)))
+(allow journald_t self (process (getcap)))
+
+(call system_dgram_send (journald_t))
+(call system_read_ring_buffer (journald_t))
+(call system_read_crypto_sysctl (journald_t))
+(call system_read_kernel_sysctl (journald_t))
+(call system_rw_unix_dgram_sockets (journald_t))
+(call system_rw_unix_stream_sockets (journald_t))
+(call system_search_invalid (journald_t))
+(call system_use_fd (journald_t))
+
+(call devices_rw_kmsg (journald_t))
+(call devices_read_urandom (journald_t))
+
+(call filesystems_getattr_filesystems (journald_t))
+(call filesystems_getattr_tmpfs_filesystems (journald_t))
+(call filesystems_read_sysfs (journald_t))
+(call filesystems_write_inherited_devpts_chr_files (journald_t))
+
+(call selinux_get_enforce_mode (journald_t))
+
+(call subject_read_all_common_subjects_state (journald_t))
+
+(call terminals_write_console (journald_t))
+
+(call audit_test_for_journald (journald_t))
+
+(call journal_read_journald_systemd_config_files (journald_t))
+
+(call machine_read_config_files (journald_t))
+
+(call miscfiles_read_locale (journald_t))
+
+(call plymouth_use_fd_plymouthd (journald_t))
+
+(call systemd_dgram_send (journald_t))
+
+(call udev_client_subject_type (journald_t))
+
+(allow journal_journalctl_client_subject_type self (capability (sys_resource ipc_lock)))
+(allow journal_journalctl_client_subject_type self (process (setrlimit)))
+(allow journal_journalctl_client_subject_type self rw_fifo_file_perms)
+
+(call system_read_crypto_sysctl (journal_journalctl_client_subject_type))
+(call system_read_kernel_sysctl (journal_journalctl_client_subject_type))
+
+(call commands_exec (journal_journalctl_client_subject_type))
+
+(call devices_read_urandom (journal_journalctl_client_subject_type))
+
+(call filesystems_getattr_filesystems (journal_journalctl_client_subject_type))
+(call filesystems_getattr_tmpfs_filesystems (journal_journalctl_client_subject_type))
+
+(call journal_read_log (journal_journalctl_client_subject_type))
+
+(call machine_read_config_files (journal_journalctl_client_subject_type))
+
+(call miscfiles_read_all_terminfo (journal_journalctl_client_subject_type))
+(call miscfiles_read_locale (journal_journalctl_client_subject_type))
+
+(call systemd_stream_connect (journal_journalctl_client_subject_type))
+
+(call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type))
+
+(allow journal_client_subject_type self (capability (net_admin))) ; FIXME
+(allow journal_client_subject_type self (unix_dgram_socket (sendto)))
+
+(call dgram_send_pattern
+    (journal_client_subject_type journald_systemd_runtime_t journald_systemd_runtime_t journald_t))
+
+(call system_dgram_send (journal_client_subject_type))
+(call system_stream_connect (journal_client_subject_type))
+
+(call filesystems_read_devtmpfs_lnk_files (journal_client_subject_type))
+
+(call terminals_use_console (journal_client_subject_type))
+
+(call systemd_search_runtime (journal_client_subject_type))
+
+(allow journal_admin_subject_type journald_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (journal_admin_subject_type journald_t))
+
+(allow journal_admin_subject_type journald_unit_t (service (all)))
+
+(allow journal_admin_subject_type journal_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro journal_exec_journalctl ((type ARG1))
+    (call can_exec (ARG1 journalctl_exec_t))
+    (call journal_journalctl_client_subject_type (ARG1)))
+
+(macro journal_journalctl_client_subject_type ((type ARG1))
+    (typeattributeset journal_journalctl_client_subject_type ARG1))
+
+(macro journal_exec_journald ((type ARG1))
+    (call can_exec (ARG1 journald_exec_t)))
+
+(macro journal_auto_subject_type_transition_journald ((type ARG1))
+    (call journal_send_signal_journald (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 journald_exec_t journald_t)))
+
+(macro journal_send_signal_journald ((type ARG1))
+    (allow ARG1 journald_t (process (signal))))
+
+(macro journal_auto_subject_type_transition_journalctl ((type ARG1))
+    (call journal_send_signal_journalctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 journalctl_exec_t journalctl_t)))
+
+(macro journal_send_signal_journalctl ((type ARG1))
+    (allow ARG1 journalctl_t (process (signal))))
+
+(macro journal_run_journalctl ((type ARG1)(role ARG2))
+    (call journal_auto_subject_type_transition_journalctl (ARG1))
+    (roleattributeset journal_journalctl_role ARG2))
+
+(macro journal_read_journald_systemd_config_files ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 journald_systemd_config_t read_file_perms))
+
+(macro journal_manage_journald_systemd_config_files ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 journald_systemd_config_t manage_file_perms))
+
+(macro journal_search_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 journal_log_t search_dir_perms))
+
+(macro journal_list_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 journal_log_t list_dir_perms))
+
+(macro journal_relabelto_log_dirs ((type ARG1))
+    (call journal_search_log (ARG1))
+    (allow ARG1 journal_log_t relabelto_dir_perms))
+
+(macro journal_read_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_files_pattern (ARG1 journal_log_t journal_log_t)))
+
+(macro journal_relabelto_log_files ((type ARG1))
+    (call journal_search_log (ARG1))
+    (allow ARG1 journal_log_t relabelto_file_perms))
+
+(macro jounal_read_log_lnk_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_lnk_files_pattern (ARG1 journal_log_t journal_log_t)))
+
+(macro journal_read_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 journal_log_t read_file_perms)
+    (allow ARG1 journal_log_t list_dir_perms)
+    (allow ARG1 journal_log_t read_lnk_file_perms))
+
+(macro journal_manage_log ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 journal_log_t manage_file_perms)
+    (allow ARG1 journal_log_t manage_dir_perms)
+    (allow ARG1 journal_log_t manage_lnk_file_perms))
+
+(macro journal_search_journald_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 journald_systemd_runtime_t search_dir_perms))
+
+(macro journal_list_journald_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 journald_systemd_runtime_t list_dir_perms))
+
+(macro journal_read_journald_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 journald_systemd_runtime_t journald_systemd_runtime_t)))
+
+(macro journal_read_journald_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 journald_systemd_runtime_t journald_systemd_runtime_t)))
+
+(macro journal_read_journald_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 journald_systemd_runtime_t read_file_perms)
+    (allow ARG1 journald_systemd_runtime_t list_dir_perms)
+    (allow ARG1 journald_systemd_runtime_t read_sock_file_perms)
+    (allow ARG1 journald_systemd_runtime_t read_lnk_file_perms))
+
+(macro journal_manage_journald_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 journald_systemd_runtime_t manage_file_perms)
+    (allow ARG1 journald_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 journald_systemd_runtime_t manage_sock_file_perms)
+    (allow ARG1 journald_systemd_runtime_t manage_lnk_file_perms))
+
+(macro journal_search_journald_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 journald_systemd_lib_t search_dir_perms))
+
+(macro journal_list_journald_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 journald_systemd_lib_t list_dir_perms))
+
+(macro journal_read_journald_systemd_lib_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_files_pattern (ARG1 journald_systemd_lib_t journald_systemd_lib_t)))
+
+(macro journal_manage_journald_systemd_lib_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call manage_files_pattern (ARG1 journald_systemd_lib_t journald_systemd_lib_t)))
+
+(macro journal_read_journald_systemd_lib_lnk_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 journald_systemd_lib_t journald_systemd_lib_t)))
+
+(macro journal_read_journald_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 journald_systemd_lib_t read_file_perms)
+    (allow ARG1 journald_systemd_lib_t list_dir_perms)
+    (allow ARG1 journald_systemd_lib_t read_lnk_file_perms))
+
+(macro journal_manage_journald_systemd_lib ((type ARG1))
+    (call systemd_rw_lib_dirs (ARG1))
+    (allow ARG1 journald_systemd_lib_t manage_file_perms)
+    (allow ARG1 journald_systemd_lib_t manage_dir_perms)
+    (allow ARG1 journald_systemd_lib_t manage_lnk_file_perms))
+
+(macro journal_stop_journald_units ((type ARG1))
+    (allow ARG1 journald_unit_t (service (stop))))
+
+(macro journal_client_subject_type ((type ARG1))
+    (typeattributeset journal_client_subject_type ARG1))
+
+(macro journal_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset journal_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

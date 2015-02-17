@@ -1,0 +1,108 @@
+(typeattribute commands_exec_object_type)
+
+(type exec_t)
+(call commands_exec_object_type (exec_t))
+
+(context exec (system_u object_r exec_t (systemlow systemlow)))
+(filecon "/etc/dhcp/dhclient\.d/chrony\.sh" file exec)
+(filecon "/etc/grub\.d(/.*)?" file exec)
+(filecon "/etc/profile\.d(/.*)?" file exec)
+(filecon "/etc/kernel/postinst\.d(/.*)?" file exec)
+(filecon "/etc/rc\.d/rc\.local" file exec)
+(filecon "/etc/rc\.d/init\.d(/.*)?" file exec)
+(filecon "/etc/security/namespace\.init" file exec)
+(filecon "/etc/sysconfig/network-scripts/ifdown-.*" file exec)
+(filecon "/etc/sysconfig/network-scripts/ifup-.*" file exec)
+(filecon "/etc/sysconfig/network-scripts/init\.ipv6-global" file exec)
+(filecon "/usr/bin" symlink exec)
+(filecon "/usr/bin(/.*)?" any exec)
+(filecon "/usr/lib/dracut(/.*)?" file exec)
+(filecon "/usr/lib/firefox/run-mozilla\.sh" file exec)
+(filecon "/usr/lib/rpm(/.*)?" file exec)
+(filecon "/usr/lib/systemd/system-shutdown(/.*)?" file exec)
+(filecon "/usr/libexec(/.*)?" any exec)
+(filecon "/usr/sbin" symlink exec)
+(filecon "/usr/sbin(/.*)?" any exec)
+(filecon "/usr/share/texlive/texmf-dist/scripts(/.*)?" file exec)
+
+(type shell_exec_t)
+(call commands_exec_object_type (shell_exec_t))
+
+(context shell_exec (system_u object_r shell_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/bash" file shell_exec)
+(filecon "/usr/bin/git-shell" file shell_exec)
+(filecon "/usr/libexec/git-core/git-shell" file shell_exec)
+(filecon "/usr/libexec/sudo/sesh" file shell_exec)
+(filecon "/usr/sbin/nologin" file shell_exec)
+
+(call files_object_type (commands_exec_object_type))
+
+(macro commands_exec_object_type ((type ARG1))
+    (typeattributeset commands_exec_object_type ARG1))
+
+(macro commands_read_exec ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 exec_t list_dir_perms)
+    (allow ARG1 exec_t read_file_perms)
+    (allow ARG1 exec_t read_lnk_file_perms))
+
+(macro commands_read_exec_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 exec_t exec_t)))
+
+(macro commands_read_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 exec_t exec_t)))
+
+(macro commands_search ((type ARG1))
+    (call commands_read_lnk_files (ARG1))
+    (allow ARG1 exec_t search_dir_perms))
+
+(macro commands_list ((type ARG1))
+    (call commands_read_lnk_files (ARG1))
+    (allow ARG1 exec_t list_dir_perms))
+
+(macro commands_exec_object_entry ((type ARG1))
+    (call subject_entry (ARG1 exec_t)))
+
+(macro commands_exec_auto_subject_type_transition ((type ARG1)(type ARG2))
+    (call commands_exec_manual_subject_type_transition (ARG1 ARG2))
+    (typetransition ARG1 exec_t process "*" ARG2))
+
+(macro commands_exec_manual_subject_type_transition ((type ARG1)(type ARG2))
+    (call manual_subject_type_transition_pattern (ARG1 exec_t ARG2)))
+
+(macro commands_exec ((type ARG1))
+    (call exec_files_pattern (ARG1 exec_t exec_t)))
+
+(macro commands_exec_all ((type ARG1))
+    (call exec_files_pattern (ARG1 exec_t commands_exec_object_type)))
+
+(macro commands_read_all_exec_files ((type ARG1))
+    (call read_files_pattern (ARG1 exec_t commands_exec_object_type)))
+
+(macro commands_dontaudit_getattr_all_exec_files ((type ARG1))
+    (dontaudit ARG1 commands_exec_object_type (file (getattr))))
+
+(macro commands_shell_exec_object_entry ((type ARG1))
+    (call subject_entry (ARG1 shell_exec_t)))
+
+(macro commands_shell_exec_auto_subject_type_transition ((type ARG1)(type ARG2))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 ARG2))
+    (typetransition ARG1 shell_exec_t process "*" ARG2))
+
+(macro commands_shell_exec_manual_subject_type_transition ((type ARG1)(type ARG2))
+    (call manual_subject_type_transition_pattern (ARG1 shell_exec_t ARG2)))
+
+(macro commands_getattr_shell_exec_files ((type ARG1))
+    (call getattr_files_pattern (ARG1 exec_t shell_exec_t)))
+
+(macro commands_exec_shell ((type ARG1))
+    (call exec_files_pattern (ARG1 exec_t shell_exec_t)))
+
+(macro commands_mmap_shell ((type ARG1))
+    (call mmap_files_pattern (ARG1 exec_t shell_exec_t)))
+
+(macro commands_mprot_read_shell_exec_files ((type ARG1))
+    (call commands_search (ARG1))
+    (allow ARG1 shell_exec_t (file (read))))

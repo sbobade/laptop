@@ -1,0 +1,151 @@
+(constrain (process (transition dyntransition noatsecure siginh rlimitinh))
+    (or (or (or
+    (eq u1 u2)
+    (and
+    (eq t1 subject_can_change_subject_identity) (eq t2 subject_user_target)))
+    (and
+    (eq t1 subject_can_change_system_identity) (eq u2 system_u)))
+    (eq t1 subject_uncond_exempt)))
+
+(constrain (process (transition dyntransition noatsecure siginh rlimitinh))
+    (or (or (or
+    (eq r1 r2)
+    (and
+    (eq t1 subject_can_change_subject_role) (eq t2 subject_user_target)))
+    (and
+    (eq t1 subject_can_change_system_role) (eq r2 system_r)))
+    (eq t1 subject_uncond_exempt)))
+
+(constrain (file (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (dir (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (lnk_file (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (chr_file (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (blk_file (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (sock_file (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (fifo_file (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (tcp_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (udp_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (rawip_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (packet_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (unix_stream_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (unix_dgram_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_route_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_firewall_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_tcpdiag_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_nflog_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_xfrm_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_selinux_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_audit_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_ip6fw_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_dnrt_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_kobject_uevent_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (appletalk_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (dccp_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (tun_socket (create relabelto relabelfrom))
+    (or (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))

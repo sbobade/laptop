@@ -1,0 +1,124 @@
+(roleattribute rtkitctl_role)
+
+(typeattribute rtkit_admin_subject_type)
+(typeattribute rtkit_client_subject_type)
+
+(typeattribute rtkit_object_type)
+
+(type rtkitctl_t)
+(type rtkitctl_exec_t)
+(call applications_app (rtkitctl_t rtkitctl_exec_t))
+(roletype rtkitctl_role rtkitctl_t)
+
+(roleattributeset rtkitctl_role system_r)
+
+(context rtkitctl_exec (system_u object_r rtkitctl_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rtkitctl" file rtkitctl_exec)
+
+(type rtkitd_t)
+(type rtkitd_exec_t)
+(call subject_common_type (rtkitd_t))
+(call subject_entry (rtkitd_t rtkitd_exec_t))
+(roletype system_r rtkitd_t)
+
+(context rtkitd_exec (system_u object_r rtkitd_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/rtkit-daemon" file rtkitd_exec)
+
+(type rtkit_dbus_config_t)
+(call dbus_config_object_type (rtkit_dbus_config_t))
+
+(typeattributeset rtkit_object_type rtkit_dbus_config_t)
+
+(context rtkit_dbus_config (system_u object_r rtkit_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.RealtimeKit1\.conf" file rtkit_dbus_config)
+
+(allow rtkitd_t self (capability (sys_nice sys_chroot setuid setgid sys_ptrace)))
+(allow rtkitd_t self (process (setsched setcap setrlimit)))
+
+(call auth_nsswitch_client_subject_type (rtkitd_t))
+
+(call dbus_system_service (rtkitd_t))
+
+(call polkit_dbus_chat_polkitd (rtkitd_t))
+
+(optional rtkitd_optional_journal
+    (call journal_client_subject_type (rtkitd_t)))
+
+(optional rtkitd_optional_systemd
+    (call systemd_daemon (rtkitd_t rtkitd_exec_t))
+
+    (type rtkitd_unit_t)
+    (call systemd_unit_object_type (rtkitd_unit_t))
+
+    (typeattributeset rtkit_object_type rtkitd_unit_t)
+
+    (context rtkitd_unit (system_u object_r rtkitd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*rtkit-daemon.*" file rtkitd_unit)
+
+    (allow rtkit_admin_subject_type rtkitd_unit_t (service (all))))
+
+(optional rtkitd_optional_unconfined
+    (call unconfined_getsched_all_subjects (rtkitd_t))
+    (call unconfined_setsched_all_subjects (rtkitd_t))
+    (call unconfined_read_state_all_subjects (rtkitd_t)))
+
+(allow rtkitd_t rtkit_client_subject_type (process (getsched setsched)))
+
+(allow rtkitd_t rtkit_client_subject_type read_file_perms)
+(allow rtkitd_t rtkit_client_subject_type list_dir_perms)
+(allow rtkitd_t rtkit_client_subject_type read_lnk_file_perms)
+
+(call rtkit_dbus_chat_rtkitd (rtkit_client_subject_type))
+
+(allow rtkit_admin_subject_type rtkitd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (rtkit_admin_subject_type rtkitd_t))
+
+(allow rtkit_admin_subject_type rtkit_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro rtkit_exec_rtkitctl ((type ARG1))
+    (call can_exec (ARG1 rtkitctl_exec_t)))
+
+(macro rtkit_exec_rtkitd ((type ARG1))
+    (call can_exec (ARG1 rtkitd_exec_t)))
+
+(macro rtkit_auto_subject_type_transition_rtkitctl ((type ARG1))
+    (call rtkit_send_signal_rtkitctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rtkitctl_exec_t rtkitctl_t)))
+
+(macro rtkit_send_signal_rtkitctl ((type ARG1))
+    (allow ARG1 rtkitctl_t (process (signal))))
+
+(macro rtkit_run_rtkitctl ((type ARG1)(role ARG2))
+    (call rtkit_auto_subject_type_transition_rtkitctl (ARG1))
+    (roleattributeset rtkitctl_role ARG2))
+
+(macro rtkit_auto_subject_type_transition_rtkitd ((type ARG1))
+    (call rtkit_send_signal_rtkitd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rtkitd_exec_t rtkitd_t)))
+
+(macro rtkit_send_signal_rtkitd ((type ARG1))
+    (allow ARG1 rtkitd_t (process (signal))))
+
+(macro rtkit_read_dbus_config ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 rtkit_dbus_config_t read_file_perms))
+
+(macro rtkit_manage_dbus_config ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 rtkit_dbus_config_t manage_file_perms))
+
+(macro rtkit_client_subject_type ((type ARG1))
+    (typeattributeset rtkit_client_subject_type ARG1))
+
+(macro rtkit_dbus_chat_rtkitd ((type ARG1))
+    (allow ARG1 rtkitd_t (dbus (send_msg)))
+    (allow rtkitd_t ARG1 (dbus (send_msg))))
+
+(macro rtkit_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset rtkit_admin_subject_type ARG1)
+    (optional rtkit_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

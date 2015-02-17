@@ -1,0 +1,25 @@
+(type remountfs_t)
+(type remountfs_exec_t)
+(call systemd_daemon (remountfs_t remountfs_exec_t))
+
+(context remountfs_exec (system_u object_r remountfs_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-remount-fs" file remountfs_exec)
+
+(call devices_read_urandom (remountfs_t))
+
+(call files_read_config_files (remountfs_t))
+
+(call journal_client_subject_type (remountfs_t))
+
+(call mount_auto_subject_type_transition (remountfs_t))
+
+(macro remountfs_exec ((type ARG1))
+    (call can_exec (ARG1 remountfs_t)))
+
+(macro remountfs_auto_subject_type_transition ((type ARG1))
+    (call remountfs_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 remountfs_exec_t remountfs_t)))
+
+(macro remountfs_send_signal ((type ARG1))
+    (allow ARG1 remountfs_t (process (signal))))

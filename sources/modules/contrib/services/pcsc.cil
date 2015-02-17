@@ -1,0 +1,155 @@
+(typeattribute pcsc_admin_subject_type)
+
+(typeattribute pcsc_object_type)
+
+(type pcscd_t)
+(type pcscd_exec_t)
+(call subject_common_type (pcscd_t))
+(call subject_entry (pcscd_t pcscd_exec_t))
+(roletype system_r pcscd_t)
+
+(context pcscd_exec (system_u object_r pcscd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/pcscd" file pcscd_exec)
+
+(type pcsc_config_t)
+(call files_config_object_type (pcsc_config_t))
+
+(typeattributeset pcsc_object_type pcsc_config_t)
+
+(context pcsc_config (system_u object_r pcsc_config_t (systemlow systemlow)))
+(filecon "/etc/reader\.conf\.d(/.*)?" any pcsc_config)
+
+(type pcscd_runtime_t)
+(call files_runtime_object_type (pcscd_runtime_t))
+
+(typeattributeset pcsc_object_type pcscd_runtime_t)
+
+(context pcscd_runtime (system_u object_r pcscd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/pcscd(/.*)?" any pcscd_runtime)
+
+(allow pcscd_t pcscd_runtime_t manage_dir_perms)
+(allow pcscd_t pcscd_runtime_t manage_file_perms)
+(allow pcscd_t pcscd_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (pcscd_t pcscd_runtime_t dir "*"))
+
+(allow pcscd_t self (unix_stream_socket (listen accept)))
+(allow pcscd_t self rw_fifo_file_perms)
+
+(call devices_rw_usb (pcscd_t))
+
+(call filesystems_list_devtmpfs (pcscd_t))
+
+(call filesystems_read_sysfs (pcscd_t))
+
+(call pcsc_read_config (pcscd_t))
+
+(call udev_client_subject_type (pcscd_t))
+
+(optional pcscd_optional_dbus
+    (call dbus_system_client_subject_type (pcscd_t))
+
+    (optional pcscd_optional_polkit
+        (call polkit_dbus_chat_polkitd (pcscd_t))))
+
+(optional pcscd_optional_systemd
+    (call systemd_daemon (pcscd_t pcscd_exec_t))
+
+    (type pcscd_unit_t)
+    (call systemd_unit_object_type (pcscd_unit_t))
+
+    (typeattributeset pcsc_object_type pcscd_unit_t)
+
+    (context pcscd_unit (system_u object_r pcscd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*pcscd.*" file pcscd_unit)
+
+    (allow pcsc_admin_subject_type pcscd_unit_t (service (all)))
+
+    (call systemd_socket_activated (pcscd_t pcscd_runtime_t)))
+
+(optional pcscd_optional_unconfined
+    (call unconfined_read_state_all_subjects (pcscd_t)))
+
+(allow pcsc_admin_subject_type pcscd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (pcsc_admin_subject_type pcscd_t))
+
+(allow pcsc_admin_subject_type pcsc_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro pcsc_exec_pcscd ((type ARG1))
+    (call can_exec (ARG1 pcscd_exec_t)))
+
+(macro pcsc_auto_subject_type_transition_pcscd ((type ARG1))
+    (call pcsc_send_signal_pcscd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pcscd_exec_t pcscd_t)))
+
+(macro pcsc_send_signal_pcscd ((type ARG1))
+    (allow ARG1 pcscd_t (process (signal))))
+
+(macro pcsc_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 pcsc_config_t search_dir_perms))
+
+(macro pcsc_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 pcsc_config_t list_dir_perms))
+
+(macro pcsc_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 pcsc_config_t pcsc_config_t)))
+
+(macro pcsc_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 pcsc_config_t pcsc_config_t)))
+
+(macro pcsc_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 pcsc_config_t read_file_perms)
+    (allow ARG1 pcsc_config_t list_dir_perms)
+    (allow ARG1 pcsc_config_t read_lnk_file_perms))
+
+(macro pcsc_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 pcsc_config_t manage_file_perms)
+    (allow ARG1 pcsc_config_t manage_dir_perms)
+    (allow ARG1 pcsc_config_t manage_lnk_file_perms))
+
+(macro pcsc_search_pcscd_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 pcscd_runtime_t search_dir_perms))
+
+(macro pcsc_list_pcscd_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 pcscd_runtime_t list_dir_perms))
+
+(macro pcsc_read_pcscd_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 pcscd_runtime_t pcscd_runtime_t)))
+
+(macro pcsc_read_pcscd_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_sock_files_pattern (ARG1 pcscd_runtime_t pcscd_runtime_t)))
+
+(macro pcsc_read_pcscd_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 pcscd_runtime_t pcscd_runtime_t)))
+
+(macro pcscd_read_pcscd_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 pcscd_runtime_t read_file_perms)
+    (allow ARG1 pcscd_runtime_t list_dir_perms)
+    (allow ARG1 pcscd_runtime_t read_sock_file_perms)
+    (allow ARG1 pcscd_runtime_t read_lnk_file_perms))
+
+(macro pcscd_manage_pcscd_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 pcscd_runtime_t manage_file_perms)
+    (allow ARG1 pcscd_runtime_t manage_dir_perms)
+    (allow ARG1 pcscd_runtime_t manage_sock_file_perms)
+    (allow ARG1 pcscd_runtime_t manage_lnk_file_perms))
+
+(macro pcsc_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset pcsc_admin_subject_type ARG1)
+    (optional pcsc_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

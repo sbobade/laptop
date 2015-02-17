@@ -1,0 +1,326 @@
+(typeattribute storage_unconfined_subject_type)
+
+(type fixed_disk_dev_t)
+(call devices_storage_object_type (fixed_disk_dev_t))
+
+(context fixed_disk_dev (system_u object_r fixed_disk_dev_t (mls_systemhigh mls_systemhigh)))
+(filecon "/dev/[shmxv]d[^/]*" block fixed_disk_dev)
+(filecon "/dev/dm-[0-9]+" block fixed_disk_dev)
+(filecon "/dev/raw/.+" char fixed_disk_dev)
+
+(type fuse_dev_t)
+(call devices_storage_object_type (fuse_dev_t))
+
+(context fuse_dev (system_u object_r fuse_dev_t (systemlow systemlow)))
+(filecon "/dev/fuse" char fuse_dev)
+
+(type removable_dev_t)
+(call devices_storage_object_type (removable_dev_t))
+
+(context removable_dev (system_u object_r removable_dev_t (systemlow systemlow)))
+(filecon "/dev/mmcblk.+" block removable_dev)
+(filecon "/dev/mspblk.+" block removable_dev)
+(filecon "/dev/sr[0-9]+" block removable_dev)
+
+(type scsi_generic_dev_t)
+(call devices_storage_object_type (scsi_generic_dev_t))
+
+(context scsi_generic_dev (system_u object_r scsi_generic_dev_t (systemlow systemlow)))
+(filecon "/dev/bsg/.+" char scsi_generic_dev)
+(filecon "/dev/sg[0-9]+" char scsi_generic_dev)
+
+(typeattribute storage_can_read_fixed_disk)
+(typeattribute storage_can_not_read_fixed_disk_or_storage_unconfined_subject_type)
+(typeattributeset storage_can_not_read_fixed_disk_or_storage_unconfined_subject_type
+    (not (storage_can_read_fixed_disk storage_unconfined_subject_type)))
+(neverallow storage_can_not_read_fixed_disk_or_storage_unconfined_subject_type
+    fixed_disk_dev_t (chr_file (read)))
+(neverallow storage_can_not_read_fixed_disk_or_storage_unconfined_subject_type
+    fixed_disk_dev_t (blk_file (read)))
+
+(typeattribute storage_can_write_fixed_disk)
+(typeattribute storage_can_not_write_fixed_disk_or_storage_unconfined_subject_type)
+(typeattributeset storage_can_not_write_fixed_disk_or_storage_unconfined_subject_type
+    (not (storage_can_write_fixed_disk storage_unconfined_subject_type)))
+(neverallow storage_can_not_write_fixed_disk_or_storage_unconfined_subject_type
+    fixed_disk_dev_t (chr_file (append write)))
+(neverallow storage_can_not_write_fixed_disk_or_storage_unconfined_subject_type
+    fixed_disk_dev_t (blk_file (append write)))
+
+(typeattribute storage_can_read_scsi_generic)
+(typeattribute storage_can_not_read_scsi_generic_or_storage_unconfined_subject_type)
+(typeattributeset storage_can_not_read_scsi_generic_or_storage_unconfined_subject_type
+    (not (storage_can_read_scsi_generic storage_unconfined_subject_type)))
+(neverallow storage_can_not_read_scsi_generic_or_storage_unconfined_subject_type
+    scsi_generic_dev_t (chr_file (read)))
+
+(typeattribute storage_can_write_scsi_generic)
+(typeattribute storage_can_not_write_scsi_generic_or_storage_unconfined_subject_type)
+(typeattributeset storage_can_not_write_scsi_generic_or_storage_unconfined_subject_type
+    (not (storage_can_write_scsi_generic storage_unconfined_subject_type)))
+(neverallow storage_can_not_write_scsi_generic_or_storage_unconfined_subject_type
+    scsi_generic_dev_t (chr_file (append write)))
+
+(allow storage_unconfined_subject_type fixed_disk_dev_t
+    all_chr_file_perms_except_mounton_and_execmod)
+(allow storage_unconfined_subject_type fixed_disk_dev_t
+    all_blk_file_perms_except_mounton_and_execmod)
+
+(allow storage_unconfined_subject_type fuse_dev_t
+    all_chr_file_perms_except_mounton_and_execmod)
+
+(allow storage_unconfined_subject_type removable_dev_t
+    all_blk_file_perms_except_mounton_and_execmod)
+
+(allow storage_unconfined_subject_type scsi_generic_dev_t
+    all_chr_file_perms_except_mounton_and_execmod)
+
+(macro storage_getattr_all ((type ARG1))
+    (call storage_getattr_fixed_disk (ARG1))
+    (call storage_getattr_fuse (ARG1))
+    (call storage_getattr_removable (ARG1))
+    (call storage_getattr_scsi_generic (ARG1)))
+
+(macro storage_manage_all ((type ARG1))
+    (call storage_manage_fixed_disk (ARG1))
+    (call storage_manage_fuse (ARG1))
+    (call storage_manage_removable (ARG1))
+    (call storage_manage_scsi_generic (ARG1)))
+
+(macro storage_relabel_all ((type ARG1))
+    (call storage_relabel_fixed_disk (ARG1))
+    (call storage_relabel_fuse (ARG1))
+    (call storage_relabel_removable (ARG1))
+    (call storage_relabel_scsi_generic (ARG1)))
+
+(macro storage_relabelto_all ((type ARG1))
+    (call storage_relabelto_fixed_disk (ARG1))
+    (call storage_relabelto_fuse (ARG1))
+    (call storage_relabelto_removable (ARG1))
+    (call storage_relabelto_scsi_generic (ARG1)))
+
+(macro storage_rw_all ((type ARG1))
+    (call storage_rw_fixed_disk (ARG1))
+    (call storage_rw_fuse (ARG1))
+    (call storage_rw_removable (ARG1))
+    (call storage_rw_scsi_generic (ARG1)))
+
+(macro storage_setattr_all ((type ARG1))
+    (call storage_setattr_fixed_disk (ARG1))
+    (call storage_setattr_fuse (ARG1))
+    (call storage_setattr_removable (ARG1))
+    (call storage_setattr_scsi_generic (ARG1)))
+
+(macro storage_manage_fixed_disk ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_rw_devtmpfs_dirs (ARG1))
+    (allow ARG1 fixed_disk_dev_t manage_blk_file_perms)
+    (allow ARG1 fixed_disk_dev_t manage_chr_file_perms)
+    (typeattributeset storage_can_read_fixed_disk ARG1)
+    (typeattributeset storage_can_write_fixed_disk ARG1))
+
+(macro storage_relabel_fixed_disk ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fixed_disk_dev_t relabel_blk_file_perms)
+    (allow ARG1 fixed_disk_dev_t relabel_chr_file_perms))
+
+(macro storage_relabelto_fixed_disk ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fixed_disk_dev_t relabelto_blk_file_perms)
+    (allow ARG1 fixed_disk_dev_t relabelto_chr_file_perms))
+
+(macro storage_getattr_fixed_disk ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fixed_disk_dev_t (chr_file (getattr)))
+    (allow ARG1 fixed_disk_dev_t (blk_file (getattr))))
+
+(macro storage_setattr_fixed_disk ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fixed_disk_dev_t (chr_file (setattr)))
+    (allow ARG1 fixed_disk_dev_t (blk_file (setattr))))
+
+(macro storage_read_fixed_disk ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fixed_disk_dev_t read_chr_file_perms)
+    (allow ARG1 fixed_disk_dev_t read_blk_file_perms)
+    (typeattributeset storage_can_read_fixed_disk ARG1))
+
+(macro storage_rw_fixed_disk ((type ARG1))
+    (call storage_read_fixed_disk (ARG1))
+    (call storage_write_fixed_disk (ARG1)))
+
+(macro storage_write_fixed_disk ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fixed_disk_dev_t write_chr_file_perms)
+    (allow ARG1 fixed_disk_dev_t write_blk_file_perms)
+    (typeattributeset storage_can_write_fixed_disk ARG1))
+
+(macro storage_manage_fuse ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fuse_dev_t manage_chr_file_perms))
+
+(macro storage_relabel_fuse ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fuse_dev_t relabel_chr_file_perms))
+
+(macro storage_relabelto_fuse ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fuse_dev_t relabelto_chr_file_perms))
+
+(macro storage_getattr_fuse ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fuse_dev_t (chr_file (getattr))))
+
+(macro storage_setattr_fuse ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fuse_dev_t (chr_file (setattr))))
+
+(macro storage_read_fuse ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fuse_dev_t read_chr_file_perms))
+
+(macro storage_rw_fuse ((type ARG1))
+    (call storage_read_fuse (ARG1))
+    (call storage_write_fuse (ARG1)))
+
+(macro storage_write_fuse ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 fuse_dev_t write_chr_file_perms))
+
+(macro storage_manage_removable ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_rw_devtmpfs_dirs (ARG1))
+    (allow ARG1 removable_dev_t manage_blk_file_perms))
+
+(macro storage_relabel_removable ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 removable_dev_t relabel_blk_file_perms))
+
+(macro storage_relabelto_removable ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 removable_dev_t relabelto_blk_file_perms))
+
+(macro storage_getattr_removable ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 removable_dev_t (blk_file (getattr))))
+
+(macro storage_setattr_removable ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 removable_dev_t (blk_file (setattr))))
+
+(macro storage_read_removable ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 removable_dev_t read_blk_file_perms))
+
+(macro storage_rw_removable ((type ARG1))
+    (call storage_read_removable (ARG1))
+    (call storage_write_removable (ARG1)))
+
+(macro storage_write_removable ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 removable_dev_t write_blk_file_perms))
+
+(macro storage_manage_scsi_generic ((type ARG1))
+    (allow ARG1 self (capability (mknod)))
+    (call filesystems_rw_devtmpfs_dirs (ARG1))
+    (allow ARG1 scsi_generic_dev_t manage_chr_file_perms)
+    (typeattributeset storage_can_read_scsi_generic ARG1)
+    (typeattributeset storage_can_write_scsi_generic ARG1))
+
+(macro storage_relabel_scsi_generic ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 scsi_generic_dev_t relabel_chr_file_perms))
+
+(macro storage_relabelto_scsi_generic ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 scsi_generic_dev_t relabelto_chr_file_perms))
+
+(macro storage_getattr_scsi_generic ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 scsi_generic_dev_t (chr_file (getattr))))
+
+(macro storage_setattr_scsi_generic ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 scsi_generic_dev_t (chr_file (setattr))))
+
+(macro storage_read_scsi_generic ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 scsi_generic_dev_t read_chr_file_perms)
+    (typeattributeset storage_can_read_scsi_generic ARG1))
+
+(macro storage_rw_scsi_generic ((type ARG1))
+    (call storage_read_scsi_generic (ARG1))
+    (call storage_write_scsi_generic (ARG1)))
+
+(macro storage_write_scsi_generic ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 scsi_generic_dev_t write_chr_file_perms)
+    (typeattributeset storage_can_write_scsi_generic ARG1))
+
+(macro storage_devtmpfs_object_type_transition_fixed_disk ((type ARG1))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda2"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda3"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda4"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda5"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda6"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda7"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda8"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sda9"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb2"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb3"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb4"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb5"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb6"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb7"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb8"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdb9"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc2"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc3"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc4"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc5"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc6"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc7"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc8"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdc9"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd2"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd3"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd4"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd5"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd6"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd7"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd8"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 fixed_disk_dev_t blk_file "sdd9")))
+
+(macro storage_devtmpfs_object_type_transition_removable ((type ARG1))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p2"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p3"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p4"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p5"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p6"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p7"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p7"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mmcblk0p9"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p2"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p3"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p4"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p5"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p6"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p7"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p8"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 removable_dev_t blk_file "mspblk0p9")))
+
+(macro storage_unconfined_subject_type ((type ARG1))
+    (typeattributeset storage_unconfined_subject_type ARG1))

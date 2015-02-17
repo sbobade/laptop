@@ -1,0 +1,75 @@
+(typeattribute getty_admin_subject_type)
+
+(type getty_t)
+(type getty_exec_t)
+(call subject_common_type (getty_t))
+(call subject_entry (getty_t getty_exec_t))
+(roletype system_r getty_t)
+
+(context getty_exec (system_u object_r getty_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/agetty" file getty_exec)
+
+(allow getty_t self (capability (chown fsetid sys_tty_config sys_admin)))
+(allow getty_t self create_unix_stream_socket_perms)
+
+(call terminals_setattr_unallocated_ttys (getty_t))
+(call terminals_use_unallocated_ttys (getty_t))
+
+(call files_read_config_files (getty_t))
+
+(call auth_nsswitch_client_subject_type (getty_t))
+(call auth_rw_utmp_runtime_files (getty_t))
+(call auth_write_wtmp_log_files (getty_t))
+
+(call miscfiles_read_locale (getty_t))
+
+(call login_auto_subject_type_transition (getty_t))
+
+(booleanif terminals_console_login
+    (true
+        (call terminals_setattr_console (getty_t))
+        (call terminals_use_console (getty_t)))
+    (false
+        (call terminals_dontaudit_use_console (getty_t))))
+
+(optional getty_optional_plymouth
+    (call plymouth_exec (getty_t)))
+
+(optional getty_optional_systemd
+    (call systemd_daemon (getty_t getty_exec_t))
+
+    (type getty_unit_t)
+    (call systemd_unit_object_type (getty_unit_t))
+
+    (context getty_unit (system_u object_r getty_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*getty.*" file getty_unit)
+
+    (allow getty_admin_subject_type getty_unit_t (service (all)))
+
+    (allow getty_admin_subject_type getty_unit_t (all_file_objects
+        (not_mounton_entrypoint_and_execmod))))
+
+(allow getty_admin_subject_type getty_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (getty_admin_subject_type getty_t))
+
+(macro getty_exec ((type ARG1))
+    (call can_exec (ARG1 getty_exec_t)))
+
+(macro getty_auto_subject_type_transition ((type ARG1))
+    (call getty_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 getty_exec_t getty_t)))
+
+(macro getty_send_signal ((type ARG1))
+    (allow ARG1 getty_t (process (signal))))
+
+(macro getty_start_units ((type ARG1))
+    (allow ARG1 getty_unit_t (service (start)))
+    (optional getty_start_unit_optional_systemd
+        (call systemd_search_unit (ARG1))))
+
+(macro getty_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset getty_admin_subject_type ARG1)
+    (optional getty_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

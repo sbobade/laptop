@@ -1,0 +1,155 @@
+(roleattribute fstools_role)
+
+(type fstools_t)
+(type fstools_exec_t)
+(call applications_app (fstools_t fstools_exec_t))
+(roletype fstools_role fstools_t)
+
+(roleattributeset fstools_role system_r)
+
+(context fstools_exec (system_u object_r fstools_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/partition_uuid" file fstools_exec)
+(filecon "/usr/bin/raw" file fstools_exec)
+(filecon "/usr/bin/scsi_unique_id" file fstools_exec)
+(filecon "/usr/bin/syslinux" file fstools_exec)
+(filecon "/usr/sbin/badblocks" file fstools_exec)
+(filecon "/usr/sbin/blkactivate" file fstools_exec)
+(filecon "/usr/sbin/blkid" file fstools_exec)
+(filecon "/usr/sbin/blockdev" file fstools_exec)
+(filecon "/usr/sbin/cfdisk" file fstools_exec)
+(filecon "/usr/sbin/clubufflush" file fstools_exec)
+(filecon "/usr/sbin/dosfsck" file fstools_exec)
+(filecon "/usr/sbin/dump" file fstools_exec)
+(filecon "/usr/sbin/dumpe2fs" file fstools_exec)
+(filecon "/usr/sbin/e2fsck" file fstools_exec)
+(filecon "/usr/sbin/e4fsck" file fstools_exec)
+(filecon "/usr/sbin/e2label" file fstools_exec)
+(filecon "/usr/sbin/fdisk" file fstools_exec)
+(filecon "/usr/sbin/findfs" file fstools_exec)
+(filecon "/usr/sbin/fsadm" file fstools_exec)
+(filecon "/usr/sbin/fsck.*" file fstools_exec)
+(filecon "/usr/sbin/hdparm" file fstools_exec)
+(filecon "/usr/sbin/install-mbr" file fstools_exec)
+(filecon "/usr/sbin/jfs_.*" file fstools_exec)
+(filecon "/usr/sbin/kpartx" file fstools_exec)
+(filecon "/usr/sbin/losetup.*" file fstools_exec)
+(filecon "/usr/sbin/lsraid" file fstools_exec)
+(filecon "/usr/sbin/make_reiser4" file fstools_exec)
+(filecon "/usr/sbin/mkdosfs" file fstools_exec)
+(filecon "/usr/sbin/mke2fs" file fstools_exec)
+(filecon "/usr/sbin/mke4fs" file fstools_exec)
+(filecon "/usr/sbin/mkfs.*" file fstools_exec)
+(filecon "/usr/sbin/mkraid" file fstools_exec)
+(filecon "/usr/sbin/mkreiserfs" file fstools_exec)
+(filecon "/usr/sbin/mkswap" file fstools_exec)
+(filecon "/usr/sbin/parted" file fstools_exec)
+(filecon "/usr/sbin/partprobe" file fstools_exec)
+(filecon "/usr/sbin/partx" file fstools_exec)
+(filecon "/usr/sbin/raidautorun" file fstools_exec)
+(filecon "/usr/sbin/raidstart" file fstools_exec)
+(filecon "/usr/sbin/reiserfs(ck|tune)" file fstools_exec)
+(filecon "/usr/sbin/resize.*fs" file fstools_exec)
+(filecon "/usr/sbin/scsi_info" file fstools_exec)
+(filecon "/usr/sbin/sfdisk" file fstools_exec)
+(filecon "/usr/sbin/smartctl" file fstools_exec)
+(filecon "/usr/sbin/swapoff" file fstools_exec)
+(filecon "/usr/sbin/swapon.*" file fstools_exec)
+(filecon "/usr/sbin/tune2fs" file fstools_exec)
+
+(type fstools_runtime_t)
+(call files_runtime_object_type (fstools_runtime_t))
+
+(context fstools_runtime (system_u object_r fstools_runtime_t (systemlow systemlow)))
+(filecon "/var/run/blkid(/.*)?" any fstools_runtime)
+
+(allow fstools_t self (capability (sys_admin dac_read_search
+    sys_rawio dac_override)))
+(allow fstools_t self (process (setfscreate)))
+
+(allow fstools_t fstools_runtime_t manage_dir_perms)
+(allow fstools_t fstools_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (fstools_t fstools_runtime_t dir "*"))
+
+(call system_get_sysvipc_info (fstools_t))
+
+(call devices_read_urandom (fstools_t))
+(call devices_read_random (fstools_t))
+(call devices_rw_lvm_control (fstools_t))
+
+(call filesystems_list_devtmpfs (fstools_t))
+(call filesystems_read_devtmpfs_lnk_files (fstools_t))
+(call filesystems_read_sysfs (fstools_t))
+
+(call files_read_config (fstools_t))
+
+(call storage_manage_fixed_disk (fstools_t))
+(call storage_manage_removable (fstools_t))
+(call storage_manage_scsi_generic (fstools_t))
+
+(call storage_devtmpfs_object_type_transition_fixed_disk (fstools_t))
+(call storage_devtmpfs_object_type_transition_removable (fstools_t))
+
+(call miscfiles_read_all_terminfo (fstools_t))
+(call miscfiles_read_locale (fstools_t))
+
+(call fstools_exec (fstools_t))
+
+(call mount_read_runtime_files (fstools_t))
+
+(call seutil_read_selinux_config_files (fstools_t))
+(call seutil_read_file_context_files (fstools_t))
+
+(call udev_client_subject_type (fstools_t))
+
+(optional fstools_optional_fsck
+    (call fsck_manage_runtime_files (fstools_t)))
+
+(optional fstools_optional_systemd
+    (call systemd_daemon (fstools_t fstools_exec_t)))
+
+(macro fstools_exec ((type ARG1))
+    (call can_exec (ARG1 fstools_exec_t)))
+
+(macro fstools_auto_subject_type_transition ((type ARG1))
+    (call fstools_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 fstools_exec_t fstools_t)))
+
+(macro fstools_send_signal ((type ARG1))
+    (allow ARG1 fstools_t (process (signal))))
+
+(macro fstools_run ((type ARG1)(role ARG2))
+    (call fstools_auto_subject_type_transition (ARG1))
+    (roleattributeset fstools_role ARG2))
+
+(macro fstools_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 fstools_runtime_t search_dir_perms))
+
+(macro fstools_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 fstools_runtime_t list_dir_perms))
+
+(macro fstools_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
+
+(macro fstools_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
+
+(macro fstools_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
+
+(macro fstools_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 fstools_runtime_t read_file_perms)
+    (allow ARG1 fstools_runtime_t list_dir_perms)
+    (allow ARG1 fstools_runtime_t read_lnk_file_perms))
+
+(macro fstools_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 fstools_runtime_t manage_file_perms)
+    (allow ARG1 fstools_runtime_t manage_dir_perms)
+    (allow ARG1 fstools_runtime_t manage_lnk_file_perms))

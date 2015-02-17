@@ -1,0 +1,79 @@
+(roleattribute fusermount_role)
+(roleattribute ulockmgr_role)
+
+(type fusermount_t)
+(type fusermount_exec_t)
+(call applications_app (fusermount_t fusermount_exec_t))
+(roletype fusermount_role fusermount_t)
+
+(roleattributeset fusermount_role system_r)
+
+(context fusermount_exec (system_u object_r fusermount_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/fusermount" file fusermount_exec)
+
+(type fuse_config_t)
+(call files_config_object_type (fuse_config_t))
+
+(context fuse_config (system_u object_r fuse_config_t (systemlow systemlow)))
+(filecon "/etc/fuse\.conf" file fuse_config)
+
+(allow fusermount_t self (capability (dac_override)))
+
+(call files_read_config (fusermount_t))
+
+(call filesystems_list_debugfs (fusermount_t))
+(call filesystems_mount_fuse (fusermount_t))
+(call filesystems_search_tmpfs (fusermount_t))
+(call filesystems_unmount_fuse (fusermount_t))
+
+(call storage_rw_fuse (fusermount_t))
+
+(call auth_nsswitch_client_subject_type (fusermount_t))
+
+(type ulockmgr_t)
+(type ulockmgr_exec_t)
+(call applications_app (ulockmgr_t ulockmgr_exec_t))
+(roletype ulockmgr_role ulockmgr_t)
+
+(roleattributeset ulockmgr_role system_r)
+
+(context ulockmgr_exec (system_u object_r ulockmgr_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/ulockmgr_server" file ulockmgr_exec)
+
+(macro fuse_exec_fusermount ((type ARG1))
+    (call can_exec (ARG1 fusermount_exec_t)))
+
+(macro fuse_exec_ulockmgr ((type ARG2))
+    (call can_exec (ARG1 ulockmgr_exec_t)))
+
+(macro fuse_auto_subject_type_transition_fusermount ((type ARG1))
+    (call fuse_send_signal_fusermount (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 fusermount_exec_t fusermount_t)))
+
+(macro fuse_send_signal_fusermount ((type ARG1))
+    (allow ARG1 fusermount_t (process (signal))))
+
+(macro fuse_run_fusermount ((type ARG1)(role ARG2))
+    (call fuse_auto_subject_type_transition_fusermount (ARG1))
+    (roleattributeset fusermount_role ARG2))
+
+(macro fuse_auto_subject_type_transition_ulockmgr ((type ARG1))
+    (call fuse_send_signal_ulockmgr (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 ulockmgr_exec_t ulockmgr_t)))
+
+(macro fuse_send_signal_ulockmgr ((type ARG1))
+    (allow ARG1 ulockmgr_t (process (signal))))
+
+(macro fuse_run_ulockmgr ((type ARG1)(role ARG2))
+    (call fuse_auto_subject_type_transition_ulockmgr (ARG1))
+    (roleattributeset ulockmgr_role ARG2))
+
+(macro fuse_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 fuse_config_t read_file_perms))
+
+(macro fuse_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 fuse_config_t manage_file_perms))

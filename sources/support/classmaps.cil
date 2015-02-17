@@ -1,0 +1,101 @@
+(classmap all_file_objects (not_mounton_entrypoint_and_execmod
+    read manage getattr setattr relabel relabelfrom relabelto
+    delete audit_access))
+
+(classmapping all_file_objects not_mounton_entrypoint_and_execmod
+    all_file_perms_except_mounton_execmod_and_entrypoint)
+
+(classmapping all_file_objects not_mounton_entrypoint_and_execmod
+    all_dir_perms_except_mounton_and_execmod)
+
+(classmapping all_file_objects not_mounton_entrypoint_and_execmod
+    all_lnk_file_perms_except_mounton_and_execmod)
+
+(classmapping all_file_objects not_mounton_entrypoint_and_execmod
+    all_chr_file_perms_except_mounton_and_execmod)
+
+(classmapping all_file_objects not_mounton_entrypoint_and_execmod
+    all_blk_file_perms_except_mounton_and_execmod)
+
+(classmapping all_file_objects not_mounton_entrypoint_and_execmod
+    all_sock_file_perms_except_mounton_and_execmod)
+
+(classmapping all_file_objects not_mounton_entrypoint_and_execmod
+    all_fifo_file_perms_except_mounton_and_execmod)
+
+(classmapping all_file_objects read read_file_perms)
+(classmapping all_file_objects read list_dir_perms)
+(classmapping all_file_objects read read_lnk_file_perms)
+(classmapping all_file_objects read read_chr_file_perms)
+(classmapping all_file_objects read read_blk_file_perms)
+(classmapping all_file_objects read read_sock_file_perms)
+(classmapping all_file_objects read read_fifo_file_perms)
+
+(classmapping all_file_objects manage manage_file_perms)
+(classmapping all_file_objects manage manage_dir_perms)
+(classmapping all_file_objects manage manage_lnk_file_perms)
+(classmapping all_file_objects manage manage_chr_file_perms)
+(classmapping all_file_objects manage manage_blk_file_perms)
+(classmapping all_file_objects manage manage_sock_file_perms)
+(classmapping all_file_objects manage manage_fifo_file_perms)
+
+(classmapping all_file_objects getattr (file (getattr)))
+(classmapping all_file_objects getattr (dir (getattr)))
+(classmapping all_file_objects getattr (lnk_file (getattr)))
+(classmapping all_file_objects getattr (chr_file (getattr)))
+(classmapping all_file_objects getattr (blk_file (getattr)))
+(classmapping all_file_objects getattr (sock_file (getattr)))
+(classmapping all_file_objects getattr (fifo_file (getattr)))
+
+(classmapping all_file_objects setattr (file (setattr)))
+(classmapping all_file_objects setattr (dir (setattr)))
+(classmapping all_file_objects setattr (lnk_file (setattr)))
+(classmapping all_file_objects setattr (chr_file (setattr)))
+(classmapping all_file_objects setattr (blk_file (setattr)))
+(classmapping all_file_objects setattr (sock_file (setattr)))
+(classmapping all_file_objects setattr (fifo_file (setattr)))
+
+(classmapping all_file_objects relabel relabel_file_perms)
+(classmapping all_file_objects relabel relabel_dir_perms)
+(classmapping all_file_objects relabel relabel_lnk_file_perms)
+(classmapping all_file_objects relabel relabel_chr_file_perms)
+(classmapping all_file_objects relabel relabel_blk_file_perms)
+(classmapping all_file_objects relabel relabel_sock_file_perms)
+(classmapping all_file_objects relabel relabel_fifo_file_perms)
+
+(classmapping all_file_objects relabelfrom relabelfrom_file_perms)
+(classmapping all_file_objects relabelfrom relabelfrom_dir_perms)
+(classmapping all_file_objects relabelfrom relabelfrom_lnk_file_perms)
+(classmapping all_file_objects relabelfrom relabelfrom_chr_file_perms)
+(classmapping all_file_objects relabelfrom relabelfrom_blk_file_perms)
+(classmapping all_file_objects relabelfrom relabelfrom_sock_file_perms)
+(classmapping all_file_objects relabelfrom relabelfrom_fifo_file_perms)
+
+(classmapping all_file_objects relabelto relabelto_file_perms)
+(classmapping all_file_objects relabelto relabelto_dir_perms)
+(classmapping all_file_objects relabelto relabelto_lnk_file_perms)
+(classmapping all_file_objects relabelto relabelto_chr_file_perms)
+(classmapping all_file_objects relabelto relabelto_blk_file_perms)
+(classmapping all_file_objects relabelto relabelto_sock_file_perms)
+(classmapping all_file_objects relabelto relabelto_fifo_file_perms)
+
+(classmapping all_file_objects delete delete_file_perms)
+(classmapping all_file_objects delete delete_dir_perms)
+(classmapping all_file_objects delete delete_lnk_file_perms)
+(classmapping all_file_objects delete delete_chr_file_perms)
+(classmapping all_file_objects delete delete_blk_file_perms)
+(classmapping all_file_objects delete delete_sock_file_perms)
+(classmapping all_file_objects delete delete_fifo_file_perms)
+
+(classmapping all_file_objects audit_access (file (audit_access)))
+(classmapping all_file_objects audit_access (dir (audit_access)))
+(classmapping all_file_objects audit_access (lnk_file (audit_access)))
+(classmapping all_file_objects audit_access (chr_file (audit_access)))
+(classmapping all_file_objects audit_access (blk_file (audit_access)))
+(classmapping all_file_objects audit_access (sock_file (audit_access)))
+(classmapping all_file_objects audit_access (fifo_file (audit_access)))
+
+(classmap dir_file (mounton))
+
+(classmapping dir_file mounton (file (mounton)))
+(classmapping dir_file mounton (dir (mounton)))

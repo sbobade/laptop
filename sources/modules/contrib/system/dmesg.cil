@@ -1,0 +1,32 @@
+(roleattribute dmesg_role)
+
+(type dmesg_t)
+(type dmesg_exec_t)
+(call applications_app (dmesg_t dmesg_exec_t))
+(roletype dmesg_role dmesg_t)
+
+(roleattributeset dmesg_role system_r)
+
+(context dmesg_exec (system_u object_r dmesg_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dmesg" file dmesg_exec)
+
+(call system_read_ring_buffer (dmesg_t))
+
+(call devices_read_kmsg (dmesg_t))
+
+(call miscfiles_read_locale (dmesg_t))
+
+(macro dmesg_exec ((type ARG1))
+    (call can_exec (ARG1 dmesg_exec_t)))
+
+(macro dmesg_auto_subject_type_transition ((type ARG1))
+    (call dmesg_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dmesg_exec_t hwclock_t)))
+
+(macro dmesg_run ((type ARG1)(role ARG2))
+    (call dmesg_auto_subject_type_transition (ARG1))
+    (roleattributeset dmesg_role (ARG2)))
+
+(macro dmesg_send_signal ((type ARG1))
+    (allow ARG1 dmesg_t (process (signal))))

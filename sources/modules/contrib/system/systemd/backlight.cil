@@ -1,0 +1,63 @@
+(type backlight_t)
+(type backlight_exec_t)
+(call systemd_daemon (backlight_t backlight_exec_t))
+
+(context backlight_exec (system_u object_r backlight_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-backlight" file backlight_exec)
+
+(type backlight_systemd_lib_t)
+(call systemd_lib_object_type (backlight_systemd_lib_t))
+
+(context backlight_systemd_lib (system_u object_r backlight_systemd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/systemd/backlight(/.*)?" any backlight_systemd_lib)
+
+(allow backlight_t backlight_systemd_lib_t manage_dir_perms)
+(allow backlight_t backlight_systemd_lib_t manage_file_perms)
+(call systemd_lib_object_type_transition (backlight_t backlight_systemd_lib_t dir "*"))
+
+(call filesystems_list_sysfs (backlight_t))
+(call filesystems_rw_sysfs_files (backlight_t))
+(call filesystems_read_sysfs_lnk_files (backlight_t))
+
+(call journal_client_subject_type (backlight_t))
+
+(call udev_client_subject_type (backlight_t))
+
+(macro backlight_exec ((type ARG1))
+    (call can_exec (ARG1 backlight_exec_t)))
+
+(macro backlight_auto_subject_type_transition ((type ARG1))
+    (call backlight_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 backlight_exec_t backlight_t)))
+
+(macro backlight_send_signal ((type ARG1))
+    (allow ARG1 backlight_t (process (signal))))
+
+(macro backlight_search_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 backlight_systemd_lib_t search_dir_perms))
+
+(macro backlight_list_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 backlight_systemd_lib_t list_dir_perms))
+
+(macro backlight_read_systemd_lib_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_files_pattern (ARG1 backlight_systemd_lib_t backlight_systemd_lib_t)))
+
+(macro backlight_read_systemd_lib_lnk_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 backlight_systemd_lib_t backlight_systemd_lib_t)))
+
+(macro backlight_read_systemd_lib ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 backlight_systemd_lib_t read_file_perms)
+    (allow ARG1 backlight_systemd_lib_t list_dir_perms)
+    (allow ARG1 backlight_systemd_lib_t read_lnk_file_perms))
+
+(macro backlight_manage_systemd_lib ((type ARG1))
+    (call systemd_rw_lib_dirs (ARG1))
+    (allow ARG1 backlight_systemd_lib_t manage_file_perms)
+    (allow ARG1 backlight_systemd_lib_t manage_dir_perms)
+    (allow ARG1 backlight_systemd_lib_t manage_lnk_file_perms))

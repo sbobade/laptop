@@ -1,0 +1,153 @@
+(sid security)
+
+(boolean selinux_load_policy true)
+
+(typeattribute selinux_bool_object_type)
+(typeattribute selinux_unconfined_subject_type)
+
+(type selinux_load_policy_t)
+(call selinux_bool_object_type (selinux_load_policy_t))
+
+(context selinux_load_policy (system_u object_r selinux_load_policy_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/selinux_load_policy" selinux_load_policy)
+
+(type securityfs_fs_t)
+(call filesystems_object_type (securityfs_fs_t))
+(typeattributeset selinux_bool_object_type securityfs_fs_t)
+
+(context securityfs_fs (system_u object_r securityfs_fs_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/" securityfs_fs)
+(genfscon "securityfs" "/" securityfs_fs)
+
+(sidcontext security (system_u object_r securityfs_fs_t (mls_systemhigh mls_systemhigh)))
+
+(call system_object_type (selinux_bool_object_type))
+
+(typeattribute selinux_can_load_policy)
+(typeattribute selinux_can_not_load_policy_or_selinux_unconfined_subject_type)
+(typeattributeset selinux_can_not_load_policy_or_selinux_unconfined_subject_type
+    (not (selinux_can_load_policy selinux_unconfined_subject_type)))
+(neverallow selinux_can_not_load_policy_or_selinux_unconfined_subject_type
+    securityfs_fs_t (security (load_policy)))
+
+(typeattribute selinux_can_setenforce)
+(typeattribute selinux_can_not_setenforce_or_selinux_unconfined_subject_type)
+(typeattributeset selinux_can_not_setenforce_or_selinux_unconfined_subject_type
+    (not (selinux_can_setenforce selinux_unconfined_subject_type)))
+(neverallow selinux_can_not_setenforce_or_selinux_unconfined_subject_type
+    securityfs_fs_t (security (setenforce)))
+
+(typeattribute selinux_can_setsecparam)
+(typeattribute selinux_can_not_setsecparam_or_selinux_unconfined_subject_type)
+(typeattributeset selinux_can_not_setsecparam_or_selinux_unconfined_subject_type
+    (not (selinux_can_setsecparam selinux_unconfined_subject_type)))
+(neverallow selinux_can_not_setsecparam_or_selinux_unconfined_subject_type
+    securityfs_fs_t (security (setsecparam)))
+
+(allow selinux_unconfined_subject_type securityfs_fs_t list_dir_perms)
+(allow selinux_unconfined_subject_type securityfs_fs_t read_lnk_file_perms)
+
+(typeattribute selinux_bool_object_type_except_selinux_load_policy)
+(typeattributeset selinux_bool_object_type_except_selinux_load_policy
+    (and (selinux_bool_object_type) (not (selinux_load_policy_t))))
+
+(allow selinux_unconfined_subject_type selinux_bool_object_type read_file_perms)
+(allow selinux_unconfined_subject_type selinux_bool_object_type_except_selinux_load_policy
+    (file (append write)))
+(allow selinux_unconfined_subject_type securityfs_fs_t
+    all_security_perms_except_load_policy_and_setenforce)
+
+(booleanif (selinux_load_policy)
+    (true
+        (allow selinux_unconfined_subject_type securityfs_fs_t
+            (security (load_policy setenforce)))
+        (allow selinux_unconfined_subject_type securityfs_fs_t
+            (file (append write)))))
+
+(macro selinux_bool_object_type ((type ARG1))
+    (typeattributeset selinux_bool_object_type ARG1))
+
+(macro selinux_search_securityfs ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 securityfs_fs_t search_dir_perms))
+
+(macro selinux_list_securityfs ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 securityfs_fs_t list_dir_perms))
+
+(macro selinux_getattr_filesystems ((type ARG1))
+    (allow ARG1 securityfs_fs_t (filesystem (getattr))))
+
+(macro selinux_compute_access_vector ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (compute_av))))
+
+(macro selinux_compute_create_context ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (compute_create))))
+
+(macro selinux_compute_relabel_context ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (compute_relabel))))
+
+(macro selinux_compute_user_contexts ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (compute_user))))
+
+(macro selinux_get_enforce_mode ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call read_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t)))
+
+(macro selinux_load_policy ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (typeattributeset selinux_can_load_policy ARG1)
+    (booleanif (selinux_load_policy)
+        (true
+            (allow ARG1 securityfs_fs_t (security (load_policy))))))
+
+(macro selinux_read_policy ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call read_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (read_policy))))
+
+(macro selinux_set_all_booleans ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 selinux_bool_object_type_except_selinux_load_policy rw_file_perms)
+    (call read_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (setbool)))
+    (booleanif (selinux_load_policy)
+        (true
+            (allow ARG1 selinux_load_policy_t (file (append write))))))
+
+(macro selinux_set_check_req_prot ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (setcheckreqprot))))
+
+(macro selinux_set_enforce_mode ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (typeattributeset selinux_can_setenforce ARG1)
+    (booleanif (selinux_load_policy)
+        (true
+            (allow ARG1 securityfs_fs_t (security (setenforce))))))
+
+(macro selinux_set_parameter ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (setsecparam)))
+    (auditallow ARG1 securityfs_fs_t (security (setsecparam)))
+    (typeattributeset selinux_can_setsecparam ARG1))
+
+(macro selinux_validate_context ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (check_context))))
+
+(macro selinux_unconfined_subject_type ((type ARG1))
+    (typeattributeset selinux_unconfined_subject_type ARG1))

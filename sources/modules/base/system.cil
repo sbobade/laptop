@@ -1,0 +1,656 @@
+(boolean system_load_kernel_module true)
+
+(sid kernel)
+(sid sysctl)
+(sid unlabeled)
+(sid file)
+
+(typeattribute system_mountpoint_object_type)
+(typeattribute system_object_type)
+(typeattribute system_proc_object_type)
+(typeattribute system_sysctl_object_type)
+
+(typeattribute system_subject_type)
+(typeattribute system_unconfined_subject_type)
+
+(roleattribute system_roleallow_role)
+
+(type system_load_kernel_module_t)
+(call selinux_bool_object_type (system_load_kernel_module_t))
+
+(context system_load_kernel_module (system_u object_r
+    system_load_kernel_module_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/system_load_kernel_module"
+    system_load_kernel_module)
+
+(type kallsyms_proc_t)
+(call system_proc_object_type (kallsyms_proc_t))
+
+(context kallsyms_proc (system_u object_r kallsyms_proc_t (systemlow systemlow)))
+(genfscon "proc" "/kallsyms" kallsyms_proc)
+
+(type kcore_proc_t)
+(call system_proc_object_type (kcore_proc_t))
+
+(context kcore_proc (system_u object_r kcore_proc_t (mls_systemhigh mls_systemhigh)))
+(genfscon "proc" "/kcore" kcore_proc)
+
+(type kmsg_proc_t)
+(call system_proc_object_type (kmsg_proc_t))
+
+(context kmsg_proc (system_u object_r kmsg_proc_t (mls_systemhigh mls_systemhigh)))
+(genfscon "proc" "/kmsg" kmsg_proc)
+
+(type mdstat_proc_t)
+(call system_proc_object_type (mdstat_proc_t))
+
+(context mdstat_proc (system_u object_r mdstat_proc_t (systemlow systemlow)))
+(genfscon "proc" "/mdstat" mdstat_proc)
+
+(type mtrr_proc_t)
+(call system_proc_object_type (mtrr_proc_t))
+
+(context mtrr_proc (system_u object_r mtrr_proc_t (systemlow systemlow)))
+(genfscon "proc" "/mtrr" mtrr_proc)
+
+(type net_proc_t)
+(call system_proc_object_type (net_proc_t))
+
+(context net_proc (system_u object_r net_proc_t (systemlow systemlow)))
+(genfscon "proc" "/net" net_proc)
+
+(type sysrq_proc_t)
+(call system_proc_object_type (sysrq_proc_t))
+
+(context sysrq_proc (system_u object_r sysrq_proc_t (systemlow systemlow)))
+(genfscon "proc" "/sysrq-trigger" sysrq_proc)
+
+(type sysctl_t)
+(call system_sysctl_object_type (sysctl_t))
+
+(context sysctl (system_u object_r sysctl_t (systemlow systemlow)))
+(sidcontext sysctl sysctl)
+
+(genfscon "proc" "/sys" sysctl)
+
+(type crypto_sysctl_t)
+(call system_sysctl_object_type (crypto_sysctl_t))
+
+(context crypto_sysctl (system_u object_r crypto_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/crypto" crypto_sysctl)
+
+(type dev_sysctl_t)
+(call system_sysctl_object_type (dev_sysctl_t))
+
+(context dev_sysctl (system_u object_r dev_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/dev" dev_sysctl)
+
+(type fs_sysctl_t)
+(call system_sysctl_object_type (fs_sysctl_t))
+(call system_mountpoint_object_type (fs_sysctl_t))
+
+(context fs_sysctl (system_u object_r fs_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/fs" fs_sysctl)
+
+(type irq_sysctl_t)
+(call system_sysctl_object_type (irq_sysctl_t))
+
+(context irq_sysctl (system_u object_r irq_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/irq" irq_sysctl)
+
+(type kernel_sysctl_t)
+(call system_sysctl_object_type (kernel_sysctl_t))
+
+(context kernel_sysctl (system_u object_r kernel_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/kernel" kernel_sysctl)
+
+(type net_sysctl_t)
+(call system_sysctl_object_type (net_sysctl_t))
+
+(context net_sysctl (system_u object_r net_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/net" net_sysctl)
+
+(type net_unix_sysctl_t)
+(call system_sysctl_object_type (net_unix_sysctl_t))
+
+(context net_unix_sysctl (system_u object_r net_unix_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/net/unix" net_unix_sysctl)
+
+(type security_sysctl_t)
+(call system_sysctl_object_type (security_sysctl_t))
+(typeattributeset system_security_or_usermodehelper_sysctl_object_type security_sysctl_t)
+
+(context security_sysctl (system_u object_r security_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/fs/protected_hardlinks" security_sysctl)
+(genfscon "proc" "/sys/fs/protected_symlinks" security_sysctl)
+(genfscon "proc" "/sys/fs/suid_dumpable" security_sysctl)
+(genfscon "proc" "/sys/kernel/dmesg_restrict" security_sysctl)
+(genfscon "proc" "/sys/kernel/kptr_restrict" security_sysctl)
+(genfscon "proc" "/sys/kernel/modules_disabled" security_sysctl)
+(genfscon "proc" "/sys/kernel/randomize_va_space" security_sysctl)
+(genfscon "proc" "/sys/vm/mmap_min_addr" security_sysctl)
+
+(type usermodehelper_sysctl_t)
+(call system_sysctl_object_type (usermodehelper_sysctl_t))
+(typeattributeset system_security_or_usermodehelper_sysctl_object_type usermodehelper_sysctl_t)
+
+(context usermodehelper_sysctl (system_u object_r usermodehelper_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/kernel/core_pattern" usermodehelper_sysctl)
+(genfscon "proc" "/sys/kernel/modprobe" usermodehelper_sysctl)
+(genfscon "proc" "/sys/kernel/poweroff_cmd" usermodehelper_sysctl)
+(genfscon "proc" "/sys/kernel/usermodehelper" usermodehelper_sysctl)
+
+(type vm_sysctl_t)
+(call system_sysctl_object_type (vm_sysctl_t))
+
+(context vm_sysctl (system_u object_r vm_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/vm" vm_sysctl)
+
+(type vm_overcommit_sysctl_t)
+(call system_sysctl_object_type (vm_overcommit_sysctl_t))
+
+(context vm_overcommit_sysctl (system_u object_r vm_overcommit_sysctl_t (systemlow systemlow)))
+(genfscon "proc" "/sys/vm/overcommit_memory" vm_overcommit_sysctl)
+
+(user system_u)
+
+(type system_t)
+
+(context system (system_u system_r system_t (mls_systemhigh mls_systemhigh)))
+(sidcontext kernel system)
+
+(role system_r)
+(role object_r)
+
+(call subject_common_type (system_t))
+
+(roletype system_r system_t)
+
+(call system_userrole (system_u))
+(call system_object_userrole (system_u))
+
+(roletype object_r system_object_type)
+
+(userlevel system_u systemlow)
+(userrange system_u (systemlow systemhigh))
+
+(roleallow system_r system_roleallow_role)
+
+(type system_log_t)
+(call files_log_object_type (system_log_t))
+
+(context system_log (system_u object_r system_log_t (systemlow systemlow)))
+(filecon "/var/log/boot\.log.*" file system_log)
+
+(type invalid_t)
+
+(context invalid (system_u system_r invalid_t (mls_systemhigh mls_systemhigh)))
+(sidcontext unlabeled invalid)
+
+(roletype system_r invalid_t)
+
+(allow invalid_t self (process (sigchld)))
+
+(allow invalid_t self rw_file_perms)
+(allow invalid_t self list_dir_perms)
+(allow invalid_t self read_lnk_file_perms)
+
+(call system_mountpoint_object_type (invalid_t)) ; FIXME
+
+(call filesystems_associate_fs (invalid_t))
+(call filesystems_associate_tmpfs (invalid_t))
+(call filesystems_search_proc (invalid_t))
+
+(type unlabeled_t)
+(call system_object_type (unlabeled_t))
+
+(context unlabeled (system_u object_r unlabeled_t (systemlow systemlow)))
+(sidcontext file unlabeled)
+
+(call filesystems_associate_devtmpfs (unlabeled_t))
+(call filesystems_associate_fs (unlabeled_t))
+(call filesystems_associate_tmpfs (unlabeled_t))
+
+(allow system_t self (system (syslog_console)))
+(allow system_t self (capability (sys_tty_config sys_admin sys_nice net_admin)))
+(allow system_t self (process (setsched)))
+(allow system_t self create_unix_stream_socket_perms)
+(allow system_t self (capability2 (block_suspend syslog)))
+
+(allow system_t system_log_t manage_file_perms)
+(call files_log_object_type_transition (system_t system_log_t file "*"))
+
+(call system_request_load_module (system_t))
+
+(call devices_manage_all (system_t)) ; FIXME
+
+(call files_read_data_files (system_t))
+
+(call filesystems_list_debugfs (system_t))
+(call filesystems_list_proc (system_t))
+
+(call filesystems_manage_devtmpfs_dirs (system_t))
+(call filesystems_manage_devtmpfs_chr_files (system_t))
+(call filesystems_manage_devtmpfs_blk_files (system_t))
+
+(call filesystems_mounton_rootfs_dirs (system_t))
+
+(call selinux_compute_create_context (system_t))
+(call selinux_list_securityfs (system_t))
+
+(booleanif (system_load_kernel_module)
+    (true
+        (allow system_can_load_kernel_module self (capability (sys_nice sys_module)))
+        (allow system_can_load_kernel_module system_t (process (setsched)))))
+
+(optional system_optional_bootchart
+    (call bootchart_auto_subject_type_transition (system_t)))
+
+(optional system_optional_cgagent
+    (call cgagent_auto_subject_type_transition (system_t)))
+
+(optional system_optional_coredump
+    (call coredump_auto_subject_type_transition (system_t)))
+
+(optional system_optional_kmod
+    (call kmod_auto_subject_type_transition (system_t)))
+
+(optional system_optional_plymouth
+    (call plymouth_manage_plymouthd_runtime_files (system_t))
+    (call plymouth_manage_plymouthd_lib_files (system_t)))
+
+(optional system_optional_storage
+    (call storage_devtmpfs_object_type_transition_fixed_disk (system_t))
+    (call storage_devtmpfs_object_type_transition_removable (system_t)))
+
+(optional system_optional_systemd
+    (call systemd_dynamic_subject_type_transition (system_t))
+    (call systemd_getattr_exec_files (system_t))
+    (call systemd_send_signal (system_t)))
+
+(typeattribute system_can_load_kernel_module)
+(typeattribute system_can_not_load_kernel_module)
+(typeattributeset system_can_not_load_kernel_module (not system_can_load_kernel_module))
+(neverallow system_can_not_load_kernel_module self (capability (sys_module)))
+
+(typeattribute system_can_read_kernel_message)
+(typeattribute system_can_not_read_kernel_message_or_system_unconfined_subject_type)
+(typeattributeset system_can_not_read_kernel_message_or_system_unconfined_subject_type
+    (not (system_can_read_kernel_message system_unconfined_subject_type)))
+(neverallow system_can_not_read_kernel_message_or_system_unconfined_subject_type
+    kmsg_proc_t all_file_perms_except_getattr)
+
+(typeattribute system_can_dump_kernel)
+(typeattribute system_can_not_dump_kernel_or_system_unconfined_subject_type)
+(typeattributeset system_can_not_dump_kernel_or_system_unconfined_subject_type
+    (not (system_can_dump_kernel system_unconfined_subject_type)))
+(neverallow system_can_not_dump_kernel_or_system_unconfined_subject_type
+    kcore_proc_t all_file_perms_except_getattr)
+
+(typeattribute system_security_or_usermodehelper_sysctl_object_type)
+(typeattribute system_not_security_or_usermodehelper_sysctl_object_type)
+(typeattribute system_can_write_security_and_usermodehelper_sysctl)
+(typeattribute system_can_not_write_security_and_usermodehelper_sysctl)
+(typeattributeset system_can_not_write_security_and_usermodehelper_sysctl
+    (not (system_can_write_security_and_usermodehelper_sysctl)))
+(neverallow system_can_not_write_security_and_usermodehelper_sysctl
+    system_security_or_usermodehelper_sysctl_object_type (file (append write)))
+
+(allow system_unconfined_subject_type invalid_t signal_perms)
+(allow system_unconfined_subject_type invalid_t (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+(allow system_unconfined_subject_type invalid_t (filesystem (all)))
+
+(allow system_unconfined_subject_type system_mountpoint_object_type (dir (mounton)))
+
+(allow system_unconfined_subject_type unlabeled_t (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(allow system_unconfined_subject_type system_t (system
+    (ipc_info syslog_read syslog_mod syslog_console module_request)))
+
+(allow system_unconfined_subject_type system_proc_object_type rw_file_perms)
+(allow system_unconfined_subject_type system_proc_object_type list_dir_perms)
+(allow system_unconfined_subject_type system_proc_object_type read_lnk_file_perms)
+
+(typeattributeset system_not_security_or_usermodehelper_sysctl_object_type
+    (and (system_sysctl_object_type) (not (system_security_or_usermodehelper_sysctl_object_type))))
+(allow system_unconfined_subject_type
+    system_not_security_or_usermodehelper_sysctl_object_type rw_file_perms)
+(allow system_unconfined_subject_type system_security_or_usermodehelper_sysctl_object_type
+    read_file_perms)
+
+(allow system_unconfined_subject_type system_sysctl_object_type list_dir_perms)
+(allow system_unconfined_subject_type system_sysctl_object_type read_lnk_file_perms)
+
+(call system_load_kernel_module (system_unconfined_subject_type))
+
+(macro system_object_type ((type ARG1))
+    (typeattributeset system_object_type ARG1))
+
+(macro system_roleallow_role ((role ARG1))
+    (roleattributeset system_roleallow_role ARG1))
+
+(macro system_subject_type ((type ARG1))
+    (typeattributeset system_subject_type ARG1))
+
+(macro system_mountpoint_object_type ((type ARG1))
+    (typeattributeset system_mountpoint_object_type ARG1))
+
+(macro system_proc_object_type ((type ARG1))
+    (call system_object_type (ARG1))
+    (typeattributeset system_proc_object_type ARG1))
+
+(macro system_sysctl_object_type ((type ARG1))
+    (call system_object_type (ARG1))
+    (typeattributeset system_sysctl_object_type ARG1))
+
+(macro system_userrole ((user ARG1))
+    (userrole ARG1 system_r))
+
+(macro system_object_userrole ((user ARG1))
+    (userrole ARG1 object_r))
+
+(macro system_dontaudit_audit_access_mountpoint_dirs ((type ARG1))
+    (dontaudit ARG1 system_mountpoint_object_type (dir (audit_access))))
+
+(macro system_getattr_all_mountpoints ((type ARG1))
+    (allow ARG1 system_mountpoint_object_type (all_file_objects (getattr))))
+
+(macro system_setattr_all_mountpoint_dirs ((type ARG1))
+    (allow ARG1 system_mountpoint_object_type (dir (setattr))))
+
+(macro system_list_mountpoints ((type ARG1))
+    (allow ARG1 system_mountpoint_object_type list_dir_perms))
+
+(macro system_mounton_mountpoint_dirs ((type ARG1))
+    (call system_dontaudit_audit_access_mountpoint_dirs (ARG1))
+    (call system_getattr_all_mountpoints (ARG1))
+    (call system_list_mountpoints (ARG1))
+    (call system_setattr_all_mountpoint_dirs (ARG1))
+    (allow ARG1 system_mountpoint_object_type (dir (mounton))))
+
+(macro system_rw_unix_dgram_sockets ((type ARG1))
+    (allow ARG1 system_t rw_unix_dgram_socket_perms))
+
+(macro system_dgram_send ((type ARG1))
+    (allow ARG1 system_t (unix_dgram_socket (sendto))))
+
+(macro system_rw_unix_stream_sockets ((type ARG1))
+    (allow ARG1 system_t rw_unix_stream_socket_perms))
+
+(macro system_stream_connect ((type ARG1))
+    (allow ARG1 system_t (unix_stream_socket (connectto))))
+
+(macro system_manage_log_files ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 system_log_t manage_file_perms))
+
+(macro system_log_object_type_transition_log_files ((type ARG1))
+    (call files_log_object_type_transition (ARG1 system_log_t file "boot.log")))
+
+(macro system_dump_kernel ((type ARG1))
+    (allow ARG1 self (capability (sys_rawio)))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 kcore_proc_t read_file_perms)
+    (typeattributeset system_can_dump_kernel ARG1))
+
+(macro system_get_sysvipc_info ((type ARG1))
+    (allow ARG1 system_t (system (ipc_info))))
+
+(macro system_getattr_core_if ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 kcore_proc_t (file (getattr))))
+
+(macro system_read_ring_buffer ((type ARG1))
+    (allow ARG1 self (capability2 (syslog)))
+    (allow ARG1 system_t (system (syslog_read))))
+
+(macro system_change_ring_buffer_level ((type ARG1))
+    (allow ARG1 self (capability2 (syslog)))
+    (allow ARG1 system_t (system (syslog_console))))
+
+(macro system_request_load_module ((type ARG1))
+    (allow ARG1 system_t (system (module_request))))
+
+(macro system_link_keyring ((type ARG1))
+    (allow ARG1 system_t (key (search link))))
+
+(macro system_load_kernel_module ((type ARG1))
+    (typeattributeset system_can_load_kernel_module ARG1))
+
+(macro system_read_kernel_message ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 kmsg_proc_t read_file_perms)
+    (typeattributeset system_can_read_kernel_message ARG1))
+
+(macro system_read_mdstat_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 mdstat_proc_t read_file_perms))
+
+(macro system_search_net_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 net_proc_t search_dir_perms))
+
+(macro system_read_net_proc ((type ARG1))
+    (call system_search_net_proc (ARG1))
+    (allow ARG1 net_proc_t read_file_perms))
+
+(macro system_write_mtrr_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 mtrr_proc_t write_file_perms))
+
+(macro system_read_all_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call read_files_pattern (ARG1 system_proc_object_type system_proc_object_type))
+    (typeattributeset system_can_dump_kernel ARG1)
+    (typeattributeset system_can_read_kernel_message ARG1))
+
+(macro system_dontaudit_list_all_proc ((type ARG1))
+    (dontaudit ARG1 system_proc_object_type list_dir_perms))
+
+(macro system_dontaudit_getattr_all_proc_files ((type ARG1))
+    (dontaudit ARG1 system_proc_object_type (file (getattr))))
+
+(macro system_read_all_sysctls ((type ARG1))
+    (call system_read_crypto_sysctl (ARG1))
+    (call system_read_dev_sysctl (ARG1))
+    (call system_read_fs_sysctl (ARG1))
+    (call system_read_sysctl (ARG1))
+    (call system_read_kernel_sysctl (ARG1))
+    (call system_read_net_sysctl (ARG1))
+    (call system_read_security_sysctl (ARG1))
+    (call system_read_usermodehelper_sysctl (ARG1))
+    (call system_read_vm_sysctl (ARG1))
+    (call system_read_vm_overcommit_sysctl (ARG1)))
+
+(macro system_rw_all_sysctls ((type ARG1))
+    (call system_rw_crypto_sysctl (ARG1))
+    (call system_rw_dev_sysctl (ARG1))
+    (call system_rw_fs_sysctl (ARG1))
+    (call system_rw_sysctl (ARG1))
+    (call system_rw_kernel_sysctl (ARG1))
+    (call system_rw_net_sysctl (ARG1))
+    (call system_rw_security_sysctl (ARG1))
+    (call system_rw_usermodehelper_sysctl (ARG1))
+    (call system_rw_vm_sysctl (ARG1))
+    (call system_rw_vm_overcommit_sysctl (ARG1)))
+
+(macro system_read_dev_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 dev_sysctl_t dev_sysctl_t)))
+
+(macro system_rw_dev_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 dev_sysctl_t dev_sysctl_t)))
+
+(macro system_search_crypto_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 crypto_sysctl_t search_dir_perms))
+
+(macro system_read_crypto_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 crypto_sysctl_t crypto_sysctl_t)))
+
+(macro system_rw_crypto_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 crypto_sysctl_t crypto_sysctl_t)))
+
+(macro system_search_fs_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 fs_sysctl_t search_dir_perms))
+
+(macro system_read_fs_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 fs_sysctl_t fs_sysctl_t)))
+
+(macro system_rw_fs_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 fs_sysctl_t fs_sysctl_t)))
+
+(macro system_search_sysctl ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 sysctl_t search_dir_perms))
+
+(macro system_read_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 sysctl_t read_file_perms))
+
+(macro system_rw_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 sysctl_t rw_file_perms))
+
+(macro system_search_kernel_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 kernel_sysctl_t search_dir_perms))
+
+(macro system_read_kernel_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 kernel_sysctl_t kernel_sysctl_t)))
+
+(macro system_rw_kernel_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 kernel_sysctl_t kernel_sysctl_t)))
+
+(macro system_search_net_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 net_sysctl_t search_dir_perms))
+
+(macro system_read_net_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 net_sysctl_t net_sysctl_t)))
+
+(macro system_rw_net_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 net_sysctl_t net_sysctl_t)))
+
+(macro system_read_security_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 fs_sysctl_t search_dir_perms)
+    (allow ARG1 kernel_sysctl_t search_dir_perms)
+    (allow ARG1 vm_sysctl_t search_dir_perms)
+    (allow ARG1 security_sysctl_t read_file_perms))
+
+(macro system_rw_security_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 fs_sysctl_t search_dir_perms)
+    (allow ARG1 kernel_sysctl_t search_dir_perms)
+    (allow ARG1 vm_sysctl_t search_dir_perms)
+    (allow ARG1 security_sysctl_t rw_file_perms)
+    (typeattributeset
+        system_can_write_security_and_usermodehelper_sysctl ARG1))
+
+(macro system_read_usermodehelper_sysctl ((type ARG1))
+    (call system_search_kernel_sysctl (ARG1))
+    (call read_files_pattern
+        (ARG1 usermodehelper_sysctl_t usermodehelper_sysctl_t)))
+
+(macro system_rw_usermodehelper_sysctl ((type ARG1))
+    (call system_search_kernel_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 usermodehelper_sysctl_t
+        usermodehelper_sysctl_t))
+    (typeattributeset
+        system_can_write_security_and_usermodehelper_sysctl ARG1))
+
+(macro system_search_vm_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 vm_sysctl_t search_dir_perms))
+
+(macro system_read_vm_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 vm_sysctl_t vm_sysctl_t)))
+
+(macro system_rw_vm_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 vm_sysctl_t vm_sysctl_t)))
+
+(macro system_read_vm_overcommit_sysctl ((type ARG1))
+    (call system_search_vm_sysctl (ARG1))
+    (allow ARG1 vm_overcommit_sysctl_t read_file_perms))
+
+(macro system_rw_vm_overcommit_sysctl ((type ARG1))
+    (call system_search_vm_sysctl (ARG1))
+    (allow ARG1 vm_overcommit_sysctl_t rw_file_perms))
+
+(macro system_dontaudit_list_all_sysctl ((type ARG1))
+    (dontaudit ARG1 system_sysctl_object_type list_dir_perms))
+
+(macro system_dontaudit_getattr_all_sysctl_files ((type ARG1))
+    (dontaudit ARG1 system_sysctl_object_type (file (getattr))))
+
+(macro system_rw_netlink_audit_sockets ((type ARG1))
+    (allow ARG1 system_t (netlink_audit_socket (getattr read write))))
+
+(macro system_send_sigchld ((type ARG1))
+    (allow ARG1 system_t (process (sigchld))))
+
+(macro system_setkeycreate ((type ARG1))
+    (allow ARG1 system_t (process (setkeycreate))))
+
+(macro system_setpgid ((type ARG1))
+    (allow ARG1 system_t (process (setpgid))))
+
+(macro system_setsched ((type ARG1))
+    (allow ARG1 system_t (process (setsched))))
+
+(macro system_share_state ((type ARG1))
+    (allow ARG1 system_t (process (share))))
+
+(macro system_manual_subject_type_transition ((type ARG1))
+    (allow ARG1 system_t (process (transition))))
+
+(macro system_use_fd ((type ARG1))
+    (allow ARG1 system_t (fd (use))))
+
+(macro system_read_state_invalid ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 invalid_t read_file_perms)
+    (allow ARG1 invalid_t list_dir_perms)
+    (allow ARG1 invalid_t read_lnk_file_perms))
+
+(macro system_search_invalid ((type ARG1))
+    (allow ARG1 invalid_t search_dir_perms))
+
+(macro system_dontaudit_list_invalid ((type ARG1))
+    (dontaudit ARG1 invalid_t list_dir_perms))
+
+(macro system_read_invalid_files ((type ARG1))
+    (call read_files_pattern (ARG1 invalid_t invalid_t)))
+
+(macro system_recvfrom_unlabeled_tcp_sockets ((type ARG1))
+    (allow ARG1 unlabeled_t (tcp_socket (recvfrom))))
+
+(macro system_recvfrom_unlabeled_udp_sockets ((type ARG1))
+    (allow ARG1 unlabeled_t (udp_socket (recvfrom))))
+
+(macro system_recvfrom_unlabeled_rawip_sockets ((type ARG1))
+    (allow ARG1 unlabeled_t (rawip_socket (recvfrom))))
+
+(macro system_recvfrom_unlabeled_dccp_sockets ((type ARG1))
+    (allow ARG1 unlabeled_t (dccp_socket (recvfrom))))
+
+(macro system_recv_unlabeled_peers ((type ARG1))
+    (allow ARG1 unlabeled_t (peer (recv))))
+
+(macro system_unconfined_subject_type ((type ARG1))
+    (typeattributeset system_unconfined_subject_type ARG1))

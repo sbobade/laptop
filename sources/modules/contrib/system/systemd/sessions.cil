@@ -1,0 +1,44 @@
+(type sessions_t)
+(type sessions_exec_t)
+(call systemd_daemon (sessions_t sessions_exec_t))
+
+(context sessions_exec (system_u object_r sessions_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-user-sessions" file sessions_exec)
+
+(type sessions_runtime_t)
+(call files_runtime_object_type (sessions_runtime_t))
+
+(context sessions_runtime (system_u object_r sessions_runtime_t (systemlow systemlow)))
+(filecon "/var/run/\.nologin.*" file sessions_runtime)
+(filecon "/var/run/nologin" file sessions_runtime)
+
+(allow sessions_t sessions_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (sessions_t sessions_runtime_t file "*"))
+
+(call devices_write_kmsg (sessions_t))
+
+(call files_search_config (sessions_t))
+
+(call journal_client_subject_type (sessions_t))
+
+(macro sessions_exec ((type ARG1))
+    (call can_exec (ARG1 sessions_exec_t)))
+
+(macro sessions_auto_subject_type_transition ((type ARG1))
+    (call sessions_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sessions_exec_t sessions_t)))
+
+(macro sessions_send_signal ((type ARG1))
+    (allow ARG1 sessions_t (process (signal))))
+
+(macro sessions_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sessions_runtime_t read_file_perms))
+
+(macro sessions_manage_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 sessions_runtime_t manage_file_perms))
+
+(macro sessions_runtime_object_type_transition_runtime_files ((type ARG1)(name ARG2))
+    (call files_runtime_object_type_transition (ARG1 sessions_runtime_t file ARG2)))

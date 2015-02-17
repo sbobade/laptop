@@ -1,0 +1,44 @@
+(type randomseed_t)
+(type randomseed_exec_t)
+(call systemd_daemon (randomseed_t randomseed_exec_t))
+
+(context randomseed_exec (system_u object_r randomseed_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-random-seed" file randomseed_exec)
+
+(type randomseed_systemd_lib_t)
+(call systemd_lib_object_type (randomseed_systemd_lib_t))
+
+(context randomseed_systemd_lib (system_u object_r randomseed_systemd_lib_t (mls_systemhigh mls_systemhigh)))
+(filecon "/var/lib/systemd/random-seed" file randomseed_systemd_lib)
+
+(allow randomseed_t randomseed_systemd_lib_t manage_file_perms)
+(call systemd_lib_object_type_transition (randomseed_t randomseed_systemd_lib_t file "*"))
+
+(call system_read_kernel_sysctl (randomseed_t))
+
+(call devices_rw_urandom (randomseed_t))
+
+(call files_search_config (randomseed_t))
+
+(call selinux_list_securityfs (randomseed_t))
+
+(call journal_client_subject_type (randomseed_t))
+
+(macro randomseed_exec ((type ARG1))
+    (call can_exec (ARG1 randomseed_exec_t)))
+
+(macro randomseed_auto_subject_type_transition ((type ARG1))
+    (call randomseed_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 randomseed_exec_t randomseed_t)))
+
+(macro randomseed_send_signal ((type ARG1))
+    (allow ARG1 randomseed_t (process (signal))))
+
+(macro randomseed_read_systemd_lib_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 randomseed_systemd_lib_t read_file_perms))
+
+(macro randomseed_manage_systemd_lib_files ((type ARG1))
+    (call systemd_rw_lib_dirs (ARG1))
+    (allow ARG1 randomseed_systemd_lib_t manage_file_perms))

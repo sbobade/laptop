@@ -1,0 +1,65 @@
+(type autorelabel_t)
+(type autorelabel_exec_t)
+(call systemd_daemon (autorelabel_t autorelabel_exec_t))
+
+(context autorelabel_exec (system_u object_r autorelabel_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/fedora-autorelabel" file autorelabel_exec)
+
+(type autorelabel_flag_t)
+(call files_flag_object_type (autorelabel_flag_t))
+
+(context autorelabel_flag (system_u object_r autorelabel_flag_t (systemlow systemlow)))
+(filecon "/\.autorelabel" file autorelabel_flag)
+
+(allow autorelabel_t autorelabel_flag_t manage_file_perms)
+(call filesystems_rootfs_object_type_transition (autorelabel_t autorelabel_flag_t file ".autorelabel"))
+
+(allow autorelabel_t self (capability (dac_override)))
+(allow autorelabel_t self (process (getsched)))
+
+(call commands_exec (autorelabel_t))
+
+(call files_read_config_files (autorelabel_t))
+
+(call files_getattr_all_tmpfs_files (autorelabel_t))
+(call files_list_all_tmpfs (autorelabel_t))
+(call files_search_lib (autorelabel_t))
+
+(call filesystems_list_rootfs (autorelabel_t))
+(call filesystems_write_inherited_devpts_chr_files (autorelabel_t))
+
+(call selinux_set_enforce_mode (autorelabel_t))
+
+(call terminals_use_console (autorelabel_t))
+
+(call auth_nsswitch_client_subject_type (autorelabel_t))
+
+(call plymouth_exec (autorelabel_t))
+
+(call seutil_dontaudit_audit_access_load_policy_exec_files (autorelabel_t))
+(call seutil_read_selinux_config_files (autorelabel_t))
+(call seutil_auto_subject_type_transition_setfiles (autorelabel_t))
+
+(call systemd_exec_systemctl (autorelabel_t))
+(call systemd_reboot_system (autorelabel_t))
+
+(macro autorelabel_exec ((type ARG1))
+    (call can_exec (ARG1 autorelabel_exec_t)))
+
+(macro autorelabel_auto_subject_type_transition ((type ARG1))
+    (call autorelabel_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 autorelabel_exec_t autorelabel_t)))
+
+(macro autorelabel_send_signal ((type ARG1))
+    (allow ARG1 autorelabel_t (process (signal))))
+
+(macro autorelabel_read_flag_files ((type ARG1))
+    (allow ARG1 autorelabel_flag_t read_file_perms))
+
+(macro autorelabel_manage_flag_files ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 autorelabel_flag_t manage_file_perms))
+
+(macro autorelabel_rootfs_object_type_transition_flag_files ((type ARG1))
+    (call filesystems_rootfs_object_type_transition (ARG1 autorelabel_flag_t file ".autorelabel")))

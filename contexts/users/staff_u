@@ -1,0 +1,4 @@
+staff_u:staff_t staff_r:staff_t
+staff_r:staff_sudo_t staff_r:staff_t
+system_r:login_t staff_r:staff_t
+system_r:systemd_t staff_r:staff_systemd_t

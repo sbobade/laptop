@@ -1,0 +1,191 @@
+(roleattribute alsactl_role)
+
+(typeattribute alsa_admin_subject_type)
+
+(typeattribute alsa_object_type)
+
+(type alsactl_t)
+(type alsactl_exec_t)
+(call applications_app (alsactl_t alsactl_exec_t))
+(roletype alsactl_role alsactl_t)
+
+(roleattributeset alsactl_role system_r)
+
+(context alsactl_exec (system_u object_r alsactl_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/alsactl" file alsactl_exec)
+
+(type alsa_config_t)
+(call files_config_object_type (alsa_config_t))
+
+(typeattributeset alsa_object_type alsa_config_t)
+
+(context alsa_config (system_u object_r alsa_config_t (systemlow systemlow)))
+(filecon "/etc/alsa(/.*)?" any alsa_config)
+(filecon "/etc/asound\.conf(/.*)?" any alsa_config)
+
+(type alsactl_runtime_t)
+(call files_runtime_object_type (alsactl_runtime_t))
+
+(typeattributeset alsa_object_type alsactl_runtime_t)
+
+(context alsactl_runtime (system_u object_r alsactl_runtime_t (systemlow systemlow)))
+(filecon "/var/run/alsactl\.pid" file alsactl_runtime)
+
+(allow alsactl_t alsactl_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (alsactl_t alsactl_runtime_t file "*"))
+
+(type alsa_lock_t)
+(call files_lock_object_type (alsa_lock_t))
+
+(typeattributeset alsa_object_type alsa_lock_t)
+
+(context alsa_lock (system_u object_r alsa_lock_t (systemlow systemlow)))
+(filecon "/var/run/lock/asound\.state\.lock" file alsa_lock)
+
+(allow alsactl_t alsa_lock_t manage_file_perms)
+(call files_lock_object_type_transition (alsactl_t alsa_lock_t file "*"))
+
+(type alsa_lib_t)
+(call files_lib_object_type (alsa_lib_t))
+
+(typeattributeset alsa_object_type alsa_lib_t)
+
+(context alsa_lib (system_u object_r alsa_lib_t (systemlow systemlow)))
+(filecon "/var/lib/alsa(/.*)?" any alsa_lib)
+
+(allow alsactl_t alsa_lib_t manage_dir_perms)
+(allow alsactl_t alsa_lib_t manage_file_perms)
+(call files_lib_object_type_transition (alsactl_t alsa_lib_t dir "*"))
+
+(dontaudit alsactl_t self (capability (sys_tty_config)))
+(allow alsactl_t self (process (getsched setsched)))
+
+(call system_use_fd (alsactl_t))
+
+(call filesystems_read_sysfs (alsactl_t))
+(call filesystems_read_devtmpfs_chr_files (alsactl_t)) ; FIXME
+
+(call devices_rw_sound (alsactl_t))
+
+(call alsa_read_config_files (alsactl_t))
+
+(call miscfiles_read_locale (alsactl_t))
+
+(call udev_rw_inherited_udevd_udp_sockets (alsactl_t))
+
+(optional alsactl_optional_journal
+    (call journal_client_subject_type (alsactl_t)))
+
+(optional alsactl_optional_systemd
+    (call systemd_daemon (alsactl_t alsactl_exec_t))
+
+    (type alsactl_unit_t)
+    (call systemd_unit_object_type (alsactl_unit_t))
+
+    (typeattributeset alsa_object_type alsactl_unit_t)
+
+    (context alsactl_unit (system_u object_r alsactl_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*alsa-state.*" file alsactl_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*alsa-restore.*" file alsactl_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*alsa-store.*" file alsactl_unit)
+
+    (allow alsa_admin_subject_type alsactl_unit_t (service (all))))
+
+(allow alsa_admin_subject_type alsactl_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (alsa_admin_subject_type alsactl_t))
+
+(allow alsa_admin_subject_type alsa_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro alsa_exec_alsactl ((type ARG1))
+    (call can_exec (ARG1 alsactl_exec_t)))
+
+(macro alsa_auto_subject_type_transition_alsactl ((type ARG1))
+    (call alsa_send_signal_alsactl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 alsactl_exec_t alsactl_t)))
+
+(macro alsa_send_signal_alsactl ((type ARG1))
+    (allow ARG1 alsactl_t (process (signal))))
+
+(macro alsa_run_alsactl ((type ARG1)(role ARG2))
+    (call alsa_auto_subject_type_transition_alsactl (ARG1))
+    (roleattributeset alsactl_role ARG2))
+
+(macro alsa_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 alsa_config_t search_dir_perms))
+
+(macro alsa_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 alsa_config_t list_dir_perms))
+
+(macro alsa_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 alsa_config_t alsa_config_t)))
+
+(macro alsa_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 alsa_config_t alsa_config_t)))
+
+(macro alsa_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 alsa_config_t read_file_perms)
+    (allow ARG1 alsa_config_t list_dir_perms)
+    (allow ARG1 alsa_config_t read_lnk_file_perms))
+
+(macro alsa_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 alsa_config_t manage_file_perms)
+    (allow ARG1 alsa_config_t manage_dir_perms)
+    (allow ARG1 alsa_config_t manage_lnk_file_perms))
+
+(macro alsa_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 alsa_lib_t search_dir_perms))
+
+(macro alsa_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 alsa_lib_t list_dir_perms))
+
+(macro alsa_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 alsa_lib_t alsa_lib_t)))
+
+(macro alsa_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 alsa_lib_t alsa_lib_t)))
+
+(macro alsa_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 alsa_lib_t read_file_perms)
+    (allow ARG1 alsa_lib_t list_dir_perms)
+    (allow ARG1 alsa_lib_t read_lnk_file_perms))
+
+(macro alsa_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 alsa_lib_t manage_file_perms)
+    (allow ARG1 alsa_lib_t manage_dir_perms)
+    (allow ARG1 alsa_lib_t manage_lnk_file_perms))
+
+(macro alsa_read_alsactl_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 alsactl_runtime_t read_file_perms))
+
+(macro alsa_manage_alsactl_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 alsactl_runtime_t manage_file_perms))
+
+(macro alsa_read_lock_files ((type ARG1))
+    (call files_search_lock (ARG1))
+    (allow ARG1 alsa_lock_t read_file_perms))
+
+(macro alsa_manage_lock_files ((type ARG1))
+    (call files_rw_lock_dirs (ARG1))
+    (allow ARG1 alsa_lock_t manage_file_perms))
+
+(macro alsa_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset alsa_admin_subject_type ARG1)
+    (optional alsa_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

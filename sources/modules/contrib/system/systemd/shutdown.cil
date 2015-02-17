@@ -1,0 +1,182 @@
+(type shutdown_t)
+(type shutdown_exec_t)
+(call systemd_daemon (shutdown_t shutdown_exec_t))
+
+(context shutdown_exec (system_u object_r shutdown_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-shutdown" file shutdown_exec)
+
+(allow shutdown_t self (capability (sys_boot ipc_lock kill sys_admin
+    sys_chroot sys_ptrace dac_override)))
+(allow shutdown_t self (process (setfscreate)))
+(allow shutdown_t self create_unix_stream_socket_perms)
+(allow shutdown_t self manage_fifo_file_perms)
+
+(call system_manual_subject_type_transition (shutdown_t))
+(call system_mounton_mountpoint_dirs (shutdown_t))
+(call system_request_load_module (shutdown_t))
+(call system_rw_kernel_sysctl (shutdown_t))
+(call system_send_sigchld (shutdown_t))
+(call system_setkeycreate (shutdown_t))
+(call system_setpgid (shutdown_t))
+(call system_share_state (shutdown_t))
+(call system_setsched (shutdown_t))
+(call system_use_fd (shutdown_t))
+
+(call commands_exec (shutdown_t))
+(call commands_exec_shell (shutdown_t))
+
+(call devices_read_loop_control (shutdown_t))
+(call devices_read_urandom (shutdown_t))
+(call devices_rw_lvm_control (shutdown_t))
+(call devices_write_kmsg (shutdown_t))
+
+(call files_read_config (shutdown_t))
+(call files_read_data (shutdown_t))
+
+(call filesystems_getattr_sysfs_filesystems (shutdown_t))
+(call filesystems_list_proc (shutdown_t))
+(call filesystems_list_devtmpfs (shutdown_t))
+(call filesystems_read_devtmpfs_lnk_files (shutdown_t))
+(call filesystems_read_sysfs (shutdown_t))
+(call filesystems_delete_cgroup_dirs (shutdown_t))
+(call filesystems_read_cgroup_files (shutdown_t))
+(call filesystems_write_inherited_devpts_chr_files (shutdown_t))
+(call filesystems_remount_all (shutdown_t))
+(call filesystems_unmount_all (shutdown_t))
+
+(call selinux_get_enforce_mode (shutdown_t))
+
+(call subject_getpgid_all_common_subjects (shutdown_t))
+(call subject_read_all_common_subjects_state (shutdown_t))
+(call subject_send_sigkill_all_common_subjects (shutdown_t))
+(call subject_send_signal_all_common_subjects (shutdown_t))
+(call subject_send_signull_all_common_subjects (shutdown_t))
+(call subject_send_sigstop_all_common_subjects (shutdown_t))
+
+(call storage_rw_fixed_disk (shutdown_t))
+(call storage_rw_removable (shutdown_t))
+(call storage_rw_scsi_generic (shutdown_t))
+
+(call terminals_use_console (shutdown_t))
+
+(call auth_read_utmp_runtime_files (shutdown_t))
+
+(call dracut_exec_runtime (shutdown_t))
+(call dracut_manage_runtime (shutdown_t))
+
+(call fstools_exec (shutdown_t))
+
+(call lvm_exec (shutdown_t))
+
+(call mount_exec (shutdown_t))
+(call mount_manage_runtime_files (shutdown_t))
+
+(call plymouth_exec (shutdown_t))
+(call plymouth_use_fd_plymouthd (shutdown_t))
+
+(call systemd_getattr_unit_dirs (shutdown_t))
+
+(call udev_client_subject_type (shutdown_t))
+
+(call usersubject_use_inherited_terminals (shutdown_t))
+
+(optional shutdown_optional_md
+    (call md_exec_mdadm (shutdown_t))
+    (call md_manage_mdadm_runtime_files (shutdown_t)))
+
+(type shutdownd_t)
+(type shutdownd_exec_t)
+(call systemd_daemon (shutdownd_t shutdownd_exec_t))
+
+(call systemd_socket_activated (shutdownd_t shutdownd_systemd_runtime_t))
+
+(context shutdownd_exec (system_u object_r shutdownd_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-shutdownd" file shutdownd_exec)
+
+(type shutdownd_systemd_runtime_t)
+(call systemd_runtime_object_type (shutdownd_systemd_runtime_t))
+
+(context shutdownd_systemd_runtime (system_u object_r shutdownd_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/shutdown(/.*)?" any shutdownd_systemd_runtime)
+(filecon "/var/run/systemd/shutdownd" socket shutdownd_systemd_runtime)
+
+(allow shutdownd_t shutdownd_systemd_runtime_t manage_dir_perms)
+(allow shutdownd_t shutdownd_systemd_runtime_t manage_file_perms)
+(allow shutdownd_t shutdownd_systemd_runtime_t manage_sock_file_perms)
+(call systemd_runtime_object_type_transition (shutdownd_t shutdownd_systemd_runtime_t dir "*"))
+(call systemd_runtime_object_type_transition (shutdownd_t shutdownd_systemd_runtime_t sock_file "*"))
+
+(allow shutdownd_t self (capability (dac_override sys_tty_config)))
+
+(call auth_read_utmp_runtime_files (shutdownd_t))
+
+(call journal_client_subject_type (shutdownd_t))
+
+(call sessions_manage_runtime_files (shutdownd_t))
+(call sessions_runtime_object_type_transition_runtime_files (shutdownd_t "*"))
+
+(call systemd_exec_systemctl (shutdownd_t))
+
+(call usersubject_use_terminals (shutdownd_t))
+
+(macro shutdown_exec ((type ARG1))
+    (call can_exec (ARG1 shutdown_exec_t)))
+
+(macro shutdown_exec_shutdownd ((type ARG1))
+    (call can_exec (ARG1 shutdownd_exec_t)))
+
+(macro shutdown_auto_subject_type_transition ((type ARG1))
+    (call shutdown_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 shutdown_exec_t shutdown_t)))
+
+(macro shutdown_send_signal ((type ARG1))
+    (allow ARG1 shutdown_t (process (signal))))
+
+(macro shutdown_auto_subject_type_transition_shutdownd ((type ARG1))
+    (call shutdown_send_signal_shutdownd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 shutdownd_exec_t shutdownd_t)))
+
+(macro shutdown_send_signal_shutdownd ((type ARG1))
+    (allow ARG1 shutdownd_t (process (signal))))
+
+(macro shutdown_search_shutdownd_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 shutdownd_systemd_runtime_t search_dir_perms))
+
+(macro shutdown_list_shutdownd_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 shutdownd_systemd_runtime_t list_dir_perms))
+
+(macro shutdown_read_shutdownd_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t)))
+
+(macro shutdown_read_shutdownd_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t)))
+
+(macro shutdown_read_shutdownd_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 shutdownd_systemd_runtime_t read_file_perms)
+    (allow ARG1 shutdownd_systemd_runtime_t list_dir_perms)
+    (allow ARG1 shutdownd_systemd_runtime_t read_sock_file_perms)
+    (allow ARG1 shutdownd_systemd_runtime_t read_lnk_file_perms))
+
+(macro shutdown_manage_shutdownd_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 shutdownd_systemd_runtime_t manage_file_perms)
+    (allow ARG1 shutdownd_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 shutdownd_systemd_runtime_t manage_sock_file_perms)
+    (allow ARG1 shutdownd_systemd_runtime_t manage_lnk_file_perms))
+
+(macro shutdown_share_state ((type ARG1))
+    (allow ARG1 shutdown_t (process (share))))
+
+(macro shutdown_send_sigchld ((type ARG1))
+    (allow ARG1 shutdown_t (process (sigchld))))
+
+(macro shutdown_dgram_send_shutdownd ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call dgram_send_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t shutdownd_t)))

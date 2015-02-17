@@ -1,0 +1,267 @@
+(typeattribute sudo_subject_type)
+(typeattribute sudo_visudo_subject_type)
+
+(type sudo_exec_t)
+(call applications_app (sudo_subject_type sudo_exec_t))
+
+(context sudo_exec (system_u object_r sudo_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/sudo" file sudo_exec)
+
+(type sudo_config_t)
+(call files_config_object_type (sudo_config_t))
+
+(context sudo_config (system_u object_r sudo_config_t (systemlow systemlow)))
+(filecon "/etc/sudoers" file sudo_config)
+(filecon "/etc/sudoers\.tmp" file sudo_config)
+(filecon "/etc/sudoers\.d(/.*)?" any sudo_config)
+
+(type sudo_pam_config_t)
+(call auth_pam_config_object_type (sudo_pam_config_t))
+
+(context sudo_pam_config (system_u object_r sudo_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/sudo" file sudo_pam_config)
+(filecon "/etc/pam\.d/sudo-i" file sudo_pam_config)
+
+(type sudo_var_t)
+(call files_var_object_type (sudo_var_t))
+
+(context sudo_var (system_u object_r sudo_var_t (systemlow systemlow)))
+(filecon "/var/db/sudo(/.*)?" any sudo_var)
+
+(type sudo_runtime_t)
+(call files_runtime_object_type (sudo_runtime_t))
+
+(context sudo_runtime (system_u object_r sudo_runtime_t (systemlow systemlow)))
+(filecon "/var/run/sudo(/.*)?" any sudo_runtime)
+
+(type sudo_tmpfs_t)
+(call files_tmpfs_object_type (sudo_tmpfs_t))
+
+(allow sudo_subject_type self (capability (setuid setgid chown sys_resource fowner dac_override kill)))
+(allow sudo_subject_type self (process (setsched setkeycreate setrlimit setexec)))
+(allow sudo_subject_type self rw_fifo_file_perms)
+(allow sudo_subject_type self (key (search link)))
+
+(allow sudo_subject_type sudo_runtime_t manage_dir_perms)
+(allow sudo_subject_type sudo_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (sudo_subject_type sudo_runtime_t dir "*"))
+
+(allow sudo_subject_type sudo_var_t manage_dir_perms)
+(allow sudo_subject_type sudo_var_t manage_file_perms)
+(call files_var_object_type_transition (sudo_subject_type sudo_var_t dir "*"))
+
+(allow sudo_subject_type sudo_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (sudo_subject_type sudo_tmpfs_t file "*"))
+
+(call system_getattr_core_if (sudo_subject_type))
+(call system_read_kernel_sysctl (sudo_subject_type))
+(call system_link_keyring (sudo_subject_type))
+
+(call commands_dontaudit_getattr_all_exec_files (sudo_subject_type))
+
+(call devices_getattr_all (sudo_subject_type))
+(call devices_read_urandom (sudo_subject_type))
+
+(call filesystems_list_devtmpfs (sudo_subject_type))
+(call filesystems_dontaudit_getattr_devtmpfs_chr_files (sudo_subject_type))
+(call filesystems_dontaudit_getattr_devtmpfs_blk_files (sudo_subject_type))
+
+(call files_read_config_files (sudo_subject_type))
+
+(call selinux_compute_relabel_context (sudo_subject_type))
+(call selinux_validate_context (sudo_subject_type))
+
+(call subject_common_type (sudo_subject_type))
+(call subject_role_change_exemption (sudo_subject_type))
+
+(call audit_client_subject_type (sudo_subject_type))
+
+(call auth_read_authconfig_pam_config (sudo_subject_type))
+(call auth_read_pam_config (sudo_subject_type))
+(call auth_read_utmp_runtime_files (sudo_subject_type))
+(call auth_nsswitch_client_subject_type (sudo_subject_type))
+
+(call miscfiles_read_locale (sudo_subject_type))
+
+(call seutil_read_selinux_config_files (sudo_subject_type))
+(call seutil_read_default_context_files (sudo_subject_type))
+
+(call sudo_read_config (sudo_subject_type))
+(call sudo_read_pam_config_files (sudo_subject_type))
+
+(call usersubject_relabel_terminals (sudo_subject_type))
+(call usersubject_setattr_terminals (sudo_subject_type))
+(call usersubject_use_terminals (sudo_subject_type))
+
+(optional sudo_optional_dbus
+    (call dbus_system_client_subject_type (sudo_subject_type)))
+
+(optional sudo_subject_type_optional_initctl
+    (call initctl_getattr_systemd_runtime_fifo_files (sudo_subject_type)))
+
+(optional sudo_subject_type_optional_journal
+    (call journal_client_subject_type (sudo_subject_type)))
+
+(optional sudo_subject_type_optional_login_logind
+    (call login_logind_client_subject_type (sudo_subject_type)))
+
+(optional sudo_subject_type_optional_systemd
+    (call systemd_getpgid (sudo_subject_type))
+    (call systemd_link_keyring (sudo_subject_type)))
+
+(type visudo_exec_t)
+(call applications_app (sudo_visudo_subject_type visudo_exec_t))
+
+(context visudo_exec (system_u object_r visudo_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/visudo" file visudo_exec)
+
+(allow sudo_visudo_subject_type self (capability (dac_override)))
+(allow sudo_visudo_subject_type self create_unix_stream_socket_perms)
+
+(call manage_files_pattern (sudo_visudo_subject_type sudo_config_t sudo_config_t))
+(call files_config_object_type_transition (sudo_visudo_subject_type sudo_config_t file "*"))
+
+(call subject_common_type (sudo_visudo_subject_type))
+
+(call auth_nsswitch_client_subject_type (sudo_visudo_subject_type))
+
+(call sudo_list_config (sudo_visudo_subject_type))
+
+(macro sudo_exec ((type ARG1))
+    (call can_exec (ARG1 sudo_exec_t)))
+
+(macro sudo_exec_visudo ((type ARG1))
+    (call can_exec (ARG1 visudo_exec_t)))
+
+(macro sudo_subject_type ((type ARG1))
+    (typeattributeset sudo_subject_type ARG1))
+
+(macro sudo_visudo_subject_type ((type ARG1))
+    (typeattributeset sudo_visudo_subject_type ARG1))
+
+(macro sudo_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 sudo_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (allow ARG3 ARG2 (key (search create link write)))
+    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call auth_run_chkpwd (ARG3 ARG1))
+    (call sudo_subject_type (ARG3)))
+
+(macro sudo_role_template_visudo ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 visudo_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call sudo_visudo_subject_type (ARG3)))
+
+(macro sudo_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 sudo_config_t search_dir_perms))
+
+(macro sudo_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 sudo_config_t list_dir_perms))
+
+(macro sudo_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 sudo_config_t sudo_config_t)))
+
+(macro sudo_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 sudo_config_t sudo_config_t)))
+
+(macro sudo_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 sudo_config_t read_file_perms)
+    (allow ARG1 sudo_config_t list_dir_perms)
+    (allow ARG1 sudo_config_t read_lnk_file_perms))
+
+(macro sudo_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 sudo_config_t manage_file_perms)
+    (allow ARG1 sudo_config_t manage_dir_perms)
+    (allow ARG1 sudo_config_t manage_lnk_file_perms))
+
+(macro sudo_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (call read_files_pattern (ARG1 sudo_pam_config_t sudo_pam_config_t)))
+
+(macro sudo_search_var ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 sudo_var_t search_dir_perms))
+
+(macro sudo_list_var ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 sudo_var_t list_dir_perms))
+
+(macro sudo_read_var_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_files_pattern (ARG1 sudo_var_t sudo_var_t)))
+
+(macro sudo_read_var_lnk_files ((type ARG1))
+    (call files_search_var (ARG1))
+    (call read_lnk_files_pattern (ARG1 sudo_var_t sudo_var_t)))
+
+(macro sudo_read_var ((type ARG1))
+    (call files_search_var (ARG1))
+    (allow ARG1 sudo_var_t read_file_perms)
+    (allow ARG1 sudo_var_t list_dir_perms)
+    (allow ARG1 sudo_var_t read_lnk_file_perms))
+
+(macro sudo_manage_var ((type ARG1))
+    (call files_rw_var_dirs (ARG1))
+    (allow ARG1 sudo_var_t manage_file_perms)
+    (allow ARG1 sudo_var_t manage_dir_perms)
+    (allow ARG1 sudo_var_t manage_lnk_file_perms))
+
+(macro sudo_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sudo_runtime_t search_dir_perms))
+
+(macro sudo_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sudo_runtime_t list_dir_perms))
+
+(macro sudo_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 sudo_runtime_t sudo_runtime_t)))
+
+(macro sudo_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 sudo_runtime_t sudo_runtime_t)))
+
+(macro sudo_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sudo_runtime_t read_file_perms)
+    (allow ARG1 sudo_runtime_t list_dir_perms)
+    (allow ARG1 sudo_runtime_t read_lnk_file_perms))
+
+(macro sudo_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 sudo_runtime_t manage_file_perms)
+    (allow ARG1 sudo_runtime_t manage_dir_perms)
+    (allow ARG1 sudo_runtime_t manage_lnk_file_perms))
+
+(macro sudo_read_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 sudo_tmpfs_t read_file_perms))
+
+(macro sudo_manage_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 sudo_tmpfs_t manage_file_perms))
+
+(macro sudo_send_signal ((type ARG1))
+    (allow ARG1 sudo_subject_type (process (signal))))
+
+(macro sudo_send_sigchld ((type ARG1))
+    (allow ARG1 sudo_subject_type (process (sigchld))))
+
+(macro sudo_use_fd ((type ARG1))
+    (allow ARG1 sudo_subject_type (fd (use))))
+
+(macro sudo_rw_inherited_fifo_files ((type ARG1))
+    (allow ARG1 sudo_subject_type rw_inherited_fifo_file_perms))

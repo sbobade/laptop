@@ -1,0 +1,160 @@
+(sid port)
+(sid netif)
+(sid netmsg)
+(sid node)
+
+(typeattribute network_netif_object_type)
+(typeattribute network_node_object_type)
+(typeattribute network_packet_object_type)
+(typeattribute network_peer_object_type)
+(typeattribute network_port_object_type)
+
+(typeattribute network_ephemeral_port_object_type)
+(typeattribute network_reserved_port_object_type)
+(typeattribute network_rpc_port_object_type)
+(typeattribute network_unreserved_port_object_type)
+
+(typeattribute network_unconfined_subject_type)
+
+(type port_t)
+(call network_port_object_type (port_t))
+
+(context port (system_u object_r port_t (systemlow systemlow)))
+(sidcontext port port)
+
+(type ephemeral_port_t)
+(call network_ephemeral_port_object_type (ephemeral_port_t))
+(context ephemeral_port (system_u object_r ephemeral_port_t (systemlow systemlow)))
+(portcon "tcp" (32768 61000) ephemeral_port)
+(portcon "udp" (32768 61000) ephemeral_port)
+
+(type hi_reserved_port_t)
+(call network_hi_reserved_port_object_type (hi_reserved_port_t))
+
+(context hi_reserved_port (system_u object_r hi_reserved_port_t (systemlow systemlow)))
+(portcon "tcp" (512 1023) hi_reserved_port)
+(portcon "udp" (512 1023) hi_reserved_port)
+
+(type reserved_port_t)
+(call network_reserved_port_object_type (reserved_port_t))
+
+(context reserved_port (system_u object_r reserved_port_t (systemlow systemlow)))
+(portcon "tcp" (1 511) reserved_port)
+(portcon "udp" (1 511) reserved_port)
+
+(type unreserved_port_t)
+(call network_unreserved_port_object_type (unreserved_port_t))
+
+(context unreserved_port (system_u object_r unreserved_port_t (systemlow systemlow)))
+(portcon "tcp" (1024 32767) unreserved_port)
+(portcon "udp" (1024 32767) unreserved_port)
+(portcon "tcp" (61001 65535) unreserved_port)
+(portcon "udp" (61001 65535) unreserved_port)
+
+(type node_t)
+(call network_node_object_type (node_t))
+
+(context node (system_u object_r node_t (systemlow mls_systemhigh)))
+(sidcontext node node)
+
+(type netif_t)
+(call network_netif_object_type (netif_t))
+
+(context netif (system_u object_r netif_t (systemlow mls_systemhigh)))
+(sidcontext netif netif)
+
+(type packet_t)
+(call network_packet_object_type (packet_t))
+
+(type peer_t)
+(call network_peer_object_type (peer_t))
+
+(context peer (system_u object_r peer_t (mls_systemhigh mls_systemhigh)))
+(sidcontext netmsg peer)
+
+(call system_object_type (network_netif_object_type))
+(call system_object_type (network_node_object_type))
+(call system_object_type (network_packet_object_type))
+(call system_object_type (network_peer_object_type))
+(call system_object_type (network_port_object_type))
+
+(allow network_unconfined_subject_type network_node_object_type (node (all)))
+(allow network_unconfined_subject_type network_netif_object_type (netif (all)))
+(allow network_unconfined_subject_type network_packet_object_type (packet (all)))
+
+(allow network_unconfined_subject_type network_port_object_type (tcp_socket
+    (send_msg recv_msg name_bind name_connect)))
+(allow network_unconfined_subject_type network_port_object_type (udp_socket
+    (send_msg recv_msg name_bind)))
+(allow network_unconfined_subject_type network_port_object_type (rawip_socket
+    (send_msg recv_msg name_bind)))
+(allow network_unconfined_subject_type network_port_object_type (dccp_socket
+    (send_msg recv_msg name_bind name_connect)))
+
+(allow network_unconfined_subject_type network_node_object_type (tcp_socket
+    (node_bind)))
+(allow network_unconfined_subject_type network_node_object_type (udp_socket
+    (node_bind)))
+(allow network_unconfined_subject_type network_node_object_type (rawip_socket
+    (node_bind)))
+(allow network_unconfined_subject_type network_node_object_type (dccp_socket
+    (node_bind)))
+
+(call system_recvfrom_unlabeled_tcp_sockets (network_unconfined_subject_type))
+(call system_recvfrom_unlabeled_udp_sockets (network_unconfined_subject_type))
+(call system_recvfrom_unlabeled_rawip_sockets (network_unconfined_subject_type))
+(call system_recvfrom_unlabeled_dccp_sockets (network_unconfined_subject_type))
+(call system_recv_unlabeled_peers (network_unconfined_subject_type))
+
+(macro network_ephemeral_port_object_type ((type ARG1))
+    (call network_port_object_type (ARG1))
+    (typeattributeset network_ephemeral_port_object_type ARG1))
+
+(macro network_hi_reserved_port_object_type ((type ARG1))
+    (call network_port_object_type (ARG1))
+    (typeattributeset network_reserved_port_object_type ARG1)
+    (typeattributeset network_rpc_port_object_type ARG1))
+
+(macro network_netif_object_type ((type ARG1))
+    (typeattributeset network_netif_object_type ARG1))
+
+(macro network_node_object_type ((type ARG1))
+    (typeattributeset network_node_object_type ARG1))
+
+(macro network_packet_object_type ((type ARG1))
+    (typeattributeset network_packet_object_type ARG1))
+
+(macro network_peer_object_type ((type ARG1))
+    (typeattributeset network_peer_object_type ARG1))
+
+(macro network_port_object_type ((type ARG1))
+    (typeattributeset network_port_object_type ARG1))
+
+(macro network_reserved_port_object_type ((type ARG1))
+    (call network_port_object_type (ARG1))
+    (typeattributeset network_reserved_port_object_type ARG1))
+
+(macro network_unreserved_port_object_type ((type ARG1))
+    (call network_port_object_type (ARG1))
+    (typeattributeset network_unreserved_port_object_type ARG1))
+
+(macro network_udp_bind_all_unreserved_ports ((type ARG1))
+    (allow ARG1 network_unreserved_port_object_type (udp_socket (name_bind))))
+
+(macro network_tcp_bind_generic_node ((type ARG1))
+    (allow ARG1 node_t (tcp_socket (node_bind))))
+
+(macro network_udp_bind_generic_node ((type ARG1))
+    (allow ARG1 node_t (udp_socket (node_bind))))
+
+(macro network_dontaudit_tcp_connect_all_ports ((type ARG1))
+    (dontaudit ARG1 network_port_object_type (tcp_socket (name_connect))))
+
+(macro network_dontaudit_tcp_bind_all_ports ((type ARG1))
+    (dontaudit ARG1 network_port_object_type (tcp_socket (name_bind))))
+
+(macro network_dontaudit_udp_bind_all_ports ((type ARG1))
+    (dontaudit ARG1 network_port_object_type (udp_socket (name_bind))))
+
+(macro network_unconfined_subject_type ((type ARG1))
+    (typeattributeset network_unconfined_subject_type ARG1))

@@ -1,0 +1,156 @@
+(roleattribute dmcrypt_role)
+(roleattribute dmsetup_role)
+
+(typeattribute dm_admin_subject_type)
+
+(typeattribute dm_object_type)
+
+(type dmeventd_t)
+(type dmeventd_exec_t)
+(call subject_common_type (dmeventd_t))
+(call subject_entry (dmeventd_t dmeventd_exec_t))
+(roletype system_r dmeventd_t)
+
+(context dmeventd_exec (system_u object_r dmeventd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/dmeventd" file dmeventd_exec)
+
+(type dmeventd_runtime_t)
+(call files_runtime_object_type (dmeventd_runtime_t))
+
+(typeattributeset dm_object_type dmeventd_runtime_t)
+
+(context dmeventd_runtime (system_u object_r dmeventd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/dmeventd-client" pipe dmeventd_runtime)
+(filecon "/var/run/dmeventd-server" pipe dmeventd_runtime)
+(filecon "/var/run/dmeventd\.pid" file dmeventd_runtime)
+
+(optional dmeventd_optional_systemd
+    (call systemd_daemon (dmeventd_t dmeventd_exec_t))
+
+    (type dmeventd_unit_t)
+    (call systemd_unit_object_type (dmeventd_unit_t))
+
+    (typeattributeset dm_object_type dmeventd_unit_t)
+
+    (context dmeventd_unit (system_u object_r dmeventd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/dm-event.*" file dmeventd_unit)
+
+    (call systemd_socket_activated (dmeventd_t dmeventd_runtime_t))
+
+    (allow dm_admin_subject_type dmeventd_unit_t (service (all))))
+
+(type dmsetup_t)
+(type dmsetup_exec_t)
+(call applications_app (dmsetup_t dmsetup_exec_t))
+(roletype dmsetup_role dmsetup_t)
+
+(roleattributeset dmsetup_role system_r)
+
+(context dmsetup_exec (system_u object_r dmsetup_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/dmsetup" file dmsetup_exec)
+
+(allow dmsetup_t self (capability (sys_admin)))
+
+(call system_get_sysvipc_info (dmsetup_t))
+
+(call devices_rw_lvm_control (dmsetup_t))
+
+(call dm_rw_dmcrypt_sem (dmsetup_t))
+
+(call udev_client_subject_type (dmsetup_t))
+(call udev_rw_inherited_udevd_udp_sockets (dmsetup_t))
+
+(optional dmsetup_optional_cryptsetup
+    (call cryptsetup_rw_sem (dmsetup_t)))
+
+(optional dmsetup_optional_lvm
+    (call lvm_rw_lvm_sem (dmsetup_t)))
+
+(optional dmsetup_optional_systemd
+    (call systemd_daemon (dmsetup_t dmsetup_exec_t)))
+
+(optional dmsetup_optional_unconfined
+    (call unconfined_rw_sem_all_subjects (dmsetup_t)))
+
+(type dmcrypt_t)
+(type dmcrypt_exec_t)
+(call applications_app (dmcrypt_t dmcrypt_exec_t))
+(roletype dmcrypt_role dmcrypt_t)
+
+(roleattributeset dmcrypt_role system_r)
+
+(context dmcrypt_exec (system_u object_r dmcrypt_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/cryptsetup" file dmcrypt_exec)
+
+(allow dmcrypt_t self (capability (ipc_lock sys_admin sys_nice)))
+(allow dmcrypt_t self (process (setsched)))
+(allow dmcrypt_t self create_socket_perms)
+(allow dmcrypt_t self (socket (accept)))
+(allow dmcrypt_t self create_sem_perms)
+
+(call system_get_sysvipc_info (dmcrypt_t))
+(call system_read_crypto_sysctl (dmcrypt_t))
+(call system_request_load_module (dmcrypt_t))
+
+(call filesystems_getattr_devtmpfs_filesystems (dmcrypt_t))
+(call filesystems_list_devtmpfs (dmcrypt_t))
+(call filesystems_list_debugfs (dmcrypt_t))
+(call filesystems_read_devtmpfs_lnk_files (dmcrypt_t))
+(call filesystems_read_sysfs (dmcrypt_t))
+
+(call devices_read_urandom (dmcrypt_t))
+(call devices_read_random (dmcrypt_t))
+(call devices_rw_lvm_control (dmcrypt_t))
+
+(call storage_rw_fixed_disk (dmcrypt_t))
+(call storage_rw_removable (dmcrypt_t))
+(call storage_rw_scsi_generic (dmcrypt_t))
+
+(call miscfiles_read_locale (dmcrypt_t))
+
+(call udev_client_subject_type (dmcrypt_t))
+
+(allow dm_admin_subject_type dmeventd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (dm_admin_subject_type dmeventd_t))
+
+(allow dm_admin_subject_type dm_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro dm_exec_dmsetup ((type ARG1))
+    (call can_exec (ARG1 dmsetup_exec_t)))
+
+(macro dm_exec_dmcrypt ((type ARG1))
+    (call can_exec (ARG1 dmsetup_exec_t)))
+
+(macro dm_auto_subject_type_transition_dmsetup ((type ARG1))
+    (call dm_send_signal_dmsetup (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dmsetup_exec_t dmsetup_t)))
+
+(macro dm_send_signal_dmsetup ((type ARG1))
+    (allow ARG1 dmsetup_t (process (signal))))
+
+(macro dm_run_dmsetup ((type ARG1)(role ARG2))
+    (call dm_auto_subject_type_transition_dmsetup (ARG1))
+    (roleattributeset dmsetup_role ARG2))
+
+(macro dm_auto_subject_type_transition_dmcrypt ((type ARG1))
+    (call dm_send_signal_dmcrypt (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dmcrypt_exec_t dmcrypt_t)))
+
+(macro dm_send_signal_dmcrypt ((type ARG1))
+    (allow ARG1 dmcrypt_t (process (signal))))
+
+(macro dm_run_dmcrypt ((type ARG1)(role ARG2))
+    (call dm_auto_subject_type_transition_dmcrypt (ARG1))
+    (roleattributeset dmcrypt_role ARG2))
+
+(macro dm_rw_dmcrypt_sem ((type ARG1))
+    (allow ARG1 dmcrypt_t rw_sem_perms))
+
+(macro dm_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset dm_admin_subject_type ARG1)
+    (optional dm_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

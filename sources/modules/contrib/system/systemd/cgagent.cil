@@ -1,0 +1,30 @@
+(type cgagent_t)
+(type cgagent_exec_t)
+(call subject_common_type (cgagent_t))
+(call subject_entry (cgagent_t cgagent_exec_t))
+(roletype system_r cgagent_t)
+
+(context cgagent_exec (system_u object_r cgagent_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-cgroups-agent" file cgagent_exec)
+
+(allow cgagent_t self (capability (net_admin)))
+
+(call devices_write_kmsg (cgagent_t))
+
+(call files_search_config (cgagent_t))
+
+(call journal_client_subject_type (cgagent_t))
+
+(call systemd_read_state (cgagent_t))
+(call systemd_stream_connect (cgagent_t))
+
+(macro cgagent_exec ((type ARG1))
+    (call can_exec (ARG1 cgagent_exec_t)))
+
+(macro cgagent_auto_subject_type_transition ((type ARG1))
+    (call cgagent_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 cgagent_exec_t cgagent_t)))
+
+(macro cgagent_send_signal ((type ARG1))
+    (allow ARG1 cgagent_t (process (signal))))

@@ -1,0 +1,180 @@
+(class security (compute_av compute_create compute_member
+    check_context load_policy compute_relabel compute_user
+    setenforce setbool setsecparam setcheckreqprot read_policy))
+
+(class process (fork transition sigchld sigkill sigstop signull
+    signal ptrace getsched setsched getsession getpgid setpgid getcap
+    setcap share getattr setexec setfscreate noatsecure siginh
+    setrlimit rlimitinh dyntransition setcurrent execmem execstack
+    execheap setkeycreate setsockcreate))
+
+(class system (ipc_info syslog_read syslog_mod syslog_console
+    module_request halt reboot status start stop undefined enable
+    disable reload))
+
+(class capability (chown dac_override dac_read_search fowner fsetid
+    kill setgid setuid setpcap linux_immutable net_bind_service
+    net_broadcast net_admin net_raw ipc_lock ipc_owner sys_module
+    sys_rawio sys_chroot sys_ptrace sys_pacct sys_admin sys_boot
+    sys_nice sys_resource sys_time sys_tty_config mknod lease
+    audit_write audit_control setfcap))
+
+(class filesystem (mount remount unmount getattr relabelfrom
+    relabelto transition associate quotamod quotaget))
+
+(common file (ioctl read write create getattr setattr lock
+    relabelfrom relabelto append unlink link rename execute swapon
+    quotaon mounton))
+
+(classcommon file file)
+(class file (audit_access open execmod execute_no_trans entrypoint))
+
+(classcommon dir file)
+(class dir (audit_access open execmod add_name remove_name reparent
+    search rmdir))
+
+(class fd (use))
+
+(classcommon lnk_file file)
+
+(class lnk_file (audit_access open execmod))
+(classcommon chr_file file)
+
+(class chr_file (audit_access open execmod))
+
+(classcommon blk_file file)
+(class blk_file (audit_access open execmod))
+
+(classcommon sock_file file)
+(class sock_file (audit_access open execmod))
+
+(classcommon fifo_file file)
+(class fifo_file (audit_access open execmod))
+
+(common socket (ioctl read write create getattr setattr lock
+    relabelfrom relabelto append bind connect listen accept getopt
+    setopt shutdown recvfrom sendto recv_msg send_msg name_bind))
+
+(classcommon socket socket)
+(class socket ())
+
+(classcommon tcp_socket socket)
+(class tcp_socket (connectto newconn acceptfrom node_bind
+    name_connect))
+
+(classcommon udp_socket socket)
+(class udp_socket (node_bind))
+
+(classcommon rawip_socket socket)
+(class rawip_socket (node_bind))
+
+(class node (tcp_recv tcp_send udp_recv udp_send rawip_recv
+    rawip_send enforce_dest dccp_recv dccp_send recvfrom sendto))
+
+(class netif (tcp_recv tcp_send udp_recv udp_send rawip_recv
+    rawip_send dccp_recv dccp_send ingress egress))
+
+(classcommon netlink_socket socket)
+(class netlink_socket ())
+
+(classcommon packet_socket socket)
+(class packet_socket ())
+
+(classcommon key_socket socket)
+(class key_socket ())
+
+(classcommon unix_stream_socket socket)
+(class unix_stream_socket (connectto newconn acceptfrom))
+
+(classcommon unix_dgram_socket socket)
+(class unix_dgram_socket ())
+
+(common ipc (create destroy getattr setattr read write associate
+    unix_read unix_write))
+
+(classcommon sem ipc)
+(class sem ())
+
+(class msg (send receive))
+
+(classcommon msgq ipc)
+(class msgq (enqueue))
+
+(classcommon shm ipc)
+(class shm (lock))
+
+(classcommon ipc ipc)
+(class ipc ())
+
+(class passwd (passwd chfn chsh rootok crontab))
+
+(classcommon netlink_route_socket socket)
+(class netlink_route_socket (nlmsg_read nlmsg_write))
+
+(classcommon netlink_firewall_socket socket)
+(class netlink_firewall_socket (nlmsg_read nlmsg_write))
+
+(classcommon netlink_tcpdiag_socket socket)
+(class netlink_tcpdiag_socket (nlmsg_read nlmsg_write))
+
+(classcommon netlink_nflog_socket socket)
+(class netlink_nflog_socket ())
+
+(classcommon netlink_xfrm_socket socket)
+(class netlink_xfrm_socket (nlmsg_read nlmsg_write))
+
+(classcommon netlink_selinux_socket socket)
+(class netlink_selinux_socket ())
+
+(classcommon netlink_audit_socket socket)
+(class netlink_audit_socket (nlmsg_read nlmsg_write nlmsg_relay
+    nlmsg_readpriv nlmsg_tty_audit))
+
+(classcommon netlink_ip6fw_socket socket)
+(class netlink_ip6fw_socket (nlmsg_read nlmsg_write))
+
+(classcommon netlink_dnrt_socket socket)
+(class netlink_dnrt_socket ())
+
+(class dbus (acquire_svc send_msg))
+
+(class association (sendto recvfrom setcontext polmatch))
+
+(classcommon netlink_kobject_uevent_socket socket)
+(class netlink_kobject_uevent_socket ())
+
+(classcommon appletalk_socket socket)
+(class appletalk_socket ())
+
+(class packet (send recv relabelto forward_in forward_out))
+
+(class key (view read write search link setattr create))
+
+(classcommon dccp_socket socket)
+(class dccp_socket (node_bind name_connect))
+
+(class memprotect (mmap_zero))
+
+(class peer (recv))
+
+(class capability2 (audit_read mac_override mac_admin syslog
+    wake_alarm block_suspend))
+
+(class kernel_service (use_as_override create_files_as))
+
+(classcommon tun_socket socket)
+
+(class tun_socket (attach_queue))
+
+(class service (stop status disable enable reload start))
+
+(classorder (security process system capability filesystem file
+    dir fd lnk_file chr_file blk_file sock_file fifo_file socket
+    tcp_socket udp_socket rawip_socket node netif netlink_socket
+    packet_socket key_socket unix_stream_socket unix_dgram_socket
+    sem msg msgq shm ipc passwd netlink_route_socket netlink_firewall_socket
+    netlink_tcpdiag_socket netlink_nflog_socket netlink_xfrm_socket
+    netlink_selinux_socket netlink_audit_socket netlink_ip6fw_socket
+    netlink_dnrt_socket dbus association netlink_kobject_uevent_socket
+    appletalk_socket packet key dccp_socket memprotect peer
+    capability2 kernel_service tun_socket service))

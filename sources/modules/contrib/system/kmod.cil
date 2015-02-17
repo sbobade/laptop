@@ -1,0 +1,109 @@
+(roleattribute kmod_role)
+
+(typeattribute kmod_object_type)
+(typeattribute kmod_admin_subject_type)
+
+(type kmod_t)
+(type kmod_exec_t)
+(call applications_app (kmod_t kmod_exec_t))
+(roletype kmod_role kmod_t)
+
+(roleattributeset kmod_role system_r)
+
+(context kmod_exec (system_u object_r kmod_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/kmod" file kmod_exec)
+
+(type kmod_config_t)
+(call files_config_object_type (kmod_config_t))
+
+(typeattributeset kmod_object_type kmod_config_t)
+
+(context kmod_config (system_u object_r kmod_config_t (systemlow systemlow)))
+(filecon "/etc/depmod\.d(/.*)?" any kmod_config)
+(filecon "/etc/modprobe\.d(/.*)?" any kmod_config)
+
+(call system_link_keyring (kmod_t))
+(call system_load_kernel_module (kmod_t))
+(call system_request_load_module (kmod_t))
+
+(call filesystems_list_debugfs (kmod_t))
+(call filesystems_read_sysfs (kmod_t))
+
+(call kmod_read_config (kmod_t))
+
+(call miscfiles_read_modules (kmod_t))
+
+(optional kmod_optional_iptables
+    (call iptables_dontaudit_rw_inherited_rawip_sockets (kmod_t))
+    (call iptables_dontaudit_rw_inherited_stream_sockets (kmod_t)))
+
+(optional kmod_optional_systemd
+    (call systemd_daemon (kmod_t kmod_exec_t))
+
+    (type kmod_unit_t)
+    (call systemd_unit_object_type (kmod_unit_t))
+
+    (typeattributeset kmod_object_type kmod_unit_t)
+
+    (context kmod_unit (system_u object_r kmod_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*kmod-static-nodes.*" file kmod_unit)
+
+    (allow kmod_admin_subject_type kmod_unit_t (service (all))))
+
+(optional kmod_optional_tmpfiles
+    (call tmpfiles_manage_runtime_files (kmod_t)))
+
+(allow kmod_admin_subject_type kmod_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (kmod_admin_subject_type kmod_t))
+
+(allow kmod_admin_subject_type kmod_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro kmod_exec ((type ARG1))
+    (call can_exec (ARG1 kmod_exec_t)))
+
+(macro kmod_auto_subject_type_transition ((type ARG1))
+    (call kmod_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 kmod_exec_t kmod_t)))
+
+(macro kmod_run ((type ARG1)(role ARG2))
+    (call kmod_auto_subject_type_transition (ARG1))
+    (roleattributeset kmod_role (ARG2)))
+
+(macro kmod_send_signal ((type ARG1))
+    (allow ARG1 kmod_t (process (signal))))
+
+(macro kmod_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 kmod_config_t search_dir_perms))
+
+(macro kmod_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 kmod_config_t list_dir_perms))
+
+(macro kmod_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 kmod_config_t kmod_config_t)))
+
+(macro kmod_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 kmod_config_t kmod_config_t)))
+
+(macro kmod_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 kmod_config_t read_file_perms)
+    (allow ARG1 kmod_config_t list_dir_perms)
+    (allow ARG1 kmod_config_t read_lnk_file_perms))
+
+(macro kmod_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 kmod_config_t manage_file_perms)
+    (allow ARG1 kmod_config_t manage_dir_perms)
+    (allow ARG1 kmod_config_t manage_lnk_file_perms))
+
+(macro kmod_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset kmod_admin_subject_type ARG1)
+    (optional kmod_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

@@ -1,0 +1,333 @@
+(boolean subject_execheap true)
+(boolean subject_execmem true)
+(boolean subject_execstack true)
+(boolean subject_mmap_low true)
+(boolean subject_ptrace_all true)
+
+(typeattribute subject_type)
+(typeattribute subject_common_type)
+(typeattribute subject_entry_object_type)
+(typeattribute subject_unconfined_subject_type)
+
+(typeattribute subject_can_change_object_identity)
+(typeattribute subject_can_change_subject_identity)
+(typeattribute subject_can_change_subject_role)
+(typeattribute subject_can_change_system_identity)
+(typeattribute subject_can_change_system_role)
+(typeattribute subject_uncond_exempt)
+(typeattribute subject_user_target)
+
+(type subject_execheap_t)
+(call selinux_bool_object_type (subject_execheap_t))
+
+(context subject_execheap (system_u object_r subject_execheap_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/subject_execheap" subject_execheap)
+
+(type subject_execmem_t)
+(call selinux_bool_object_type (subject_execmem_t))
+
+(context subject_execmem (system_u object_r subject_execmem_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/subject_execmem" subject_execmem)
+
+(type subject_execstack_t)
+(call selinux_bool_object_type (subject_execstack_t))
+
+(context subject_execstack (system_u object_r subject_execstack_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/subject_execstack" subject_execstack)
+
+(type subject_mmap_low_t)
+(call selinux_bool_object_type (subject_mmap_low_t))
+
+(context subject_mmap_low (system_u object_r subject_mmap_low_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/subject_mmap_low" subject_mmap_low)
+
+(type subject_ptrace_all_t)
+(call selinux_bool_object_type (subject_ptrace_all_t))
+
+(context subject_ptrace_all (system_u object_r subject_ptrace_all_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/subject_ptrace_all" subject_ptrace_all)
+
+(call system_subject_type (subject_common_type))
+
+(call commands_exec_object_type (subject_entry_object_type))
+
+(typeattribute subject_not_subject_entry_object_type)
+(typeattributeset subject_not_subject_entry_object_type (not
+    (subject_entry_object_type)))
+(neverallow subject_type subject_not_subject_entry_object_type
+    (file (entrypoint)))
+
+(typeattribute subject_not_subject_type)
+(typeattributeset subject_not_subject_type (not subject_type))
+(neverallow subject_type subject_not_subject_type (process (transition
+    dyntransition)))
+
+(typeattribute subject_can_set_current_context)
+(typeattribute subject_can_not_set_current_context)
+(typeattributeset subject_can_not_set_current_context
+    (and (subject_type) (not (subject_can_set_current_context))))
+(neverallow subject_can_not_set_current_context self (process (setcurrent)))
+
+(typeattribute subject_can_execheap)
+(typeattribute subject_can_not_execheap)
+(typeattributeset subject_can_not_execheap
+    (and (subject_type) (not (subject_can_execheap))))
+(neverallow subject_can_not_execheap self (process (execheap)))
+
+(typeattribute subject_can_execmem)
+(typeattribute subject_can_not_execmem)
+(typeattributeset subject_can_not_execmem
+    (and (subject_type) (not (subject_can_execmem))))
+(neverallow subject_can_not_execmem self (process (execmem)))
+
+(typeattribute subject_can_execstack)
+(typeattribute subject_can_not_execstack)
+(typeattributeset subject_can_not_execstack
+    (and (subject_type) (not (subject_can_execstack))))
+(neverallow subject_can_not_execstack self (process (execstack)))
+
+(typeattribute subject_can_mmap_low)
+(typeattribute subject_can_not_mmap_low)
+(typeattributeset subject_can_not_mmap_low
+    (and (subject_type) (not (subject_can_mmap_low))))
+(neverallow subject_can_not_mmap_low self (memprotect (mmap_zero)))
+
+(allow subject_type self (process (sigkill signal signull sigstop)))
+
+(allow subject_type self rw_file_perms)
+(allow subject_type self list_dir_perms)
+(allow subject_type self read_lnk_file_perms)
+
+(call filesystems_search_rootfs (subject_type))
+
+(optional subject_type_optional_systemd
+    (call systemd_send_sigchld (subject_type)))
+
+(optional subject_type_optional_shutdown
+    (call shutdown_send_sigchld (subject_type)))
+
+(allow subject_common_type self (process (fork sigchld)))
+
+(call system_read_vm_overcommit_sysctl (subject_common_type))
+
+(call commands_search (subject_common_type))
+
+(call filesystems_read_proc_files (subject_common_type))
+(call filesystems_read_proc_lnk_files (subject_common_type))
+(call filesystems_search_sysfs (subject_common_type))
+
+(call devices_rw_devtty (subject_common_type))
+(call devices_rw_null (subject_common_type))
+(call devices_rw_zero (subject_common_type))
+
+(call selinux_getattr_filesystems (subject_common_type))
+
+(optional subject_common_type_optional_libraries
+    (call libraries_use_ld_so (subject_common_type))
+    (call libraries_use_shared_libs (subject_common_type)))
+
+(allow subject_unconfined_subject_type subject_type
+    all_process_perms_except_transition_ptrace_setsched_dyntransition_setcurrent_execmem_execstack_and_execheap)
+(allow subject_unconfined_subject_type subject_type rw_file_perms)
+(allow subject_unconfined_subject_type subject_type list_dir_perms)
+(allow subject_unconfined_subject_type subject_type read_lnk_file_perms)
+(allow subject_unconfined_subject_type subject_type (fd (all)))
+(allow subject_unconfined_subject_type subject_type (socket (all)))
+(allow subject_unconfined_subject_type subject_type create_tcp_stream_socket_perms)
+(allow subject_unconfined_subject_type subject_type create_udp_socket_perms)
+(allow subject_unconfined_subject_type subject_type create_rawip_socket_perms)
+(allow subject_unconfined_subject_type subject_type (netlink_socket (all)))
+(allow subject_unconfined_subject_type subject_type (packet_socket (all)))
+(allow subject_unconfined_subject_type subject_type (unix_stream_socket (all)))
+(allow subject_unconfined_subject_type subject_type (unix_dgram_socket (all)))
+(allow subject_unconfined_subject_type subject_type (sem (all)))
+(allow subject_unconfined_subject_type subject_type (msg (all)))
+(allow subject_unconfined_subject_type subject_type (msgq (all)))
+(allow subject_unconfined_subject_type subject_type (shm (all)))
+(allow subject_unconfined_subject_type subject_type (ipc (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_route_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_firewall_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_tcpdiag_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_nflog_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_xfrm_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_selinux_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_audit_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_ip6fw_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_dnrt_socket (all)))
+(allow subject_unconfined_subject_type subject_type (netlink_kobject_uevent_socket (all)))
+(allow subject_unconfined_subject_type subject_type (appletalk_socket (all)))
+(allow subject_unconfined_subject_type subject_type (key (all)))
+(allow subject_unconfined_subject_type subject_type create_dccp_stream_socket_perms)
+(allow subject_unconfined_subject_type subject_type (tun_socket (all)))
+
+(call subject_dynamic_subject_type_transition_subject (subject_unconfined_subject_type))
+
+(call subject_execheap (subject_unconfined_subject_type))
+(call subject_execmem (subject_unconfined_subject_type))
+(call subject_execstack (subject_unconfined_subject_type))
+(call subject_mmap_low (subject_unconfined_subject_type))
+(call subject_ptrace_all (subject_unconfined_subject_type))
+
+(call subject_object_identity_change_exemption (subject_unconfined_subject_type))
+(call subject_uncond_exemption (subject_unconfined_subject_type))
+
+(allow subject_unconfined_subject_type subject_entry_object_type (file (entrypoint)))
+
+(macro subject_type ((type ARG1))
+    (typeattributeset subject_type ARG1))
+
+(macro subject_common_type ((type ARG1))
+    (call subject_type (ARG1))
+    (typeattributeset subject_common_type ARG1))
+
+(macro subject_system_change_exemption ((type ARG1))
+    (call subject_system_identity_change_exemption (ARG1))
+    (call subject_system_role_change_exemption (ARG1)))
+
+(macro subject_system_identity_change_exemption ((type ARG1))
+    (typeattributeset subject_can_change_system_identity ARG1))
+
+(macro subject_system_role_change_exemption ((type ARG1))
+    (typeattributeset subject_can_change_system_role ARG1))
+
+(macro subject_change_exemption ((type ARG1))
+    (call subject_identity_change_exemption (ARG1))
+    (call subject_role_change_exemption (ARG1)))
+
+(macro subject_identity_change_exemption ((type ARG1))
+    (typeattributeset subject_can_change_subject_identity ARG1))
+
+(macro subject_role_change_exemption ((type ARG1))
+    (typeattributeset subject_can_change_subject_role ARG1))
+
+(macro subject_object_identity_change_exemption ((type ARG1))
+    (typeattributeset subject_can_change_object_identity ARG1))
+
+(macro subject_uncond_exemption ((type ARG1))
+    (typeattributeset subject_uncond_exempt ARG1))
+
+(macro subject_user_exemption_target ((type ARG1))
+    (typeattributeset subject_user_target ARG1))
+
+(macro subject_dynamic_subject_type_transition_subject ((type ARG1))
+    (typeattributeset subject_can_set_current_context ARG1))
+
+(macro subject_entry ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (file (entrypoint)))
+    (allow ARG1 ARG2 mmap_file_perms)
+    (call subject_entry_object_type (ARG2)))
+
+(macro subject_entry_object_type ((type ARG1))
+    (typeattributeset subject_entry_object_type ARG1))
+
+(macro subject_getattr_all_subjects ((type ARG1))
+    (allow ARG1 subject_type (process (getattr))))
+
+(macro subject_read_all_subjects_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 subject_type read_file_perms)
+    (allow ARG1 subject_type list_dir_perms)
+    (allow ARG1 subject_type read_lnk_file_perms))
+
+(macro subject_dontaudit_getattr_all_common_subjects ((type ARG1))
+    (dontaudit ARG1 subject_common_type (process (getattr))))
+
+(macro subject_getattr_all_common_subjects ((type ARG1))
+    (allow ARG1 subject_common_type (process (getattr))))
+
+(macro subject_dontaudit_read_all_common_subjects_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (dontaudit ARG1 subject_common_type read_file_perms)
+    (dontaudit ARG1 subject_common_type list_dir_perms)
+    (dontaudit ARG1 subject_common_type read_lnk_file_perms))
+
+(macro subject_read_all_common_subjects_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 subject_common_type read_file_perms)
+    (allow ARG1 subject_common_type list_dir_perms)
+    (allow ARG1 subject_common_type read_lnk_file_perms))
+
+(macro subject_getpgid_all_subjects ((type ARG1))
+    (allow ARG1 subject_type (process (getpgid))))
+
+(macro subject_getpgid_all_common_subjects ((type ARG1))
+    (allow ARG1 subject_common_type (process (getpgid))))
+
+(macro subject_send_sigkill_all_subjects ((type ARG1))
+    (allow ARG1 subject_type (process (sigkill))))
+
+(macro subject_send_sigkill_all_common_subjects ((type ARG1))
+    (allow ARG1 subject_common_type (process (sigkill))))
+
+(macro subject_send_signal_all_subjects ((type ARG1))
+    (allow ARG1 subject_type (process (signal))))
+
+(macro subject_send_signal_all_common_subjects ((type ARG1))
+    (allow ARG1 subject_common_type (process (signal))))
+
+(macro subject_send_signull_all_subjects ((type ARG1))
+    (allow ARG1 subject_type (process (signull))))
+
+(macro subject_send_signull_all_common_subjects ((type ARG1))
+    (allow ARG1 subject_common_type (process (signull))))
+
+(macro subject_send_sigstop_all_subjects ((type ARG1))
+    (allow ARG1 subject_type (process (sigstop))))
+
+(macro subject_send_sigstop_all_common_subjects ((type ARG1))
+    (allow ARG1 subject_common_type (process (sigstop))))
+
+(macro subject_execheap ((type ARG1))
+    (typeattributeset subject_can_execheap ARG1)
+    (booleanif subject_execheap
+        (true
+            (allow ARG1 self (process (execheap))))))
+
+(macro subject_execheap_uncond ((type ARG1))
+    (allow ARG1 self (process (execheap)))
+    (typeattributeset subject_can_execheap ARG1))
+
+(macro subject_execmem ((type ARG1))
+    (typeattributeset subject_can_execmem ARG1)
+    (booleanif subject_execmem
+        (true
+            (allow ARG1 self (process (execmem))))))
+
+(macro subject_execmem_uncond ((type ARG1))
+    (allow ARG1 self (process (execmem)))
+    (typeattributeset subject_can_execmem ARG1))
+
+(macro subject_execstack ((type ARG1))
+    (typeattributeset subject_can_execmem ARG1)
+    (typeattributeset subject_can_execstack ARG1)
+    (booleanif subject_execstack
+        (true
+            (allow ARG1 self (process (execmem execstack))))))
+
+(macro subject_execstack_uncond ((type ARG1))
+    (allow ARG1 self (process (execmem execstack)))
+    (typeattributeset subject_can_execmem ARG1)
+    (typeattributeset subject_can_execstack ARG1))
+
+(macro subject_mmap_low ((type ARG1))
+    (typeattributeset subject_can_mmap_low ARG1)
+    (booleanif subject_mmap_low
+        (true
+            (allow ARG1 self (memprotect (mmap_zero))))))
+
+(macro subject_mmap_low_uncond ((type ARG1))
+    (allow ARG1 self (memprotect (mmap_zero)))
+    (typeattributeset subject_can_mmap_low ARG1))
+
+(macro subject_ptrace_all ((type ARG1))
+    (booleanif subject_ptrace_all
+        (true
+            (allow ARG1 self (capability (sys_ptrace)))
+            (allow ARG1 subject_type (process (ptrace))))))
+
+(macro subject_ptrace_all_uncond ((type ARG1))
+    (allow ARG1 self (capability (sys_ptrace)))
+    (allow ARG1 subject_type (process (ptrace))))
+
+(macro subject_unconfined_subject_type ((type ARG1))
+    (typeattributeset subject_unconfined_subject_type ARG1))

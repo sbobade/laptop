@@ -1,0 +1,181 @@
+(type dhclient_t)
+(type dhclient_exec_t)
+(call subject_common_type (dhclient_t))
+(call subject_entry (dhclient_t dhclient_exec_t))
+(roletype system_r dhclient_t)
+
+(context dhclient_exec (system_u object_r dhclient_exec_t (systemlow systemlow)))
+(filecon "/etc/NetworkManager/dispatcher\.d/[^/]*dhclient" file dhclient_exec)
+(filecon "/usr/sbin/dhclient.*" file dhclient_exec)
+
+(type dhcp_config_t)
+(call files_config_object_type (dhcp_config_t))
+
+(context dhcp_config (system_u object_r dhcp_config_t (systemlow systemlow)))
+(filecon "/etc/dhcp(/.*)?" any dhcp_config)
+
+(type dhclient_runtime_t)
+(call files_runtime_object_type (dhclient_runtime_t))
+
+(context dhclient_runtime (system_u object_r dhclient_runtime_t (systemlow systemlow)))
+(filecon "/var/run/dhclient.*" file dhclient_runtime)
+
+(allow dhclient_t dhclient_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (dhclient_t dhclient_runtime_t file "*"))
+
+(type dhclient_lib_t)
+(call files_lib_object_type (dhclient_lib_t))
+
+(context dhclient_lib (system_u object_r dhclient_lib_t (systemlow systemlow)))
+(filecon "/var/lib/dhclient(/.*)?" any dhclient_lib)
+
+(allow dhclient_t dhclient_lib_t manage_dir_perms)
+(allow dhclient_t dhclient_lib_t manage_file_perms)
+(call files_lib_object_type_transition (dhclient_t dhclient_lib_t dir "*"))
+
+(allow dhclient_t self (capability (net_raw)))
+(allow dhclient_t self (process (setcap)))
+(allow dhclient_t self create_packet_socket_perms)
+(allow dhclient_t self rw_fifo_file_perms)
+
+(call system_read_kernel_sysctl (dhclient_t))
+
+(call commands_exec (dhclient_t))
+(call commands_mmap_shell (dhclient_t))
+
+(call files_read_config_files (dhclient_t))
+
+(call network_udp_bind_all_unreserved_ports (dhclient_t))
+(call network_udp_bind_generic_node (dhclient_t))
+
+(call auth_nsswitch_client_subject_type (dhclient_t))
+
+(call dhcp_read_config (dhclient_t))
+(call dhcp_udp_bind_dhcp_port (dhclient_t))
+
+(call miscfiles_read_cert_files (dhclient_t))
+(call miscfiles_read_locale (dhclient_t))
+(call miscfiles_read_net_config_files (dhclient_t))
+
+(optional dhclient_optional_nm
+    (call nm_exec_nmhelper (dhclient_t))
+    (call nm_read_config_files (dhclient_t))
+    (call nm_manage_lib_files (dhclient_t))
+    (call nm_stream_connect (dhclient_t)))
+
+(optional dhclient_optional_ntp
+    (call ntp_auto_subject_type_transition (dhclient_t))
+    (call ntp_exec_ntphelper (dhclient_t)))
+
+(optional dhclient_optional_journal
+    (call journal_client_subject_type (dhclient_t)))
+
+(optional dhclient_optional_systemd
+    (call systemd_daemon (dhclient_t dhclient_exec_t)))
+
+(type dhcp_port_t)
+(call network_reserved_port_object_type (dhcp_port_t))
+
+(context dhcp_port (system_u object_r dhcp_port_t (systemlow systemlow)))
+(portcon "tcp" 67 dhcp_port)
+(portcon "udp" 67 dhcp_port)
+(portcon "tcp" 68 dhcp_port)
+(portcon "udp" 68 dhcp_port)
+
+(macro dhcp_exec_dhclient ((type ARG1))
+    (call can_exec (ARG1 dhclient_exec_t)))
+
+(macro dhcp_auto_subject_type_transition_dhclient ((type ARG1))
+    (call dhcp_send_signal_dhclient (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dhclient_exec_t dhclient_t)))
+
+(macro dhcp_send_signal_dhclient ((type ARG1))
+    (allow ARG1 dhclient_t (process (signal))))
+
+(macro dhcp_send_sigkill_dhclient ((type ARG1))
+    (allow ARG1 dhclient_t (process (sigkill))))
+
+(macro dhcp_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dhcp_config_t search_dir_perms))
+
+(macro dhcp_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dhcp_config_t list_dir_perms))
+
+(macro dhcp_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 dhcp_config_t dhcp_config_t)))
+
+(macro dhcp_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 dhcp_config_t dhcp_config_t)))
+
+(macro dhcp_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dhcp_config_t read_file_perms)
+    (allow ARG1 dhcp_config_t list_dir_perms)
+    (allow ARG1 dhcp_config_t read_lnk_file_perms))
+
+(macro dhcp_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 dhcp_config_t manage_file_perms)
+    (allow ARG1 dhcp_config_t manage_dir_perms)
+    (allow ARG1 dhcp_config_t manage_lnk_file_perms))
+
+(macro dhcp_search_dhclient_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dhclient_lib_t search_dir_perms))
+
+(macro dhcp_list_dhclient_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dhclient_lib_t list_dir_perms))
+
+(macro dhcp_read_dhclient_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 dhclient_lib_t dhclient_lib_t)))
+
+(macro dhcp_setattr_dhclient_lib_dirs ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call setattr_dirs_pattern (ARG1 dhclient_lib_t dhclient_lib_t)))
+
+(macro dhcp_setattr_dhclient_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call setattr_files_pattern (ARG1 dhclient_lib_t dhclient_lib_t)))
+
+(macro dhcp_setattr_dhclient_lib ((type ARG1))
+    (call dhcp_setattr_dhclient_lib_dirs (ARG1))
+    (call dhcp_setattr_dhclient_lib_files (ARG1)))
+
+(macro dhcp_read_dhclient_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 dhclient_lib_t dhclient_lib_t)))
+
+(macro dhcp_read_dhclient_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dhclient_lib_t read_file_perms)
+    (allow ARG1 dhclient_lib_t list_dir_perms)
+    (allow ARG1 dhclient_lib_t read_lnk_file_perms))
+
+(macro dhcp_manage_dhclient_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 dhclient_lib_t manage_file_perms)
+    (allow ARG1 dhclient_lib_t manage_dir_perms)
+    (allow ARG1 dhclient_lib_t manage_lnk_file_perms))
+
+(macro dhcp_read_dhclient_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dhclient_runtime_t read_file_perms))
+
+(macro dhcp_delete_dhclient_runtime_files ((type ARG1))
+    (call files_del_entry_runtime (ARG1))
+    (allow ARG1 dhclient_runtime_t delete_file_perms))
+
+(macro dhcp_manage_dhclient_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 dhclient_runtime_t manage_file_perms))
+
+(macro dhcp_udp_bind_dhcp_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 dhcp_port_t (udp_socket (name_bind))))

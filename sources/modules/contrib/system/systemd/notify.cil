@@ -1,0 +1,27 @@
+(roleattribute notify_role)
+
+(type notify_t)
+(type notify_exec_t)
+(call applications_app (notify_t notify_exec_t))
+(call systemd_daemon (notify_t notify_exec_t))
+(roletype notify_role notify_t)
+
+(context notify_exec (system_u object_r notify_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-notify" file notify_exec)
+
+(call files_read_config_files (notify_t))
+
+(macro notify_exec ((type ARG1))
+    (call can_exec (ARG1 notify_exec_t)))
+
+(macro notify_auto_subject_type_transition ((type ARG1))
+    (call notify_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 notify_exec_t notify_t)))
+
+(macro notify_send_signal ((type ARG1))
+    (allow ARG1 notify_t (process (signal))))
+
+(macro notify_run ((type ARG1)(role ARG2))
+    (call notify_auto_subject_type_transition (ARG1))
+    (roleattributeset notify_role ARG2))
