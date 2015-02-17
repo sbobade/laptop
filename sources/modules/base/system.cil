@@ -634,8 +634,20 @@
 (macro system_dontaudit_list_invalid ((type ARG1))
     (dontaudit ARG1 invalid_t list_dir_perms))
 
+(macro system_list_invalid ((type ARG1))
+    (allow ARG1 invalid_t list_dir_perms))
+
+(macro system_relabelfrom_invalid ((type ARG1))
+    (allow ARG1 invalid_t (all_file_objects (relabelfrom))))
+
 (macro system_read_invalid_files ((type ARG1))
     (call read_files_pattern (ARG1 invalid_t invalid_t)))
+
+(macro system_list_unlabeled ((type ARG1))
+    (allow ARG1 unlabeled_t list_dir_perms))
+
+(macro system_relabelfrom_unlabeled ((type ARG1))
+    (allow ARG1 unlabeled_t (all_file_objects (relabelfrom))))
 
 (macro system_recvfrom_unlabeled_tcp_sockets ((type ARG1))
     (allow ARG1 unlabeled_t (tcp_socket (recvfrom))))

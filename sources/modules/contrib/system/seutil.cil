@@ -55,13 +55,19 @@
 
 (allow setfiles_t self (capability (dac_override fowner)))
 
-(call system_list_mountpoints (setfiles_t))
+(call system_list_invalid (setfiles_t))
+(call system_relabelfrom_invalid (setfiles_t))
+
+(call system_list_unlabeled (setfiles_t))
+(call system_relabelfrom_unlabeled (setfiles_t))
 
 (call devices_relabel_all (setfiles_t))
 
+(call files_list_all (setfiles_t))
 (call files_relabel_all_except (setfiles_t))
 
 (call filesystems_getattr_all_filesystems (setfiles_t))
+(call filesystems_list_all (setfiles_t))
 (call filesystems_read_cgroup_files (setfiles_t))
 (call filesystems_relabel_all (setfiles_t))
 

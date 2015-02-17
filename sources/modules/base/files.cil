@@ -1250,6 +1250,9 @@
 (macro files_setattr_all_dirs_except ((type ARG1))
     (allow ARG1 files_except (dir (setattr))))
 
+(macro files_list_all ((type ARG1))
+    (allow ARG1 files_object_type list_dir_perms))
+
 (macro files_list_all_except ((type ARG1))
     (allow ARG1 files_except list_dir_perms))
 

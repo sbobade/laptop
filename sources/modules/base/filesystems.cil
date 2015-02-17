@@ -568,6 +568,9 @@
 (macro filesystems_dontaudit_list_all ((type ARG1))
     (dontaudit ARG1 filesystems_object_type list_dir_perms))
 
+(macro filesystems_list_all ((type ARG1))
+    (allow ARG1 filesystems_object_type list_dir_perms))
+
 (macro filesystems_mount_autofs ((type ARG1))
     (allow ARG1 autofs_fs_t (filesystem (mount))))
 
