@@ -19,8 +19,6 @@
 
 (roleattributeset authconfig_role system_r)
 
-(typeattributeset auth_subject_type authconfig_t)
-
 (context authconfig_exec (system_u object_r authconfig_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/authconfig" file authconfig_exec)
 (filecon "/usr/share/authconfig/authconfig\.py" file authconfig_exec)
@@ -154,8 +152,6 @@
 
 (roleattributeset utempter_role system_r)
 
-(typeattributeset auth_subject_type utempter_t)
-
 (context utempter_exec (system_u object_r utempter_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/utempter/utempter" file utempter_exec)
 
@@ -233,6 +229,8 @@
 
 (type utmp_runtime_t)
 (call files_runtime_object_type (utmp_runtime_t))
+
+(typeattributeset auth_object_type utmp_runtime_t)
 
 (context utmp_runtime (system_u object_r utmp_runtime_t (systemlow systemlow)))
 (filecon "/var/run/utmp" file utmp_runtime)
@@ -594,7 +592,7 @@
 
 (macro auth_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))
-    (typeattributeset auth_admin_type ARG1))
+    (typeattributeset auth_admin_subject_type ARG1))
 
 (macro auth_unconfined_subject_type ((type ARG1))
     (typeattributeset auth_unconfined_subject_type ARG1))
