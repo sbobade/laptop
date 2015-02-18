@@ -1,0 +1,16 @@
+(type irc_port_t)
+(call network_unreserved_port_object_type (irc_port_t))
+
+(context irc_port (system_u object_r irc_port_t (systemlow systemlow)))
+(portcon "tcp" 6667 irc_port)
+(portcon "udp" 6667 irc_port)
+(portcon "tcp" 6697 irc_port)
+(portcon "udp" 6697 irc_port)
+(portcon "tcp" 7000 irc_port)
+(portcon "udp" 7000 irc_port)
+
+(macro irc_tcp_connect_irc_port ((type ARG1))
+    (allow ARG1 irc_port_t (tcp_socket (name_connect))))
+
+(macro irc_tcp_bind_irc_port ((type ARG1))
+    (allow ARG1 irc_port_t (tcp_socket (name_bind))))

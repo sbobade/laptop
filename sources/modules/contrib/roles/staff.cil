@@ -48,6 +48,17 @@
     (filecon "/home/kcinimod/\.bti" file staff_bti_home)
     (filecon "/home/kcinimod/\.bti\.log.*" file staff_bti_home))
 
+(optional staff_optional_irc
+    (type staff_irssi_t)
+    (call irc_role_template_irssi (staff_r staff_t staff_irssi_t))
+
+    (call irc_manage_irssi_home (staff_t))
+    (call irc_relabel_irssi_home (staff_t))
+    (call irc_home_dir_object_type_transition_irssi_home (staff_t dir ".irssi"))
+
+    (context staff_irssi_home (staff_u object_r irssi_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.irssi(/.*)?" any staff_irssi_home))
+
 (optional staff_optional_pa
     (call pa_run (staff_t staff_r))
     (call pa_run_pactl (staff_t staff_r))
