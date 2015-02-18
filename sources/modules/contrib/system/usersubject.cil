@@ -618,6 +618,9 @@
     (call usersubject_home_dir_object_type_transition (ARG1 exec_home_t dir "bin"))
     (call usersubject_data_home_object_type_transition (ARG1 exec_home_t dir "bin")))
 
+(macro usersubject_home_dir_object_type_transition_exec_home ((type ARG1)(class ARG2)(name ARG3))
+    (call usersubject_home_dir_object_type_transition (ARG1 exec_home_t ARG2 ARG3)))
+
 (macro usersubject_exec_home_object_entry ((type ARG1))
     (call subject_entry (ARG1 exec_home_t)))
 

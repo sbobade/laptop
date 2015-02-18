@@ -1,6 +1,10 @@
 (roleattribute xserver_role)
+(roleattribute xserver_wrap_role)
+(roleattribute xserver_xauth_role)
 
 (typeattribute xserver_client_subject_type)
+
+(typeattribute xserver_xinit_subject_type)
 
 (type xserver_t)
 (type xserver_exec_t)
@@ -119,12 +123,12 @@
 (type xserver_wrap_t)
 (type xserver_wrap_exec_t)
 (call applications_app (xserver_wrap_t xserver_wrap_exec_t))
-(roletype xserver_role xserver_wrap_t)
+(roletype xserver_wrap_role xserver_wrap_t)
 
 (context xserver_wrap_exec (system_u object_r xserver_wrap_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/Xorg\.wrap" file xserver_wrap_exec)
 
-(call xserver_auto_subject_type_transition (xserver_wrap_t))
+(call xserver_run (xserver_wrap_t xserver_wrap_role))
 (call xserver_read_config_files (xserver_wrap_t))
 
 (type xsession_exec_t)
@@ -133,33 +137,27 @@
 (context xsession_exec (system_u object_r xsession_exec_t (systemlow systemlow)))
 (filecon "/etc/X11/xinit/Xsession" any xsession_exec)
 
-(type xinit_t)
 (type xinit_exec_t)
-(call applications_app (xinit_t xinit_exec_t))
-(roletype xserver_role xinit_t)
+(call applications_app (xserver_xinit_subject_type xinit_exec_t))
 
 (context xinit_exec (system_u object_r xinit_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/xinit" file xinit_exec)
 
-(allow xinit_t self (process (setpgid)))
+(allow xserver_xinit_subject_type self (process (setpgid)))
 
-(call commands_exec (xinit_t))
-(call commands_exec_shell (xinit_t))
+(call filesystems_search_tmpfs (xserver_xinit_subject_type))
 
-(call filesystems_search_tmpfs (xinit_t))
+(call auth_nsswitch_client_subject_type (xserver_xinit_subject_type))
 
-(call auth_nsswitch_client_subject_type (xinit_t))
+(call miscfiles_read_net_config_files (xserver_xinit_subject_type))
+(call miscfiles_read_locale (xserver_xinit_subject_type))
 
-(call miscfiles_read_net_config_files (xinit_t))
-(call miscfiles_read_locale (xinit_t))
-
-(call xserver_tcp_connect_xserver_port (xinit_t))
+(call xserver_tcp_connect_xserver_port (xserver_xinit_subject_type))
 
 (type xauth_t)
 (type xauth_exec_t)
-(call subject_common_type (xauth_t))
 (call applications_app (xauth_t xauth_exec_t))
-(roletype xserver_role xauth_t)
+(roletype xserver_xauth_role xauth_t)
 
 (context xauth_exec (system_u object_r xauth_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/xauth" file xauth_exec)
@@ -214,13 +212,22 @@
 (macro xserver_send_signal_wrap ((type ARG1))
     (allow ARG1 xserver_wrap_t (process (signal))))
 
-(macro xserver_auto_subject_type_transition_xinit ((type ARG1))
-    (call xserver_send_signal_xinit (ARG1))
-    (call auto_subject_type_transition_pattern
-        (ARG1 xinit_exec_t xinit_t)))
+(macro xserver_run_wrap ((type ARG1)(role ARG2))
+    (call xserver_auto_subject_type_transition_wrap (ARG1))
+    (roleattributeset xserver_wrap_role ARG2))
 
-(macro xserver_send_signal_xinit ((type ARG1))
-    (allow ARG1 xinit_t (process (signal))))
+(macro xserver_xinit_subject_type ((type ARG1))
+    (typeattributeset xserver_xinit_subject_type ARG1))
+
+(macro xserver_role_template_xinit ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 xinit_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
+    (call xserver_xinit_subject_type (ARG3)))
 
 (macro xserver_auto_subject_type_transition_xauth ((type ARG1))
     (call xserver_send_signal_xauth (ARG1))
@@ -229,6 +236,10 @@
 
 (macro xserver_send_signal_xauth ((type ARG1))
     (allow ARG1 xauth_t (process (signal))))
+
+(macro xserver_run_xauth ((type ARG1)(role ARG2))
+    (call xserver_auto_subject_type_transition_xauth (ARG1))
+    (roleattributeset xserver_xauth_role ARG2))
 
 (macro xserver_search_config ((type ARG1))
     (call files_search_config (ARG1))
@@ -356,6 +367,9 @@
 (macro xserver_relabel_home_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 xserver_home_t relabel_file_perms))
+
+(macro xserver_home_dir_object_type_transition_xserver_home ((type ARG1)(class ARG2)(name ARG3))
+    (call usersubject_home_dir_object_type_transition (ARG1 xserver_home_t ARG2 ARG3)))
 
 (macro xserver_client_subject ((type ARG1))
     (typeattributeset xserver_client_subject_type ARG1))

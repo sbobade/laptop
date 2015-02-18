@@ -86,23 +86,6 @@
     (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home)
 )
 
-(optional staff_optional_rp
-    (type staff_rp_t)
-    (call rp_role_template (staff_r staff_t staff_rp_t))
-
-    (call rp_manage_home_files (staff_t))
-    (call rp_relabel_home_files (staff_t))
-    (call rp_home_dir_object_type_transition_home_files (staff_t))
-
-    (context staff_rp_home (staff_u object_r rp_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.ratpoisonrc" file staff_rp_home)
-    (filecon "/home/kcinimod/\.ratpoison_history" file staff_rp_home)
-
-    (call rp_run_rpws (staff_t staff_r))
-
-    (call rp_manage_rpws_tmpfs_files (staff_t))
-    (call rp_relabel_rpws_tmpfs_files (staff_t)))
-
 (optional staff_optional_screen
     (type staff_screen_t)
     (call screen_role_template (staff_r staff_t staff_screen_t))
@@ -159,6 +142,50 @@
 (optional staff_optional_unconfined
     (call unconfined_subject_type (staff_t))
 )
+
+(optional staff_optional_xserver
+    (type staff_xinit_t)
+    (call xserver_role_template_xinit (staff_r staff_t staff_xinit_t))
+
+    (call xserver_run_xauth (staff_t staff_r))
+
+    (call xserver_manage_xauth_home_files (staff_t))
+    (call xserver_relabel_xauth_home_files (staff_t))
+
+    (context staff_xauth_home (staff_u object_r xauth_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.Xauthority.*" file staff_xauth_home)
+    (filecon "/home/kcinimod/\.serverauth.*" file staff_xauth_home)
+
+    (call usersubject_home_dir_object_type_transition_exec_home (staff_t file ".xinitrc"))
+
+    (filecon "/home/kcinimod/\.xinitrc" file staff_exec_home)
+
+    (context staff_xserver_home (staff_u object_r xserver_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.xserverrc" file staff_xserver_home)
+
+    (call xserver_manage_home_files (staff_t))
+    (call xserver_relabel_home_files (staff_t))
+
+    (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc"))
+
+    (call xserver_run_wrap (staff_xinit_t staff_r))
+
+    (optional staff_optional_rp
+        (type staff_rp_t)
+        (call rp_role_template (staff_r staff_xinit_t staff_rp_t))
+
+        (call rp_manage_home_files (staff_t))
+        (call rp_relabel_home_files (staff_t))
+        (call rp_home_dir_object_type_transition_home_files (staff_t))
+
+        (context staff_rp_home (staff_u object_r rp_home_t (systemlow systemlow)))
+        (filecon "/home/kcinimod/\.ratpoisonrc" file staff_rp_home)
+        (filecon "/home/kcinimod/\.ratpoison_history" file staff_rp_home)
+
+        (call rp_run_rpws (staff_t staff_r))
+
+        (call rp_manage_rpws_tmpfs_files (staff_t))
+        (call rp_relabel_rpws_tmpfs_files (staff_t))))
 
 (macro staff_rw_inherited_fifo_files ((type ARG1))
     (allow ARG1 staff_t rw_inherited_fifo_file_perms))
