@@ -51,6 +51,8 @@
 
 (call devices_rw_sound (pa_t))
 
+(call files_dontaudit_list_all (pa_t))
+(call files_dontaudit_read_all_lnk_files (pa_t))
 (call files_read_data (pa_t))
 
 (call filesystems_getattr_proc_filesystems (pa_t))
@@ -73,6 +75,9 @@
 
 (optional pa_optional_login_logind
     (call login_read_logind_systemd_runtime (pa_t)))
+
+(optional pa_optional_xserver
+    (call xserver_client_subject_type (pa_t)))
 
 (type pactl_t)
 (type pactl_exec_t)
@@ -99,6 +104,8 @@
 
 (allow pa_client_subject_type pa_tmpfs_object_type delete_file_perms)
 (allow pa_client_subject_type pa_tmpfs_object_type read_file_perms)
+
+(allow pa_client_subject_type pa_t (unix_stream_socket (connectto)))
 
 (call devices_read_urandom (pa_client_subject_type))
 
@@ -337,3 +344,7 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call stream_connect_pattern (ARG1 pa_tmpfs_t pa_tmpfs_t pa_t)))
+
+(macro pa_tmpfs_client_template ((type ARG1)(role ARG2)(type ARG3))
+    (call pa_client (ARG1 ARG2))
+    (call pa_tmpfs_object_type (ARG3)))

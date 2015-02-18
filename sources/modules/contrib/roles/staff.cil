@@ -59,7 +59,7 @@
     (call gstreamer_cache_home_object_type_transition_cache_home_dirs (staff_t))
 
     (context staff_gstreamer_cache_home (staff_u object_r gstreamer_cache_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.cache/gstreamer-1\.0" file staff_gstreamer_cache_home))
+    (filecon "/home/kcinimod/\.cache/gstreamer-1\.0(/.*)?" any staff_gstreamer_cache_home))
 
 (optional staff_optional_irc
     (type staff_irssi_t)
@@ -194,6 +194,30 @@
     (call xserver_relabel_home_files (staff_t))
 
     (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc"))
+
+    (optional staff_xserver_firefox
+        (call firefox_run (staff_t staff_r))
+        (call firefox_run_xremotec (staff_t staff_r))
+
+        (call firefox_manage_home (staff_t))
+        (call firefox_relabel_home (staff_t))
+        (call firefox_home_dir_object_type_transition_home_dirs (staff_t))
+
+        (context staff_firefox_home (staff_u object_r firefox_home_t (systemlow systemlow)))
+        (filecon "/home/kcinimod/\.mozilla(/.*)?" any staff_firefox_home)
+
+        (call firefox_manage_cache_home (staff_t))
+        (call firefox_relabel_cache_home (staff_t))
+        (call firefox_cache_home_object_type_transition_cache_home_dirs (staff_t))
+
+        (context staff_firefox_cache_home (staff_u object_r firefox_cache_home_t (systemlow systemlow)))
+        (filecon "/home/kcinimod/\.cache/mozilla(/.*)?" any staff_firefox_cache_home)
+
+        (call firefox_manage_tmpfs_files (staff_t))
+        (call firefox_relabel_tmpfs_files (staff_t))
+
+        (call firefox_manage_plugs_tmpfs_files (staff_t))
+        (call firefox_relabel_plugs_tmpfs_files (staff_t)))
 
     (optional staff_xserver_optional_rp
         (type staff_rp_t)

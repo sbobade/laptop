@@ -281,6 +281,10 @@
     (call usersubject_rw_home_dir_dirs (ARG1))
     (call manage_files_pattern (ARG1 user_home_t user_home_t)))
 
+(macro usersubject_manage_user_home_dirs ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 user_home_t user_home_t)))
+
 (macro usersubject_read_user_home_lnk_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
     (call read_lnk_files_pattern (ARG1 user_home_t user_home_t)))
@@ -719,8 +723,10 @@
     (allow ARG1 fonts_home_t read_lnk_file_perms))
 
 (macro usersubject_manage_fonts_home ((type ARG1))
-    (call usersubject_rw_home_dir_dirs (ARG1))
+    (call usersubject_home_dir_object_type_transition_cache_home_dirs (ARG1))
+    (call usersubject_create_cache_home_dirs (ARG1))
     (call usersubject_rw_cache_home_dirs (ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
     (allow ARG1 fonts_home_t manage_file_perms)
     (allow ARG1 fonts_home_t manage_dir_perms)
     (allow ARG1 fonts_home_t manage_lnk_file_perms))

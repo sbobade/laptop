@@ -4,6 +4,9 @@
 
 (typeattribute xserver_client_subject_type)
 
+(typeattribute xserver_tmpfs_client_subject_type)
+(typeattribute xserver_tmpfs_client_object_type)
+
 (typeattribute xserver_xinit_subject_type)
 
 (type xserver_t)
@@ -81,6 +84,11 @@
 (allow xserver_t xserver_xinit_subject_type list_dir_perms)
 (allow xserver_t xserver_xinit_subject_type read_lnk_file_perms)
 
+(allow xserver_tmpfs_client_subject_type self create_shm_perms)
+
+(allow xserver_t xserver_tmpfs_client_subject_type (fd (use)))
+(allow xserver_t xserver_tmpfs_client_object_type (file (read write)))
+
 (call system_write_mtrr_proc (xserver_t))
 
 (call commands_exec (xserver_t))
@@ -131,6 +139,7 @@
 (call xserver_read_xauth_home_files (xserver_client_subject_type))
 (call xserver_stream_connect (xserver_client_subject_type))
 (call xserver_tcp_connect_xserver_port (xserver_client_subject_type))
+(call xserver_use_fd (xserver_client_subject_type))
 
 (optional xserver_client_subject_type_optional_rp
     (call rp_client_subject_type (xserver_client_subject_type)))
@@ -411,3 +420,8 @@
 (macro xserver_stream_connect ((type ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call stream_connect_pattern (ARG1 xserver_tmpfs_t xserver_tmpfs_t xserver_t)))
+
+(macro xserver_tmpfs_client_template ((type ARG1)(type ARG2))
+    (call xserver_client_subject_type (ARG1))
+    (typeattributeset xserver_tmpfs_client_subject_type ARG1)
+    (typeattributeset xserver_tmpfs_client_object_type ARG2))

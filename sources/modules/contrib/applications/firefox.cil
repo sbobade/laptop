@@ -1,0 +1,305 @@
+(roleattribute firefox_role)
+(roleattribute firefox_plugs_role)
+(roleattribute firefox_xremotec_role)
+
+(type firefox_t)
+(type firefox_exec_t)
+(call applications_app (firefox_t firefox_exec_t))
+(roletype firefox_role firefox_t)
+
+(context firefox_exec (system_u object_r firefox_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/firefox" file firefox_exec)
+(filecon "/usr/lib/firefox/firefox" file firefox_exec)
+
+(type firefox_home_t)
+(call usersubject_home_object_type (firefox_home_t))
+
+(type firefox_cache_home_t)
+(call usersubject_cache_home_object_type (firefox_cache_home_t))
+
+(type firefox_tmpfs_t)
+(call usersubject_tmpfs_object_type (firefox_tmpfs_t))
+
+(allow firefox_t self (process (setsched getsched execmem)))
+(allow firefox_t self create_unix_dgram_socket_perms)
+(allow firefox_t self rw_fifo_file_perms)
+
+(allow firefox_t firefox_plugs_t (unix_stream_socket (read write)))
+(allow firefox_t firefox_plugs_t (fd (use)))
+
+(allow firefox_t firefox_home_t manage_dir_perms)
+(allow firefox_t firefox_home_t manage_file_perms)
+(allow firefox_t firefox_home_t manage_lnk_file_perms)
+(call firefox_home_dir_object_type_transition_home_dirs (firefox_t))
+
+(allow firefox_t firefox_cache_home_t manage_dir_perms)
+(allow firefox_t firefox_cache_home_t manage_file_perms)
+(allow firefox_t firefox_cache_home_t manage_lnk_file_perms)
+(call firefox_cache_home_object_type_transition_cache_home_dirs (firefox_t))
+
+(allow firefox_t firefox_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (firefox_t firefox_tmpfs_t file "*"))
+
+(call system_read_crypto_sysctl (firefox_t))
+
+(call commands_exec (firefox_t))
+(call commands_exec_shell (firefox_t))
+
+(call devices_read_urandom (firefox_t))
+(call devices_rw_dri (firefox_t))
+
+(call filesystems_getattr_filesystems (firefox_t))
+(call filesystems_read_devtmpfs_lnk_files (firefox_t))
+(call filesystems_read_sysfs (firefox_t))
+
+(call files_dontaudit_list_all (firefox_t))
+(call files_dontaudit_read_all_lnk_files (firefox_t))
+(call files_read_config (firefox_t))
+(call files_read_data (firefox_t))
+(call files_list_mnt (firefox_t))
+(call files_read_tmp_lnk_files (firefox_t))
+
+(call storage_getattr_fixed_disk (firefox_t))
+(call storage_getattr_removable (firefox_t))
+
+(call subject_execmem_uncond (firefox_t))
+
+(call auth_nsswitch_client_subject_type (firefox_t))
+
+(call firefox_exec (firefox_t))
+(call firefox_run_plugs (firefox_t firefox_role))
+(call firefox_run_xremotec (firefox_t firefox_role))
+
+(call http_tcp_connect_http_port (firefox_t))
+
+(call miscfiles_read_all_certs (firefox_t))
+(call miscfiles_read_net_config_files (firefox_t))
+(call miscfiles_read_fonts (firefox_t))
+(call miscfiles_read_locale (firefox_t))
+
+(call pa_tmpfs_client_template (firefox_t firefox_role firefox_tmpfs_t))
+
+(call udev_client_subject_type (firefox_t))
+
+(call usersubject_manage_fonts_home (firefox_t))
+
+(call usersubject_manage_user_home_files (firefox_t))
+(call usersubject_manage_user_home_dirs (firefox_t))
+(call usersubject_home_dir_object_type_transition_user_home (firefox_t dir "Desktop"))
+(call usersubject_home_dir_object_type_transition_user_home (firefox_t file "*"))
+
+(call xserver_tmpfs_client_template (firefox_t firefox_tmpfs_t))
+
+(optional firefox_optional_dbus
+    (call dbus_system_client_subject_type (firefox_t))
+
+    (optional firefox_optional_nm
+        (call nm_dbus_chat (firefox_t))))
+
+(optional firefox_optional_gstreamer
+    (call gstreamer_client_subject_type (firefox_t)))
+
+(optional firefox_optional_machine
+    (call machine_read_config_files (firefox_t)))
+
+(optional firefox_optional_tor
+    (call tor_tcp_connect_tor_port (firefox_t)))
+
+(type firefox_plugs_t)
+(type firefox_plugs_exec_t)
+(call applications_app (firefox_plugs_t firefox_plugs_exec_t))
+(roletype firefox_plugs_role firefox_plugs_t)
+
+(context firefox_plugs_exec (system_u object_r firefox_plugs_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/firefox/plugin-container" file firefox_plugs_exec)
+
+(type firefox_plugs_tmpfs_t)
+(call usersubject_tmpfs_object_type (firefox_plugs_tmpfs_t))
+
+(allow firefox_plugs_t self (process (setsched execmem)))
+(allow firefox_plugs_t self create_unix_dgram_socket_perms)
+
+(allow firefox_plugs_t firefox_t (unix_stream_socket (read write)))
+
+(allow firefox_plugs_t firefox_plugs_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (firefox_plugs_t firefox_plugs_tmpfs_t file "*"))
+
+(call system_dontaudit_getattr_all_proc_files (firefox_plugs_t))
+(call system_getattr_core_if (firefox_plugs_t))
+(call system_dontaudit_list_all_sysctl (firefox_plugs_t))
+(call system_dontaudit_getattr_all_sysctl_files (firefox_plugs_t))
+
+(call filesystems_list_proc (firefox_plugs_t))
+(call filesystems_getattr_filesystems (firefox_plugs_t))
+
+(call network_tcp_connect_all_ephemeral_ports (firefox_plugs_t))
+
+(call subject_dontaudit_read_all_common_subjects_state (firefox_plugs_t))
+(call subject_execmem_uncond (firefox_plugs_t))
+
+(call usersubject_manage_fonts_home (firefox_plugs_t))
+
+(call xserver_client_subject_type (firefox_plugs_t))
+
+(type firefox_xremotec_t)
+(type firefox_xremotec_exec_t)
+(call applications_app (firefox_xremotec_t firefox_xremotec_exec_t))
+(roletype firefox_xremotec_role firefox_xremotec_t)
+
+(context firefox_xremotec_exec (system_u object_r firefox_xremotec_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/firefox/mozilla-xremote-client" file firefox_xremotec_exec)
+
+(call files_read_config_files (firefox_xremotec_t))
+
+(call usersubject_read_user_home_files (firefox_xremotec_t))
+
+(call xserver_client_subject_type (firefox_xremotec_t))
+
+(macro firefox_exec ((type ARG1))
+    (call can_exec (ARG1 firefox_exec_t)))
+
+(macro firefox_exec_plugs ((type ARG1))
+    (call can_exec (ARG1 firefox_plugs_exec_t)))
+
+(macro firefox_exec_xremotec ((type ARG1))
+    (call can_exec (ARG1 firefox_xremotec_exec_t)))
+
+(macro firefox_auto_subject_type_transition ((type ARG1))
+    (call firefox_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 firefox_exec_t firefox_t)))
+
+(macro firefox_send_signal ((type ARG1))
+    (allow ARG1 firefox_t (process (signal))))
+
+(macro firefox_run ((type ARG1)(role ARG2))
+    (call firefox_auto_subject_type_transition (ARG1))
+    (roleattributeset firefox_role ARG2))
+
+(macro firefox_auto_subject_type_transition_plugs ((type ARG1))
+    (call firefox_send_signal_plugs (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 firefox_plugs_exec_t firefox_t)))
+
+(macro firefox_send_signal_plugs ((type ARG1))
+    (allow ARG1 firefox_plugs_t (process (signal))))
+
+(macro firefox_run_plugs ((type ARG1)(role ARG2))
+    (call firefox_auto_subject_type_transition_plugs (ARG1))
+    (roleattributeset firefox_plugs_role ARG2))
+
+(macro firefox_auto_subject_type_transition_xremotec ((type ARG1))
+    (call firefox_send_signal_xremotec (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 firefox_xremotec_exec_t firefox_xremotec_t)))
+
+(macro firefox_send_signal_xremotec ((type ARG1))
+    (allow ARG1 firefox_xremotec_t (process (signal))))
+
+(macro firefox_run_xremotec ((type ARG1)(role ARG2))
+    (call firefox_auto_subject_type_transition_xremotec (ARG1))
+    (roleattributeset firefox_xremotec_role ARG2))
+
+(macro firefox_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 firefox_home_t search_dir_perms))
+
+(macro firefox_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 firefox_home_t list_dir_perms))
+
+(macro firefox_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 firefox_home_t firefox_home_t)))
+
+(macro firefox_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 firefox_home_t firefox_home_t)))
+
+(macro firefox_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 firefox_home_t read_file_perms)
+    (allow ARG1 firefox_home_t list_dir_perms)
+    (allow ARG1 firefox_home_t read_lnk_file_perms))
+
+(macro firefox_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 firefox_home_t manage_file_perms)
+    (allow ARG1 firefox_home_t manage_dir_perms)
+    (allow ARG1 firefox_home_t manage_lnk_file_perms))
+
+(macro firefox_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 firefox_home_t relabel_file_perms)
+    (allow ARG1 firefox_home_t relabel_dir_perms)
+    (allow ARG1 firefox_home_t relabel_lnk_file_perms))
+
+(macro firefox_home_dir_object_type_transition_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 firefox_home_t dir ".mozilla")))
+
+(macro firefox_search_cache_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 firefox_cache_home_t search_dir_perms))
+
+(macro firefox_list_cache_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 firefox_cache_home_t list_dir_perms))
+
+(macro firefox_read_cache_home_files ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (call read_files_pattern (ARG1 firefox_cache_home_t firefox_cache_home_t)))
+
+(macro firefox_read_cache_home_lnk_files ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 firefox_cache_home_t firefox_cache_home_t)))
+
+(macro firefox_read_cache_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 firefox_cache_home_t read_file_perms)
+    (allow ARG1 firefox_cache_home_t list_dir_perms)
+    (allow ARG1 firefox_cache_home_t read_lnk_file_perms))
+
+(macro firefox_manage_cache_home ((type ARG1))
+    (call usersubject_rw_cache_home_dirs (ARG1))
+    (allow ARG1 firefox_cache_home_t manage_file_perms)
+    (allow ARG1 firefox_cache_home_t manage_dir_perms)
+    (allow ARG1 firefox_cache_home_t manage_lnk_file_perms))
+
+(macro firefox_relabel_cache_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 firefox_cache_home_t relabel_file_perms)
+    (allow ARG1 firefox_cache_home_t relabel_dir_perms)
+    (allow ARG1 firefox_cache_home_t relabel_lnk_file_perms))
+
+(macro firefox_cache_home_object_type_transition_cache_home_dirs ((type ARG1))
+    (call usersubject_cache_home_object_type_transition (ARG1 firefox_cache_home_t dir "mozilla")))
+
+(macro firefox_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 firefox_tmpfs_t read_file_perms))
+
+(macro firefox_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 firefox_tmpfs_t manage_file_perms))
+
+(macro firefox_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 firefox_tmpfs_t relabel_file_perms))
+
+(macro firefox_read_plugs_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 firefox_plugs_tmpfs_t read_file_perms))
+
+(macro firefox_manage_plugs_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 firefox_plugs_tmpfs_t manage_file_perms))
+
+(macro firefox_relabel_plugs_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 firefox_plugs_tmpfs_t relabel_file_perms))

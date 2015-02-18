@@ -24,6 +24,7 @@
 (call filesystems_dontaudit_audit_access_tmpfs_dirs (bti_t))
 
 (call files_dontaudit_list_all (bti_t))
+(call files_dontaudit_read_all_lnk_files (bti_t))
 
 (call auth_nsswitch_client_subject_type (bti_t))
 

@@ -54,7 +54,6 @@
 (call xlock_read_pam_config_files (xlock_t))
 
 (call xserver_client_subject_type (xlock_t))
-(call xserver_use_fd (xlock_t))
 
 (optional xlock_optional_dbus
     (call dbus_system_client_subject_type (xlock_t)))

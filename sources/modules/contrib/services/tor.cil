@@ -1,0 +1,9 @@
+(type tor_port_t)
+(call network_unreserved_port_object_type (tor_port_t))
+
+(context tor_port (system_u object_r tor_port_t (systemlow systemlow)))
+(portcon "tcp" 9050 tor_port)
+(portcon "udp" 9050 tor_port)
+
+(macro tor_tcp_connect_tor_port ((type ARG1))
+    (allow ARG1 tor_port_t (tcp_socket (name_connect))))
