@@ -1,8 +1,8 @@
-(boolean subject_execheap true)
-(boolean subject_execmem true)
-(boolean subject_execstack true)
-(boolean subject_mmap_low true)
-(boolean subject_ptrace_all true)
+(boolean subject_execheap false)
+(boolean subject_execmem false)
+(boolean subject_execstack false)
+(boolean subject_mmap_low false)
+(boolean subject_ptrace_all false)
 
 (typeattribute subject_type)
 (typeattribute subject_common_type)

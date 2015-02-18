@@ -1,4 +1,4 @@
-(boolean terminals_console_login true)
+(boolean terminals_console_login false)
 
 (typeattribute terminals_pty_object_type)
 (typeattribute terminals_serial_object_type)

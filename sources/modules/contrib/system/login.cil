@@ -1,4 +1,4 @@
-(boolean login_priv_user true)
+(boolean login_priv_user false)
 
 (typeattribute login_admin_subject_type)
 (typeattribute login_subject_type)
