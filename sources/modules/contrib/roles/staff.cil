@@ -13,6 +13,10 @@
 (context staff_cert_home (staff_u object_r cert_home_t (systemlow systemlow)))
 (filecon "/home/kcinimod/\.pki(/.*)?" any staff_cert_home)
 
+(context staff_fonts_home (staff_u object_r fonts_home_t (systemlow systemlow)))
+(filecon "/home/kcinimod/\.fontconfig(/.*)?" any staff_fonts_home)
+(filecon "/home/kcinimod/\.cache/fontconfig(/.*)?" any staff_fonts_home)
+
 (context staff_terminfo_home (staff_u object_r terminfo_home_t (systemlow systemlow)))
 (filecon "/home/kcinimod/\.terminfo" file staff_terminfo_home)
 
@@ -81,6 +85,23 @@
     (context staff_pa_home (staff_u object_r pa_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home)
 )
+
+(optional staff_optional_rp
+    (type staff_rp_t)
+    (call rp_role_template (staff_r staff_t staff_rp_t))
+
+    (call rp_manage_home_files (staff_t))
+    (call rp_relabel_home_files (staff_t))
+    (call rp_home_dir_object_type_transition_home_files (staff_t))
+
+    (context staff_rp_home (staff_u object_r rp_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.ratpoisonrc" file staff_rp_home)
+    (filecon "/home/kcinimod/\.ratpoison_history" file staff_rp_home)
+
+    (call rp_run_rpws (staff_t staff_r))
+
+    (call rp_manage_rpws_tmpfs_files (staff_t))
+    (call rp_relabel_rpws_tmpfs_files (staff_t)))
 
 (optional staff_optional_screen
     (type staff_screen_t)

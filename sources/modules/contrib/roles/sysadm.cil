@@ -13,6 +13,10 @@
 (context sysadm_cert_home (sysadm_u object_r cert_home_t (systemlow systemlow)))
 (filecon "/root/\.pki(/.*)?" any sysadm_cert_home)
 
+(context sysadm_fonts_home (sysadm_u object_r fonts_home_t (systemlow systemlow)))
+(filecon "/root/\.fontconfig(/.*)?" any sysadm_fonts_home)
+(filecon "/root/\.cache/fontconfig(/.*)?" any sysadm_fonts_home)
+
 (context sysadm_terminfo_home (sysadm_u object_r terminfo_home_t (systemlow systemlow)))
 (filecon "/root/\.terminfo" file sysadm_terminfo_home)
 

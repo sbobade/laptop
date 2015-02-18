@@ -1,0 +1,106 @@
+(roleattribute rp_rpws_role)
+
+(typeattribute rp_subject_type)
+(typeattribute rp_client_subject_type)
+
+(type rp_exec_t)
+(call applications_app (rp_subject_type rp_exec_t))
+
+(context rp_exec (system_u object_r rp_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/ratpoison" file rp_exec)
+
+(type rp_home_t)
+(call usersubject_home_object_type (rp_home_t))
+
+(allow rp_subject_type rp_client_subject_type (process (getsession)))
+(allow rp_client_subject_type rp_subject_type (process (sigchld)))
+
+(allow rp_subject_type rp_home_t manage_file_perms)
+(call rp_home_dir_object_type_transition_home_files (rp_subject_type))
+
+(call miscfiles_manage_all_fonts_cache (rp_subject_type))
+
+(type rpws_t)
+(type rpws_exec_t)
+(call applications_app (rpws_t rpws_exec_t))
+(roletype rp_rpws_role rpws_t)
+
+(context rpws_exec (system_u object_r rpws_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/rpws" file rpws_exec)
+
+(type rpws_tmpfs_t)
+(call usersubject_tmpfs_object_type (rpws_tmpfs_t))
+
+(allow rpws_t self rw_fifo_file_perms)
+
+(allow rpws_t rpws_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (rpws_t rpws_tmpfs_t file "*"))
+
+(call commands_exec (rpws_t))
+(call commands_exec_shell (rpws_t))
+
+(call devices_read_urandom (rpws_t))
+
+(call rp_exec (rpws_t))
+
+(macro rp_exec ((type ARG1))
+    (call can_exec (ARG1 rp_exec_t)))
+
+(macro rp_subject_type ((type ARG1))
+    (typeattributeset rp_subject_type ARG1))
+
+(macro rp_client_subject_type ((type ARG1))
+    (typeattributeset rp_client_subject_type ARG1))
+
+(macro rp_exec_rpws ((type ARG1))
+    (call can_exec (ARG1 rpws_exec_t)))
+
+(macro rp_auto_subject_type_transition_rpws ((type ARG1))
+    (call rp_send_signal_rpws (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rpws_exec_t rpws_t)))
+
+(macro rp_send_signal_rpws ((type ARG1))
+    (allow ARG1 rpws_t (process (signal))))
+
+(macro rp_run_rpws ((type ARG1)(role ARG2))
+    (call rp_auto_subject_type_transition_rpws (ARG1))
+    (roleattributeset rp_rpws_role ARG2))
+
+(macro rp_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 rp_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
+    (call rp_subject_type (ARG3)))
+
+(macro rp_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 rp_home_t read_file_perms))
+
+(macro rp_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 rp_home_t manage_file_perms))
+
+(macro rp_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 rp_home_t relabel_file_perms))
+
+(macro rp_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 rp_home_t file ".ratpoisonrc"))
+    (call usersubject_home_dir_object_type_transition (ARG1 rp_home_t file ".ratpoison_history")))
+
+(macro rp_read_rpws_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 rpws_tmpfs_t read_file_perms))
+
+(macro rp_manage_rpws_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 rpws_tmpfs_t manage_file_perms))
+
+(macro rp_relabel_rpws_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 rpws_tmpfs_t relabel_file_perms))

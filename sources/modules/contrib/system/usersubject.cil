@@ -46,6 +46,10 @@
 (call usersubject_home_object_type (cert_home_t))
 (call miscfiles_cert_object_type (cert_home_t))
 
+(type fonts_home_t)
+(call usersubject_cache_home_object_type (fonts_home_t))
+(call miscfiles_fonts_cache_object_type (fonts_home_t))
+
 (type terminfo_home_t)
 (call usersubject_home_object_type (terminfo_home_t))
 (call miscfiles_terminfo_config_object_type (terminfo_home_t))
@@ -403,6 +407,10 @@
     (call usersubject_search_home_dir (ARG1))
     (call read_lnk_files_pattern (ARG1 cache_home_object_type cache_home_object_type)))
 
+(macro usersubject_rw_cache_home_dirs ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_t rw_dir_perms))
+
 (macro usersubject_read_all_cache_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 cache_home_object_type (all_file_objects (read))))
@@ -659,6 +667,57 @@
     (call usersubject_manage_cert_home (ARG1))
     (call usersubject_relabel_cert_home (ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 cert_home_t dir ".pki")))
+
+(macro usersubject_search_fonts_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 fonts_home_t search_dir_perms))
+
+(macro usersubject_list_fonts_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 fonts_home_t list_dir_perms))
+
+(macro usersubject_read_fonts_home_files ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (call read_files_pattern (ARG1 fonts_home_t fonts_home_t)))
+
+(macro usersubject_manage_fonts_home_files ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (call manage_files_pattern (ARG1 fonts_home_t fonts_home_t)))
+
+(macro usersubject_read_fonts_home_lnk_files ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 fonts_home_t fonts_home_t)))
+
+(macro usersubject_read_fonts_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 fonts_home_t read_file_perms)
+    (allow ARG1 fonts_home_t list_dir_perms)
+    (allow ARG1 fonts_home_t read_lnk_file_perms))
+
+(macro usersubject_manage_fonts_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (call usersubject_rw_cache_home_dirs (ARG1))
+    (allow ARG1 fonts_home_t manage_file_perms)
+    (allow ARG1 fonts_home_t manage_dir_perms)
+    (allow ARG1 fonts_home_t manage_lnk_file_perms))
+
+(macro usersubject_relabel_fonts_home ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (allow ARG1 fonts_home_t relabel_file_perms)
+    (allow ARG1 fonts_home_t relabel_dir_perms)
+    (allow ARG1 fonts_home_t relabel_lnk_file_perms))
+
+(macro usersubject_home_dir_object_type_transition_fonts_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 fonts_home_t dir ".fontconfig")))
+
+(macro usersubject_cache_home_object_type_transition_fonts_home_dirs ((type ARG1))
+    (call usersubject_cache_home_object_type_transition (ARG1 fonts_home_t dir "fontconfig")))
+
+(macro usersubject_common_login_user_fonts_home_template ((type ARG1))
+    (call usersubject_manage_fonts_home (ARG1))
+    (call usersubject_relabel_fonts_home (ARG1))
+    (call usersubject_home_dir_object_type_transition_fonts_home_dirs (ARG1))
+    (call usersubject_cache_home_object_type_transition_fonts_home_dirs (ARG1)))
 
 (macro usersubject_read_terminfo_config_home_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
@@ -1067,6 +1126,7 @@
     (call usersubject_exec_home (ARG1))
     (call usersubject_common_login_user_exec_home_template (ARG1))
     (call usersubject_common_login_user_cert_home_template (ARG1))
+    (call usersubject_common_login_user_fonts_home_template (ARG1))
     (call usersubject_common_login_user_terminfo_config_home_template (ARG1))
     (call usersubject_common_login_user_home_template (ARG1))
     (call usersubject_common_login_user_cache_home_template (ARG1))
