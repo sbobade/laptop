@@ -42,6 +42,8 @@
 
 (call filesystems_getattr_filesystems (mandb_t))
 
+(call mandb_read_config_files (mandb_t))
+
 (call miscfiles_read_man_data (mandb_t))
 (call miscfiles_read_locale (mandb_t))
 

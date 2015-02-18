@@ -48,6 +48,8 @@
 
 (call auth_nsswitch_client_subject_type (logrotate_t))
 
+(call logrotate_read_config (logrotate_t))
+
 (call miscfiles_read_locale (logrotate_t))
 
 (optional logrotate_optional_ntp
