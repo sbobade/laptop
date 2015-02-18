@@ -10,6 +10,8 @@
 (allow unconfined_subject_type self
     all_fifo_file_perms_except_mounton_and_execmod)
 
+(call files_rootfs_object_type_transition_file (unconfined_subject_type))
+
 (call devices_unconfined_subject_type (unconfined_subject_type))
 (call files_unconfined_subject_type (unconfined_subject_type))
 (call filesystems_unconfined_subject_type (unconfined_subject_type))
