@@ -104,6 +104,9 @@
 (context getsebool_exec (system_u object_r getsebool_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/getsebool" file getsebool_exec)
 
+(call selinux_list_securityfs (getsebool_t))
+(call selinux_get_all_booleans (getsebool_t))
+
 (type setsebool_t)
 (type setsebool_exec_t)
 (call applications_app (setsebool_t setsebool_exec_t))

@@ -115,6 +115,11 @@
     (call read_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
     (allow ARG1 securityfs_fs_t (security (read_policy))))
 
+(macro selinux_get_all_booleans ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 selinux_bool_object_type read_file_perms)
+    (call read_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t)))
+
 (macro selinux_set_all_booleans ((type ARG1))
     (call filesystems_search_sysfs (ARG1))
     (allow ARG1 selinux_bool_object_type_except_selinux_load_policy rw_file_perms)
