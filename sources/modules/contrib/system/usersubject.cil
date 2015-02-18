@@ -382,10 +382,17 @@
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 cache_home_t (all_file_objects (relabel))))
 
+(macro usersubject_create_cache_home_dirs ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 cache_home_t create_dir_perms))
+
+(macro usersubject_home_dir_object_type_transition_cache_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 cache_home_t dir ".cache")))
+
 (macro usersubject_common_login_user_cache_home_template ((type ARG1))
     (call usersubject_manage_cache_home (ARG1))
     (call usersubject_relabel_cache_home (ARG1))
-    (call usersubject_home_dir_object_type_transition (ARG1 cache_home_t dir ".cache")))
+    (call usersubject_home_dir_object_type_transition_cache_home_dirs (ARG1)))
 
 (macro usersubject_search_all_cache_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
@@ -459,10 +466,17 @@
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 config_home_t (all_file_objects (relabel))))
 
+(macro usersubject_create_config_home_dirs ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 config_home_t create_dir_perms))
+
+(macro usersubject_home_dir_object_type_transition_config_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 config_home_t dir ".config")))
+
 (macro usersubject_common_login_user_config_home_template ((type ARG1))
     (call usersubject_manage_config_home (ARG1))
     (call usersubject_relabel_config_home (ARG1))
-    (call usersubject_home_dir_object_type_transition (ARG1 config_home_t dir ".config")))
+    (call usersubject_home_dir_object_type_transition_config_home_dirs (ARG1)))
 
 (macro usersubject_search_all_config_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
@@ -532,10 +546,17 @@
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 data_home_t (all_file_objects (relabel))))
 
+(macro usersubject_create_data_home_dirs ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 data_home_t create_dir_perms))
+
+(macro usersubject_home_dir_object_type_transition_data_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 data_home_t dir ".local")))
+
 (macro usersubject_common_login_user_data_home_template ((type ARG1))
     (call usersubject_manage_data_home (ARG1))
     (call usersubject_relabel_data_home (ARG1))
-    (call usersubject_home_dir_object_type_transition (ARG1 data_home_t dir ".local")))
+    (call usersubject_home_dir_object_type_transition_data_home_dirs (ARG1)))
 
 (macro usersubject_search_all_data_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))

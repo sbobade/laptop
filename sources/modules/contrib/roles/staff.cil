@@ -52,6 +52,15 @@
     (filecon "/home/kcinimod/\.bti" file staff_bti_home)
     (filecon "/home/kcinimod/\.bti\.log.*" file staff_bti_home))
 
+(optional staff_optional_gstreamer
+    (call gstreamer_manage_cache_home (staff_t))
+    (call gstreamer_relabel_cache_home (staff_t))
+
+    (call gstreamer_cache_home_object_type_transition_cache_home_dirs (staff_t))
+
+    (context staff_gstreamer_cache_home (staff_u object_r gstreamer_cache_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.cache/gstreamer-1\.0" file staff_gstreamer_cache_home))
+
 (optional staff_optional_irc
     (type staff_irssi_t)
     (call irc_role_template_irssi (staff_r staff_t staff_irssi_t))

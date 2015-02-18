@@ -107,6 +107,9 @@
 
 (call alsa_read_config (pa_client_subject_type))
 
+(call usersubject_create_config_home_dirs (pa_client_subject_type))
+(call usersubject_home_dir_object_type_transition_config_home_dirs (pa_client_subject_type))
+
 (call pa_manage_home_files (pa_client_subject_type))
 (call pa_home_dir_object_type_transition_home_files (pa_client_subject_type))
 
