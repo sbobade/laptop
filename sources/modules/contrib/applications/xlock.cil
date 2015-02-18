@@ -1,0 +1,126 @@
+(roleattribute xlock_role)
+
+(typeattribute xlock_admin_subject_type)
+
+(typeattribute xlock_object_type)
+
+(type xlock_t)
+(type xlock_exec_t)
+(call applications_app (xlock_t xlock_exec_t))
+(roletype xlock_role xlock_t)
+
+(roleattributeset xlock_role system_r)
+
+(context xlock_exec (system_u object_r xlock_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xlock" file xlock_exec)
+
+(type xlock_pam_config_t)
+(call auth_pam_config_object_type (xlock_pam_config_t))
+
+(typeattributeset xlock_object_type xlock_pam_config_t)
+
+(context xlock_pam_config (system_u object_r xlock_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/xlock" file xlock_pam_config)
+
+(type xlock_home_t)
+(call usersubject_home_object_type (xlock_home_t))
+
+(allow xlock_t self (process (setsched)))
+(allow xlock_t self rw_fifo_file_perms)
+
+(call devices_rw_inherited_dri (xlock_t))
+
+(call files_read_config_files (xlock_t))
+(call files_read_data_files (xlock_t))
+
+(call filesystems_read_sysfs (xlock_t))
+
+(call audit_client_subject_type (xlock_t))
+
+(call auth_nsswitch_client_subject_type (xlock_t))
+
+(call auth_read_pam_config_files (xlock_t))
+(call auth_read_authconfig_pam_config (xlock_t))
+(call auth_read_utmp_runtime_files (xlock_t))
+(call auth_run_chkpwd (xlock_t xlock_role))
+
+(call miscfiles_read_locale (xlock_t))
+
+(call udev_client_subject_type (xlock_t))
+
+(call usersubject_read_user_home_files (xlock_t))
+
+(call xlock_read_home_files (xlock_t))
+(call xlock_read_pam_config_files (xlock_t))
+
+(call xserver_client_subject_type (xlock_t))
+(call xserver_use_fd (xlock_t))
+
+(optional xlock_optional_dbus
+    (call dbus_system_client_subject_type (xlock_t)))
+
+(optional xlock_optional_journal
+    (call journal_client_subject_type (xlock_t)))
+
+(optional xlock_optional_systemd
+    (call systemd_daemon (xlock_t xlock_exec_t))
+
+    (type xlock_unit_t)
+    (call systemd_unit_object_type (xlock_unit_t))
+
+    (typeattributeset xlock_object_type xlock_unit_t)
+
+    (context xlock_unit (system_u object_r xlock_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*xlock.*" file xlock_unit)
+
+    (allow xlock_admin_subject_type xlock_unit_t (service (all))))
+
+(allow xlock_admin_subject_type xlock_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (xlock_admin_subject_type xlock_t))
+
+(allow xlock_admin_subject_type xlock_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro xlock_exec ((type ARG1))
+    (call can_exec (ARG1 xlock_exec_t)))
+
+(macro xlock_auto_subject_type_transition ((type ARG1))
+    (call xlock_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xlock_exec_t xlock_t)))
+
+(macro xlock_send_signal ((type ARG1))
+    (allow ARG1 xlock_t (process (signal))))
+
+(macro xlock_run ((type ARG1)(role ARG2))
+    (call xlock_auto_subject_type_transition (ARG1))
+    (roleattributeset xlock_role ARG2))
+
+(macro xlock_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 xlock_pam_config_t read_file_perms))
+
+(macro xlock_manage_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 xlock_pam_config_t manage_file_perms))
+
+(macro xlock_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xlock_home_t read_file_perms))
+
+(macro xlock_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 xlock_home_t manage_file_perms))
+
+(macro xlock_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xlock_home_t relabel_file_perms))
+
+(macro xlock_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 xlock_home_t file ".xlockrc")))
+
+(macro xlock_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset xlock_admin_subject_type ARG1)
+    (optional xlock_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

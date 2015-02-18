@@ -405,6 +405,9 @@
     (allow ARG1 xserver_t list_dir_perms)
     (allow ARG1 xserver_t read_lnk_file_perms))
 
+(macro xserver_use_fd ((type ARG1))
+    (allow ARG1 xserver_t (fd (use))))
+
 (macro xserver_stream_connect ((type ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call stream_connect_pattern (ARG1 xserver_tmpfs_t xserver_tmpfs_t xserver_t)))

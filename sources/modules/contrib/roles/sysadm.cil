@@ -332,6 +332,9 @@
     (call wpa_admin (sysadm_t))
     (call wpa_run_wpacli (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_xlock
+    (call xlock_admin (sysadm_t)))
+
 (macro sysadm_roleallow ((role ARG1))
     (roleallow ARG1 sysadm_r))
 
