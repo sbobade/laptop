@@ -1,0 +1,65 @@
+(roleattribute bti_role)
+
+(type bti_t)
+(type bti_exec_t)
+(call applications_app (bti_t bti_exec_t))
+(roletype bti_role bti_t)
+
+(context bti_exec (system_u object_r bti_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/bti" file bti_exec)
+
+(type bti_home_t)
+(call usersubject_home_object_type (bti_home_t))
+
+(allow bti_t bti_home_t manage_file_perms)
+(call bti_home_dir_object_type_transition_home_files (bti_t))
+
+(allow bti_t self rw_fifo_file_perms)
+
+(call commands_exec (bti_t))
+
+(call devices_read_urandom (bti_t))
+
+(call filesystems_list_tmpfs (bti_t))
+(call filesystems_dontaudit_audit_access_tmpfs_dirs (bti_t))
+
+(call files_dontaudit_list_all (bti_t))
+
+(call auth_nsswitch_client_subject_type (bti_t))
+
+(call http_tcp_connect_http_port (bti_t))
+
+(call miscfiles_read_net_config_files (bti_t))
+(call miscfiles_read_all_certs (bti_t))
+(call miscfiles_read_locale (bti_t))
+
+(macro bti_exec ((type ARG1))
+    (call can_exec (ARG1 bti_exec_t)))
+
+(macro bti_auto_subject_type_transition ((type ARG1))
+    (call bti_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 bti_exec_t bti_t)))
+
+(macro bti_send_signal ((type ARG1))
+    (allow ARG1 bti_t (process (signal))))
+
+(macro bti_run ((type ARG1)(role ARG2))
+    (call bti_auto_subject_type_transition (ARG1))
+    (roleattributeset bti_role ARG2))
+
+(macro bti_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 bti_home_t read_file_perms))
+
+(macro bti_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 bti_home_t manage_file_perms))
+
+(macro bti_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 bti_home_t relabel_file_perms))
+
+(macro bti_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 bti_home_t file ".bti"))
+    (call usersubject_home_dir_object_type_transition (ARG1 bti_home_t file ".bti.log")))

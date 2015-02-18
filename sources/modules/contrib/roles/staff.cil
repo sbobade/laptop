@@ -40,6 +40,17 @@
 (type staff_passwd_t)
 (call usermanage_role_template_passwd (staff_r staff_t staff_passwd_t))
 
+(optional staff_optional_bti
+    (call bti_run (staff_t staff_r))
+
+    (call bti_manage_home_files (staff_t))
+    (call bti_relabel_home_files (staff_t))
+    (call bti_home_dir_object_type_transition_home_files (staff_t))
+
+    (context staff_bti_home (staff_u object_r bti_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.bti" file staff_bti_home)
+    (filecon "/home/kcinimod/\.bti\.log.*" file staff_bti_home))
+
 (optional staff_optional_pa
     (call pa_run (staff_t staff_r))
     (call pa_run_pactl (staff_t staff_r))

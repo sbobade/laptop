@@ -545,6 +545,9 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 tmpfs_fs_t del_entry_dir_perms))
 
+(macro filesystems_dontaudit_audit_access_tmpfs_dirs ((type ARG1))
+    (dontaudit ARG1 tmpfs_fs_t (dir (audit_access))))
+
 (macro filesystems_rw_tmpfs_dirs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 tmpfs_fs_t rw_dir_perms))
