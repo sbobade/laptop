@@ -122,6 +122,9 @@
 (optional sysadm_optional_dmesg
     (call dmesg_run (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_dmi
+    (call dmi_run_dmidecode (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_dns
     (call dns_manage_resolve_config_files (sysadm_t)))
 

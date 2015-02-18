@@ -1,0 +1,33 @@
+(roleattribute dmi_dmidecode_role)
+
+(type dmidecode_t)
+(type dmidecode_exec_t)
+(call applications_app (dmidecode_t dmidecode_exec_t))
+(roletype dmi_dmidecode_role dmidecode_t)
+
+(roleattributeset dmi_dmidecode_role system_r)
+
+(context dmidecode_exec (system_u object_r dmidecode_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/biosdecode" file dmidecode_exec)
+(filecon "/usr/sbin/dmidecode" file dmidecode_exec)
+(filecon "/usr/sbin/ownership" file dmidecode_exec)
+(filecon "/usr/sbin/vpddecode" file dmidecode_exec)
+
+(call devices_read_memory (dmidecode_t))
+
+(call filesystems_read_sysfs (dmidecode_t))
+
+(macro dmi_exec_dmidecode ((type ARG1))
+    (call can_exec (ARG1 dmidecode_exec_t)))
+
+(macro dmi_auto_subject_type_transition_dmidecode ((type ARG1))
+    (call dmi_send_signal_dmidecode (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dmidecode_exec_t dmidecode_t)))
+
+(macro dmi_send_signal_dmidecode ((type ARG1))
+    (allow ARG1 dmidecode_t (process (signal))))
+
+(macro dmi_run_dmidecode ((type ARG1)(role ARG2))
+    (call dmi_auto_subject_type_transition_dmidecode (ARG1))
+    (roleattributeset dmi_dmidecode_role ARG2))
