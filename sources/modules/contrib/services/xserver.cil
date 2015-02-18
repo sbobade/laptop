@@ -15,7 +15,7 @@
 
 (context xserver_exec (system_u object_r xserver_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/Xorg" file xserver_exec)
-(filecon "/usr/libexec/Xorg\.bin" file xserver_exec)
+(filecon "/usr/libexec/Xorg" file xserver_exec)
 
 (type xserver_config_t)
 (call files_config_object_type (xserver_config_t))
@@ -30,11 +30,7 @@
 (context xserver_log (system_u object_r xserver_log_t (systemlow systemlow)))
 (filecon "/var/log/Xorg.*\.log.*" file xserver_log)
 
-(allow xserver_t xserver_log_t (file (setattr)))
-(allow xserver_t xserver_log_t create_file_perms)
-(allow xserver_t xserver_log_t append_file_perms)
-(allow xserver_t xserver_log_t delete_file_perms)
-(allow xserver_t xserver_log_t read_file_perms)
+(allow xserver_t xserver_log_t manage_file_perms)
 (call files_log_object_type_transition (xserver_t xserver_log_t file "*"))
 
 (type xserver_home_t)
@@ -68,14 +64,22 @@
 (allow xserver_t self (capability (dac_override setgid setuid sys_admin
     sys_rawio ipc_owner sys_ptrace)))
 (allow xserver_t self (process (getpgid setpgid)))
+(allow xserver_t self create_tcp_stream_socket_perms)
 (allow xserver_t self (unix_stream_socket (accept listen)))
 (allow xserver_t self rw_fifo_file_perms)
 
+(allow xserver_t xserver_client_subject_type (process (signal)))
 (allow xserver_t xserver_client_subject_type rw_shm_perms)
 
 (allow xserver_t xserver_client_subject_type read_file_perms)
 (allow xserver_t xserver_client_subject_type list_dir_perms)
 (allow xserver_t xserver_client_subject_type read_lnk_file_perms)
+
+(allow xserver_t xserver_xinit_subject_type (process (signal sigchld)))
+
+(allow xserver_t xserver_xinit_subject_type read_file_perms)
+(allow xserver_t xserver_xinit_subject_type list_dir_perms)
+(allow xserver_t xserver_xinit_subject_type read_lnk_file_perms)
 
 (call system_write_mtrr_proc (xserver_t))
 
@@ -105,8 +109,12 @@
 
 (call udev_client_subject_type (xserver_t))
 
+(call xserver_read_config (xserver_t))
+(call xserver_read_xauth_home_files (xserver_t))
+(call xserver_run_wrap (xserver_t xserver_role))
 (call xserver_tcp_bind_xserver_port (xserver_t))
-(call xserver_auto_subject_type_transition_wrap (xserver_t))
+
+(call usersubject_use_ttys (xserver_t))
 
 (optional xserver_optional_dbus
     (call dbus_system_client_subject_type (xserver_t)))
@@ -118,7 +126,12 @@
     (call unconfined_rw_shm_all_subjects (xserver_t))
     (call unconfined_read_state_all_subjects (xserver_t)))
 
+(call xserver_read_xauth_home_files (xserver_client_subject_type))
 (call xserver_stream_connect (xserver_client_subject_type))
+(call xserver_tcp_connect_xserver_port (xserver_client_subject_type))
+
+(optional xserver_client_subject_type_optional_rp
+    (call rp_client_subject_type (xserver_client_subject_type)))
 
 (type xserver_wrap_t)
 (type xserver_wrap_exec_t)
@@ -145,6 +158,11 @@
 
 (allow xserver_xinit_subject_type self (process (setpgid)))
 
+(allow xserver_xinit_subject_type xserver_t (process (signal)))
+
+(call commands_shell_exec_object_entry (xserver_xinit_subject_type))
+(call commands_exec_shell (xserver_xinit_subject_type))
+
 (call filesystems_search_tmpfs (xserver_xinit_subject_type))
 
 (call auth_nsswitch_client_subject_type (xserver_xinit_subject_type))
@@ -152,6 +170,9 @@
 (call miscfiles_read_net_config_files (xserver_xinit_subject_type))
 (call miscfiles_read_locale (xserver_xinit_subject_type))
 
+(call xserver_read_home_files (xserver_xinit_subject_type))
+(call xserver_read_xauth_home_files (xserver_xinit_subject_type))
+(call xserver_stream_connect (xserver_xinit_subject_type))
 (call xserver_tcp_connect_xserver_port (xserver_xinit_subject_type))
 
 (type xauth_t)
@@ -165,7 +186,7 @@
 (allow xauth_t self create_unix_dgram_socket_perms)
 
 (call filesystems_getattr_filesystems (xauth_t))
-(call filesystems_read_sysfs_files (xauth_t))
+(call filesystems_read_sysfs (xauth_t))
 
 (call auth_nsswitch_client_subject_type (xauth_t))
 
@@ -225,7 +246,6 @@
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
     (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
     (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
     (call xserver_xinit_subject_type (ARG3)))
 
@@ -371,11 +391,8 @@
 (macro xserver_home_dir_object_type_transition_xserver_home ((type ARG1)(class ARG2)(name ARG3))
     (call usersubject_home_dir_object_type_transition (ARG1 xserver_home_t ARG2 ARG3)))
 
-(macro xserver_client_subject ((type ARG1))
+(macro xserver_client_subject_type ((type ARG1))
     (typeattributeset xserver_client_subject_type ARG1))
-
-(macro xserver_signal_all_client_subjects ((type ARG1))
-    (allow ARG1 xserver_client_subject_type (process (signal))))
 
 (macro xserver_read_state ((type ARG1))
     (call filesystems_search_proc (ARG1))

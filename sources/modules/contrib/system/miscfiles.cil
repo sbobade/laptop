@@ -38,6 +38,7 @@
 
 (type fonts_cache_t)
 (call files_cache_object_type (fonts_cache_t))
+(call miscfiles_fonts_cache_object_type (fonts_cache_t))
 
 (context fonts_cache (system_u object_r fonts_cache_t (systemlow systemlow)))
 (filecon "/var/cache/fontconfig(/.*)?" any fonts_cache)

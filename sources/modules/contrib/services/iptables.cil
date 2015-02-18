@@ -191,11 +191,11 @@
     (call files_rw_lock_dirs (ARG1))
     (allow ARG1 iptables_lock_t manage_file_perms))
 
-(macro iptables_dontaudit_rw_inherited_stream_sockets ((type ARG1))
-    (dontaudit ARG1 iptables_t (unix_stream_socket (read write))))
+(macro iptables_dontaudit_rw_stream_sockets ((type ARG1))
+    (dontaudit ARG1 iptables_t rw_unix_stream_socket_perms))
 
-(macro iptables_dontaudit_rw_inherited_rawip_sockets ((type ARG1))
-    (dontaudit ARG1 iptables_t (rawip_socket (read write))))
+(macro iptables_dontaudit_rw_rawip_sockets ((type ARG1))
+    (dontaudit ARG1 iptables_t rw_rawip_socket_perms))
 
 (macro iptables_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

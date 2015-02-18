@@ -170,6 +170,9 @@
 
     (call xserver_run_wrap (staff_xinit_t staff_r))
 
+    (optional staff_xserver_optional_rp
+        (call rp_run_rpws (staff_xinit_t staff_r)))
+
     (optional staff_optional_rp
         (type staff_rp_t)
         (call rp_role_template (staff_r staff_xinit_t staff_rp_t))

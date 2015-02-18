@@ -7,6 +7,9 @@
 
 (call login_use_fd_sulogin (applications_subject_type))
 
+(optional applications_optional_screen
+    (call screen_use_fd (applications_subject_type)))
+
 (optional applications_optional_sudo
     (call sudo_send_sigchld (applications_subject_type))
     (call sudo_use_fd (applications_subject_type))

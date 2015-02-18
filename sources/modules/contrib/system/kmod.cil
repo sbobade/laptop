@@ -34,8 +34,8 @@
 (call miscfiles_read_modules (kmod_t))
 
 (optional kmod_optional_iptables
-    (call iptables_dontaudit_rw_inherited_rawip_sockets (kmod_t))
-    (call iptables_dontaudit_rw_inherited_stream_sockets (kmod_t)))
+    (call iptables_dontaudit_rw_rawip_sockets (kmod_t))
+    (call iptables_dontaudit_rw_stream_sockets (kmod_t)))
 
 (optional kmod_optional_systemd
     (call systemd_daemon (kmod_t kmod_exec_t))

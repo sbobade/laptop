@@ -159,6 +159,10 @@
 (call auth_rw_utmp_runtime_files (utempter_t))
 (call auth_write_wtmp_log_files (utempter_t))
 
+(optional utempter_optional_screen
+    (call screen_rw_unix_stream_sockets (utempter_t))
+    (call screen_read_inherited_home_files (utempter_t)))
+
 (type passwd_config_t)
 (call files_config_object_type (passwd_config_t))
 

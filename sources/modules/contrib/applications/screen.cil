@@ -110,6 +110,9 @@
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 screen_home_t read_file_perms))
 
+(macro screen_read_inherited_home_files ((type ARG1))
+    (allow ARG1 screen_home_t read_inherited_file_perms))
+
 (macro screen_manage_home_files ((type ARG1))
     (call usersubject_rw_home_dir_dirs (ARG1))
     (allow ARG1 screen_home_t manage_file_perms))
@@ -158,3 +161,9 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 screen_tmpfs_t relabel_file_perms))
+
+(macro screen_use_fd ((type ARG1))
+    (allow ARG1 screen_subject_type (fd (use))))
+
+(macro screen_rw_unix_stream_sockets ((type ARG1))
+    (allow ARG1 screen_subject_type rw_unix_stream_socket_perms))
