@@ -62,9 +62,9 @@
 (call screen_read_home_files (screen_subject_type))
 (call screen_read_pam_config_files (screen_subject_type))
 
-(call usersubject_use_terminals (screen_subject_type))
-(call usersubject_setattr_terminals (screen_subject_type))
 (call usersubject_create_ptys (screen_subject_type))
+(call usersubject_setattr_ptys (screen_subject_type))
+(call usersubject_use_ptys (screen_subject_type))
 
 (optional screen_subject_type_optional_dbus
     (call dbus_system_client_subject_type (screen_subject_type)))
@@ -83,9 +83,6 @@
         (ARG2 screen_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
     (call auth_run_chkpwd (ARG3 ARG1))
     (call auth_run_utempter (ARG3 ARG1))
     (call screen_subject_type (ARG3)))

@@ -144,9 +144,6 @@
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
     (allow ARG3 ARG2 (key (search create link write)))
-    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
     (call auth_run_chkpwd (ARG3 ARG1))
     (call sudo_subject_type (ARG3)))
 
@@ -155,7 +152,6 @@
         (ARG2 visudo_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
     (call sudo_visudo_subject_type (ARG3)))
 
 (macro sudo_search_config ((type ARG1))

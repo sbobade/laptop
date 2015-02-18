@@ -89,9 +89,6 @@
         (ARG2 rp_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
     (call rp_subject_type (ARG3)))
 
 (macro rp_read_home_files ((type ARG1))

@@ -1,0 +1,41 @@
+(typeattribute xterm_subject_type)
+
+(type xterm_exec_t)
+(call applications_app (xterm_subject_type xterm_exec_t))
+
+(context xterm_exec (system_u object_r xterm_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xterm" file xterm_exec)
+
+(allow xterm_subject_type self rw_fifo_file_perms)
+
+(call files_read_config_files (xterm_subject_type))
+(call files_read_data (xterm_subject_type))
+
+(call filesystems_getattr_filesystems (xterm_subject_type))
+
+(call auth_nsswitch_client_subject_type (xterm_subject_type))
+
+(call miscfiles_manage_all_fonts_cache (xterm_subject_type))
+(call miscfiles_read_fonts_config (xterm_subject_type))
+(call miscfiles_read_fonts_data (xterm_subject_type))
+(call miscfiles_read_locale (xterm_subject_type))
+
+(call usersubject_create_ptys (xterm_subject_type))
+(call usersubject_setattr_ptys (xterm_subject_type))
+(call usersubject_use_ptys (xterm_subject_type))
+
+(call xserver_client_subject_type (xterm_subject_type))
+
+(macro xterm_exec ((type ARG1))
+    (call can_exec (ARG1 xterm_exec_t)))
+
+(macro xterm_subject_type ((type ARG1))
+    (typeattributeset xterm_subject_type ARG1))
+
+(macro xterm_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 xterm_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call auth_run_utempter (ARG3 ARG1))
+    (call xterm_subject_type (ARG3)))

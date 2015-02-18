@@ -54,7 +54,6 @@
         (ARG2 irssi_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
     (call irc_irssi_subject_type (ARG3)))
 
 (macro irc_read_irssi_config_files ((type ARG1))

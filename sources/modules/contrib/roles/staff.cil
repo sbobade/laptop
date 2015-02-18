@@ -56,6 +56,8 @@
     (type staff_irssi_t)
     (call irc_role_template_irssi (staff_r staff_t staff_irssi_t))
 
+    (call commands_shell_exec_auto_subject_type_transition (staff_irssi_t staff_t))
+
     (call irc_manage_irssi_home (staff_t))
     (call irc_relabel_irssi_home (staff_t))
     (call irc_home_dir_object_type_transition_irssi_home (staff_t dir ".irssi"))
@@ -83,12 +85,16 @@
     (call pa_home_dir_object_type_transition_home_files (staff_t))
 
     (context staff_pa_home (staff_u object_r pa_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home)
-)
+    (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home))
 
 (optional staff_optional_screen
     (type staff_screen_t)
     (call screen_role_template (staff_r staff_t staff_screen_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_screen_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_screen_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_screen_t staff_t))
 
     (call screen_manage_home_files (staff_t))
     (call screen_relabel_home_files (staff_t))
@@ -107,6 +113,11 @@
     (type staff_sudo_t)
     (call sudo_role_template (staff_r staff_t staff_sudo_t))
 
+    (call commands_exec_auto_subject_type_transition (staff_sudo_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_sudo_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_sudo_t staff_t))
+
     (optional staff_optional_sysadm
         (call sysadm_manage_keyring (staff_sudo_t))
         (call sysadm_send_signal (staff_sudo_t))
@@ -120,6 +131,11 @@
 (optional staff_optional_systemd
     (type staff_systemd_t)
     (call systemd_session_role_template (staff_r staff_t staff_systemd_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_systemd_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_systemd_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_systemd_t staff_t))
 
     (call systemd_manage_tmpfs (staff_t))
     (call systemd_relabel_tmpfs (staff_t))
@@ -136,16 +152,18 @@
         (call askpwd_exec_askpwdagent (staff_t)))
 
     (optional staff_optional_journal
-        (call journal_exec_journalctl (staff_t)))
-)
+        (call journal_exec_journalctl (staff_t))))
 
 (optional staff_optional_unconfined
-    (call unconfined_subject_type (staff_t))
-)
+    (call unconfined_subject_type (staff_t)))
 
 (optional staff_optional_xserver
     (type staff_xinit_t)
     (call xserver_role_template_xinit (staff_r staff_t staff_xinit_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_xinit_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_xinit_t staff_t))
 
     (call xserver_run_xauth (staff_t staff_r))
 
@@ -168,14 +186,14 @@
 
     (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc"))
 
-    (call xserver_run_wrap (staff_xinit_t staff_r))
-
     (optional staff_xserver_optional_rp
-        (call rp_run_rpws (staff_xinit_t staff_r)))
-
-    (optional staff_optional_rp
         (type staff_rp_t)
         (call rp_role_template (staff_r staff_xinit_t staff_rp_t))
+
+        (call commands_exec_auto_subject_type_transition (staff_rp_t staff_t))
+        (call commands_shell_exec_auto_subject_type_transition (staff_rp_t staff_t))
+
+        (call usersubject_exec_home_auto_subject_type_transition (staff_rp_t staff_t))
 
         (call rp_manage_home_files (staff_t))
         (call rp_relabel_home_files (staff_t))
@@ -188,7 +206,19 @@
         (call rp_run_rpws (staff_t staff_r))
 
         (call rp_manage_rpws_tmpfs_files (staff_t))
-        (call rp_relabel_rpws_tmpfs_files (staff_t))))
+        (call rp_relabel_rpws_tmpfs_files (staff_t)))
+
+    (optional staff_xserver_optional_xterm
+        (type staff_xterm_t)
+        (call xterm_role_template (staff_r staff_t staff_xterm_t))
+
+        (call commands_exec_auto_subject_type_transition (staff_xterm_t staff_t))
+        (call commands_shell_exec_auto_subject_type_transition (staff_xterm_t staff_t))
+
+        (call usersubject_exec_home_auto_subject_type_transition (staff_xterm_t staff_t))
+
+        (optional staff_xserver_xterm_optional_screen
+            (call screen_role_template (staff_r staff_xterm_t staff_screen_t)))))
 
 (macro staff_rw_inherited_fifo_files ((type ARG1))
     (allow ARG1 staff_t rw_inherited_fifo_file_perms))

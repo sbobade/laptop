@@ -238,6 +238,10 @@
     (type sysadm_visudo_t)
     (call sudo_role_template_visudo (sysadm_r sysadm_t sysadm_visudo_t))
 
+    (call commands_exec_auto_subject_type_transition (sysadm_visudo_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_visudo_t sysadm_t))
+
     (optional sysadm_optional_staff
         (call staff_rw_inherited_fifo_files (sysadm_t))
         (call staff_use_fd (sysadm_t))))
@@ -249,6 +253,11 @@
 (optional sysadm_optional_systemd
     (type sysadm_systemd_t)
     (call systemd_session_role_template (sysadm_r sysadm_t sysadm_systemd_t))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_systemd_t sysadm_t))
+    (call commands_shell_exec_auto_subject_type_transition (sysadm_systemd_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_systemd_t sysadm_t))
 
     (allow sysadm_systemd_t self (capability (dac_override)))
 

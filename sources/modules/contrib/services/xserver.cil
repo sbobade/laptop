@@ -245,9 +245,10 @@
         (ARG2 xinit_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
-    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
-    (call xserver_xinit_subject_type (ARG3)))
+    (call xserver_xinit_subject_type (ARG3))
+    (call xserver_run_wrap (ARG3 ARG1))
+    (optional xserver_role_template_xinit_optional_rp
+        (call rp_run_rpws (ARG3 staff_r))))
 
 (macro xserver_auto_subject_type_transition_xauth ((type ARG1))
     (call xserver_send_signal_xauth (ARG1))
