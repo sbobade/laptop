@@ -20,6 +20,10 @@
 (call miscfiles_read_locale (xterm_subject_type))
 
 (call usersubject_manage_fonts_home (xterm_subject_type))
+(call usersubject_cache_home_object_type_transition_fonts_home_dirs (xterm_subject_type))
+
+(call usersubject_create_cache_home_dirs (xterm_subject_type))
+(call usersubject_home_dir_object_type_transition_cache_home_dirs (xterm_subject_type))
 
 (call usersubject_create_ptys (xterm_subject_type))
 (call usersubject_setattr_ptys (xterm_subject_type))

@@ -324,9 +324,7 @@
     (allow ARG1 miscfiles_fonts_cache_object_type list_dir_perms)
     (allow ARG1 miscfiles_fonts_cache_object_type manage_lnk_file_perms)
     (optional miscfiles_manage_all_fonts_cache_optional_usersubject
-        (call usersubject_manage_fonts_home (ARG1)) 
-        (call usersubject_cache_home_object_type_transition_fonts_home_dirs (ARG1))
-        (call usersubject_home_dir_object_type_transition_fonts_home_dirs (ARG1))))
+        (call usersubject_manage_fonts_home (ARG1))))
 
 (macro miscfiles_search_fonts_config ((type ARG1))
     (call files_search_config (ARG1))
