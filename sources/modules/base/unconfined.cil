@@ -81,6 +81,9 @@
 (macro unconfined_send_signull_all_subjects ((type ARG1))
     (allow ARG1 unconfined_subject_type (process (signull))))
 
+(macro unconfined_getsession_all_subjects ((type ARG1))
+    (allow ARG1 unconfined_subject_type (process (getsession))))
+
 (macro unconfined_getsched_all_subjects ((type ARG1))
     (allow ARG1 unconfined_subject_type (process (getsched))))
 

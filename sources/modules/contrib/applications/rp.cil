@@ -33,6 +33,9 @@
 
 (call xserver_client_subject_type (rp_subject_type))
 
+(optional rp_subject_type_optional_unconfined
+    (call unconfined_getsession_all_subjects (rp_subject_type)))
+
 (type rpws_t)
 (type rpws_exec_t)
 (call applications_app (rpws_t rpws_exec_t))
