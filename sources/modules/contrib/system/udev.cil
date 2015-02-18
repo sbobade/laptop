@@ -85,7 +85,6 @@
 (call system_load_kernel_module (udevd_t))
 (call system_read_net_proc (udevd_t))
 (call system_request_load_module (udevd_t))
-(call system_search_invalid (udevd_t))
 
 (call commands_exec_shell (udevd_t))
 

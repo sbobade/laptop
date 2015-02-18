@@ -112,6 +112,8 @@
 
 (call commands_search (subject_common_type))
 
+(call system_search_invalid (subject_common_type))
+
 (call filesystems_read_proc_files (subject_common_type))
 (call filesystems_read_proc_lnk_files (subject_common_type))
 (call filesystems_search_sysfs (subject_common_type))

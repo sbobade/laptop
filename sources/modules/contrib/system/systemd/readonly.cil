@@ -7,8 +7,6 @@
 
 (allow readonly_t self rw_fifo_file_perms)
 
-(call system_search_invalid (readonly_t))
-
 (call commands_exec (readonly_t))
 (call commands_mprot_read_shell_exec_files (readonly_t))
 
