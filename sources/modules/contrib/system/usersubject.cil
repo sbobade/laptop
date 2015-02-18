@@ -148,9 +148,7 @@
 (call miscfiles_read_net_config_files (usersubject_common_login_subject_type))
 
 (optional usersubject_optional_tmpfiles
-    (call tmpfiles_object_exception_type (usersubject_home_object_type))
-    (call tmpfiles_object_exception_type (usersubject_tmp_object_type))
-    (call tmpfiles_object_exception_type (usersubject_tmpfs_object_type)))
+    (call tmpfiles_object_exception_type (usersubject_home_object_type)))
 
 (macro usersubject_home_object_type ((type ARG1))
     (call files_object_type (ARG1))
