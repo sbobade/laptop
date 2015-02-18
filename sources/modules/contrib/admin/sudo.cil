@@ -71,7 +71,6 @@
 (call selinux_compute_relabel_context (sudo_subject_type))
 (call selinux_validate_context (sudo_subject_type))
 
-(call subject_common_type (sudo_subject_type))
 (call subject_role_change_exemption (sudo_subject_type))
 
 (call audit_client_subject_type (sudo_subject_type))
@@ -120,8 +119,6 @@
 
 (call manage_files_pattern (sudo_visudo_subject_type sudo_config_t sudo_config_t))
 (call files_config_object_type_transition (sudo_visudo_subject_type sudo_config_t file "*"))
-
-(call subject_common_type (sudo_visudo_subject_type))
 
 (call auth_nsswitch_client_subject_type (sudo_visudo_subject_type))
 

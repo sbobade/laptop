@@ -31,16 +31,12 @@
 (context passwd_pam_config (system_u object_r passwd_pam_config_t (systemlow systemlow)))
 (filecon "/etc/pam\.d/passwd" file passwd_pam_config)
 
-(call applications_subject_type (usermanage_chfn_subject_type))
-
 (allow usermanage_passwd_subject_type self (capability (setuid dac_override chown fsetid)))
 (allow usermanage_passwd_subject_type self (process (setfscreate)))
 (allow usermanage_passwd_subject_type self create_netlink_selinux_socket_perms)
 (allow usermanage_passwd_subject_type self rw_fifo_file_perms)
 
 (call system_read_crypto_sysctl (usermanage_passwd_subject_type))
-
-(call applications_subject_type (usermanage_passwd_subject_type))
 
 (call devices_read_urandom (usermanage_passwd_subject_type))
 
