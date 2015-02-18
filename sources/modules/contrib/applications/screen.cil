@@ -1,0 +1,160 @@
+(roleattribute screen_role)
+
+(typeattribute screen_subject_type)
+
+(type screen_exec_t)
+(call applications_app (screen_subject_type screen_exec_t))
+
+(context screen_exec (system_u object_r screen_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/screen" file screen_exec)
+
+(type screen_config_t)
+(call files_config_object_type (screen_config_t))
+
+(context screen_config (system_u object_r screen_config_t (systemlow systemlow)))
+(filecon "/etc/screenrc" file screen_config)
+
+(type screen_pam_config_t)
+(call auth_pam_config_object_type (screen_pam_config_t))
+
+(context screen_pam_config (system_u object_r screen_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/screen" file screen_pam_config)
+
+(type screen_runtime_t)
+(call files_runtime_object_type (screen_runtime_t))
+
+(context screen_runtime (system_u object_r screen_runtime_t (systemlow systemlow)))
+(filecon "/var/run/screen(/.*)?" any screen_runtime)
+
+(type screen_home_t)
+(call usersubject_home_object_type (screen_home_t))
+
+(type screen_tmpfs_t)
+(call usersubject_tmpfs_object_type (screen_home_t))
+
+(allow screen_subject_type self (unix_stream_socket (listen accept connectto)))
+(allow screen_subject_type self rw_fifo_file_perms)
+
+(allow screen_subject_type screen_runtime_t manage_dir_perms)
+(allow screen_subject_type screen_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (screen_subject_type screen_runtime_t dir "*"))
+
+(allow screen_subject_type screen_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (screen_subject_type screen_tmpfs_t file "*"))
+
+(call system_read_crypto_sysctl (screen_subject_type))
+
+(call files_dontaudit_list_all (screen_subject_type))
+
+(call files_read_config_files (screen_subject_type))
+
+(call audit_client_subject_type (screen_subject_type))
+
+(call auth_read_pam_config_files (screen_subject_type))
+(call auth_read_authconfig_pam_config (screen_subject_type))
+(call auth_nsswitch_client_subject_type (screen_subject_type))
+(call auth_read_utmp_runtime_files (screen_subject_type))
+
+(call miscfiles_read_all_terminfo (screen_subject_type))
+(call miscfiles_read_locale (screen_subject_type))
+
+(call screen_read_config_files (screen_subject_type))
+(call screen_read_home_files (screen_subject_type))
+(call screen_read_pam_config_files (screen_subject_type))
+
+(call usersubject_use_terminals (screen_subject_type))
+(call usersubject_setattr_terminals (screen_subject_type))
+(call usersubject_create_ptys (screen_subject_type))
+
+(optional screen_subject_type_optional_dbus
+    (call dbus_system_client_subject_type (screen_subject_type)))
+
+(optional screen_subject_type_optional_journal
+    (call journal_client_subject_type (screen_subject_type)))
+
+(macro screen_exec ((type ARG1))
+    (call can_exec (ARG1 screen_exec_t)))
+
+(macro screen_subject_type ((type ARG1))
+    (typeattributeset screen_subject_type ARG1))
+
+(macro screen_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 screen_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
+    (call auth_run_chkpwd (ARG3 ARG1))
+    (call auth_run_utempter (ARG3 ARG1))
+    (call screen_subject_type (ARG3)))
+
+(macro screen_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 screen_config_t read_file_perms))
+
+(macro screen_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 screen_config_t manage_file_perms))
+
+(macro screen_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 screen_pam_config_t read_file_perms))
+
+(macro screen_manage_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 screen_pam_config_t manage_file_perms))
+
+(macro screen_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 screen_home_t read_file_perms))
+
+(macro screen_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 screen_home_t manage_file_perms))
+
+(macro screen_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 screen_home_t relabel_file_perms))
+
+(macro screen_home_dir_object_type_transition_home_files ((type ARG1)(name ARG2))
+    (call usersubject_home_dir_object_type_transition (ARG1 screen_home_t file ARG2)))
+
+(macro screen_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 screen_runtime_t search_dir_perms))
+
+(macro screen_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 screen_runtime_t list_dir_perms))
+
+(macro screen_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 screen_runtime_t list_dir_perms)
+    (allow ARG1 screen_runtime_t read_sock_file_perms))
+
+(macro screen_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 screen_runtime_t manage_dir_perms)
+    (allow ARG1 screen_runtime_t manage_sock_file_perms))
+
+(macro screen_relabel_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 screen_runtime_t relabel_dir_perms)
+    (allow ARG1 screen_runtime_t relabel_sock_file_perms))
+
+(macro screen_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 screen_tmpfs_t read_file_perms))
+
+(macro screen_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 screen_tmpfs_t manage_file_perms))
+
+(macro screen_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 screen_tmpfs_t relabel_file_perms))

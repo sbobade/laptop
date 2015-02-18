@@ -31,9 +31,6 @@
 (context staff_mail_spool (staff_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
 (filecon "/var/spool/mail/kcinimod" file staff_mail_spool)
 
-(call usersubject_setattr_ptys (staff_t))
-(call usersubject_create_ptys (staff_t))
-
 (type staff_chfn_t)
 (call usermanage_role_template_chfn (staff_r staff_t staff_chfn_t))
 
@@ -73,6 +70,23 @@
     (context staff_pa_home (staff_u object_r pa_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home)
 )
+
+(optional staff_optional_screen
+    (type staff_screen_t)
+    (call screen_role_template (staff_r staff_t staff_screen_t))
+
+    (call screen_manage_home_files (staff_t))
+    (call screen_relabel_home_files (staff_t))
+    (call screen_home_dir_object_type_transition_home_files (staff_t ".screenrc"))
+
+    (context staff_screen_home (staff_u object_r screen_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.screenrc" file staff_screen_home)
+
+    (call screen_manage_runtime (staff_t))
+    (call screen_relabel_runtime (staff_t))
+
+    (call screen_manage_tmpfs_files (staff_t))
+    (call screen_relabel_tmpfs_files (staff_t)))
 
 (optional staff_optional_sudo
     (type staff_sudo_t)

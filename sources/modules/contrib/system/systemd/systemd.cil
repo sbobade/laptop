@@ -407,8 +407,6 @@
 
 (call udev_client_subject_type (systemd_session_subject_type))
 
-(call usersubject_search_data_home (systemd_session_subject_type))
-
 (call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
 (call systemd_read_state (systemd_daemon_subject_type))
 
@@ -517,6 +515,7 @@
     (call ps_subject_pattern (ARG3 ARG2))
     (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
     (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
     (call filesystems_manage_cgroup_dirs (ARG3))
     (call systemd_exec_systemctl (ARG2))
     (call systemd_control_session_units (ARG2))

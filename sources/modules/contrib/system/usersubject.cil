@@ -117,6 +117,7 @@
 
 (allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
 
+(call usersubject_exec_home_object_entry (usersubject_common_login_subject_type))
 (call usersubject_common_login_user_object_template (usersubject_common_login_subject_type))
 
 (call system_read_net_proc (usersubject_common_login_subject_type))
@@ -608,6 +609,13 @@
     (call usersubject_relabel_exec_home (ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 exec_home_t dir "bin"))
     (call usersubject_data_home_object_type_transition (ARG1 exec_home_t dir "bin")))
+
+(macro usersubject_exec_home_object_entry ((type ARG1))
+    (call subject_entry (ARG1 exec_home_t)))
+
+(macro usersubject_exec_home_auto_subject_type_transition ((type ARG1)(type ARG2))
+    (call usersubject_search_exec_home (ARG1))
+    (call auto_subject_type_transition_pattern (ARG1 exec_home_t ARG2)))
 
 (macro usersubject_search_cert_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))

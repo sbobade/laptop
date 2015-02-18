@@ -146,6 +146,7 @@
     (allow ARG3 ARG2 (key (search create link write)))
     (call commands_exec_auto_subject_type_transition (ARG3 ARG2))
     (call commands_shell_exec_auto_subject_type_transition (ARG3 ARG2))
+    (call usersubject_exec_home_auto_subject_type_transition (ARG3 ARG2))
     (call auth_run_chkpwd (ARG3 ARG1))
     (call sudo_subject_type (ARG3)))
 
