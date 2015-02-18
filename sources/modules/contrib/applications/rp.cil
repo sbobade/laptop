@@ -108,13 +108,16 @@
     (call usersubject_home_dir_object_type_transition (ARG1 rp_home_t file ".ratpoison_history")))
 
 (macro rp_read_rpws_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 rpws_tmpfs_t read_file_perms))
 
 (macro rp_manage_rpws_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_rw_tmpfs_dirs (ARG1))
     (allow ARG1 rpws_tmpfs_t manage_file_perms))
 
 (macro rp_relabel_rpws_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 rpws_tmpfs_t relabel_file_perms))

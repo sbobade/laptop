@@ -247,10 +247,12 @@
     (allow ARG1 sudo_runtime_t manage_lnk_file_perms))
 
 (macro sudo_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 sudo_tmpfs_t read_file_perms))
 
 (macro sudo_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_rw_tmpfs_dirs (ARG1))
     (allow ARG1 sudo_tmpfs_t manage_file_perms))
 

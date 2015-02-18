@@ -829,51 +829,66 @@
     (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t ARG2 ARG3)))
 
 (macro usersubject_user_tmpfs_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call object_type_transition_pattern (ARG1 user_tmpfs_t ARG2 ARG3 ARG4)))
 
 (macro usersubject_search_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 user_tmpfs_t search_dir_perms))
 
 (macro usersubject_list_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 user_tmpfs_t list_dir_perms))
 
 (macro usersubject_delete_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_del_entry_tmpfs (ARG1))
     (call delete_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
 
 (macro usersubject_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call read_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
 
+(macro usersubject_read_inherited_tmpfs_files ((type ARG1))
+    (allow ARG1 user_tmpfs_t read_inherited_file_perms))
+
 (macro usersubject_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call manage_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
 
 (macro usersubject_read_tmpfs_lnk_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call read_lnk_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
 
 (macro usersubject_read_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 user_tmpfs_t (all_file_objects (read))))
 
 (macro usersubject_manage_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_rw_tmpfs_dirs (ARG1))
     (allow ARG1 user_tmpfs_t (all_file_objects (manage))))
 
 (macro usersubject_delete_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_del_entry_tmpfs (ARG1))
     (allow ARG1 user_tmpfs_t del_entry_dir_perms)
     (allow ARG1 user_tmpfs_t (all_file_objects (delete))))
 
 (macro usersubject_relabel_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 user_tmpfs_t (all_file_objects (relabel))))
 
 (macro usersubject_rw_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 user_tmpfs_t rw_dir_perms))
 
@@ -889,39 +904,48 @@
     (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t chr_file "*")))
 
 (macro usersubject_search_all_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 usersubject_tmpfs_object_type search_dir_perms))
 
 (macro usersubject_list_all_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 usersubject_tmpfs_object_type list_dir_perms))
 
 (macro usersubject_read_all_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call read_files_pattern (ARG1 usersubject_tmpfs_object_type usersubject_tmpfs_object_type)))
 
 (macro usersubject_manage_all_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call manage_files_pattern (ARG1 usersubject_tmpfs_object_type usersubject_tmpfs_object_type)))
 
 (macro usersubject_read_all_tmpfs_lnk_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call read_lnk_files_pattern (ARG1 usersubject_tmpfs_object_type usersubject_tmpfs_object_type)))
 
 (macro usersubject_read_all_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (read))))
 
 (macro usersubject_manage_all_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_rw_tmpfs_dirs (ARG1))
     (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (manage))))
 
 (macro usersubject_delete_all_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_del_entry_tmpfs (ARG1))
     (allow ARG1 usersubject_tmpfs_object_type del_entry_dir_perms)
     (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (delete))))
 
 (macro usersubject_relabel_all_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 usersubject_tmpfs_object_type (all_file_objects (relabel))))
 

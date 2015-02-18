@@ -126,6 +126,8 @@
     (call unconfined_rw_shm_all_subjects (xserver_t))
     (call unconfined_read_state_all_subjects (xserver_t)))
 
+(allow xserver_client_subject_type xserver_xinit_subject_type (fd (use)))
+
 (call xserver_read_xauth_home_files (xserver_client_subject_type))
 (call xserver_stream_connect (xserver_client_subject_type))
 (call xserver_tcp_connect_xserver_port (xserver_client_subject_type))
@@ -192,6 +194,8 @@
 
 (call miscfiles_read_net_config_files (xauth_t))
 
+(call usersubject_read_inherited_tmpfs_files (xauth_t))
+
 (type xauth_home_t)
 (call usersubject_home_object_type (xauth_home_t))
 
@@ -248,7 +252,7 @@
     (call xserver_xinit_subject_type (ARG3))
     (call xserver_run_wrap (ARG3 ARG1))
     (optional xserver_role_template_xinit_optional_rp
-        (call rp_run_rpws (ARG3 staff_r))))
+        (call rp_run_rpws (ARG3 ARG1))))
 
 (macro xserver_auto_subject_type_transition_xauth ((type ARG1))
     (call xserver_send_signal_xauth (ARG1))
