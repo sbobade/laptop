@@ -71,20 +71,16 @@
     (allow ARG1 dnssec_port_t (tcp_socket (name_connect))))
 
 (macro dns_tcp_bind_dnssec_port ((type ARG1))
-    (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 dnssec_port_t (tcp_socket (name_bind))))
 
 (macro dns_udp_bind_dnssec_port ((type ARG1))
-    (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 dnssec_port_t (udp_socket (name_bind))))
 
 (macro dns_tcp_connect_mdns_port ((type ARG1))
     (allow ARG1 mdns_port_t (tcp_socket (name_connect))))
 
 (macro dns_tcp_bind_mdns_port ((type ARG1))
-    (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 mdns_port_t (tcp_socket (name_bind))))
 
 (macro dns_udp_bind_mdns_port ((type ARG1))
-    (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 mdns_port_t (udp_socket (name_bind))))
