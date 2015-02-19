@@ -54,6 +54,7 @@
 
 (optional staff_optional_gpg
     (call gpg_run (staff_t staff_r))
+    (call gpg_run_dirmngr (staff_t staff_r))
     (call gpg_run_gpg2keys (staff_t staff_r))
     (call gpg_run_gpgagent (staff_t staff_r))
     (call gpg_run_gpgpcsc (staff_t staff_r))
@@ -91,6 +92,14 @@
 
     (call gpg_home_object_type_transition_scd_home (staff_t sock_file "S.scdaemon"))
 
+    (context staff_dirmngr_home (staff_u object_r dirmngr_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.gnupg/S\.dirmngr" socket staff_dirmngr_home)
+
+    (call gpg_manage_dirmngr_home_sock_files (staff_t))
+    (call gpg_relabel_dirmngr_home_sock_files (staff_t))
+
+    (call gpg_home_object_type_transition_dirmngr_home (staff_t sock_file "S.dirmngr"))
+
     (call gpg_manage_scd_home (staff_t))
     (call gpg_relabel_scd_home (staff_t))
 
@@ -118,6 +127,28 @@
 
     (context staff_irssi_home (staff_u object_r irssi_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.irssi(/.*)?" any staff_irssi_home))
+
+(optional staff_optional_mail
+    (call mail_run_mutt (staff_t staff_r))
+    (call mail_run_muttpgp (staff_t staff_r))
+
+    (call mail_manage_mutt_home_files (staff_t))
+    (call mail_relabel_mutt_home_files (staff_t))
+
+    (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".muttrc"))
+    (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".mutt_cache"))
+    (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".mutt_certificates"))
+    (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".mutt_passwords"))
+    (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".mutt_passwords.gpg"))
+
+    (call mail_manage_mutt_tmpfs (staff_t))
+    (call mail_relabel_mutt_tmpfs (staff_t))
+
+    (context staff_mutt_home (staff_u object_r mutt_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.muttrc" file staff_mutt_home)
+    (filecon "/home/kcinimod/\.mutt_cache" file staff_mutt_home)
+    (filecon "/home/kcinimod/\.mutt_certificates" file staff_mutt_home)
+    (filecon "/home/kcinimod/\.mutt_passwords\.gpg" file staff_mutt_home))
 
 (optional staff_optional_pa
     (call pa_run (staff_t staff_r))

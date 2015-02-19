@@ -3,6 +3,7 @@
 (roleattribute gpg_gpgagent_role)
 (roleattribute gpg_gpgpcsc_role)
 (roleattribute gpg_scd_role)
+(roleattribute gpg_dirmngr_role)
 
 (type gpg_t)
 (type gpg_exec_t)
@@ -38,9 +39,11 @@
 
 (call gpg_exec_gpghelper (gpg_t))
 (call gpg_read_config (gpg_t))
-(call gpg_stream_connect_gpgagent (gpg_t))
+(call gpg_run_dirmngr (gpg_t gpg_role))
 (call gpg_run_gpgagent (gpg_t gpg_role))
 (call gpg_run_gpg2keys (gpg_t gpg_role))
+(call gpg_stream_connect_gpgagent (gpg_t))
+(call gpg_stream_connect_dirmngr (gpg_t))
 
 (call miscfiles_read_all_terminfo (gpg_t))
 (call miscfiles_read_locale (gpg_t))
@@ -49,6 +52,10 @@
 (call usersubject_home_dir_object_type_transition_user_home (gpg_t file "*"))
 (call usersubject_read_tmpfs_files (gpg_t))
 (call usersubject_use_terminals (gpg_t))
+
+(optional gpg_optional_mutt
+    (call mail_read_mutt_home_files (gpg_t))
+    (call mail_rw_mutt_tmpfs_files (gpg_t)))
 
 (type gpg2keys_t)
 (type gpg2keys_exec_t)
@@ -145,7 +152,7 @@
 (call files_search_config (gpgpcsc_t))
 
 (optional gpgpcsc_optional_pcsc
-    (call pcsc_stream_connect_pcscd (gpgpcsc_t)))
+    (call pcsc_client_subject_type (gpgpcsc_t)))
 
 (type scd_t)
 (type scd_exec_t)
@@ -186,6 +193,23 @@
 
 (call udev_client_subject_type (scd_t))
 
+(type dirmngr_t)
+(type dirmngr_exec_t)
+(call applications_app (dirmngr_t dirmngr_exec_t))
+(roletype gpg_dirmngr_role dirmngr_t)
+
+(context dirmngr_exec (system_u object_r dirmngr_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dirmngr" file dirmngr_exec)
+
+(type dirmngr_home_t)
+(call usersubject_home_object_type (dirmngr_home_t))
+
+(allow dirmngr_t dirmngr_home_t manage_sock_file_perms)
+(call gpg_home_object_type_transition_dirmngr_home (dirmngr_t sock_file "S.dirmngr"))
+
+(optional scd_optional_pcsc
+    (call pcsc_client_subject_type (scd_t)))
+
 (macro gpg_exec ((type ARG1))
     (call can_exec (ARG1 gpg_exec_t)))
 
@@ -203,6 +227,9 @@
 
 (macro gpg_exec_scd ((type ARG1))
     (call can_exec (ARG1 scd_exec_t)))
+
+(macro gpg_exec_dirmngr ((type ARG1))
+    (call can_exec (ARG1 dirmngr_exec_t)))
 
 (macro gpg_auto_subject_type_transition ((type ARG1))
     (call gpg_send_signal (ARG1))
@@ -263,6 +290,18 @@
 (macro gpg_run_scd ((type ARG1)(role ARG2))
     (call gpg_auto_subject_type_transition_scd (ARG1))
     (roleattributeset gpg_scd_role ARG2))
+
+(macro gpg_auto_subject_type_transition_dirmngr ((type ARG1))
+    (call gpg_send_signal_dirmngr (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dirmngr_exec_t dirmngr_t)))
+
+(macro gpg_send_signal_dirmngr ((type ARG1))
+    (allow ARG1 dirmngr_t (process (signal))))
+
+(macro gpg_run_dirmngr ((type ARG1)(role ARG2))
+    (call gpg_auto_subject_type_transition (ARG1))
+    (roleattributeset gpg_dirmngr_role ARG2))
 
 (macro gpg_search_config ((type ARG1))
     (call files_search_config (ARG1))
@@ -380,6 +419,21 @@
 
 (macro gpg_home_object_type_transition_gpgagent_home ((type ARG1)(class ARG2)(name ARG3))
     (call gpg_home_object_type_transition (ARG1 gpgagent_home_t ARG2 ARG3)))
+
+(macro gpg_manage_dirmngr_home_sock_files ((type ARG1))
+    (call gpg_rw_home_dirs (ARG1))
+    (allow ARG1 dirmngr_home_t manage_sock_file_perms))
+
+(macro gpg_relabel_dirmngr_home_sock_files ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (allow ARG1 dirmngr_home_t relabel_sock_file_perms))
+
+(macro gpg_stream_connect_dirmngr ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (call stream_connect_pattern (ARG1 dirmngr_home_t dirmngr_home_t dirmngr_t)))
+
+(macro gpg_home_object_type_transition_dirmngr_home ((type ARG1)(class ARG2)(name ARG3))
+    (call gpg_home_object_type_transition (ARG1 dirmngr_home_t ARG2 ARG3)))
 
 (macro gpg_stream_connect_scd ((type ARG1))
     (call gpg_search_home (ARG1))

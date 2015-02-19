@@ -1,4 +1,5 @@
 (typeattribute pcsc_admin_subject_type)
+(typeattribute pcsc_client_subject_type)
 
 (typeattribute pcsc_object_type)
 
@@ -74,6 +75,15 @@
 
 (allow pcsc_admin_subject_type pcsc_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
+
+(allow pcscd_t pcsc_client_subject_type read_file_perms)
+(allow pcscd_t pcsc_client_subject_type list_dir_perms)
+(allow pcscd_t pcsc_client_subject_type read_lnk_file_perms)
+
+(call pcsc_stream_connect_pcscd (pcsc_client_subject_type))
+
+(macro pcsc_client_subject_type ((type ARG1))
+    (typeattributeset pcsc_client_subject_type ARG1))
 
 (macro pcsc_exec_pcscd ((type ARG1))
     (call can_exec (ARG1 pcscd_exec_t)))

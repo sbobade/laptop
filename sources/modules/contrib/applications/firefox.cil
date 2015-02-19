@@ -79,18 +79,12 @@
 
 (call miscfiles_read_all_certs (firefox_t))
 (call miscfiles_read_net_config_files (firefox_t))
-(call miscfiles_read_fonts (firefox_t))
+(call miscfiles_read_all_fonts (firefox_t))
 (call miscfiles_read_locale (firefox_t))
 
 (call pa_tmpfs_client_template (firefox_t firefox_role firefox_tmpfs_t))
 
 (call udev_client_subject_type (firefox_t))
-
-(call usersubject_manage_fonts_home (firefox_t))
-(call usersubject_cache_home_object_type_transition_fonts_home_dirs (firefox_t))
-
-(call usersubject_create_cache_home_dirs (firefox_t))
-(call usersubject_home_dir_object_type_transition_cache_home_dirs (firefox_t))
 
 (call usersubject_manage_user_home_files (firefox_t))
 (call usersubject_manage_user_home_dirs (firefox_t))

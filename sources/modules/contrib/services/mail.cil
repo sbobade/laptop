@@ -1,0 +1,29 @@
+(type imap_port_t)
+(call network_hi_reserved_port_object_type (imap_port_t))
+
+(context imap_port (system_u object_r imap_port_t (systemlow systemlow)))
+(portcon "tcp" 993 imap_port)
+(portcon "udp" 993 imap_port)
+
+(type smtp_port_t)
+(call network_reserved_port_object_type (smtp_port_t))
+
+(context smtp_port (system_u object_r smtp_port_t (systemlow systemlow)))
+(portcon "tcp" 465 smtp_port)
+(portcon "udp" 465 smtp_port)
+(portcon "tcp" 587 smtp_port)
+(portcon "udp" 587 smtp_port)
+
+(macro mail_tcp_connect_imap_port ((type ARG1))
+    (allow ARG1 imap_port_t (tcp_socket (name_connect))))
+
+(macro mail_tcp_bind_imap_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 imap_port_t (tcp_socket (name_bind))))
+
+(macro mail_tcp_connect_smtp_port ((type ARG1))
+    (allow ARG1 smtp_port_t (tcp_socket (name_connect))))
+
+(macro mail_tcp_bind_smtp_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 smtp_port_t (tcp_socket (name_bind))))
