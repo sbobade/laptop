@@ -88,12 +88,6 @@
 
 (call polkit_dbus_chat_polkitd (askpwd_askpwdagent_client_subject_type))
 
-(call systemd_dgram_send (askpwd_askpwdagent_client_subject_type))
-(call systemd_read_state_lnk_files (askpwd_askpwdagent_client_subject_type))
-(call systemd_search_unit (askpwd_askpwdagent_client_subject_type))
-(call systemd_stream_connect (askpwd_askpwdagent_client_subject_type))
-(call systemd_use_fd (askpwd_askpwdagent_client_subject_type))
-
 (macro askpwd_exec ((type ARG1))
     (call can_exec (ARG1 askpwd_exec_t)))
 
