@@ -80,13 +80,19 @@
 (allow askpwd_admin_subject_type askpwd_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
-(call systemd_read_state_lnk_files (askpwd_askpwdagent_client_subject_type))
+(call dbus_system_client_subject_type (askpwd_askpwdagent_client_subject_type))
 
 (call login_dbus_chat_logind (askpwd_askpwdagent_client_subject_type))
 (call login_list_logind_systemd_runtime (askpwd_askpwdagent_client_subject_type))
 (call login_read_logind_systemd_runtime_files (askpwd_askpwdagent_client_subject_type))
 
 (call polkit_dbus_chat_polkitd (askpwd_askpwdagent_client_subject_type))
+
+(call systemd_dgram_send (askpwd_askpwdagent_client_subject_type))
+(call systemd_read_state_lnk_files (askpwd_askpwdagent_client_subject_type))
+(call systemd_search_unit (askpwd_askpwdagent_client_subject_type))
+(call systemd_stream_connect (askpwd_askpwdagent_client_subject_type))
+(call systemd_use_fd (askpwd_askpwdagent_client_subject_type))
 
 (macro askpwd_exec ((type ARG1))
     (call can_exec (ARG1 askpwd_exec_t)))

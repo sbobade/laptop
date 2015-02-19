@@ -291,6 +291,14 @@
 (filecon "/usr/bin/systemctl" file systemctl_exec)
 
 (allow systemctl_t self (capability (dac_override net_admin)))
+(allow systemctl_t self rw_fifo_file_perms)
+
+(call commands_exec (systemctl_t))
+
+(call filesystems_getattr_filesystems (systemctl_t))
+
+(call miscfiles_read_all_terminfo (systemctl_t))
+(call miscfiles_read_locale (systemctl_t))
 
 (call systemd_control_all_units (systemctl_t))
 (call systemd_read_state_all_systemd_daemon_subjects (systemctl_t))
@@ -411,17 +419,13 @@
 
 (allow systemd_systemctl_client_subject_type self (capability (sys_resource ipc_lock)))
 (allow systemd_systemctl_client_subject_type self (process (setrlimit)))
-(allow systemd_systemctl_client_subject_type self rw_fifo_file_perms)
 
 (call system_read_crypto_sysctl (systemd_systemctl_client_subject_type))
 (call system_read_kernel_sysctl (systemd_systemctl_client_subject_type))
 (call system_use_fd (systemd_systemctl_client_subject_type))
 
-(call commands_exec (systemd_systemctl_client_subject_type))
-
 (call devices_read_urandom (systemd_systemctl_client_subject_type))
 
-(call filesystems_getattr_filesystems (systemd_systemctl_client_subject_type))
 (call filesystems_getattr_tmpfs_filesystems (systemd_systemctl_client_subject_type))
 (call filesystems_read_sysfs_files (systemd_systemctl_client_subject_type))
 (call filesystems_read_cgroup (systemd_systemctl_client_subject_type))
@@ -431,9 +435,6 @@
 (call journal_read_log (systemd_systemctl_client_subject_type))
 
 (call machine_read_config_files (systemd_systemctl_client_subject_type))
-
-(call miscfiles_read_all_terminfo (systemd_systemctl_client_subject_type))
-(call miscfiles_read_locale (systemd_systemctl_client_subject_type))
 
 (call systemd_dbus_chat (systemd_systemctl_client_subject_type))
 (call systemd_dgram_send (systemd_systemctl_client_subject_type))
