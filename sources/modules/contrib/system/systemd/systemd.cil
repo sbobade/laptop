@@ -437,7 +437,7 @@
 
 (call systemd_dbus_chat (systemd_systemctl_client_subject_type))
 (call systemd_dgram_send (systemd_systemctl_client_subject_type))
-(call systemd_dontaudit_read_state (systemd_systemctl_client_subject_type))
+(call systemd_read_state_lnk_files (systemd_systemctl_client_subject_type))
 (call systemd_search_unit (systemd_systemctl_client_subject_type))
 (call systemd_stream_connect (systemd_systemctl_client_subject_type))
 (call systemd_use_fd (systemd_systemctl_client_subject_type))
