@@ -427,6 +427,7 @@
 (macro miscfiles_read_man ((type ARG1))
     (call miscfiles_read_man_data (ARG1))
     (optional miscfiles_read_man_optional_mandb
+        (call mandb_read_config_files (ARG1))
         (call mandb_read_cache (ARG1))))
 
 (macro miscfiles_search_hwdata ((type ARG1))
