@@ -275,7 +275,6 @@
 
     (optional sysadm_optional_askpwd
         (call askpwd_admin (sysadm_t))
-        (call askpwd_exec_askpwdagent (sysadm_t))
         (call askpwd_run (sysadm_t sysadm_r)))
 
     (optional sysadm_optional_autorelabel
