@@ -514,6 +514,7 @@
     (call ps_subject_pattern (ARG3 ARG2))
     (call filesystems_manage_cgroup_dirs (ARG3))
     (call systemd_exec_systemctl (ARG2))
+    (call systemd_read_state_lnk_files (ARG2))
     (call systemd_control_session_units (ARG2))
     (call systemd_session_subject_type (ARG3)))
 
@@ -996,6 +997,10 @@
 
 (macro systemd_system_service_admin_subject_type ((type ARG1))
     (typeattributeset systemd_system_service_admin_subject_type ARG1))
+
+(macro systemd_read_state_lnk_files ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_t systemd_t)))
 
 (macro systemd_dontaudit_read_state ((type ARG1))
     (dontaudit ARG1 systemd_t read_file_perms)

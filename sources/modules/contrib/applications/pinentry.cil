@@ -26,6 +26,7 @@
 (call pinentry_exec (pinentry_t))
 
 (call usersubject_use_terminals (pinentry_t))
+(call usersubject_search_data_home (pinentry_t)) ; FIXME
 
 (optional pinentry_optional_xserver
     (call xserver_tmpfs_client_template (pinentry_t pinentry_tmpfs_t))

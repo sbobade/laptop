@@ -23,6 +23,8 @@
 (context muttpgp_exec (system_u object_r muttpgp_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pgpewrap" file muttpgp_exec)
 
+(call mail_rw_inherited_mutt_tmpfs_files (muttpgp_t))
+
 (optional muttpgp_optional_pgp
     (call gpg_run (muttpgp_t mail_muttpgp_role)))
 

@@ -1,6 +1,7 @@
 (roleattribute askpwd_role)
 
 (typeattribute askpwd_admin_subject_type)
+(typeattribute askpwd_askpwdagent_client_subject_type)
 
 (typeattribute askpwd_object_type)
 
@@ -77,14 +78,19 @@
 (allow askpwd_admin_subject_type askpwd_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
+(call systemd_read_state_lnk_files (askpwd_askpwdagent_client_subject_type))
+
+(call login_read_logind_systemd_runtime (askpwd_askpwdagent_client_subject_type))
+
 (macro askpwd_exec ((type ARG1))
     (call can_exec (ARG1 askpwd_exec_t)))
 
-(macro askpwd_client_subject_type ((type ARG1))
-    (typeattributeset askpwd_client_subject_type ARG1))
+(macro askpwd_askpwdagent_client_subject_type ((type ARG1))
+    (typeattributeset askpwd_askpwdagent_client_subject_type ARG1))
 
 (macro askpwd_exec_askpwdagent ((type ARG1))
-    (call can_exec (ARG1 askpwdagent_exec_t)))
+    (call can_exec (ARG1 askpwdagent_exec_t))
+    (call askpwd_askpwdagent_client_subject_type (ARG1)))
 
 (macro askpwd_auto_subject_type_transition ((type ARG1))
     (call askpwd_send_signal (ARG1))

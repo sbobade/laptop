@@ -209,8 +209,8 @@
 
 (call usersubject_read_inherited_tmpfs_files (xauth_t))
 
-(optional xauth_optional_systemd
-    (call systemd_search_runtime (xauth_t)))
+(optional xauth_optional_machined
+    (call machine_read_machined_systemd_runtime (xauth_t)))
 
 (type xauth_home_t)
 (call usersubject_home_object_type (xauth_home_t))

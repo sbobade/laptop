@@ -188,10 +188,14 @@
 (call filesystems_read_sysfs (scd_t))
 
 (call gpg_run_gpgpcsc (scd_t gpg_scd_role))
+(call gpg_delete_home_dirs (scd_t))
 
 (call miscfiles_read_locale (scd_t))
 
 (call udev_client_subject_type (scd_t))
+
+(optional scd_optional_pcsc
+    (call pcsc_client_subject_type (scd_t)))
 
 (type dirmngr_t)
 (type dirmngr_exec_t)
@@ -207,8 +211,15 @@
 (allow dirmngr_t dirmngr_home_t manage_sock_file_perms)
 (call gpg_home_object_type_transition_dirmngr_home (dirmngr_t sock_file "S.dirmngr"))
 
-(optional scd_optional_pcsc
-    (call pcsc_client_subject_type (scd_t)))
+(allow dirmngr_t dirmngr_home_t manage_dir_perms)
+(allow dirmngr_t dirmngr_home_t manage_file_perms)
+(call gpg_home_object_type_transition_dirmngr_home (dirmngr_t dir "crls.d"))
+
+(allow dirmngr_t self create_unix_stream_stream_socket_perms)
+
+(call system_read_crypto_sysctl (dirmngr_t))
+
+(call miscfiles_read_locale (dirmngr_t))
 
 (macro gpg_exec ((type ARG1))
     (call can_exec (ARG1 gpg_exec_t)))
@@ -300,7 +311,7 @@
     (allow ARG1 dirmngr_t (process (signal))))
 
 (macro gpg_run_dirmngr ((type ARG1)(role ARG2))
-    (call gpg_auto_subject_type_transition (ARG1))
+    (call gpg_auto_subject_type_transition_dirmngr (ARG1))
     (roleattributeset gpg_dirmngr_role ARG2))
 
 (macro gpg_search_config ((type ARG1))
@@ -420,13 +431,42 @@
 (macro gpg_home_object_type_transition_gpgagent_home ((type ARG1)(class ARG2)(name ARG3))
     (call gpg_home_object_type_transition (ARG1 gpgagent_home_t ARG2 ARG3)))
 
-(macro gpg_manage_dirmngr_home_sock_files ((type ARG1))
-    (call gpg_rw_home_dirs (ARG1))
-    (allow ARG1 dirmngr_home_t manage_sock_file_perms))
-
-(macro gpg_relabel_dirmngr_home_sock_files ((type ARG1))
+(macro gpg_search_dirmngr_home ((type ARG1))
     (call gpg_search_home (ARG1))
-    (allow ARG1 dirmngr_home_t relabel_sock_file_perms))
+    (allow ARG1 dirmngr_home_t search_dir_perms))
+
+(macro gpg_list_dirmngr_home ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (allow ARG1 dirmngr_home_t list_dir_perms))
+
+(macro gpg_read_dirmngr_home_files ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (call read_files_pattern (ARG1 dirmngr_home_t dirmngr_home_t)))
+
+(macro gpg_read_dirmngr_home_lnk_files ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 dirmngr_home_t dirmngr_home_t)))
+
+(macro gpg_read_dirmngr_home ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (allow ARG1 dirmngr_home_t read_file_perms)
+    (allow ARG1 dirmngr_home_t list_dir_perms)
+    (allow ARG1 dirmngr_home_t read_sock_file_perms)
+    (allow ARG1 dirmngr_home_t read_lnk_file_perms))
+
+(macro gpg_manage_dirmngr_home ((type ARG1))
+    (call gpg_rw_home_dirs (ARG1))
+    (allow ARG1 dirmngr_home_t manage_file_perms)
+    (allow ARG1 dirmngr_home_t manage_dir_perms)
+    (allow ARG1 dirmngr_home_t manage_sock_file_perms)
+    (allow ARG1 dirmngr_home_t manage_lnk_file_perms))
+
+(macro gpg_relabel_dirmngr_home ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (allow ARG1 dirmngr_home_t relabel_file_perms)
+    (allow ARG1 dirmngr_home_t relabel_dir_perms)
+    (allow ARG1 dirmngr_home_t relabel_sock_file_perms)
+    (allow ARG1 dirmngr_home_t relabel_lnk_file_perms))
 
 (macro gpg_stream_connect_dirmngr ((type ARG1))
     (call gpg_search_home (ARG1))
@@ -501,3 +541,7 @@
     (allow ARG1 gpgpcsc_t read_file_perms)
     (allow ARG1 gpgpcsc_t list_dir_perms)
     (allow ARG1 gpgpcsc_t read_lnk_file_perms))
+
+(macro gpg_delete_home_dirs ((type ARG1))
+    (call usersubject_del_entry_home_dir (ARG1))
+    (allow ARG1 gpg_home_t delete_dir_perms))

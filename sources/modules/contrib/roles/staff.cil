@@ -93,11 +93,13 @@
     (call gpg_home_object_type_transition_scd_home (staff_t sock_file "S.scdaemon"))
 
     (context staff_dirmngr_home (staff_u object_r dirmngr_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.gnupg/crls\.d(/.*)?" dir staff_dirmngr_home)
     (filecon "/home/kcinimod/\.gnupg/S\.dirmngr" socket staff_dirmngr_home)
 
-    (call gpg_manage_dirmngr_home_sock_files (staff_t))
-    (call gpg_relabel_dirmngr_home_sock_files (staff_t))
+    (call gpg_manage_dirmngr_home (staff_t))
+    (call gpg_relabel_dirmngr_home (staff_t))
 
+    (call gpg_home_object_type_transition_dirmngr_home (staff_t dir "crls.d"))
     (call gpg_home_object_type_transition_dirmngr_home (staff_t sock_file "S.dirmngr"))
 
     (call gpg_manage_scd_home (staff_t))
@@ -238,6 +240,9 @@
 
     (context staff_systemd_config_home (staff_u object_r systemd_config_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemd_config_home)
+
+    (optional staff_optional_askpwd
+        (call askpwd_exec_askpwdagent (staff_t)))
 
     (optional staff_optional_journal
         (call journal_exec_journalctl (staff_t))))
