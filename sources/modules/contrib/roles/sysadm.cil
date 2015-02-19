@@ -336,6 +336,9 @@
 (optional sysadm_optional_xlock
     (call xlock_admin (sysadm_t)))
 
+(optional sysadm_optional_xutil
+    (call xutil_run (sysadm_t sysadm_r)))
+
 (macro sysadm_roleallow ((role ARG1))
     (roleallow ARG1 sysadm_r))
 
