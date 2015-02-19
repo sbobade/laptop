@@ -14,6 +14,8 @@
 
 (call devices_read_kmsg (dmesg_t))
 
+(call files_dontaudit_catchall_subject_type (dmesg_t))
+
 (call miscfiles_read_locale (dmesg_t))
 
 (macro dmesg_exec ((type ARG1))
