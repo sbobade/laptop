@@ -46,6 +46,7 @@
 (call devices_manage_all (tmpfiles_t))
 (call devices_relabel_all (tmpfiles_t))
 
+(call filesystems_list_rootfs (tmpfiles_t))
 (call filesystems_manage_devtmpfs_dirs (tmpfiles_t))
 (call filesystems_manage_devtmpfs_lnk_files (tmpfiles_t))
 (call filesystems_manage_tmpfs_dirs (tmpfiles_t))

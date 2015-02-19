@@ -175,6 +175,7 @@
 
 (call system_read_net_proc (nmdisp_t))
 
+(call commands_exec (nmdisp_t))
 (call commands_exec_shell (nmdisp_t))
 
 (call files_read_config (nmdisp_t))

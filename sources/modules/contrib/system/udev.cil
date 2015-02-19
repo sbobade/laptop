@@ -86,6 +86,7 @@
 (call system_read_net_proc (udevd_t))
 (call system_request_load_module (udevd_t))
 
+(call commands_exec (udevd_t))
 (call commands_exec_shell (udevd_t))
 
 (call devices_rw_all (udevd_t))
@@ -94,6 +95,7 @@
 
 (call files_list_config (udevd_t))
 
+(call filesystems_getattr_filesystems (udevd_t))
 (call filesystems_mprot_write_rootfs_dirs (udevd_t))
 (call filesystems_list_debugfs (udevd_t))
 (call filesystems_manage_devtmpfs_dirs (udevd_t))
@@ -123,6 +125,7 @@
 
 (call miscfiles_read_modules (udevd_t))
 (call miscfiles_read_net_config_files (udevd_t))
+(call miscfiles_read_locale (udevd_t))
 
 (call seutil_read_selinux_config_files (udevd_t))
 (call seutil_read_file_context_files (udevd_t))

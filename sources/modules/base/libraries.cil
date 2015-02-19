@@ -76,7 +76,10 @@
     (allow ARG1 ld_so_cache_t manage_file_perms))
 
 (macro libraries_config_object_type_transition_ld_so_cache_files ((type ARG1))
-    (call files_config_object_type_transition (ARG1 ld_so_cache_t file "*")))
+    (call files_config_object_type_transition (ARG1 ld_so_cache_t file "ld.so.cache"))
+    (call files_config_object_type_transition (ARG1 ld_so_cache_t file "ld.so.cache~"))
+    (call files_config_object_type_transition (ARG1 ld_so_cache_t file "ld.so.preload"))
+    (call files_config_object_type_transition (ARG1 ld_so_cache_t file "ld.so.preload~")))
 
 (macro libraries_use_shared_libs ((type ARG1))
     (call libraries_list (ARG1))

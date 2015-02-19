@@ -22,7 +22,7 @@
 (macro dmesg_auto_subject_type_transition ((type ARG1))
     (call dmesg_send_signal (ARG1))
     (call auto_subject_type_transition_pattern
-        (ARG1 dmesg_exec_t hwclock_t)))
+        (ARG1 dmesg_exec_t dmesg_t)))
 
 (macro dmesg_run ((type ARG1)(role ARG2))
     (call dmesg_auto_subject_type_transition (ARG1))
