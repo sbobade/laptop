@@ -1,15 +1,12 @@
-(roleattribute alsactl_role)
-
 (typeattribute alsa_admin_subject_type)
 
 (typeattribute alsa_object_type)
 
 (type alsactl_t)
 (type alsactl_exec_t)
-(call applications_app (alsactl_t alsactl_exec_t))
-(roletype alsactl_role alsactl_t)
-
-(roleattributeset alsactl_role system_r)
+(call subject_common_type (alsactl_t))
+(call subject_entry (alsactl_t alsactl_exec_t))
+(roletype system_r alsactl_t)
 
 (context alsactl_exec (system_u object_r alsactl_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/alsactl" file alsactl_exec)
@@ -107,10 +104,6 @@
 
 (macro alsa_send_signal_alsactl ((type ARG1))
     (allow ARG1 alsactl_t (process (signal))))
-
-(macro alsa_run_alsactl ((type ARG1)(role ARG2))
-    (call alsa_auto_subject_type_transition_alsactl (ARG1))
-    (roleattributeset alsactl_role ARG2))
 
 (macro alsa_search_config ((type ARG1))
     (call files_search_config (ARG1))

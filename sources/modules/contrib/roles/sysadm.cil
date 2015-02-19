@@ -106,8 +106,7 @@
 (call usermanage_run_useradd (sysadm_t sysadm_r))
 
 (optional sysadm_optional_alsa
-    (call alsa_admin (sysadm_t))
-    (call alsa_run_alsactl (sysadm_t sysadm_r)))
+    (call alsa_admin (sysadm_t)))
 
 (optional sysadm_optional_bootloader
     (call bootloader_run (sysadm_t sysadm_r))
@@ -275,8 +274,8 @@
     (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemd_config_home)
 
     (optional sysadm_optional_askpwd
-        (call askpwd_run (sysadm_t sysadm_r))
-        (call askpwd_run_askpwdagent (sysadm_t sysadm_r)))
+        (call askpwd_admin (sysadm_t))
+        (call askpwd_run (sysadm_t sysadm_r)))
 
     (optional sysadm_optional_autorelabel
         (call autorelabel_manage_flag_files (sysadm_t)))

@@ -1,9 +1,8 @@
 (roleattribute askpwd_role)
-(roleattribute askpwdagent_role)
 
-(typeattribute askpwd_client_subject_type)
+(typeattribute askpwd_admin_subject_type)
 
-(typeattribute askpwd_askpwdagent_client_subject_type)
+(typeattribute askpwd_object_type)
 
 (type askpwd_t)
 (type askpwd_exec_t)
@@ -11,13 +10,13 @@
 (call systemd_daemon (askpwd_t askpwd_exec_t))
 (roletype askpwd_role askpwd_t)
 
-(call askpwd_client_subject_type (askpwd_t))
-
 (context askpwd_exec (system_u object_r askpwd_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-ask-password" file askpwd_exec)
 
 (type askpwd_systemd_runtime_t)
 (call systemd_runtime_object_type (askpwd_systemd_runtime_t))
+
+(typeattributeset askpwd_object_type askpwd_systemd_runtime_t)
 
 (context askpwd_systemd_runtime (system_u object_r askpwd_systemd_runtime_t (systemlow systemlow)))
 (filecon "/var/run/systemd/ask-password(/.*)?" any askpwd_systemd_runtime)
@@ -28,17 +27,23 @@
 
 (type askpwdagent_t)
 (type askpwdagent_exec_t)
-(call applications_app (askpwdagent_t askpwdagent_exec_t))
 (call systemd_daemon (askpwdagent_t askpwdagent_exec_t))
-(roletype askpwdagent_role askpwdagent_t)
-
-(call askpwd_askpwdagent_client_subject_type (askpwdagent_t))
 
 (context askpwdagent_exec (system_u object_r askpwdagent_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-tty-ask-password-agent" file askpwdagent_exec)
 
+(type askpwdagent_unit_t)
+(call systemd_unit_object_type (askpwdagent_unit_t))
+
+(typeattributeset askpwd_object_type askpwdagent_unit_t)
+
+(context askpwdagent_unit (system_u object_r askpwdagent_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-ask-password.*" file askpwdagent_unit)
+
 (type askpwdagent_systemd_runtime_t)
 (call systemd_runtime_object_type (askpwdagent_systemd_runtime_t))
+
+(typeattributeset askpwd_object_type askpwdagent_systemd_runtime_t)
 
 (context askpwdagent_systemd_runtime (system_u object_r askpwdagent_systemd_runtime_t (systemlow systemlow)))
 (filecon "/var/run/systemd/ask-password-block(/.*)?" any askpwdagent_systemd_runtime)
@@ -64,19 +69,22 @@
 
 (call systemd_use_fd (askpwdagent_t))
 
+(allow askpwd_admin_subject_type askpwdagent_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (askpwd_admin_subject_type askpwdagent_t))
+
+(allow askpwd_admin_subject_type askpwdagent_unit_t (service (all)))
+
+(allow askpwd_admin_subject_type askpwd_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
 (macro askpwd_exec ((type ARG1))
-    (call can_exec (ARG1 askpwd_exec_t))
-    (call askpwd_client_subject_type (ARG1)))
+    (call can_exec (ARG1 askpwd_exec_t)))
 
 (macro askpwd_client_subject_type ((type ARG1))
     (typeattributeset askpwd_client_subject_type ARG1))
 
 (macro askpwd_exec_askpwdagent ((type ARG1))
-    (call can_exec (ARG1 askpwdagent_exec_t))
-    (call askpwd_askpwdagent_client_subject_type (ARG1)))
-
-(macro askpwd_askpwdagent_client_subject_type ((type ARG1))
-    (typeattributeset askpwd_askpwdagent_client_subject_type ARG1))
+    (call can_exec (ARG1 askpwdagent_exec_t)))
 
 (macro askpwd_auto_subject_type_transition ((type ARG1))
     (call askpwd_send_signal (ARG1))
@@ -97,10 +105,6 @@
 
 (macro askpwd_send_signal_askpwdagent ((type ARG1))
     (allow ARG1 askpwdagent_t (process (signal))))
-
-(macro askpwd_run_askpwdagent ((type ARG1)(role ARG2))
-    (call askpwd_auto_subject_type_transition_askpwdagent (ARG1))
-    (roleattributeset askpwdagent_role ARG2))
 
 (macro askpwd_search_systemd_runtime ((type ARG1))
     (call systemd_search_runtime (ARG1))
@@ -184,3 +188,8 @@
 
 (macro askpwd_systemd_runtime_object_type_transition_askpwdagent_systemd_runtime_dirs ((type ARG1))
     (call systemd_runtime_object_type_transition (ARG2 askpwdagent_systemd_runtime_t dir "ask-password-block")))
+
+(macro askpwd_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset askpwd_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

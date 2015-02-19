@@ -301,8 +301,6 @@
 (call systemd_reload_system (systemctl_t))
 (call systemd_status_system (systemctl_t))
 
-(call askpwd_run_askpwdagent (systemctl_t systemd_systemctl_role))
-
 (call usersubject_dontaudit_read_user_home_files (systemctl_t))
 
 (type systemd_generic_t)

@@ -1,4 +1,3 @@
-(roleattribute wpa_role)
 (roleattribute wpacli_role)
 
 (typeattribute wpa_admin_subject_type)
@@ -8,10 +7,9 @@
 
 (type wpa_t)
 (type wpa_exec_t)
-(call applications_app (wpa_t wpa_exec_t))
-(roletype wpa_role wpa_t)
-
-(roleattributeset wpa_role system_r)
+(call subject_common_type (wpa_t))
+(call subject_entry (wpa_t wpa_exec_t))
+(roletype system_r wpa_t)
 
 (context wpa_exec (system_u object_r wpa_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/wpa_supplicant" file wpa_exec)
