@@ -292,7 +292,7 @@
 (context systemctl_exec (system_u object_r systemctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemctl" file systemctl_exec)
 
-(allow systemctl_t self (capability (dac_override)))
+(allow systemctl_t self (capability (dac_override net_admin)))
 (allow systemctl_t self (process (setfscreate)))
 (allow systemctl_t self rw_fifo_file_perms)
 
@@ -424,7 +424,7 @@
 (call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
 (call systemd_read_state (systemd_daemon_subject_type))
 
-(allow systemd_systemctl_client_subject_type self (capability (sys_resource ipc_lock net_admin)))
+(allow systemd_systemctl_client_subject_type self (capability (sys_resource ipc_lock)))
 (allow systemd_systemctl_client_subject_type self (process (setrlimit)))
 
 (call system_read_crypto_sysctl (systemd_systemctl_client_subject_type))
