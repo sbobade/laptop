@@ -30,6 +30,8 @@
 (type askpwdagent_exec_t)
 (call systemd_daemon (askpwdagent_t askpwdagent_exec_t))
 
+(call askpwd_askpwdagent_client_subject_type (askpwdagent_t))
+
 (context askpwdagent_exec (system_u object_r askpwdagent_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-tty-ask-password-agent" file askpwdagent_exec)
 
@@ -80,7 +82,11 @@
 
 (call systemd_read_state_lnk_files (askpwd_askpwdagent_client_subject_type))
 
-(call login_read_logind_systemd_runtime (askpwd_askpwdagent_client_subject_type))
+(call login_dbus_chat_logind (askpwd_askpwdagent_client_subject_type))
+(call login_list_logind_systemd_runtime (askpwd_askpwdagent_client_subject_type))
+(call login_read_logind_systemd_runtime_files (askpwd_askpwdagent_client_subject_type))
+
+(call polkit_dbus_chat_polkitd (askpwd_askpwdagent_client_subject_type))
 
 (macro askpwd_exec ((type ARG1))
     (call can_exec (ARG1 askpwd_exec_t)))
