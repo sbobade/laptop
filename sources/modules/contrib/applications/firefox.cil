@@ -40,28 +40,33 @@
 (allow firefox_t firefox_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (firefox_t firefox_tmpfs_t file "*"))
 
+(call system_dontaudit_catchall_subject_type (firefox_t))
 (call system_read_crypto_sysctl (firefox_t))
 
 (call commands_exec (firefox_t))
 (call commands_exec_shell (firefox_t))
 
+(call devices_dontaudit_catchall_subject_type (firefox_t))
 (call devices_read_urandom (firefox_t))
 (call devices_rw_dri (firefox_t))
 
+(call filesystems_dontaudit_catchall_subject_type (firefox_t))
 (call filesystems_getattr_filesystems (firefox_t))
 (call filesystems_read_devtmpfs_lnk_files (firefox_t))
 (call filesystems_read_sysfs (firefox_t))
 
-(call files_dontaudit_list_all (firefox_t))
-(call files_dontaudit_read_all_lnk_files (firefox_t))
+(call files_dontaudit_catchall_subject_type (firefox_t))
 (call files_read_config (firefox_t))
 (call files_read_data (firefox_t))
 (call files_list_mnt (firefox_t))
 (call files_read_tmp_lnk_files (firefox_t))
 
+(call network_dontaudit_catchall_subject_type (firefox_t))
+
 (call storage_getattr_fixed_disk (firefox_t))
 (call storage_getattr_removable (firefox_t))
 
+(call subject_dontaudit_catchall_subject_type (firefox_t))
 (call subject_execmem_uncond (firefox_t))
 
 (call auth_nsswitch_client_subject_type (firefox_t))

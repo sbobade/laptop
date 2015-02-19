@@ -22,6 +22,8 @@
 (typeattribute files_tmp_object_type)
 (typeattribute files_tmpfs_object_type)
 
+(typeattribute files_dontaudit_catchall_subject_type)
+
 (typeattribute files_unconfined_subject_type)
 
 (type boot_t)
@@ -215,6 +217,8 @@
     (not_mounton_entrypoint_and_execmod)))
 
 (call files_execmod_all_except (files_unconfined_subject_type))
+
+(call files_dontaudit_manage_all_except (files_dontaudit_catchall_subject_type))
 
 (macro files_object_type ((type ARG1))
     (typeattributeset files_object_type ARG1)
@@ -1235,8 +1239,14 @@
     (call files_setattr_all_dirs_except (ARG1))
     (allow ARG1 files_except (dir_file (mounton))))
 
+(macro files_dontaudit_catchall_subject_type ((type ARG1))
+    (typeattributeset files_dontaudit_catchall_subject_type ARG1))
+
 (macro files_dontaudit_audit_access_all_except ((type ARG1))
     (dontaudit ARG1 files_except (all_file_objects (audit_access))))
+
+(macro files_dontaudit_manage_all_except ((type ARG1))
+    (dontaudit ARG1 files_except (all_file_objects (manage))))
 
 (macro files_getattr_all_except ((type ARG1))
     (allow ARG1 files_except (all_file_objects (getattr))))

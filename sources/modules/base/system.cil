@@ -12,6 +12,7 @@
 
 (typeattribute system_subject_type)
 (typeattribute system_unconfined_subject_type)
+(typeattribute system_dontaudit_catchall_subject_type)
 
 (roleattribute system_roleallow_role)
 
@@ -65,10 +66,10 @@
 (context sysrq_proc (system_u object_r sysrq_proc_t (systemlow systemlow)))
 (genfscon "proc" "/sysrq-trigger" sysrq_proc)
 
-(type sysctl_t)
-(call system_sysctl_object_type (sysctl_t))
+(type sysctl_fs_t)
+(call system_sysctl_object_type (sysctl_fs_t))
 
-(context sysctl (system_u object_r sysctl_t (systemlow systemlow)))
+(context sysctl (system_u object_r sysctl_fs_t (systemlow systemlow)))
 (sidcontext sysctl sysctl)
 
 (genfscon "proc" "/sys" sysctl)
@@ -325,6 +326,11 @@
 
 (call system_load_kernel_module (system_unconfined_subject_type))
 
+(call system_dontaudit_manage_all_proc (system_dontaudit_catchall_subject_type))
+(call system_dontaudit_getattr_proc_filesystems (system_dontaudit_catchall_subject_type))
+(call system_dontaudit_manage_all_sysctl (system_dontaudit_catchall_subject_type))
+(call system_dontaudit_getattr_sysctl_filesystems (system_dontaudit_catchall_subject_type))
+
 (macro system_object_type ((type ARG1))
     (typeattributeset system_object_type ARG1))
 
@@ -344,6 +350,9 @@
 (macro system_sysctl_object_type ((type ARG1))
     (call system_object_type (ARG1))
     (typeattributeset system_sysctl_object_type ARG1))
+
+(macro system_dontaudit_catchall_subject_type ((type ARG1))
+    (typeattributeset system_dontaudit_catchall_subject_type ARG1))
 
 (macro system_userrole ((user ARG1))
     (userrole ARG1 system_r))
@@ -452,6 +461,12 @@
 (macro system_dontaudit_getattr_all_proc_files ((type ARG1))
     (dontaudit ARG1 system_proc_object_type (file (getattr))))
 
+(macro system_dontaudit_manage_all_proc ((type ARG1))
+    (dontaudit ARG1 system_proc_object_type (all_file_objects (manage))))
+
+(macro system_dontaudit_getattr_proc_filesystems ((type ARG1))
+    (dontaudit ARG1 proc_fs_t (filesystem (getattr))))
+
 (macro system_read_all_sysctls ((type ARG1))
     (call system_read_crypto_sysctl (ARG1))
     (call system_read_dev_sysctl (ARG1))
@@ -510,15 +525,15 @@
 
 (macro system_search_sysctl ((type ARG1))
     (call filesystems_search_proc (ARG1))
-    (allow ARG1 sysctl_t search_dir_perms))
+    (allow ARG1 sysctl_fs_t search_dir_perms))
 
 (macro system_read_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
-    (allow ARG1 sysctl_t read_file_perms))
+    (allow ARG1 sysctl_fs_t read_file_perms))
 
 (macro system_rw_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
-    (allow ARG1 sysctl_t rw_file_perms))
+    (allow ARG1 sysctl_fs_t rw_file_perms))
 
 (macro system_search_kernel_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
@@ -597,6 +612,12 @@
 
 (macro system_dontaudit_getattr_all_sysctl_files ((type ARG1))
     (dontaudit ARG1 system_sysctl_object_type (file (getattr))))
+
+(macro system_dontaudit_manage_all_sysctl ((type ARG1))
+    (dontaudit ARG1 system_sysctl_object_type (all_file_objects (manage))))
+
+(macro system_dontaudit_getattr_sysctl_filesystems ((type ARG1))
+    (dontaudit ARG1 sysctl_fs_t (filesystem (getattr))))
 
 (macro system_rw_netlink_audit_sockets ((type ARG1))
     (allow ARG1 system_t (netlink_audit_socket (getattr read write))))

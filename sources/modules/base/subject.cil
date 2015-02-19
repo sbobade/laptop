@@ -6,8 +6,11 @@
 
 (typeattribute subject_type)
 (typeattribute subject_common_type)
+
 (typeattribute subject_entry_object_type)
+
 (typeattribute subject_unconfined_subject_type)
+(typeattribute subject_dontaudit_catchall_subject_type)
 
 (typeattribute subject_can_change_object_identity)
 (typeattribute subject_can_change_subject_identity)
@@ -175,12 +178,18 @@
 
 (allow subject_unconfined_subject_type subject_entry_object_type (file (entrypoint)))
 
+(call subject_dontaudit_getattr_all_common_subjects (subject_dontaudit_catchall_subject_type))
+(call subject_dontaudit_read_all_common_subjects_state (subject_dontaudit_catchall_subject_type))
+
 (macro subject_type ((type ARG1))
     (typeattributeset subject_type ARG1))
 
 (macro subject_common_type ((type ARG1))
     (call subject_type (ARG1))
     (typeattributeset subject_common_type ARG1))
+
+(macro subject_dontaudit_catchall_subject_type ((type ARG1))
+    (typeattributeset subject_dontaudit_catchall_subject_type ARG1))
 
 (macro subject_system_change_exemption ((type ARG1))
     (call subject_system_identity_change_exemption (ARG1))

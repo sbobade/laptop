@@ -1,7 +1,9 @@
 (sid fs)
 
 (typeattribute filesystems_object_type)
+
 (typeattribute filesystems_unconfined_subject_type)
+(typeattribute filesystems_dontaudit_catchall_subject_type)
 
 (type aio_fs_t)
 (call filesystems_object_type (aio_fs_t))
@@ -172,8 +174,14 @@
 (allow filesystems_unconfined_subject_type filesystems_object_type
     (filesystem (all)))
 
+(call filesystems_dontaudit_getattr_all_filesystems (filesystems_dontaudit_catchall_subject_type))
+(call filesystems_dontaudit_manage_all (filesystems_dontaudit_catchall_subject_type))
+
 (macro filesystems_object_type ((type ARG1))
     (typeattributeset filesystems_object_type ARG1))
+
+(macro filesystems_dontaudit_catchall_subject_type ((type ARG1))
+    (typeattributeset filesystems_dontaudit_catchall_subject_type ARG1))
 
 (macro filesystems_associate_devpts ((type ARG1))
     (allow ARG1 devpts_fs_t (filesystem (associate))))
@@ -558,6 +566,9 @@
 
 (macro filesystems_dontaudit_getattr_all_filesystems ((type ARG1))
     (dontaudit ARG1 filesystems_object_type (filesystem (getattr))))
+
+(macro filesystems_dontaudit_manage_all ((type ARG1))
+    (dontaudit ARG1 filesystems_object_type (all_file_objects (manage))))
 
 (macro filesystems_getattr_all_filesystems ((type ARG1))
     (allow ARG1 filesystems_object_type (filesystem (getattr))))

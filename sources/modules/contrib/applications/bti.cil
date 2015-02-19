@@ -16,15 +16,21 @@
 
 (allow bti_t self rw_fifo_file_perms)
 
+(call system_dontaudit_catchall_subject_type (bti_t))
+
 (call commands_exec (bti_t))
 
+(call devices_dontaudit_catchall_subject_type (bti_t))
 (call devices_read_urandom (bti_t))
 
 (call filesystems_list_tmpfs (bti_t))
-(call filesystems_dontaudit_audit_access_tmpfs_dirs (bti_t))
+(call filesystems_dontaudit_catchall_subject_type (bti_t))
 
-(call files_dontaudit_list_all (bti_t))
-(call files_dontaudit_read_all_lnk_files (bti_t))
+(call files_dontaudit_catchall_subject_type (bti_t))
+
+(call network_dontaudit_catchall_subject_type (bti_t))
+
+(call subject_dontaudit_catchall_subject_type (bti_t))
 
 (call auth_nsswitch_client_subject_type (bti_t))
 

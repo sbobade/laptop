@@ -2,7 +2,9 @@
 
 (typeattribute devices_object_type)
 (typeattribute devices_storage_object_type)
+
 (typeattribute devices_unconfined_subject_type)
+(typeattribute devices_dontaudit_catchall_subject_type)
 
 (type apm_dev_t)
 (call devices_object_type (apm_dev_t))
@@ -238,12 +240,17 @@
 (allow devices_unconfined_subject_type devices_except_storage
     all_chr_file_perms_except_mounton_and_execmod)
 
+(call devices_dontaudit_manage_all (devices_dontaudit_catchall_subject_type))
+
 (macro devices_object_type ((type ARG1))
     (typeattributeset devices_object_type ARG1))
 
 (macro devices_storage_object_type ((type ARG1))
     (call devices_object_type (ARG1))
     (typeattributeset devices_storage_object_type ARG1))
+
+(macro devices_dontaudit_catchall_subject_type ((type ARG1))
+    (typeattributeset devices_dontaudit_catchall_subject_type ARG1))
 
 (macro devices_getattr_all ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
@@ -258,6 +265,10 @@
     (typeattributeset devices_can_write_memory ARG1)
     (optional devices_manage_all_optional_storage
         (call storage_manage_all (ARG1))))
+
+(macro devices_dontaudit_manage_all ((type ARG1))
+    (dontaudit ARG1 devices_object_type manage_chr_file_perms)
+    (dontaudit ARG1 devices_object_type manage_blk_file_perms))
 
 (macro devices_relabel_all ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))

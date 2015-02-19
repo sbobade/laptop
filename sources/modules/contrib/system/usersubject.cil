@@ -73,10 +73,7 @@
 (allow usersubject_common_type self create_unix_stream_socket_perms)
 (allow usersubject_common_type self rw_fifo_file_perms)
 
-(call system_dontaudit_list_all_proc (usersubject_common_type))
-(call system_dontaudit_getattr_all_proc_files (usersubject_common_type))
-(call system_dontaudit_list_all_sysctl (usersubject_common_type))
-(call system_dontaudit_getattr_all_sysctl_files (usersubject_common_type))
+(call system_dontaudit_catchall_subject_type (usersubject_common_type))
 
 (call commands_exec_object_entry (usersubject_common_type))
 (call commands_shell_exec_object_entry (usersubject_common_type))
@@ -84,26 +81,18 @@
 (call commands_exec (usersubject_common_type))
 (call commands_exec_shell (usersubject_common_type))
 
-(call files_dontaudit_manage_all_files (usersubject_common_type))
-(call files_dontaudit_read_all_lnk_files (usersubject_common_type))
-(call files_dontaudit_list_all (usersubject_common_type))
+(call devices_dontaudit_catchall_subject_type (usersubject_common_type))
 
-(call filesystems_dontaudit_getattr_all_filesystems (usersubject_common_type))
-(call filesystems_dontaudit_manage_all_files (usersubject_common_type))
-(call filesystems_dontaudit_read_all_lnk_files (usersubject_common_type))
-(call filesystems_dontaudit_list_all (usersubject_common_type))
+(call files_dontaudit_catchall_subject_type (usersubject_common_type))
 
+(call filesystems_dontaudit_catchall_subject_type (usersubject_common_type))
 (call filesystems_getattr_filesystems (usersubject_common_type))
 (call filesystems_list_proc (usersubject_common_type))
 
-(call subject_dontaudit_getattr_all_common_subjects (usersubject_common_type))
-(call subject_dontaudit_read_all_common_subjects_state (usersubject_common_type))
-
+(call subject_dontaudit_catchall_subject_type (usersubject_common_type))
 (call subject_user_exemption_target (usersubject_common_type))
 
-(call network_dontaudit_udp_bind_all_ports (usersubject_common_type))
-(call network_dontaudit_tcp_bind_all_ports (usersubject_common_type))
-(call network_dontaudit_tcp_connect_all_ports (usersubject_common_type))
+(call network_dontaudit_catchall_subject_type (usersubject_common_type))
 
 (call applications_getattr_all_subjects (usersubject_common_type))
 (call applications_send_signal_all_subjects (usersubject_common_type))
@@ -877,6 +866,9 @@
 
 (macro usersubject_read_inherited_tmpfs_files ((type ARG1))
     (allow ARG1 user_tmpfs_t read_inherited_file_perms))
+
+(macro usersubject_rw_inherited_tmpfs_files ((type ARG1))
+    (allow ARG1 user_tmpfs_t rw_inherited_file_perms))
 
 (macro usersubject_manage_tmpfs_files ((type ARG1))
     (call files_search_user_runtime (ARG1))

@@ -122,6 +122,7 @@
 (call xserver_run_wrap (xserver_t xserver_role))
 (call xserver_tcp_bind_xserver_port (xserver_t))
 
+(call usersubject_rw_inherited_tmpfs_files (xserver_t))
 (call usersubject_use_ttys (xserver_t))
 
 (optional xserver_optional_dbus
