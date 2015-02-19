@@ -93,7 +93,9 @@
     (allow ARG3 ARG2 (process (signal)))
     (call auth_run_chkpwd (ARG3 ARG1))
     (call auth_run_utempter (ARG3 ARG1))
-    (call screen_subject_type (ARG3)))
+    (call screen_subject_type (ARG3))
+    (optional screen_role_template_optional_temps
+        (call temps_run (ARG3 ARG1))))
 
 (macro screen_read_config_files ((type ARG1))
     (call files_search_config (ARG1))

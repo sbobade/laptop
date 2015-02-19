@@ -1,0 +1,67 @@
+(roleattribute xutil_role)
+
+(type xutil_t)
+(type xutil_exec_t)
+(call applications_app (xutil_t xutil_exec_t))
+(roletype xutil_role xutil_t)
+
+(context xutil_exec (system_u object_r xutil_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xbacklight" file xutil_exec)
+(filecon "/usr/bin/xhost" file xutil_exec)
+(filecon "/usr/bin/xloadimage" file xutil_exec)
+(filecon "/usr/bin/xmodmap" file xutil_exec)
+(filecon "/usr/bin/xprop" file xutil_exec)
+(filecon "/usr/bin/xset" file xutil_exec)
+(filecon "/usr/bin/xrandr" file xutil_exec)
+(filecon "/usr/bin/xrdb" file xutil_exec)
+
+(type xutil_home_t)
+(call usersubject_home_object_type (xutil_home_t))
+
+(allow xutil_t self rw_fifo_file_perms)
+
+(call commands_exec (xutil_t))
+(call commands_exec_shell (xutil_t))
+
+(call files_read_config_files (xutil_t))
+
+(call auth_nsswitch_client_subject_type (xutil_t))
+
+(call miscfiles_read_locale (xutil_t))
+(call miscfiles_read_net_config_files (xutil_t))
+
+(call usersubject_read_user_home_files (xutil_t))
+
+(call xserver_client_subject_type (xutil_t))
+
+(call xutil_read_home_files (xutil_t))
+
+(macro xutil_exec ((type ARG1))
+    (call can_exec (ARG1 xutil_exec_t)))
+
+(macro xutil_auto_subject_type_transition ((type ARG1))
+    (call xutil_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xutil_exec_t xutil_t)))
+
+(macro xutil_send_signal ((type ARG1))
+    (allow ARG1 xutil_t (process (signal))))
+
+(macro xutil_run ((type ARG1)(role ARG2))
+    (call xutil_auto_subject_type_transition (ARG1))
+    (roleattributeset xutil_role ARG2))
+
+(macro xutil_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xutil_home_t read_file_perms))
+
+(macro xutil_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 xutil_home_t manage_file_perms))
+
+(macro xutil_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xutil_home_t relabel_file_perms))
+
+(macro xutil_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 xutil_home_t file ".Xresources")))

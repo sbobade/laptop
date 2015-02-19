@@ -1,0 +1,35 @@
+(roleattribute temps_role)
+
+(type temps_t)
+(type temps_exec_t)
+(call applications_app (temps_t temps_exec_t))
+(roletype temps_role temps_t)
+
+(context temps_exec (staff_u object_r temps_exec_t (systemlow systemlow)))
+(filecon "/home/kcinimod/\.local/bin/temps" file temps_exec)
+
+(allow temps_t self rw_fifo_file_perms)
+
+(call commands_exec (temps_t))
+(call commands_mprot_read_shell_exec_files (temps_t))
+
+(call filesystems_read_sysfs (temps_t))
+
+(call miscfiles_read_locale (temps_t))
+
+(call usersubject_search_exec_home (temps_t))
+
+(macro temps_exec ((type ARG1))
+    (call can_exec (ARG1 temps_exec_t)))
+
+(macro temps_auto_subject_type_transition ((type ARG1))
+    (call temps_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 temps_exec_t temps_t)))
+
+(macro temps_send_signal ((type ARG1))
+    (allow ARG1 temps_t (process (signal))))
+
+(macro temps_run ((type ARG1)(role ARG2))
+    (call temps_auto_subject_type_transition (ARG1))
+    (roleattributeset temps_role ARG2))

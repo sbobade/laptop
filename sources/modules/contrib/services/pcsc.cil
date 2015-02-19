@@ -134,19 +134,23 @@
     (call files_search_runtime (ARG1))
     (call read_lnk_files_pattern (ARG1 pcscd_runtime_t pcscd_runtime_t)))
 
-(macro pcscd_read_pcscd_runtime ((type ARG1))
+(macro pcsc_read_pcscd_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
     (allow ARG1 pcscd_runtime_t read_file_perms)
     (allow ARG1 pcscd_runtime_t list_dir_perms)
     (allow ARG1 pcscd_runtime_t read_sock_file_perms)
     (allow ARG1 pcscd_runtime_t read_lnk_file_perms))
 
-(macro pcscd_manage_pcscd_runtime ((type ARG1))
+(macro pcsc_manage_pcscd_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
     (allow ARG1 pcscd_runtime_t manage_file_perms)
     (allow ARG1 pcscd_runtime_t manage_dir_perms)
     (allow ARG1 pcscd_runtime_t manage_sock_file_perms)
     (allow ARG1 pcscd_runtime_t manage_lnk_file_perms))
+
+(macro pcsc_stream_connect_pcscd ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 pcscd_runtime_t pcscd_runtime_t pcscd_t)))
 
 (macro pcsc_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

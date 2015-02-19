@@ -408,9 +408,6 @@
 
 (call udev_client_subject_type (systemd_session_subject_type))
 
-(call usersubject_read_exec_home_lnk_files (systemd_session_subject_type))
-(call usersubject_search_exec_home (systemd_session_subject_type))
-
 (call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
 (call systemd_read_state (systemd_daemon_subject_type))
 

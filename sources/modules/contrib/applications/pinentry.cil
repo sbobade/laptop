@@ -1,0 +1,62 @@
+(roleattribute pinentry_role)
+
+(type pinentry_t)
+(type pinentry_exec_t)
+(call applications_app (pinentry_t pinentry_exec_t))
+(roletype pinentry_role pinentry_t)
+
+(context pinentry_exec (system_u object_r pinentry_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/pinentry" file pinentry_exec)
+(filecon "/usr/bin/pinentry-curses" file pinentry_exec)
+(filecon "/usr/bin/pinentry-gtk-2" file pinentry_exec)
+
+(call commands_mprot_read_shell_exec_files (pinentry_t))
+
+(call miscfiles_read_all_terminfo (pinentry_t))
+(call miscfiles_read_locale (pinentry_t))
+
+(call pinentry_exec (pinentry_t))
+
+(call usersubject_use_terminals (pinentry_t))
+
+(optional pinentry_optional_xserver
+    (call xserver_tmpfs_client_template (pinentry_t pinentry_tmpfs_t))
+
+    (type pinentry_tmpfs_t)
+    (call usersubject_tmpfs_object_type (pinentry_tmpfs_t))
+
+    (allow pinentry_t pinentry_tmpfs_t manage_file_perms)
+    (call filesystems_tmpfs_object_type_transition (pinentry_t pinentry_tmpfs_t file "*")))
+
+(optional pinentry_optional_xutil
+    (call xutil_exec (pinentry_t)))
+
+(macro pinentry_exec ((type ARG1))
+    (call can_exec (ARG1 pinentry_exec_t)))
+
+(macro pinentry_auto_subject_type_transition ((type ARG1))
+    (call pinentry_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pinentry_exec_t pinentry_t)))
+
+(macro pinentry_send_signal ((type ARG1))
+    (allow ARG1 pinentry_t (process (signal))))
+
+(macro pinentry_run ((type ARG1)(role ARG2))
+    (call pinentry_auto_subject_type_transition (ARG1))
+    (roleattributeset pinentry_role ARG2))
+
+(macro pinentry_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 pinentry_tmpfs_t read_file_perms))
+
+(macro pinentry_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 pinentry_tmpfs_t manage_file_perms))
+
+(macro pinentry_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 pinentry_tmpfs_t relabel_file_perms))
