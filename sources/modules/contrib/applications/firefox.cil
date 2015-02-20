@@ -20,7 +20,7 @@
 (type firefox_tmpfs_t)
 (call usersubject_tmpfs_object_type (firefox_tmpfs_t))
 
-(allow firefox_t self (process (setsched getsched execmem)))
+(allow firefox_t self (process (setsched getsched)))
 (allow firefox_t self create_unix_dgram_socket_perms)
 (allow firefox_t self rw_fifo_file_perms)
 
@@ -99,9 +99,6 @@
     (optional firefox_optional_nm
         (call nm_dbus_chat (firefox_t))))
 
-(optional firefox_optional_gstreamer
-    (call gstreamer_client_subject_type (firefox_t)))
-
 (optional firefox_optional_machine
     (call machine_read_config_files (firefox_t)))
 
@@ -122,7 +119,7 @@
 (type firefox_plugs_tmpfs_t)
 (call usersubject_tmpfs_object_type (firefox_plugs_tmpfs_t))
 
-(allow firefox_plugs_t self (process (setsched execmem)))
+(allow firefox_plugs_t self (process (getsched setsched)))
 (allow firefox_plugs_t self create_unix_dgram_socket_perms)
 
 (allow firefox_plugs_t firefox_t (unix_stream_socket (read write)))
