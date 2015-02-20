@@ -66,10 +66,10 @@
 (context sysrq_proc (system_u object_r sysrq_proc_t (systemlow systemlow)))
 (genfscon "proc" "/sysrq-trigger" sysrq_proc)
 
-(type sysctl_fs_t)
-(call system_sysctl_object_type (sysctl_fs_t))
+(type sysctl_t)
+(call system_sysctl_object_type (sysctl_t))
 
-(context sysctl (system_u object_r sysctl_fs_t (systemlow systemlow)))
+(context sysctl (system_u object_r sysctl_t (systemlow systemlow)))
 (sidcontext sysctl sysctl)
 
 (genfscon "proc" "/sys" sysctl)
@@ -537,15 +537,15 @@
 
 (macro system_search_sysctl ((type ARG1))
     (call filesystems_search_proc (ARG1))
-    (allow ARG1 sysctl_fs_t search_dir_perms))
+    (allow ARG1 sysctl_t search_dir_perms))
 
 (macro system_read_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
-    (allow ARG1 sysctl_fs_t read_file_perms))
+    (allow ARG1 sysctl_t read_file_perms))
 
 (macro system_rw_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
-    (allow ARG1 sysctl_fs_t rw_file_perms))
+    (allow ARG1 sysctl_t rw_file_perms))
 
 (macro system_search_kernel_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
@@ -635,7 +635,7 @@
     (dontaudit ARG1 system_sysctl_object_type (all_file_objects (manage))))
 
 (macro system_dontaudit_getattr_sysctl_filesystems ((type ARG1))
-    (dontaudit ARG1 sysctl_fs_t (filesystem (getattr))))
+    (dontaudit ARG1 sysctl_t (filesystem (getattr))))
 
 (macro system_rw_netlink_audit_sockets ((type ARG1))
     (allow ARG1 system_t (netlink_audit_socket (getattr read write))))
