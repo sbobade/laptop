@@ -46,6 +46,9 @@
 (call usersubject_read_tmpfs_files (gpg_subject_type))
 (call usersubject_use_terminals (gpg_subject_type))
 
+(optional gpg_optional_git
+    (call git_read_tmpfs_files (gpg_subject_type)))
+
 (optional gpg_subject_type_optional_mutt
     (call mail_read_mutt_home_files (gpg_subject_type))
     (call mail_rw_mutt_tmpfs_files (gpg_subject_type)))
