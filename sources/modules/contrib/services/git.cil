@@ -22,7 +22,7 @@
 (call usersubject_home_object_type (git_home_t))
 
 (type git_config_home_t)
-(call usersubject_home_object_type (git_config_home_t))
+(call usersubject_config_home_object_type (git_config_home_t))
 
 (type git_tmpfs_t)
 (call usersubject_tmpfs_object_type (git_tmpfs_t))
@@ -33,8 +33,6 @@
 (allow git_subject_type git_home_t manage_file_perms)
 (allow git_subject_type git_home_t manage_lnk_file_perms)
 (call git_user_home_object_type_transition_git_home_dirs (git_subject_type))
-
-(allow git_subject_type git_config_home_t read_file_perms)
 
 (allow git_subject_type git_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (git_subject_type git_tmpfs_t file "*"))
@@ -52,6 +50,7 @@
 
 (call git_exec (git_subject_type))
 (call git_tcp_connect_git_port (git_subject_type))
+(call git_read_config_home (git_subject_type))
 
 (call miscfiles_read_all_certs (git_subject_type))
 (call miscfiles_read_net_config_files (git_subject_type))
@@ -120,17 +119,39 @@
     (allow ARG3 ARG2 (process (signal)))
     (call git_gitemail_subject_type (ARG3)))
 
+(macro git_search_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 git_config_home_t search_dir_perms))
+
+(macro git_list_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 git_config_home_t list_dir_perms))
+
 (macro git_read_config_home_files ((type ARG1))
-    (call usersubject_search_home_dir (ARG1))
-    (allow ARG1 git_config_home_t read_file_perms))
+    (call usersubject_search_config_home (ARG1))
+    (call read_files_pattern (ARG1 git_config_home_t git_config_home_t)))
 
-(macro git_manage_config_home_files ((type ARG1))
+(macro git_read_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 git_config_home_t read_file_perms)
+    (allow ARG1 git_config_home_t list_dir_perms)
+    (allow ARG1 git_config_home_t read_lnk_file_perms))
+
+(macro git_manage_config_home ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
     (call usersubject_rw_home_dir_dirs (ARG1))
-    (allow ARG1 git_config_home_t manage_file_perms))
+    (allow ARG1 git_config_home_t manage_file_perms)
+    (allow ARG1 git_config_home_t manage_dir_perms)
+    (allow ARG1 git_config_home_t manage_lnk_file_perms))
 
-(macro git_relabel_config_home_files ((type ARG1))
-    (call usersubject_search_home_dir (ARG1))
-    (allow ARG1 git_config_home_t relabel_file_perms))
+(macro git_relabel_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 git_config_home_t relabel_file_perms)
+    (allow ARG1 git_config_home_t relabel_dir_perms)
+    (allow ARG1 git_config_home_t relabel_lnk_file_perms))
+
+(macro git_config_home_object_type_transition_git_config_home_dirs ((type ARG1))
+    (call usersubject_config_home_object_type_transition (ARG1 git_config_home_t dir "git")))
 
 (macro git_home_dir_object_type_transition_git_config_home_files ((type ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 git_config_home_t file ".gitconfig"))
