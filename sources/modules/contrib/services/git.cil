@@ -37,10 +37,13 @@
 (allow git_subject_type git_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (git_subject_type git_tmpfs_t file "*"))
 
+(call devices_dontaudit_catchall_subject_type (git_subject_type))
 (call devices_read_urandom (git_subject_type))
 
 (call files_read_data (git_subject_type))
+(call files_dontaudit_catchall_subject_type (git_subject_type))
 
+(call filesystems_dontaudit_catchall_subject_type (git_subject_type))
 (call filesystems_dontaudit_audit_access_tmpfs_dirs (git_subject_type))
 (call filesystems_getattr_tmpfs_filesystems (git_subject_type))
 (call filesystems_list_tmpfs (git_subject_type))
@@ -57,11 +60,17 @@
 (call miscfiles_read_all_terminfo (git_subject_type))
 (call miscfiles_read_locale (git_subject_type))
 
+(call usersubject_read_user_home_lnk_files (git_subject_type))
 (call usersubject_manage_user_home_files (git_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (git_subject_type file "*"))
 
 (optional git_optional_http
     (call http_tcp_connect_http_port (git_subject_type)))
+
+(optional git_optional_pass
+    (call pass_read_home_files (git_subject_type))
+    (call pass_read_home_lnk_files (git_subject_type))
+    (call pass_home_object_type_transition (git_subject_type git_home_t dir ".git")))
 
 (type gitemail_exec_t)
 (call applications_app (git_gitemail_subject_type gitemail_exec_t))
@@ -156,6 +165,9 @@
 (macro git_home_dir_object_type_transition_git_config_home_files ((type ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 git_config_home_t file ".gitconfig"))
     (call usersubject_home_dir_object_type_transition (ARG1 git_config_home_t file ".gitaliases")))
+
+(macro git_user_home_object_type_transition_git_config_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 git_config_home_t file ".gitattributes")))
 
 (macro git_search_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))

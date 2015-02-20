@@ -123,6 +123,7 @@
 (call files_read_config (usersubject_common_login_subject_type))
 (call files_read_data (usersubject_common_login_subject_type))
 
+(call filesystems_getattr_sysfs_filesystems (usersubject_common_login_subject_type))
 (call filesystems_list_tmpfs (usersubject_common_login_subject_type))
 
 (call selinux_get_enforce_mode (usersubject_common_login_subject_type))
@@ -135,6 +136,9 @@
 
 (call miscfiles_read_man (usersubject_common_login_subject_type))
 (call miscfiles_read_net_config_files (usersubject_common_login_subject_type))
+
+(call seutil_read_selinux_config_files (usersubject_common_login_subject_type))
+(call seutil_read_file_context_files (usersubject_common_login_subject_type))
 
 (optional usersubject_optional_tmpfiles
     (call tmpfiles_object_exception_type (usersubject_home_object_type)))

@@ -1248,6 +1248,18 @@
 (macro files_dontaudit_manage_all_except ((type ARG1))
     (dontaudit ARG1 files_except (all_file_objects (manage))))
 
+(macro files_getattr_all_files ((type ARG1))
+    (call getattr_files_pattern (ARG1 files_object_type files_object_type)))
+
+(macro files_getattr_all_lnk_files ((type ARG1))
+    (call getattr_lnk_files_pattern (ARG1 files_object_type files_object_type)))
+
+(macro files_getattr_all_fifo_files ((type ARG1))
+    (call getattr_fifo_files_pattern (ARG1 files_object_type files_object_type)))
+
+(macro files_getattr_all_sock_files ((type ARG1))
+    (call getattr_sock_files_pattern (ARG1 files_object_type files_object_type)))
+
 (macro files_getattr_all_except ((type ARG1))
     (allow ARG1 files_except (all_file_objects (getattr))))
 

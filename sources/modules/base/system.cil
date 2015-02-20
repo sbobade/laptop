@@ -455,6 +455,18 @@
     (typeattributeset system_can_dump_kernel ARG1)
     (typeattributeset system_can_read_kernel_message ARG1))
 
+(macro system_search_all_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 system_proc_object_type search_dir_perms))
+
+(macro system_getattr_all_proc_files ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call getattr_files_pattern (ARG1 system_proc_object_type system_proc_object_type)))
+
+(macro system_getattr_all_proc_lnk_files ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call getattr_lnk_files_pattern (ARG1 system_proc_object_type system_proc_object_type)))
+
 (macro system_dontaudit_list_all_proc ((type ARG1))
     (dontaudit ARG1 system_proc_object_type list_dir_perms))
 
@@ -606,6 +618,12 @@
 (macro system_rw_vm_overcommit_sysctl ((type ARG1))
     (call system_search_vm_sysctl (ARG1))
     (allow ARG1 vm_overcommit_sysctl_t rw_file_perms))
+
+(macro system_getattr_all_sysctl_files ((type ARG1))
+    (call getattr_files_pattern (ARG1 system_sysctl_object_type system_sysctl_object_type)))
+
+(macro system_getattr_all_sysctl_lnk_files ((type ARG1))
+    (call getattr_lnk_files_pattern (ARG1 system_sysctl_object_type system_sysctl_object_type)))
 
 (macro system_dontaudit_list_all_sysctl ((type ARG1))
     (dontaudit ARG1 system_sysctl_object_type list_dir_perms))

@@ -35,6 +35,8 @@
 (context staff_mail_spool (staff_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
 (filecon "/var/spool/mail/kcinimod" file staff_mail_spool)
 
+(call seutil_exec_setfiles (staff_t))
+
 (type staff_chfn_t)
 (call usermanage_role_template_chfn (staff_r staff_t staff_chfn_t))
 
@@ -80,6 +82,10 @@
     (call git_home_dir_object_type_transition_git_config_home_files (staff_t))
     (call git_config_home_object_type_transition_git_config_home_dirs (staff_t))
 
+    (filecon "/home/kcinimod/.*/\.gitattributes" file staff_git_config_home)
+
+    (call git_user_home_object_type_transition_git_config_home_files (staff_t))
+
     (context staff_git_home (staff_u object_r git_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/.*/\.git(/.*)?" any staff_git_home)
 
@@ -92,11 +98,17 @@
 
     (call git_role_template_gitemail (staff_r staff_git_t staff_gitemail_t))
 
-    (optional staff_git_optional_staff_ssh
-        (call ssh_role_template (staff_r staff_git_t staff_ssh_t)))
-
     (optional staff_git_optional_staff_gpg
         (call gpg_role_template (staff_r staff_git_t staff_gpg_t)))
+
+    (optional staff_git_optional_pass
+        (call pass_home_object_type_transition (staff_t git_config_home_t file ".gitattributes"))
+
+        (filecon "/home/kcinimod/\.password-store/\.gitattributes" file staff_git_config_home)
+        (filecon "/home/kcinimod/\.password-store/\.git(/.*)?" any staff_git_home))
+
+    (optional staff_git_optional_staff_ssh
+        (call ssh_role_template (staff_r staff_git_t staff_ssh_t)))
 
     (type staff_gitemail_t)
     (call git_role_template_gitemail (staff_r staff_t staff_gitemail_t))
@@ -274,6 +286,14 @@
 
         (call mplayer_manage_tmpfs_files (staff_t))
         (call mplayer_relabel_tmpfs_files (staff_t)))
+
+(optional staff_optional_pass
+    (call pass_manage_home (staff_t))
+    (call pass_relabel_home (staff_t))
+    (call pass_home_dir_object_type_transition_home_dirs (staff_t))
+
+    (context staff_pass_home (staff_u object_r pass_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.password-store(/.*)?" any staff_pass_home))
 
 (optional staff_optional_pinentry
     (call pinentry_run (staff_t staff_r))

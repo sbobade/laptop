@@ -3,6 +3,8 @@
 (roleattribute setfiles_role)
 (roleattribute setools_role)
 
+(roleattribute matchpathcon_role)
+
 (roleattribute getsebool_role)
 (roleattribute setsebool_role)
 
@@ -155,6 +157,36 @@
 
 (call seutil_read_selinux_config_files (setenforce_t))
 
+(type matchpathcon_t)
+(type matchpathcon_exec_t)
+(call applications_app (matchpathcon_t matchpathcon_exec_t))
+(roletype matchpathcon_role matchpathcon_t)
+
+(roleattributeset matchpathcon_role system_r)
+
+(context matchpathcon_exec (system_u object_r matchpathcon_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/matchpathcon" file matchpathcon_exec)
+
+(call system_getattr_all_proc_files (matchpathcon_t))
+(call system_getattr_all_proc_lnk_files (matchpathcon_t))
+(call system_getattr_all_sysctl_files (matchpathcon_t))
+(call system_getattr_all_sysctl_lnk_files (matchpathcon_t))
+
+(call devices_getattr_all (matchpathcon_t))
+
+(call files_getattr_all_files (matchpathcon_t))
+(call files_getattr_all_lnk_files (matchpathcon_t))
+(call files_getattr_all_fifo_files (matchpathcon_t))
+(call files_getattr_all_sock_files (matchpathcon_t))
+
+(call filesystems_getattr_all_files (matchpathcon_t))
+(call filesystems_getattr_all_lnk_files (matchpathcon_t))
+
+(call selinux_validate_context (matchpathcon_t))
+
+(call seutil_read_selinux_config_files (matchpathcon_t))
+(call seutil_read_file_context_files (matchpathcon_t))
+
 (type setools_t)
 (type setools_exec_t)
 (call applications_app (setools_t setools_exec_t))
@@ -239,6 +271,9 @@
 
 (macro seutil_exec_setenforce ((type ARG1))
     (call can_exec (ARG1 setenforce_exec_t)))
+
+(macro seutil_exec_matchpathcon ((type ARG1))
+    (call can_exec (ARG1 matchpathcon_exec_t)))
 
 (macro seutil_auto_subject_type_transition_load_policy ((type ARG1))
     (call seutil_send_signal_load_policy (ARG1))
@@ -335,6 +370,18 @@
 (macro seutil_run_setenforce ((type ARG1)(role ARG2))
     (call seutil_auto_subject_type_transition_setenforce (ARG1))
     (roleattributeset setenforce_role ARG2))
+
+(macro seutil_auto_subject_type_transition_matchpathcon ((type ARG1))
+    (call seutil_send_signal_matchpathcon (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 matchpathcon_exec_t matchpathcon_t)))
+
+(macro seutil_send_signal_matchpathcon ((type ARG1))
+    (allow ARG1 matchpathcon_t (process (signal))))
+
+(macro seutil_run_matchpathcon ((type ARG1)(role ARG2))
+    (call seutil_auto_subject_type_transition_matchpathcon (ARG1))
+    (roleattributeset matchpathcon_role ARG2))
 
 (macro seutil_search_selinux_config ((type ARG1))
     (call files_search_config (ARG1))

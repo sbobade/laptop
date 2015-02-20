@@ -95,6 +95,7 @@
 (call seutil_run_setools (sysadm_t sysadm_r))
 (call seutil_run_getsebool (sysadm_t sysadm_r))
 (call seutil_run_setsebool (sysadm_t sysadm_r))
+(call seutil_run_matchpathcon (sysadm_t sysadm_r))
 
 (type sysadm_chfn_t)
 (call usermanage_role_template_chfn (sysadm_r sysadm_t sysadm_chfn_t))

@@ -1,0 +1,43 @@
+(type pass_home_t)
+(call usersubject_home_object_type (pass_home_t))
+
+(macro pass_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 pass_home_t search_dir_perms))
+
+(macro pass_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 pass_home_t search_dir_perms))
+
+(macro pass_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 pass_home_t pass_home_t)))
+
+(macro pass_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 pass_home_t pass_home_t)))
+
+(macro pass_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 pass_home_t read_file_perms)
+    (allow ARG1 pass_home_t list_dir_perms)
+    (allow ARG1 pass_home_t read_lnk_file_perms))
+
+(macro pass_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 pass_home_t manage_file_perms)
+    (allow ARG1 pass_home_t manage_dir_perms)
+    (allow ARG1 pass_home_t manage_lnk_file_perms))
+
+(macro pass_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 pass_home_t relabel_file_perms)
+    (allow ARG1 pass_home_t relabel_dir_perms)
+    (allow ARG1 pass_home_t relabel_lnk_file_perms))
+
+(macro pass_home_dir_object_type_transition_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 pass_home_t dir ".password-store")))
+
+(macro pass_home_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call usersubject_search_home_dir (ARG1))
+    (call object_type_transition_pattern (ARG1 pass_home_t ARG2 ARG3 ARG4)))
