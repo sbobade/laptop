@@ -1,0 +1,52 @@
+(roleattribute qiv_role)
+
+(type qiv_t)
+(type qiv_exec_t)
+(call applications_app (qiv_t qiv_exec_t))
+(roletype qiv_role qiv_t)
+
+(context qiv_exec (system_u object_r qiv_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/qiv" file qiv_exec)
+
+(type qiv_tmpfs_t)
+(call usersubject_tmpfs_object_type (qiv_tmpfs_t))
+
+(allow qiv_t qiv_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (qiv_t qiv_tmpfs_t file "*"))
+
+(call files_read_config_files (qiv_t))
+(call files_search_mnt (qiv_t))
+
+(call usersubject_read_user_home_files (qiv_t))
+
+(call xserver_tmpfs_client_template (qiv_t qiv_tmpfs_t))
+
+(macro qiv_exec ((type ARG1))
+    (call can_exec (ARG1 qiv_exec_t)))
+
+(macro qiv_auto_subject_type_transition ((type ARG1))
+    (call qiv_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 qiv_exec_t qiv_t)))
+
+(macro qiv_send_signal ((type ARG1))
+    (allow ARG1 qiv_t (process (signal))))
+
+(macro qiv_run ((type ARG1)(role ARG2))
+    (call qiv_auto_subject_type_transition (ARG1))
+    (roleattributeset qiv_role ARG2))
+
+(macro qiv_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 qiv_tmpfs_t read_file_perms))
+
+(macro qiv_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 qiv_tmpfs_t manage_file_perms))
+
+(macro qiv_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 qiv_tmpfs_t relabel_file_perms))

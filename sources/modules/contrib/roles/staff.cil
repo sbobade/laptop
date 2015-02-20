@@ -52,11 +52,15 @@
     (filecon "/home/kcinimod/\.bti" file staff_bti_home)
     (filecon "/home/kcinimod/\.bti\.log.*" file staff_bti_home))
 
+(optional staff_optional_ffmpeg
+    (call ffmpeg_run (staff_t staff_r))
+
+    (call ffmpeg_manage_tmpfs_files (staff_t))
+    (call ffmpeg_relabel_tmpfs_files (staff_t)))
+
 (optional staff_optional_gpg
-    (call gpg_run (staff_t staff_r))
     (call gpg_run_dirmngr (staff_t staff_r))
     (call gpg_run_gpg2keys (staff_t staff_r))
-    (call gpg_run_gpgagent (staff_t staff_r))
     (call gpg_run_gpgpcsc (staff_t staff_r))
     (call gpg_run_scd (staff_t staff_r))
 
@@ -67,6 +71,17 @@
 
     (call gpg_manage_home (staff_t))
     (call gpg_relabel_home (staff_t))
+
+    (type staff_gpg_t)
+    (call gpg_role_template (staff_r staff_t staff_gpg_t))
+
+    (type staff_gpgagent_t)
+    (call gpg_role_template_gpgagent (staff_r staff_t staff_gpgagent_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_gpgagent_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_gpgagent_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_gpgagent_t staff_t))
 
     (context staff_gpgagent_home (staff_u object_r gpgagent_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.gnupg/gpg-agent\.conf" file staff_gpgagent_home)
@@ -93,7 +108,7 @@
     (call gpg_home_object_type_transition_scd_home (staff_t sock_file "S.scdaemon"))
 
     (context staff_dirmngr_home (staff_u object_r dirmngr_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.gnupg/crls\.d(/.*)?" dir staff_dirmngr_home)
+    (filecon "/home/kcinimod/\.gnupg/crls\.d(/.*)?" any staff_dirmngr_home)
     (filecon "/home/kcinimod/\.gnupg/S\.dirmngr" socket staff_dirmngr_home)
 
     (call gpg_manage_dirmngr_home (staff_t))
@@ -106,7 +121,10 @@
     (call gpg_relabel_scd_home (staff_t))
 
     (call gpg_manage_scd_tmpfs (staff_t))
-    (call gpg_relabel_scd_tmpfs (staff_t)))
+    (call gpg_relabel_scd_tmpfs (staff_t))
+
+    (call gpg_role_template_gpgagent (staff_r staff_gpg_t staff_gpgagent_t))
+    (call stream_connect_pattern (staff_gpg_t gpgagent_home_t gpgagent_home_t staff_gpgagent_t)))
 
 (optional staff_optional_gstreamer
     (call gstreamer_manage_cache_home (staff_t))
@@ -131,8 +149,16 @@
     (filecon "/home/kcinimod/\.irssi(/.*)?" any staff_irssi_home))
 
 (optional staff_optional_mail
-    (call mail_run_mutt (staff_t staff_r))
-    (call mail_run_muttpgp (staff_t staff_r))
+    (type staff_mutt_t)
+    (call mail_role_template_mutt (staff_r staff_t staff_mutt_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_mutt_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_mutt_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_mutt_t staff_t))
+
+    (type staff_muttpgp_t)
+    (call mail_role_template_muttpgp (staff_r staff_t staff_muttpgp_t))
 
     (call mail_manage_mutt_home_files (staff_t))
     (call mail_relabel_mutt_home_files (staff_t))
@@ -150,7 +176,13 @@
     (filecon "/home/kcinimod/\.muttrc" file staff_mutt_home)
     (filecon "/home/kcinimod/\.mutt_cache" file staff_mutt_home)
     (filecon "/home/kcinimod/\.mutt_certificates" file staff_mutt_home)
-    (filecon "/home/kcinimod/\.mutt_passwords\.gpg" file staff_mutt_home))
+    (filecon "/home/kcinimod/\.mutt_passwords\.gpg" file staff_mutt_home)
+
+    (call mail_role_template_muttpgp (staff_r staff_mutt_t staff_muttpgp_t))
+
+    (optional staff_mutt_optional_staff_pgp
+        (call gpg_role_template (staff_r staff_muttpgp_t staff_gpg_t))
+        (call gpg_role_template (staff_r staff_mutt_t staff_gpg_t))))
 
 (optional staff_optional_pa
     (call pa_run (staff_t staff_r))
@@ -172,7 +204,20 @@
     (call pa_home_dir_object_type_transition_home_files (staff_t))
 
     (context staff_pa_home (staff_u object_r pa_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home))
+    (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home)
+
+    (optional mplayer_optional_pa
+        (call mplayer_run (staff_t staff_r)))
+
+        (context staff_mplayer_home (staff_u object_r mplayer_home_t (systemlow systemlow)))
+        (filecon "/home/kcinimod/\.mplayer(/.*)?" any staff_mplayer_home)
+
+        (call mplayer_manage_home (staff_t))
+        (call mplayer_relabel_home (staff_t))
+        (call mplayer_home_dir_object_type_transition_home_dirs (staff_t))
+
+        (call mplayer_manage_tmpfs_files (staff_t))
+        (call mplayer_relabel_tmpfs_files (staff_t)))
 
 (optional staff_optional_pinentry
     (call pinentry_run (staff_t staff_r))
@@ -201,6 +246,34 @@
 
     (call screen_manage_tmpfs_files (staff_t))
     (call screen_relabel_tmpfs_files (staff_t)))
+
+(optional staff_optional_ssh
+    (call ssh_run_sshkeygen (staff_t staff_r))
+
+    (call ssh_manage_home (staff_t))
+    (call ssh_relabel_home (staff_t))
+
+    (call ssh_home_dir_object_type_transition_ssh_home_dirs (staff_t ".ssh"))
+
+    (context staff_ssh_home (staff_u object_r ssh_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.ssh(/.*)?" any staff_ssh_home)
+
+    (type staff_ssh_t)
+    (call ssh_role_template (staff_r staff_t staff_ssh_t))
+
+    (type staff_sshagent_t)
+    (call ssh_role_template_sshagent (staff_r staff_t staff_sshagent_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_sshagent_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_sshagent_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_sshagent_t staff_t))
+
+    (call ssh_manage_sshagent_tmpfs (staff_t))
+    (call ssh_relabel_sshagent_tmpfs (staff_t))
+
+    (optional staff_ssh_optional_staff_gpg
+        (call stream_connect_pattern (staff_ssh_t gpgagent_home_t gpgagent_home_t staff_gpgagent_t))))
 
 (optional staff_optional_sudo
     (type staff_sudo_t)
@@ -274,6 +347,9 @@
     (call xserver_manage_home_files (staff_t))
     (call xserver_relabel_home_files (staff_t))
 
+    (call xserver_manage_tmpfs (staff_t))
+    (call xserver_relabel_tmpfs (staff_t))
+
     (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc"))
 
     (optional staff_xserver_firefox
@@ -299,6 +375,12 @@
 
         (call firefox_manage_plugs_tmpfs_files (staff_t))
         (call firefox_relabel_plugs_tmpfs_files (staff_t)))
+
+    (optional staff_xserver_optional_qiv
+        (call qiv_run (staff_t staff_r))
+
+        (call qiv_manage_tmpfs_files (staff_t))
+        (call qiv_relabel_tmpfs_files (staff_t)))
 
     (optional staff_xserver_optional_rp
         (type staff_rp_t)
@@ -333,6 +415,19 @@
         (context staff_xlock_home (staff_u object_r xlock_home_t (systemlow systemlow)))
         (filecon "/home/kcinimod/\.xlockrc" file staff_xlock_home))
 
+    (optional staff_xserver_optional_xpdf
+        (call xpdf_run (staff_t staff_r))
+
+        (call xpdf_manage_home_files (staff_t))
+        (call xpdf_relabel_home_files (staff_t))
+        (call xpdf_home_dir_object_type_transition_home_files (staff_t))
+
+        (context staff_xpdf_home (staff_u object_r xpdf_home_t (systemlow systemlow)))
+        (filecon "/home/kcinimod/\.xpdfrc" file staff_xpdf_home)
+
+        (call xpdf_manage_tmpfs_files (staff_t))
+        (call xpdf_relabel_tmpfs_files (staff_t)))
+
     (optional staff_xserver_optional_xterm
         (type staff_xterm_t)
         (call xterm_role_template (staff_r staff_t staff_xterm_t))
@@ -342,7 +437,7 @@
 
         (call usersubject_exec_home_auto_subject_type_transition (staff_xterm_t staff_t))
 
-        (optional staff_xserver_xterm_optional_screen
+        (optional staff_xserver_xterm_optional_staff_screen
             (call screen_role_template (staff_r staff_xterm_t staff_screen_t))))
 
     (optional staff_xserver_optional_xutil

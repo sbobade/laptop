@@ -1,16 +1,13 @@
-(roleattribute gpg_role)
 (roleattribute gpg_gpg2keys_role)
-(roleattribute gpg_gpgagent_role)
 (roleattribute gpg_gpgpcsc_role)
 (roleattribute gpg_scd_role)
 (roleattribute gpg_dirmngr_role)
 
-(type gpg_t)
-(type gpg_exec_t)
-(call applications_app (gpg_t gpg_exec_t))
-(roletype gpg_role gpg_t)
+(typeattribute gpg_subject_type)
+(typeattribute gpg_gpgagent_subject_type)
 
-(roleattributeset gpg_role system_r)
+(type gpg_exec_t)
+(call applications_app (gpg_subject_type gpg_exec_t))
 
 (context gpg_exec (system_u object_r gpg_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/gpg2" file gpg_exec)
@@ -24,38 +21,34 @@
 (type gpg_home_t)
 (call usersubject_home_object_type (gpg_home_t))
 
-(allow gpg_t self rw_fifo_file_perms)
+(allow gpg_subject_type self rw_fifo_file_perms)
 
-(allow gpg_t gpg_home_t manage_dir_perms)
-(allow gpg_t gpg_home_t manage_file_perms)
-(call gpg_home_dir_object_type_transition_gpg_home_dirs (gpg_t))
+(allow gpg_subject_type gpg_home_t manage_dir_perms)
+(allow gpg_subject_type gpg_home_t manage_file_perms)
+(call gpg_home_dir_object_type_transition_gpg_home_dirs (gpg_subject_type))
 
-(call system_read_crypto_sysctl (gpg_t))
+(call system_read_crypto_sysctl (gpg_subject_type))
 
-(call devices_read_urandom (gpg_t))
-(call devices_read_random (gpg_t))
+(call devices_read_urandom (gpg_subject_type))
+(call devices_read_random (gpg_subject_type))
 
-(call files_read_data_files (gpg_t))
+(call files_read_data_files (gpg_subject_type))
 
-(call gpg_exec_gpghelper (gpg_t))
-(call gpg_read_config (gpg_t))
-(call gpg_run_dirmngr (gpg_t gpg_role))
-(call gpg_run_gpgagent (gpg_t gpg_role))
-(call gpg_run_gpg2keys (gpg_t gpg_role))
-(call gpg_stream_connect_gpgagent (gpg_t))
-(call gpg_stream_connect_dirmngr (gpg_t))
+(call gpg_exec_gpghelper (gpg_subject_type))
+(call gpg_read_config (gpg_subject_type))
+(call gpg_stream_connect_dirmngr (gpg_subject_type))
 
-(call miscfiles_read_all_terminfo (gpg_t))
-(call miscfiles_read_locale (gpg_t))
+(call miscfiles_read_all_terminfo (gpg_subject_type))
+(call miscfiles_read_locale (gpg_subject_type))
 
-(call usersubject_manage_user_home_files (gpg_t))
-(call usersubject_home_dir_object_type_transition_user_home (gpg_t file "*"))
-(call usersubject_read_tmpfs_files (gpg_t))
-(call usersubject_use_terminals (gpg_t))
+(call usersubject_manage_user_home_files (gpg_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (gpg_subject_type file "*"))
+(call usersubject_read_tmpfs_files (gpg_subject_type))
+(call usersubject_use_terminals (gpg_subject_type))
 
-(optional gpg_optional_mutt
-    (call mail_read_mutt_home_files (gpg_t))
-    (call mail_rw_mutt_tmpfs_files (gpg_t)))
+(optional gpg_subject_type_optional_mutt
+    (call mail_read_mutt_home_files (gpg_subject_type))
+    (call mail_rw_mutt_tmpfs_files (gpg_subject_type)))
 
 (type gpg2keys_t)
 (type gpg2keys_exec_t)
@@ -94,10 +87,8 @@
 (filecon "/usr/libexec/gpg-preset-passphrase" file gpghelper_exec)
 (filecon "/usr/libexec/gpg-protect-tool" file gpghelper_exec)
 
-(type gpgagent_t)
 (type gpgagent_exec_t)
-(call applications_app (gpgagent_t gpgagent_exec_t))
-(roletype gpg_gpgagent_role gpgagent_t)
+(call applications_app (gpg_gpgagent_subject_type gpgagent_exec_t))
 
 (context gpgagent_exec (system_u object_r gpgagent_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/gpg-agent" file gpgagent_exec)
@@ -105,41 +96,35 @@
 (type gpgagent_home_t)
 (call usersubject_home_object_type (gpgagent_home_t))
 
-(allow gpgagent_t gpg_home_t manage_dir_perms)
-(call gpg_home_dir_object_type_transition_gpg_home_dirs (gpgagent_t))
+(allow gpg_gpgagent_subject_type gpg_home_t manage_dir_perms)
+(call gpg_home_dir_object_type_transition_gpg_home_dirs (gpg_gpgagent_subject_type))
 
-(allow gpgagent_t gpgagent_home_t manage_dir_perms)
-(allow gpgagent_t gpgagent_home_t manage_file_perms)
-(allow gpgagent_t gpgagent_home_t manage_sock_file_perms)
-(call gpg_home_object_type_transition_gpgagent_home (gpgagent_t file "gpg-agent.conf"))
-(call gpg_home_object_type_transition_gpgagent_home (gpgagent_t file "gpg-agent.log"))
-(call gpg_home_object_type_transition_gpgagent_home (gpgagent_t file "sshcontrol"))
-(call gpg_home_object_type_transition_gpgagent_home (gpgagent_t dir "private-keys-v1.d"))
-(call gpg_home_object_type_transition_gpgagent_home (gpgagent_t sock_file "S.gpg-agent"))
-(call gpg_home_object_type_transition_gpgagent_home (gpgagent_t sock_file "S.gpg-agent.ssh"))
+(allow gpg_gpgagent_subject_type gpgagent_home_t manage_dir_perms)
+(allow gpg_gpgagent_subject_type gpgagent_home_t manage_file_perms)
+(allow gpg_gpgagent_subject_type gpgagent_home_t manage_sock_file_perms)
+(call gpg_home_object_type_transition_gpgagent_home (gpg_gpgagent_subject_type file "gpg-agent.conf"))
+(call gpg_home_object_type_transition_gpgagent_home (gpg_gpgagent_subject_type file "gpg-agent.log"))
+(call gpg_home_object_type_transition_gpgagent_home (gpg_gpgagent_subject_type file "sshcontrol"))
+(call gpg_home_object_type_transition_gpgagent_home (gpg_gpgagent_subject_type dir "private-keys-v1.d"))
+(call gpg_home_object_type_transition_gpgagent_home (gpg_gpgagent_subject_type sock_file "S.gpg-agent"))
+(call gpg_home_object_type_transition_gpgagent_home (gpg_gpgagent_subject_type sock_file "S.gpg-agent.ssh"))
 
-(allow gpgagent_t self create_unix_stream_stream_socket_perms)
-(allow gpgagent_t self (unix_stream_socket (connectto)))
-(allow gpgagent_t self rw_fifo_file_perms)
+(allow gpg_gpgagent_subject_type self create_unix_stream_stream_socket_perms)
+(allow gpg_gpgagent_subject_type self (unix_stream_socket (connectto)))
+(allow gpg_gpgagent_subject_type self rw_fifo_file_perms)
 
-(call system_read_crypto_sysctl (gpgagent_t))
+(call system_read_crypto_sysctl (gpg_gpgagent_subject_type))
 
-(call commands_exec_shell (gpgagent_t))
+(call files_read_data_files (gpg_gpgagent_subject_type))
 
-(call files_read_data_files (gpgagent_t))
+(call filesystems_list_devtmpfs (gpg_gpgagent_subject_type))
+(call filesystems_search_tmpfs (gpg_gpgagent_subject_type))
 
-(call filesystems_list_devtmpfs (gpgagent_t))
-(call filesystems_search_tmpfs (gpgagent_t))
+(call gpg_stream_connect_scd (gpg_gpgagent_subject_type))
 
-(call gpg_run_scd (gpgagent_t gpg_gpgagent_role))
-(call gpg_stream_connect_scd (gpgagent_t))
+(call miscfiles_read_locale (gpg_gpgagent_subject_type))
 
-(call miscfiles_read_locale (gpgagent_t))
-
-(call usersubject_use_terminals (gpgagent_t))
-
-(optional gpgagent_optional_pinentry
-    (call pinentry_run (gpgagent_t gpg_gpgagent_role)))
+(call usersubject_use_terminals (gpg_gpgagent_subject_type))
 
 (type gpgpcsc_t)
 (type gpgpcsc_exec_t)
@@ -171,7 +156,7 @@
 (allow scd_t self create_unix_stream_stream_socket_perms)
 (allow scd_t self rw_fifo_file_perms)
 
-(allow scd_t gpgagent_t (process (signal)))
+(allow scd_t gpg_gpgagent_subject_type (process (signal)))
 
 (allow scd_t scd_home_t manage_file_perms)
 (allow scd_t scd_home_t manage_sock_file_perms)
@@ -242,17 +227,30 @@
 (macro gpg_exec_dirmngr ((type ARG1))
     (call can_exec (ARG1 dirmngr_exec_t)))
 
-(macro gpg_auto_subject_type_transition ((type ARG1))
-    (call gpg_send_signal (ARG1))
+(macro gpg_gpgagent_subject_type ((type ARG1))
+    (typeattributeset gpg_gpgagent_subject_type ARG1))
+
+(macro gpg_role_template_gpgagent ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 gpg_exec_t gpg_t)))
+        (ARG2 gpgagent_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call gpg_run_scd (ARG3 ARG1))
+    (call gpg_gpgagent_subject_type (ARG3))
+    (optional gpg_role_template_gpgagent_optional_pinentry
+        (call pinentry_run (ARG3 ARG1))))
 
-(macro gpg_send_signal ((type ARG1))
-    (allow ARG1 gpg_t (process (signal))))
+(macro gpg_subject_type ((type ARG1))
+    (typeattributeset gpg_subject_type ARG1))
 
-(macro gpg_run ((type ARG1)(role ARG2))
-    (call gpg_auto_subject_type_transition (ARG1))
-    (roleattributeset gpg_role ARG2))
+(macro gpg_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 gpg_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call gpg_run_dirmngr (ARG3 ARG1))
+    (call gpg_run_gpg2keys (ARG3 ARG1))
+    (call gpg_subject_type (ARG3)))
 
 (macro gpg_auto_subject_type_transition_gpg2keys ((type ARG1))
     (call gpg_send_signal_gpg2keys (ARG1))
@@ -265,18 +263,6 @@
 (macro gpg_run_gpg2keys ((type ARG1)(role ARG2))
     (call gpg_auto_subject_type_transition_gpg2keys (ARG1))
     (roleattributeset gpg_gpg2keys_role ARG2))
-
-(macro gpg_auto_subject_type_transition_gpgagent ((type ARG1))
-    (call gpg_send_signal_gpgagent (ARG1))
-    (call auto_subject_type_transition_pattern
-        (ARG1 gpgagent_exec_t gpgagent_t)))
-
-(macro gpg_send_signal_gpgagent ((type ARG1))
-    (allow ARG1 gpgagent_t (process (signal))))
-
-(macro gpg_run_gpgagent ((type ARG1)(role ARG2))
-    (call gpg_auto_subject_type_transition_gpgagent (ARG1))
-    (roleattributeset gpg_gpgagent_role ARG2))
 
 (macro gpg_auto_subject_type_transition_gpgpcsc ((type ARG1))
     (call gpg_send_signal_gpgpcsc (ARG1))
@@ -382,10 +368,6 @@
 
 (macro gpg_home_dir_object_type_transition_gpg_home_dirs ((type ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 gpg_home_t dir ".gnupg")))
-
-(macro gpg_stream_connect_gpgagent ((type ARG1))
-    (call gpg_search_home (ARG1))
-    (call stream_connect_pattern (ARG1 gpgagent_home_t gpgagent_home_t gpgagent_t)))
 
 (macro gpg_search_gpgagent_home ((type ARG1))
     (call gpg_search_home (ARG1))

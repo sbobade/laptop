@@ -1,0 +1,152 @@
+(roleattribute mplayer_role)
+
+(type mplayer_t)
+(type mplayer_exec_t)
+(call applications_app (mplayer_t mplayer_exec_t))
+(roletype mplayer_role mplayer_t)
+
+(context mplayer_exec (system_u object_r mplayer_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/mplayer" file mplayer_exec)
+
+(type mplayer_config_t)
+(call files_config_object_type (mplayer_config_t))
+
+(context mplayer_config (system_u object_r mplayer_config_t (systemlow systemlow)))
+(filecon "/etc/mplayer(/.*)?" any mplayer_config)
+
+(type mplayer_home_t)
+(call usersubject_home_object_type (mplayer_home_t))
+
+(type mplayer_tmpfs_t)
+(call usersubject_tmpfs_object_type (mplayer_tmpfs_t))
+
+(allow mplayer_t mplayer_home_t manage_dir_perms)
+(allow mplayer_t mplayer_home_t manage_file_perms)
+(call mplayer_home_dir_object_type_transition_home_dirs (mplayer_t))
+
+(allow mplayer_t mplayer_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (mplayer_t mplayer_tmpfs_t file "*"))
+
+(call devices_rw_dri (mplayer_t))
+
+(call files_read_config_files (mplayer_t))
+(call files_read_data_files (mplayer_t))
+
+(call files_search_mnt (mplayer_t))
+
+(call auth_nsswitch_client_subject_type (mplayer_t))
+
+(call miscfiles_read_locale (mplayer_t))
+
+(call mplayer_read_config_files (mplayer_t))
+
+(call pa_tmpfs_client_template (mplayer_t mplayer_role mplayer_tmpfs_t))
+
+(call udev_client_subject_type (mplayer_t))
+
+(call usersubject_manage_user_home_files (mplayer_t))
+(call usersubject_home_dir_object_type_transition_user_home (mplayer_t file "*"))
+
+(optional mplayer_optional_icecast
+    (call icecast_tcp_connect_icecast_port (mplayer_t)))
+
+(optional mplayer_optional_machine
+    (call machine_read_machined_systemd_runtime_files (mplayer_t)))
+
+(optional mplayer_optional_xserver
+    (call xserver_tmpfs_client_template (mplayer_t mplayer_tmpfs_t)))
+
+(macro mplayer_exec ((type ARG1))
+    (call can_exec (ARG1 mplayer_exec_t)))
+
+(macro mplayer_auto_subject_type_transition ((type ARG1))
+    (call mplayer_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 mplayer_exec_t mplayer_t)))
+
+(macro mplayer_send_signal ((type ARG1))
+    (allow ARG1 mplayer_t (process (signal))))
+
+(macro mplayer_run ((type ARG1)(role ARG2))
+    (call mplayer_auto_subject_type_transition (ARG1))
+    (roleattributeset mplayer_role ARG2))
+
+(macro mplayer_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 mplayer_config_t search_dir_perms))
+
+(macro mplayer_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 mplayer_config_t list_dir_perms))
+
+(macro mplayer_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 mplayer_config_t mplayer_config_t)))
+
+(macro mplayer_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 mplayer_config_t mplayer_config_t)))
+
+(macro mplayer_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 mplayer_config_t read_file_perms)
+    (allow ARG1 mplayer_config_t list_dir_perms)
+    (allow ARG1 mplayer_config_t read_lnk_file_perms))
+
+(macro mplayer_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 mplayer_config_t manage_file_perms)
+    (allow ARG1 mplayer_config_t manage_dir_perms)
+    (allow ARG1 mplayer_config_t manage_lnk_file_perms))
+
+(macro mplayer_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 mplayer_home_t search_dir_perms))
+
+(macro mplayer_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 mplayer_home_t list_dir_perms))
+
+(macro mplayer_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 mplayer_home_t mplayer_home_t)))
+
+(macro mplayer_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 mplayer_home_t mplayer_home_t)))
+
+(macro mplayer_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 mplayer_home_t read_file_perms)
+    (allow ARG1 mplayer_home_t list_dir_perms)
+    (allow ARG1 mplayer_home_t read_lnk_file_perms))
+
+(macro mplayer_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 mplayer_home_t manage_file_perms)
+    (allow ARG1 mplayer_home_t manage_dir_perms)
+    (allow ARG1 mplayer_home_t manage_lnk_file_perms))
+
+(macro mplayer_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 mplayer_home_t relabel_file_perms)
+    (allow ARG1 mplayer_home_t relabel_dir_perms)
+    (allow ARG1 mplayer_home_t relabel_lnk_file_perms))
+
+(macro mplayer_home_dir_object_type_transition_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 mplayer_home_t dir ".mplayer")))
+
+(macro mplayer_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 mplayer_tmpfs_t read_file_perms))
+
+(macro mplayer_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 mplayer_tmpfs_t manage_file_perms))
+
+(macro mplayer_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 mplayer_tmpfs_t relabel_file_perms))

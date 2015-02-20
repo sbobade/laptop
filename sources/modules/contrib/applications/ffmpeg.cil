@@ -1,0 +1,65 @@
+(roleattribute ffmpeg_role)
+
+(type ffmpeg_t)
+(type ffmpeg_exec_t)
+(call applications_app (ffmpeg_t ffmpeg_exec_t))
+(roletype ffmpeg_role ffmpeg_t)
+
+(context ffmpeg_exec (system_u object_r ffmpeg_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/ffmpeg" file ffmpeg_exec)
+(filecon "/usr/bin/ffplay" file ffmpeg_exec)
+(filecon "/usr/bin/ffprobe" file ffmpeg_exec)
+(filecon "/usr/bin/ffserver" file ffmpeg_exec)
+(filecon "/usr/bin/qt-faststart" file ffmpeg_exec)
+
+(type ffmpeg_tmpfs_t)
+(call usersubject_tmpfs_object_type (ffmpeg_tmpfs_t))
+
+(allow ffmpeg_t self (process (setsched)))
+
+(allow ffmpeg_t ffmpeg_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (ffmpeg_t ffmpeg_tmpfs_t file "*"))
+
+(call files_read_data (ffmpeg_t))
+(call files_search_mnt (ffmpeg_t))
+
+(call miscfiles_read_locale (ffmpeg_t))
+
+(call usersubject_manage_user_home_files (ffmpeg_t))
+(call usersubject_home_dir_object_type_transition_user_home (ffmpeg_t file "*"))
+
+(optional ffmpeg_optional_pa
+    (call pa_tmpfs_client_template (ffmpeg_t ffmpeg_role ffmpeg_tmpfs_t)))
+
+(optional ffmpeg_optional_xserver
+    (call xserver_tmpfs_client_template (ffmpeg_t ffmpeg_tmpfs_t)))
+
+(macro ffmpeg_exec ((type ARG1))
+    (call can_exec (ARG1 ffmpeg_exec_t)))
+
+(macro ffmpeg_auto_subject_type_transition ((type ARG1))
+    (call ffmpeg_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 ffmpeg_exec_t ffmpeg_t)))
+
+(macro ffmpeg_send_signal ((type ARG1))
+    (allow ARG1 ffmpeg_t (process (signal))))
+
+(macro ffmpeg_run ((type ARG1)(role ARG2))
+    (call ffmpeg_auto_subject_type_transition (ARG1))
+    (roleattributeset ffmpeg_role ARG2))
+
+(macro ffmpeg_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 ffmpeg_tmpfs_t read_file_perms))
+
+(macro ffmpeg_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 ffmpeg_tmpfs_t manage_file_perms))
+
+(macro ffmpeg_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 ffmpeg_tmpfs_t relabel_file_perms))

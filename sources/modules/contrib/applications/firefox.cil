@@ -108,6 +108,9 @@
 (optional firefox_optional_tor
     (call tor_tcp_connect_tor_port (firefox_t)))
 
+(optional firefox_optional_xpdf
+    (call xpdf_run (firefox_t firefox_role)))
+
 (type firefox_plugs_t)
 (type firefox_plugs_exec_t)
 (call applications_app (firefox_plugs_t firefox_plugs_exec_t))

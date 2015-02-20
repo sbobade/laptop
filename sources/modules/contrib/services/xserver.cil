@@ -50,7 +50,7 @@
 (call files_lib_object_type_transition (xserver_t xserver_lib_t dir "*"))
 
 (type xserver_tmpfs_t)
-(call files_tmpfs_object_type (xserver_tmpfs_t))
+(call usersubject_tmpfs_object_type (xserver_tmpfs_t))
 
 (allow xserver_t xserver_tmpfs_t manage_file_perms)
 (allow xserver_t xserver_tmpfs_t manage_sock_file_perms)

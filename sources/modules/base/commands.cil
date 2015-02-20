@@ -76,6 +76,12 @@
 (macro commands_exec ((type ARG1))
     (call exec_files_pattern (ARG1 exec_t exec_t)))
 
+(macro commands_auditallow_exec ((type ARG1))
+    (auditallow ARG1 exec_t (file (execute execute_no_trans))))
+
+(macro commands_auditallow_exec_all ((type ARG1))
+    (auditallow ARG1 commands_exec_object_type (file (execute execute_no_trans))))
+
 (macro commands_exec_all ((type ARG1))
     (call exec_files_pattern (ARG1 exec_t commands_exec_object_type)))
 
@@ -100,6 +106,9 @@
 
 (macro commands_exec_shell ((type ARG1))
     (call exec_files_pattern (ARG1 exec_t shell_exec_t)))
+
+(macro commands_auditallow_exec_shell ((type ARG1))
+    (auditallow ARG1 shell_exec_t (file (execute execute_no_trans))))
 
 (macro commands_mmap_shell ((type ARG1))
     (call mmap_files_pattern (ARG1 exec_t shell_exec_t)))

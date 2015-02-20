@@ -144,6 +144,9 @@
 (optional sysadm_optional_getty
     (call getty_admin (sysadm_t)))
 
+(optional sysadm_optional_gpg
+    (call gpg_manage_config (sysadm_t)))
+
 (optional sysadm_optional_hostname
     (call hostname_run (sysadm_t sysadm_r))
     (call hostname_manage_config_files (sysadm_t)))
@@ -159,6 +162,9 @@
 (optional sysadm_optional_iptools
     (call iptools_run (sysadm_t sysadm_r))
     (call iptools_manage_config (sysadm_t)))
+
+(optional sysadm_optional_irc
+    (call irc_manage_irssi_config_files (sysadm_t)))
 
 (optional sysadm_optional_kmod
     (call kmod_admin (sysadm_t))
@@ -178,6 +184,9 @@
 (optional sysadm_optional_lvm
     (call lvm_admin (sysadm_t))
     (call lvm_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_mail
+    (call mail_manage_mutt_config_files (sysadm_t)))
 
 (optional sysadm_optional_mandb
     (call mandb_admin (sysadm_t))
@@ -230,6 +239,9 @@
 (optional sysadm_optional_rtkit
     (call rtkit_admin (sysadm_t))
     (call rtkit_run_rtkitctl (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_screen
+    (call screen_manage_config_files (sysadm_t)))
 
 (optional sysadm_optional_sudo
     (call sudo_send_signal (sysadm_t))
@@ -335,6 +347,9 @@
 
 (optional sysadm_optional_xlock
     (call xlock_admin (sysadm_t)))
+
+(optional sysadm_optional_xpdf
+    (call xpdf_manage_config (sysadm_t)))
 
 (optional sysadm_optional_xutil
     (call xutil_run (sysadm_t sysadm_r)))

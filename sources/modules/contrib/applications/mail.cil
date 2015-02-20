@@ -1,10 +1,8 @@
-(roleattribute mail_mutt_role)
-(roleattribute mail_muttpgp_role)
+(typeattribute mail_mutt_subject_type)
+(typeattribute mail_muttpgp_subject_type)
 
-(type mutt_t)
 (type mutt_exec_t)
-(call applications_app (mutt_t mutt_exec_t))
-(roletype mail_mutt_role mutt_t)
+(call applications_app (mail_mutt_subject_type mutt_exec_t))
 
 (context mutt_exec (system_u object_r mutt_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/mutt" file mutt_exec)
@@ -15,18 +13,13 @@
 (type mutt_tmpfs_t)
 (call usersubject_tmpfs_object_type (mutt_tmpfs_t))
 
-(type muttpgp_t)
 (type muttpgp_exec_t)
-(call applications_app (muttpgp_t muttpgp_exec_t))
-(roletype mail_muttpgp_role muttpgp_t)
+(call applications_app (mail_muttpgp_subject_type muttpgp_exec_t))
 
 (context muttpgp_exec (system_u object_r muttpgp_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pgpewrap" file muttpgp_exec)
 
-(call mail_rw_inherited_mutt_tmpfs_files (muttpgp_t))
-
-(optional muttpgp_optional_pgp
-    (call gpg_run (muttpgp_t mail_muttpgp_role)))
+(call mail_rw_inherited_mutt_tmpfs_files (mail_muttpgp_subject_type))
 
 (type mutthelper_exec_t)
 (call commands_exec_object_type (mutthelper_exec_t))
@@ -42,50 +35,38 @@
 (filecon "/etc/Muttrc" file mutt_config)
 (filecon "/etc/Muttrc\.local" file mutt_config)
 
-(allow mutt_t self rw_fifo_file_perms)
+(allow mail_mutt_subject_type self rw_fifo_file_perms)
 
-(allow mutt_t mutt_home_t manage_file_perms)
-(call mail_home_dir_object_type_transition_mutt_home_files (mutt_t ".mutt_cache"))
-(call mail_home_dir_object_type_transition_mutt_home_files (mutt_t ".mutt_certificates"))
+(allow mail_mutt_subject_type mutt_home_t manage_file_perms)
+(call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_cache"))
+(call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_certificates"))
 
-(allow mutt_t mutt_tmpfs_t manage_dir_perms)
-(allow mutt_t mutt_tmpfs_t manage_file_perms)
-(call filesystems_tmpfs_object_type_transition (mutt_t mutt_tmpfs_t file "*"))
-(call filesystems_tmpfs_object_type_transition (mutt_t mutt_tmpfs_t dir "*"))
+(allow mail_mutt_subject_type mutt_tmpfs_t manage_dir_perms)
+(allow mail_mutt_subject_type mutt_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (mail_mutt_subject_type mutt_tmpfs_t file "*"))
+(call filesystems_tmpfs_object_type_transition (mail_mutt_subject_type mutt_tmpfs_t dir "*"))
 
-(call commands_exec (mutt_t))
-(call commands_exec_shell (mutt_t))
+(call devices_read_urandom (mail_mutt_subject_type))
 
-(call devices_read_urandom (mutt_t))
+(call files_read_data_files (mail_mutt_subject_type))
+(call files_read_config_files (mail_mutt_subject_type))
 
-(call files_read_data_files (mutt_t))
-(call files_read_config_files (mutt_t))
+(call auth_nsswitch_client_subject_type (mail_mutt_subject_type))
 
-(call auth_nsswitch_client_subject_type (mutt_t))
+(call mail_tcp_connect_imap_port (mail_mutt_subject_type))
+(call mail_tcp_connect_smtp_port (mail_mutt_subject_type))
 
-(call mail_run_muttpgp (mutt_t mail_mutt_role))
+(call mail_read_mutt_config_files (mail_mutt_subject_type))
 
-(call mail_tcp_connect_imap_port (mutt_t))
-(call mail_tcp_connect_smtp_port (mutt_t))
+(call miscfiles_read_net_config_files (mail_mutt_subject_type))
+(call miscfiles_read_all_terminfo (mail_mutt_subject_type))
+(call miscfiles_read_locale (mail_mutt_subject_type))
 
-(call mail_read_mutt_config_files (mutt_t))
+(call usersubject_manage_user_home_files (mail_mutt_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (mail_mutt_subject_type file "*"))
 
-(call miscfiles_read_net_config_files (mutt_t))
-(call miscfiles_read_all_terminfo (mutt_t))
-(call miscfiles_read_locale (mutt_t))
-
-(call usersubject_manage_user_home_files (mutt_t))
-(call usersubject_home_dir_object_type_transition_user_home (mutt_t file "*"))
-
-(optional mutt_optional_dbus
-    (call dbus_read_lib_files (mutt_t)))
-
-(optional mutt_optional_firefox
-    (call firefox_run (mutt_t mail_mutt_role))
-    (call firefox_run_xremotec (mutt_t mail_mutt_role)))
-
-(optional mutt_optional_gpg
-    (call gpg_run (mutt_t mail_mutt_role)))
+(optional mail_mutt_subject_type_optional_dbus
+    (call dbus_read_lib_files (mail_mutt_subject_type)))
 
 (macro mail_exec_mutt ((type ARG1))
     (call can_exec (ARG1 mutt_exec_t)))
@@ -96,29 +77,28 @@
 (macro mail_exec_mutthelper ((type ARG1))
     (call can_exec (ARG1 mutthelper_exec_t)))
 
-(macro mail_auto_subject_type_transition_mutt ((type ARG1))
-    (call mail_send_signal_mutt (ARG1))
+(macro mail_mutt_subject_type ((type ARG1))
+    (typeattributeset mail_mutt_subject_type ARG1))
+
+(macro mail_role_template_mutt ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 mutt_exec_t mutt_t)))
+        (ARG2 mutt_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call mail_mutt_subject_type (ARG3))
+    (optional mail_role_template_mutt_optional_firefox
+        (call firefox_run (ARG3 ARG1))
+        (call firefox_run_xremotec (ARG3 ARG1))))
 
-(macro mail_send_signal_mutt ((type ARG1))
-    (allow ARG1 mutt_t (process (signal))))
+(macro mail_muttpgp_subject_type ((type ARG1))
+    (typeattributeset mail_muttpgp_subject_type ARG1))
 
-(macro mail_run_mutt ((type ARG1)(role ARG2))
-    (call mail_auto_subject_type_transition_mutt (ARG1))
-    (roleattributeset mail_mutt_role ARG2))
-
-(macro mail_auto_subject_type_transition_muttpgp ((type ARG1))
-    (call mail_send_signal_muttpgp (ARG1))
+(macro mail_role_template_muttpgp ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 muttpgp_exec_t muttpgp_t)))
-
-(macro mail_send_signal_muttpgp ((type ARG1))
-    (allow ARG1 muttpgp_t (process (signal))))
-
-(macro mail_run_muttpgp ((type ARG1)(role ARG2))
-    (call mail_auto_subject_type_transition_muttpgp (ARG1))
-    (roleattributeset mail_muttpgp_role ARG2))
+        (ARG2 muttpgp_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call mail_muttpgp_subject_type (ARG3)))
 
 (macro mail_read_mutt_home_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))

@@ -62,10 +62,6 @@
 (call filesystems_list_devtmpfs (pa_t))
 (call filesystems_list_proc (pa_t))
 
-(call network_dontaudit_catchall_subject_type (pa_t))
-
-(call subject_dontaudit_catchall_subject_type (pa_t))
-
 (call dbus_system_client_subject_type (pa_t))
 
 (call miscfiles_read_locale (pa_t))

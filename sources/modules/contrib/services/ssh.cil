@@ -1,0 +1,268 @@
+(roleattribute ssh_sshkeygen_role)
+
+(typeattribute ssh_subject_type)
+(typeattribute ssh_sshagent_subject_type)
+
+(type ssh_config_t)
+(call files_config_object_type (ssh_config_t))
+
+(context ssh_config (system_u object_r ssh_config_t (systemlow systemlow)))
+(filecon "/etc/ssh(/.*)?" any ssh_config)
+
+(type ssh_port_t)
+(call network_reserved_port_object_type (ssh_port_t))
+
+(context ssh_port (system_u object_r ssh_port_t (systemlow systemlow)))
+(portcon "tcp" 22 ssh_port)
+(portcon "udp" 22 ssh_port)
+
+(type ssh_exec_t)
+(call applications_app (ssh_subject_type ssh_exec_t))
+
+(context ssh_exec (system_u object_r ssh_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/scp" file ssh_exec)
+(filecon "/usr/bin/sftp" file ssh_exec)
+(filecon "/usr/bin/slogin" file ssh_exec)
+(filecon "/usr/bin/ssh" file ssh_exec)
+
+(allow ssh_subject_type self (process (setfscreate signal)))
+(allow ssh_subject_type self (key (view read search write link)))
+(allow ssh_subject_type self rw_fifo_file_perms)
+
+(allow ssh_subject_type ssh_home_t manage_dir_perms)
+(allow ssh_subject_type ssh_home_t manage_file_perms)
+(call ssh_home_dir_object_type_transition_ssh_home_dirs (ssh_subject_type ".ssh"))
+
+(call devices_read_urandom (ssh_subject_type))
+
+(call files_read_config (ssh_subject_type))
+
+(call auth_nsswitch_client_subject_type (ssh_subject_type))
+
+(call miscfiles_read_all_terminfo (ssh_subject_type))
+(call miscfiles_read_all_certs (ssh_subject_type))
+(call miscfiles_read_locale (ssh_subject_type))
+(call miscfiles_read_net_config_files (ssh_subject_type))
+
+(optional ssh_subject_type_optional_gpg
+    (call gpg_search_home (ssh_subject_type)))
+
+(call ssh_exec (ssh_subject_type))
+(call ssh_read_config_files (ssh_subject_type))
+(call ssh_tcp_connect_ssh_port (ssh_subject_type))
+
+(type sshagent_exec_t)
+(call applications_app (ssh_sshagent_subject_type sshagent_exec_t))
+
+(context sshagent_exec (system_u object_r sshagent_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/ssh-agent" file sshagent_exec)
+(filecon "/usr/bin/ssh-add" file sshagent_exec)
+(filecon "/usr/bin/ssh-copy-id" file sshagent_exec)
+(filecon "/usr/bin/ssh-keyscan" file sshagent_exec)
+
+(allow ssh_sshagent_subject_type self (process (setrlimit)))
+(allow ssh_sshagent_subject_type self (unix_stream_socket (listen accept connectto)))
+
+(allow ssh_sshagent_subject_type sshagent_tmpfs_t manage_dir_perms)
+(allow ssh_sshagent_subject_type sshagent_tmpfs_t manage_file_perms)
+(allow ssh_sshagent_subject_type sshagent_tmpfs_t manage_sock_file_perms)
+(call filesystems_tmpfs_object_type_transition (ssh_sshagent_subject_type sshagent_tmpfs_t dir "*"))
+
+(call devices_read_urandom (ssh_sshagent_subject_type))
+
+(call auth_nsswitch_client_subject_type (ssh_sshagent_subject_type))
+
+(call miscfiles_read_all_certs (ssh_sshagent_subject_type))
+
+(call ssh_read_home (ssh_sshagent_subject_type))
+
+(type sshagent_tmpfs_t)
+(call usersubject_tmpfs_object_type (sshagent_tmpfs_t))
+
+(type sshkeygen_t)
+(type sshkeygen_exec_t)
+(call applications_app (sshkeygen_t sshkeygen_exec_t))
+(roletype ssh_sshkeygen_role sshkeygen_t)
+
+(context sshkeygen_exec (system_u object_r sshkeygen_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/ssh-keygen" file sshkeygen_exec)
+
+(allow sshkeygen_t ssh_home_t manage_dir_perms)
+(allow sshkeygen_t ssh_home_t manage_file_perms)
+(call ssh_home_dir_object_type_transition_ssh_home_dirs (sshkeygen_t ".ssh"))
+
+(call devices_read_urandom (sshkeygen_t))
+
+(call auth_nsswitch_client_subject_type (sshkeygen_t))
+
+(call miscfiles_read_all_certs (sshkeygen_t))
+
+(type sshhelper_exec_t)
+(call commands_exec_object_type (sshhelper_exec_t))
+
+(context sshhelper_exec (system_u object_r sshhelper_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/openssh/ssh-pkcs11-helper" file sshhelper_exec)
+
+(type ssh_home_t)
+(call usersubject_home_object_type (ssh_home_t))
+
+(macro ssh_exec ((type ARG1))
+    (call can_exec (ARG1 ssh_exec_t)))
+
+(macro ssh_exec_sshagent ((type ARG1))
+    (call can_exec (ARG1 sshagent_exec_t)))
+
+(macro ssh_exec_sshkeygen ((type ARG1))
+    (call can_exec (ARG1 sshkeygen_exec_t)))
+
+(macro ssh_exec_sshhelper ((type ARG1))
+    (call can_exec (ARG1 sshhelper_exec_t)))
+
+(macro ssh_subject_type ((type ARG1))
+    (typeattributeset ssh_subject_type ARG1))
+
+(macro ssh_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 ssh_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (allow ARG3 self (key (view read search write link)))
+    (call ssh_subject_type (ARG3)))
+
+(macro ssh_sshagent_subject_type ((type ARG1))
+    (typeattributeset ssh_sshagent_subject_type ARG1))
+
+(macro ssh_role_template_sshagent ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 sshagent_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call ssh_sshagent_subject_type (ARG3)))
+
+(macro ssh_auto_subject_type_transition_sshkeygen ((type ARG1))
+    (call ssh_send_signal_sshkeygen (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sshkeygen_exec_t sshkeygen_t)))
+
+(macro ssh_send_signal_sshkeygen ((type ARG1))
+    (allow ARG1 sshkeygen_t (process (signal))))
+
+(macro ssh_run_sshkeygen ((type ARG1)(role ARG2))
+    (call ssh_auto_subject_type_transition_sshkeygen (ARG1))
+    (roleattributeset ssh_sshkeygen_role ARG2))
+
+(macro ssh_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ssh_config_t search_dir_perms))
+
+(macro ssh_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ssh_config_t list_dir_perms))
+
+(macro ssh_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 ssh_config_t ssh_config_t)))
+
+(macro ssh_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 ssh_config_t ssh_config_t)))
+
+(macro ssh_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ssh_config_t read_file_perms)
+    (allow ARG1 ssh_config_t list_dir_perms)
+    (allow ARG1 ssh_config_t read_lnk_file_perms))
+
+(macro ssh_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 ssh_config_t manage_file_perms)
+    (allow ARG1 ssh_config_t manage_dir_perms)
+    (allow ARG1 ssh_config_t manage_lnk_file_perms))
+
+(macro ssh_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 ssh_home_t search_dir_perms))
+
+(macro ssh_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 ssh_home_t list_dir_perms))
+
+(macro ssh_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 ssh_home_t ssh_home_t)))
+
+(macro ssh_manage_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 ssh_home_t ssh_home_t)))
+
+(macro ssh_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 ssh_home_t ssh_home_t)))
+
+(macro ssh_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 ssh_home_t read_file_perms)
+    (allow ARG1 ssh_home_t list_dir_perms)
+    (allow ARG1 ssh_home_t read_lnk_file_perms))
+
+(macro ssh_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 ssh_home_t manage_file_perms)
+    (allow ARG1 ssh_home_t manage_dir_perms)
+    (allow ARG1 ssh_home_t manage_lnk_file_perms))
+
+(macro ssh_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 ssh_home_t relabel_file_perms)
+    (allow ARG1 ssh_home_t relabel_dir_perms)
+    (allow ARG1 ssh_home_t relabel_lnk_file_perms))
+
+(macro ssh_search_sshagent_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 sshagent_tmpfs_t search_dir_perms))
+
+(macro ssh_list_sshagent_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 sshagent_tmpfs_t list_dir_perms))
+
+(macro ssh_read_sshagent_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 sshagent_tmpfs_t sshagent_tmpfs_t)))
+
+(macro ssh_read_sshagent_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 sshagent_tmpfs_t read_file_perms)
+    (allow ARG1 sshagent_tmpfs_t list_dir_perms)
+    (allow ARG1 sshagent_tmpfs_t read_lnk_file_perms))
+
+(macro ssh_manage_sshagent_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 sshagent_tmpfs_t manage_file_perms)
+    (allow ARG1 sshagent_tmpfs_t manage_dir_perms)
+    (allow ARG1 sshagent_tmpfs_t manage_lnk_file_perms))
+
+(macro ssh_relabel_sshagent_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 sshagent_tmpfs_t relabel_file_perms)
+    (allow ARG1 sshagent_tmpfs_t relabel_dir_perms)
+    (allow ARG1 sshagent_tmpfs_t relabel_lnk_file_perms))
+
+(macro ssh_home_dir_object_type_transition_ssh_home_dirs ((type ARG1)(name ARG2))
+    (call usersubject_home_dir_object_type_transition (ARG1 ssh_home_t dir ARG2)))
+
+(macro ssh_tcp_connect_ssh_port ((type ARG1))
+    (allow ARG1 ssh_port_t (tcp_socket (name_connect))))
+
+(macro ssh_tcp_bind_ssh_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 ssh_port_t (tcp_socket (name_bind))))
+
+(macro ssh_udp_bind_ssh_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 ssh_port_t (udp_socket (name_bind))))
