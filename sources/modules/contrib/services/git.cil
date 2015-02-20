@@ -1,0 +1,220 @@
+(typeattribute git_subject_type)
+(typeattribute git_gitemail_subject_type)
+
+(type git_port_t)
+(call network_unreserved_port_object_type (git_port_t))
+
+(context git_port (system_u object_r git_port_t (systemlow systemlow)))
+(portcon "tcp" 9418 git_port)
+(portcon "udp" 9418 git_port)
+
+(type git_exec_t)
+(call applications_app (git_subject_type git_exec_t))
+
+(context git_exec (system_u object_r git_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/git" file git_exec)
+(filecon "/usr/bin/git-receive-pack" file git_exec)
+(filecon "/usr/bin/git-upload-archive" file git_exec)
+(filecon "/usr/bin/git-upload-pack" file git_exec)
+(filecon "/usr/libexec/git-core(/.*)?" file git_exec)
+
+(type git_home_t)
+(call usersubject_home_object_type (git_home_t))
+
+(type git_config_home_t)
+(call usersubject_home_object_type (git_config_home_t))
+
+(type git_tmpfs_t)
+(call usersubject_tmpfs_object_type (git_tmpfs_t))
+
+(allow git_subject_type self rw_fifo_file_perms)
+
+(allow git_subject_type git_home_t manage_dir_perms)
+(allow git_subject_type git_home_t manage_file_perms)
+(allow git_subject_type git_home_t manage_lnk_file_perms)
+(call git_user_home_object_type_transition_git_home_dirs (git_subject_type))
+
+(allow git_subject_type git_config_home_t read_file_perms)
+
+(allow git_subject_type git_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (git_subject_type git_tmpfs_t file "*"))
+
+(call devices_read_urandom (git_subject_type))
+
+(call files_read_data (git_subject_type))
+
+(call filesystems_dontaudit_audit_access_tmpfs_dirs (git_subject_type))
+(call filesystems_getattr_tmpfs_filesystems (git_subject_type))
+(call filesystems_list_tmpfs (git_subject_type))
+(call filesystems_read_sysfs (git_subject_type))
+
+(call auth_nsswitch_client_subject_type (git_subject_type))
+
+(call git_exec (git_subject_type))
+(call git_tcp_connect_git_port (git_subject_type))
+
+(call miscfiles_read_all_certs (git_subject_type))
+(call miscfiles_read_net_config_files (git_subject_type))
+(call miscfiles_read_all_terminfo (git_subject_type))
+(call miscfiles_read_locale (git_subject_type))
+
+(call usersubject_manage_user_home_files (git_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (git_subject_type file "*"))
+
+(optional git_optional_http
+    (call http_tcp_connect_http_port (git_subject_type)))
+
+(type gitemail_exec_t)
+(call applications_app (git_gitemail_subject_type gitemail_exec_t))
+
+(context gitemail_exec (system_u object_r gitemail_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/git-core/git-send-email" file gitemail_exec)
+
+(type gitemail_home_t)
+(call usersubject_home_object_type (gitemail_home_t))
+
+(allow git_gitemail_subject_type self rw_fifo_file_perms)
+
+(allow git_gitemail_subject_type gitemail_home_t manage_file_perms)
+(call git_home_object_type_transition_gitemail_home_files (git_gitemail_subject_type "*"))
+
+(call devices_read_urandom (git_gitemail_subject_type))
+
+(call files_read_data (git_gitemail_subject_type))
+(call files_read_config_files (git_gitemail_subject_type))
+
+(call auth_nsswitch_client_subject_type (git_gitemail_subject_type))
+
+(call miscfiles_read_all_certs (git_gitemail_subject_type))
+(call miscfiles_read_net_config_files (git_gitemail_subject_type))
+(call miscfiles_read_locale (git_gitemail_subject_type))
+
+(call usersubject_read_user_home_files (git_gitemail_subject_type))
+
+(optional gitemail_optional_mail
+    (call mail_tcp_connect_smtp_port (git_gitemail_subject_type)))
+
+(macro git_exec ((type ARG1))
+    (call can_exec (ARG1 git_exec_t)))
+
+(macro git_exec_gitemail ((type ARG1))
+    (call can_exec (ARG1 gitemail_exec_t)))
+
+(macro git_subject_type ((type ARG1))
+    (typeattributeset git_subject_type ARG1))
+
+(macro git_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 git_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call git_subject_type (ARG3)))
+
+(macro git_gitemail_subject_type ((type ARG1))
+    (typeattributeset git_gitemail_subject_type ARG1))
+
+(macro git_role_template_gitemail ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 gitemail_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call git_gitemail_subject_type (ARG3)))
+
+(macro git_read_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 git_config_home_t read_file_perms))
+
+(macro git_manage_config_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 git_config_home_t manage_file_perms))
+
+(macro git_relabel_config_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 git_config_home_t relabel_file_perms))
+
+(macro git_home_dir_object_type_transition_git_config_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 git_config_home_t file ".gitconfig"))
+    (call usersubject_home_dir_object_type_transition (ARG1 git_config_home_t file ".gitaliases")))
+
+(macro git_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 git_home_t search_dir_perms))
+
+(macro git_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 git_home_t list_dir_perms))
+
+(macro git_rw_home_dirs ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 git_home_t rw_dir_perms))
+
+(macro git_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 git_home_t git_home_t)))
+
+(macro git_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 git_home_t git_home_t)))
+
+(macro git_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 git_home_t read_file_perms)
+    (allow ARG1 git_home_t list_dir_perms)
+    (allow ARG1 git_home_t read_lnk_file_perms))
+
+(macro git_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 git_home_t manage_file_perms)
+    (allow ARG1 git_home_t manage_dir_perms)
+    (allow ARG1 git_home_t manage_lnk_file_perms))
+
+(macro git_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 git_home_t relabel_file_perms)
+    (allow ARG1 git_home_t relabel_dir_perms)
+    (allow ARG1 git_home_t relabel_lnk_file_perms))
+
+(macro git_home_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 git_home_t ARG2 ARG3 ARG4)))
+
+(macro git_user_home_object_type_transition_git_home_dirs ((type ARG1))
+    (call usersubject_user_home_object_type_transition (ARG1 git_home_t dir ".git")))
+
+(macro git_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 git_tmpfs_t read_file_perms))
+
+(macro git_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 git_tmpfs_t manage_file_perms))
+
+(macro git_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 git_tmpfs_t relabel_file_perms))
+
+(macro git_read_gitemail_home_files ((type ARG1))
+    (call git_search_home (ARG1))
+    (allow ARG1 gitemail_home_t read_file_perms))
+
+(macro git_manage_gitemail_home_files ((type ARG1))
+    (call git_rw_home_dirs (ARG1))
+    (allow ARG1 gitemail_home_t manage_file_perms))
+
+(macro git_relabel_gitemail_home_files ((type ARG1))
+    (call git_search_home (ARG1))
+    (allow ARG1 gitemail_home_t relabel_file_perms))
+
+(macro git_home_object_type_transition_gitemail_home_files ((type ARG1)(name ARG2))
+    (call git_home_object_type_transition (ARG1 gitemail_home_t file ARG2)))
+
+(macro git_tcp_connect_git_port ((type ARG1))
+    (allow ARG1 git_port_t (tcp_socket (name_connect))))
+
+(macro git_tcp_bind_git_port ((type ARG1))
+    (allow ARG1 git_port_t (tcp_socket (name_bind))))
+
+(macro git_udp_bind_git_port ((type ARG1))
+    (allow ARG1 git_port_t (udp_socket (name_bind))))

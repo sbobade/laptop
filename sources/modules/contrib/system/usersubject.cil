@@ -186,6 +186,10 @@
     (call usersubject_search_home_dir (ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 user_home_t ARG2 ARG3)))
 
+(macro usersubject_user_home_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call usersubject_search_home_dir (ARG1))
+    (call object_type_transition_pattern (ARG1 user_home_t ARG2 ARG3 ARG4)))
+
 (macro usersubject_cache_home_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
     (call usersubject_search_home_dir (ARG1))
     (call object_type_transition_pattern (ARG1 cache_home_t ARG2 ARG3 ARG4)))

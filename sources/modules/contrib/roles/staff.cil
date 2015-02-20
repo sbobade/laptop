@@ -58,6 +58,60 @@
     (call ffmpeg_manage_tmpfs_files (staff_t))
     (call ffmpeg_relabel_tmpfs_files (staff_t)))
 
+(optional staff_optional_git
+    (type staff_git_t)
+    (call git_role_template (staff_r staff_t staff_git_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_git_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_git_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_git_t staff_t))
+
+    (call subject_entry (staff_t git_home_t))
+    (call auto_subject_type_transition_pattern (staff_git_t git_home_t staff_t))
+
+    (context staff_git_config_home (staff_u object_r git_config_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.gitaliases" file staff_git_config_home)
+    (filecon "/home/kcinimod/\.gitconfig" file staff_git_config_home)
+
+    (call git_manage_config_home_files (staff_t))
+    (call git_relabel_config_home_files (staff_t))
+    (call git_home_dir_object_type_transition_git_config_home_files (staff_t))
+
+    (context staff_git_home (staff_u object_r git_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/.*/\.git(/.*)?" any staff_git_home)
+
+    (call git_manage_home (staff_t))
+    (call git_relabel_home (staff_t))
+    (call git_user_home_object_type_transition_git_home_dirs (staff_t))
+
+    (call git_manage_tmpfs_files (staff_t))
+    (call git_relabel_tmpfs_files (staff_t))
+
+    (call git_role_template_gitemail (staff_r staff_git_t staff_gitemail_t))
+
+    (optional staff_git_optional_staff_ssh
+        (call ssh_role_template (staff_r staff_git_t staff_ssh_t)))
+
+    (optional staff_git_optional_staff_gpg
+        (call gpg_role_template (staff_r staff_git_t staff_gpg_t)))
+
+    (type staff_gitemail_t)
+    (call git_role_template_gitemail (staff_r staff_t staff_gitemail_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_gitemail_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_gitemail_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_gitemail_t staff_t))
+
+    (context staff_gitemail_home (staff_u object_r gitemail_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/.*/\.git/\.gitsendemail\.msg.*" file staff_gitemail_home)
+
+    (call git_manage_gitemail_home_files (staff_t))
+    (call git_relabel_gitemail_home_files (staff_t))
+
+    (call git_role_template (staff_r staff_gitemail_t staff_git_t)))
+
 (optional staff_optional_gpg
     (call gpg_run_dirmngr (staff_t staff_r))
     (call gpg_run_gpg2keys (staff_t staff_r))
