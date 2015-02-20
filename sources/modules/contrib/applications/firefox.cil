@@ -149,7 +149,7 @@
 (call usersubject_create_cache_home_dirs (firefox_plugs_t))
 (call usersubject_home_dir_object_type_transition_cache_home_dirs (firefox_plugs_t))
 
-(call xserver_client_subject_type (firefox_plugs_t))
+(call xserver_tmpfs_client_template (firefox_plugs_t firefox_plugs_tmpfs_t))
 
 (type firefox_xremotec_t)
 (type firefox_xremotec_exec_t)
