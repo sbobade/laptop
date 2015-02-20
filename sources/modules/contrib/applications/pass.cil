@@ -13,6 +13,10 @@
     (call usersubject_search_home_dir (ARG1))
     (call read_files_pattern (ARG1 pass_home_t pass_home_t)))
 
+(macro pass_manage_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 pass_home_t pass_home_t)))
+
 (macro pass_read_home_lnk_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
     (call read_lnk_files_pattern (ARG1 pass_home_t pass_home_t)))

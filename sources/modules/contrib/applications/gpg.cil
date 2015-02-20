@@ -53,6 +53,9 @@
     (call mail_read_mutt_home_files (gpg_subject_type))
     (call mail_rw_mutt_tmpfs_files (gpg_subject_type)))
 
+(optional gpg_optional_pass
+    (call pass_manage_home_files (gpg_subject_type)))
+
 (type gpg2keys_t)
 (type gpg2keys_exec_t)
 (call applications_app (gpg2keys_t gpg2keys_exec_t))
