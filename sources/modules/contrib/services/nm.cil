@@ -182,7 +182,7 @@
 
 (call auth_nsswitch_client_subject_type (nmdisp_t))
 
-(call dbus_acquire_system_service (nmdisp_t))
+(call dbus_system_service (nmdisp_t))
 
 (call iptools_exec (nmdisp_t))
 (call iptools_read_config_files (nmdisp_t))
@@ -257,6 +257,8 @@
 (call filesystems_read_sysfs_files (nmcli_t))
 
 (call auth_read_passwd_config_files (nmcli_t))
+
+(call dbus_system_client_subject_type (nmcli_t))
 
 (call miscfiles_read_all_terminfo (nmcli_t))
 (call miscfiles_read_locale (nmcli_t))
