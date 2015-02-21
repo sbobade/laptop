@@ -57,7 +57,7 @@
 (call system_read_kernel_sysctl (sudo_subject_type))
 (call system_link_keyring (sudo_subject_type))
 
-(call commands_dontaudit_getattr_all_exec_files (sudo_subject_type))
+(call commands_getattr_all_exec_files (sudo_subject_type))
 
 (call devices_getattr_all (sudo_subject_type))
 (call devices_read_urandom (sudo_subject_type))
