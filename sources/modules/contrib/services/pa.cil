@@ -46,6 +46,7 @@
 (allow pa_t self (process (setcap setsched setrlimit)))
 (allow pa_t self (unix_stream_socket (listen accept)))
 
+(allow pa_t pa_tmpfs_t mmap_file_perms)
 (call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t file "*"))
 (call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t dir "*"))
 
@@ -89,6 +90,7 @@
 (filecon "/usr/bin/pactl" file pactl_exec)
 (filecon "/usr/bin/pacmd" file pactl_exec)
 
+(allow pactl_t pa_tmpfs_t mmap_file_perms)
 (call filesystems_tmpfs_object_type_transition (pactl_t pa_tmpfs_t file "*"))
 
 (call miscfiles_read_locale (pactl_t))

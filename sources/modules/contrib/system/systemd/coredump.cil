@@ -12,11 +12,19 @@
 (context coredumpctl_exec (system_u object_r coredumpctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/coredumpctl" file coredumpctl_exec)
 
-(allow coredumpctl_t self (capability (dac_override net_admin)))
+(allow coredumpctl_t self (capability (dac_override net_admin ipc_lock)))
+(allow coredumpctl_t self rw_fifo_file_perms)
+
+(call filesystems_getattr_filesystems (coredumpctl_t))
 
 (call coredump_read_systemd_lib_files (coredumpctl_t))
 
 (call auth_nsswitch_client_subject_type (coredumpctl_t))
+
+(call miscfiles_read_all_terminfo (coredumpctl_t))
+(call miscfiles_read_locale (coredumpctl_t))
+
+(call usersubject_dontaudit_read_user_home_files (coredumpctl_t))
 
 (type coredump_t)
 (type coredump_exec_t)
@@ -43,7 +51,8 @@
 (allow coredump_t coredump_systemd_lib_t manage_file_perms)
 (call systemd_lib_object_type_transition (coredump_t coredump_systemd_lib_t dir "*"))
 
-(allow coredump_t self (capability (setuid setgid sys_ptrace)))
+(allow coredump_t self (capability (setuid setgid sys_ptrace dac_read_search dac_override)))
+(allow coredump_t self (process (getcap setfscreate)))
 
 (call system_read_kernel_sysctl (coredump_t))
 
@@ -54,6 +63,8 @@
 
 (call subject_read_all_common_subjects_state (coredump_t))
 
+(call coredump_read_systemd_config_files (coredump_t))
+
 (call journal_client_subject_type (coredump_t))
 
 (call system_read_crypto_sysctl (coredump_coredumpctl_client_subject_type))
@@ -63,15 +74,11 @@
 
 (call devices_read_urandom (coredump_coredumpctl_client_subject_type))
 
-(call filesystems_getattr_filesystems (coredump_coredumpctl_client_subject_type))
 (call filesystems_getattr_tmpfs_filesystems (coredump_coredumpctl_client_subject_type))
 
 (call journal_read_log (coredump_coredumpctl_client_subject_type))
 
 (call machine_read_config_files (coredump_coredumpctl_client_subject_type))
-
-(call miscfiles_read_all_terminfo (coredump_coredumpctl_client_subject_type))
-(call miscfiles_read_locale (coredump_coredumpctl_client_subject_type))
 
 (macro coredump_exec ((type ARG1))
     (call can_exec (ARG1 coredump_exec_t)))
