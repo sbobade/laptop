@@ -29,6 +29,7 @@
 
 (call devices_rw_dri (mplayer_t))
 
+(call files_dontaudit_catchall_subject_type (mplayer_t))
 (call files_read_config_files (mplayer_t))
 (call files_read_data_files (mplayer_t))
 

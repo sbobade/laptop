@@ -8,6 +8,7 @@
 
 (allow xterm_subject_type self rw_fifo_file_perms)
 
+(call files_dontaudit_catchall_subject_type (xterm_subject_type))
 (call files_read_config_files (xterm_subject_type))
 (call files_read_data (xterm_subject_type))
 

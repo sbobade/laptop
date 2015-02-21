@@ -26,6 +26,7 @@
 (call commands_exec (fop_t))
 (call commands_exec_shell (fop_t))
 
+(call files_dontaudit_catchall_subject_type (fop_t))
 (call files_search_lib (fop_t))
 
 (call fop_read_config_files (fop_t))

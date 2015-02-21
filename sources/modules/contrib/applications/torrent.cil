@@ -21,6 +21,8 @@
 (allow rtorrent_t rtorrent_home_t manage_file_perms)
 (call torrent_home_dir_object_type_transition_rtorrent_home_dirs (rtorrent_t ".rtorrent"))
 
+(call files_dontaudit_catchall_subject_type (rtorrent_t))
+
 (call network_tcp_bind_generic_node (rtorrent_t))
 (call network_tcp_bind_all_unreserved_ports (rtorrent_t))
 

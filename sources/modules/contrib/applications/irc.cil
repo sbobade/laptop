@@ -26,6 +26,7 @@
 (call devices_read_random (irc_irssi_subject_type))
 (call devices_read_urandom (irc_irssi_subject_type))
 
+(call files_dontaudit_catchall_subject_type (irc_irssi_subject_type))
 (call files_read_config_files (irc_irssi_subject_type))
 (call files_read_data (irc_irssi_subject_type))
 

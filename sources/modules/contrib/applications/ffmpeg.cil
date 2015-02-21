@@ -20,6 +20,7 @@
 (allow ffmpeg_t ffmpeg_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (ffmpeg_t ffmpeg_tmpfs_t file "*"))
 
+(call files_dontaudit_catchall_subject_type (ffmpeg_t))
 (call files_read_data (ffmpeg_t))
 (call files_search_mnt (ffmpeg_t))
 

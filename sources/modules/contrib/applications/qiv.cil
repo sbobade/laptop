@@ -14,6 +14,7 @@
 (allow qiv_t qiv_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (qiv_t qiv_tmpfs_t file "*"))
 
+(call files_dontaudit_catchall_subject_type (qiv_t))
 (call files_read_config_files (qiv_t))
 (call files_search_mnt (qiv_t))
 

@@ -20,6 +20,7 @@
 
 (call devices_read_urandom (nb_subject_type))
 
+(call files_dontaudit_catchall_subject_type (nb_subject_type))
 (call files_search_mnt (nb_subject_type))
 (call files_search_tmp (nb_subject_type))
 

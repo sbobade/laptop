@@ -23,6 +23,7 @@
 (call commands_exec (xutil_t))
 (call commands_exec_shell (xutil_t))
 
+(call files_dontaudit_catchall_subject_type (xutil_t))
 (call files_read_config_files (xutil_t))
 
 (call auth_nsswitch_client_subject_type (xutil_t))

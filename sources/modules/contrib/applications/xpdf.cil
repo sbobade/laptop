@@ -24,6 +24,7 @@
 
 (allow xpdf_t self rw_fifo_file_perms)
 
+(call files_dontaudit_catchall_subject_type (xpdf_t))
 (call files_read_config_files (xpdf_t))
 (call files_read_data_files (xpdf_t))
 

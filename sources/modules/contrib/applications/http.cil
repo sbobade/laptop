@@ -32,6 +32,7 @@
 
 (call devices_read_urandom (http_lynx_subject_type))
 
+(call files_dontaudit_catchall_subject_type (http_lynx_subject_type))
 (call files_search_mnt (http_lynx_subject_type))
 (call files_read_config_files (http_lynx_subject_type))
 (call files_read_data (http_lynx_subject_type))
