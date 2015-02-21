@@ -30,6 +30,8 @@
 (call miscfiles_read_all_fonts (xpdf_t))
 (call miscfiles_read_locale (xpdf_t))
 
+(call usersubject_manage_data_home_files (xpdf_t))
+
 (call usersubject_list_user_home (xpdf_t))
 (call usersubject_manage_user_home_files (xpdf_t))
 (call usersubject_home_dir_object_type_transition_user_home (xpdf_t file "*"))

@@ -97,6 +97,9 @@
 (macro terminals_use_inherited_unallocated_ttys ((type ARG1))
     (allow ARG1 tty_dev_t rw_inherited_term_perms))
 
+(macro terminals_dontaudit_use_unallocated_ttys ((type ARG1))
+    (dontaudit ARG1 tty_dev_t rw_term_perms))
+
 (macro terminals_use_unallocated_ttys ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 tty_dev_t rw_term_perms))

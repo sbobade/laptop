@@ -155,6 +155,9 @@
     (call hostname_run (sysadm_t sysadm_r))
     (call hostname_manage_config_files (sysadm_t)))
 
+(optional sysadm_optional_http
+    (call http_manage_lynx_config_files (sysadm_t)))
+
 (optional sysadm_optional_hwclock
     (call hwclock_run (sysadm_t sysadm_r))
     (call hwclock_manage_config_files (sysadm_t)))

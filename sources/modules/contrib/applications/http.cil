@@ -1,0 +1,115 @@
+(typeattribute http_lynx_subject_type)
+
+(type lynx_exec_t)
+(call applications_app (http_lynx_subject_type lynx_exec_t))
+
+(context lynx_exec (system_u object_r lynx_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/lynx" file lynx_exec)
+
+(type lynx_config_t)
+(call files_config_object_type (lynx_config_t))
+
+(context lynx_config (system_u object_r lynx_config_t (systemlow systemlow)))
+(filecon "/etc/lynx-site\.cfg" file lynx_config)
+(filecon "/etc/lynx\.cfg" file lynx_config)
+(filecon "/etc/lynx\.lss" file lynx_config)
+
+(type lynx_home_t)
+(call usersubject_home_object_type (lynx_home_t))
+
+(type lynx_tmpfs_t)
+(call usersubject_tmpfs_object_type (lynx_tmpfs_t))
+
+(allow http_lynx_subject_type self (process (getsched setsched)))
+(allow http_lynx_subject_type self (unix_stream_socket (listen accept connectto)))
+(allow http_lynx_subject_type self rw_fifo_file_perms)
+
+(allow http_lynx_subject_type lynx_home_t manage_file_perms)
+(call http_home_dir_object_type_transition_lynx_home_files (http_lynx_subject_type))
+
+(allow http_lynx_subject_type lynx_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (http_lynx_subject_type lynx_tmpfs_t file "*"))
+
+(call devices_read_urandom (http_lynx_subject_type))
+
+(call files_search_mnt (http_lynx_subject_type))
+(call files_read_config_files (http_lynx_subject_type))
+(call files_read_data (http_lynx_subject_type))
+
+(call filesystems_list_tmpfs (http_lynx_subject_type))
+(call filesystems_list_devtmpfs (http_lynx_subject_type))
+(call filesystems_read_devtmpfs_lnk_files (http_lynx_subject_type))
+
+(call terminals_dontaudit_use_unallocated_ttys (http_lynx_subject_type))
+
+(call http_tcp_connect_http_port (http_lynx_subject_type))
+(call http_read_lynx_config_files (http_lynx_subject_type))
+
+(call auth_nsswitch_client_subject_type (http_lynx_subject_type))
+(call auth_read_utmp_runtime_files (http_lynx_subject_type))
+
+(call miscfiles_read_net_config_files (http_lynx_subject_type))
+(call miscfiles_read_all_terminfo (http_lynx_subject_type))
+(call miscfiles_read_all_certs (http_lynx_subject_type))
+(call miscfiles_read_locale (http_lynx_subject_type))
+
+(call usersubject_manage_user_home_files (http_lynx_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (http_lynx_subject_type file "*"))
+
+(call usersubject_use_terminals (http_lynx_subject_type))
+
+(optional http_lynx_subject_type_optional_nb
+    (call nb_rw_inherited_home_files (http_lynx_subject_type)))
+
+(macro http_exec_lynx ((type ARG1))
+    (call can_exec (ARG1 lynx_exec_t)))
+
+(macro http_lynx_subject_type ((type ARG1))
+    (typeattributeset http_lynx_subject_type ARG1))
+
+(macro http_role_template_lynx ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 lynx_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call http_lynx_subject_type (ARG3))
+    (optional http_role_template_lynx_optional_rtorrent
+        (call torrent_run_rtorrent (ARG3 ARG1))))
+
+(macro http_read_lynx_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 lynx_config_t read_file_perms))
+
+(macro http_manage_lynx_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 lynx_config_t manage_file_perms))
+
+(macro http_read_lynx_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 lynx_home_t read_file_perms))
+
+(macro http_manage_lynx_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 lynx_home_t manage_file_perms))
+
+(macro http_relabel_lynx_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 lynx_home_t relabel_file_perms))
+
+(macro http_home_dir_object_type_transition_lynx_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 lynx_home_t file ".lynxrc")))
+
+(macro http_read_lynx_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 lynx_tmpfs_t read_file_perms))
+
+(macro http_manage_lynx_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 lynx_tmpfs_t manage_file_perms))
+
+(macro http_relabel_lynx_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 lynx_tmpfs_t relabel_file_perms))

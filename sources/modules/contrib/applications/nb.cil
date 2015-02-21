@@ -1,0 +1,101 @@
+(typeattribute nb_subject_type)
+
+(type nb_exec_t)
+(call applications_app (nb_subject_type nb_exec_t))
+
+(context nb_exec (system_u object_r nb_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/newsbeuter" file nb_exec)
+(filecon "/usr/bin/podbeuter" file nb_exec)
+
+(type nb_home_t)
+(call usersubject_home_object_type (nb_home_t))
+
+(allow nb_subject_type nb_home_t manage_dir_perms)
+(allow nb_subject_type nb_home_t manage_file_perms)
+(call nb_home_dir_object_type_transition_nb_home_dirs (nb_subject_type))
+
+(call system_read_vm_sysctl (nb_subject_type))
+
+(call commands_exec_shell (nb_subject_type))
+
+(call devices_read_urandom (nb_subject_type))
+
+(call files_search_mnt (nb_subject_type))
+(call files_search_tmp (nb_subject_type))
+
+(call filesystems_list_tmpfs (nb_subject_type))
+(call filesystems_dontaudit_audit_access_tmpfs_dirs (nb_subject_type))
+
+(call auth_nsswitch_client_subject_type (nb_subject_type))
+
+(call http_tcp_connect_http_port (nb_subject_type))
+
+(call miscfiles_read_all_certs (nb_subject_type))
+(call miscfiles_read_net_config_files (nb_subject_type))
+(call miscfiles_read_all_terminfo (nb_subject_type))
+(call miscfiles_read_locale (nb_subject_type))
+
+(call usersubject_manage_user_home_dirs (nb_subject_type))
+(call usersubject_manage_user_home_files (nb_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (nb_subject_type file "*"))
+
+(macro nb_exec ((type ARG1))
+    (call can_exec (ARG1 nb_exec_t)))
+
+(macro nb_subject_type ((type ARG1))
+    (typeattributeset nb_subject_type ARG1))
+
+(macro nb_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 nb_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call nb_subject_type (ARG3))
+    (optional nb_optional_firefox
+        (call firefox_run (ARG3 ARG1)))
+    (optional nb_optional_mplayer
+        (call mplayer_run (ARG3 ARG1))))
+
+(macro nb_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 nb_home_t search_dir_perms))
+
+(macro nb_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 nb_home_t list_dir_perms))
+
+(macro nb_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 nb_home_t nb_home_t)))
+
+(macro nb_rw_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call rw_files_pattern (ARG1 nb_home_t nb_home_t)))
+
+(macro nb_rw_inherited_home_files ((type ARG1))
+    (allow ARG1 nb_home_t rw_inherited_file_perms))
+
+(macro nb_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 nb_home_t nb_home_t)))
+
+(macro nb_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 nb_home_t read_file_perms)
+    (allow ARG1 nb_home_t list_dir_perms)
+    (allow ARG1 nb_home_t read_lnk_file_perms))
+
+(macro nb_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 nb_home_t manage_file_perms)
+    (allow ARG1 nb_home_t manage_dir_perms)
+    (allow ARG1 nb_home_t manage_lnk_file_perms))
+
+(macro nb_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 nb_home_t relabel_file_perms)
+    (allow ARG1 nb_home_t relabel_dir_perms)
+    (allow ARG1 nb_home_t relabel_lnk_file_perms))
+
+(macro nb_home_dir_object_type_transition_nb_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 nb_home_t dir ".newsbeuter")))

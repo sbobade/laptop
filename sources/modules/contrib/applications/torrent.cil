@@ -15,6 +15,7 @@
 (call usersubject_config_home_object_type (rtorrent_config_home_t))
 
 (allow rtorrent_t self create_unix_stream_socket_perms)
+(allow rtorrent_t self create_tcp_stream_socket_perms)
 
 (allow rtorrent_t rtorrent_home_t manage_dir_perms)
 (allow rtorrent_t rtorrent_home_t manage_file_perms)

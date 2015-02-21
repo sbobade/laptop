@@ -242,6 +242,31 @@
     (context staff_gstreamer_cache_home (staff_u object_r gstreamer_cache_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.cache/gstreamer-1\.0(/.*)?" any staff_gstreamer_cache_home))
 
+(optional staff_optional_http
+    (type staff_lynx_t)
+    (call http_role_template_lynx (staff_r staff_t staff_lynx_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_lynx_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_lynx_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_lynx_t staff_t))
+
+    (call http_manage_lynx_home_files (staff_t))
+    (call http_relabel_lynx_home_files (staff_t))
+    (call http_home_dir_object_type_transition_lynx_home_files (staff_t))
+
+    (context staff_lynx_home (staff_u object_r lynx_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.lynxrc" file staff_lynx_home)
+
+    (call http_manage_lynx_tmpfs_files (staff_t))
+    (call http_relabel_lynx_tmpfs_files (staff_t))
+
+    (optional staff_http_optional_staff_mutt
+        (call mail_role_template_mutt (staff_r staff_lynx_t staff_mutt_t)))
+
+    (optional staff_http_optional_staff_irssi
+        (call irc_role_template_irssi (staff_r staff_lynx_t staff_irssi_t))))
+
 (optional staff_optional_irc
     (type staff_irssi_t)
     (call irc_role_template_irssi (staff_r staff_t staff_irssi_t))
@@ -311,6 +336,27 @@
     (optional staff_mutt_optional_staff_pgp
         (call gpg_role_template (staff_r staff_muttpgp_t staff_gpg_t))
         (call gpg_role_template (staff_r staff_mutt_t staff_gpg_t))))
+
+(optional staff_optional_nb
+    (type staff_nb_t)
+    (call nb_role_template (staff_r staff_t staff_nb_t))
+
+    (call nb_manage_home (staff_t))
+    (call nb_relabel_home (staff_t))
+    (call nb_home_dir_object_type_transition_nb_home_dirs (staff_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_nb_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_nb_t staff_t))
+
+    (context staff_nb_home (staff_u object_r nb_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.newsbeuter(/.*)?" any staff_nb_home)
+
+    (optional staff_nb_optional_staff_lynx
+        (call http_role_template_lynx (staff_r staff_nb_t staff_lynx_t)))
+
+    (optional staff_nb_optional_mutt
+        (call mail_role_template_mutt (staff_r staff_nb_t staff_mutt_t))))
 
 (optional staff_optional_nm
     (call nm_run_nmcli (staff_t staff_r)))
