@@ -1,3 +1,6 @@
 * appropriately name: audit_test_for_journald()
 
 * is there a pattern that all nsswitch client subjects want to read machine runtime files?
+
+* test all the systemd "ctl" apps by commenting out systemctl_client_subject_type first because that provides a lot of permissions that all have in common.
+* do journal clients still need net_admin?
