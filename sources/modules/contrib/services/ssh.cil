@@ -35,6 +35,7 @@
 
 (call devices_read_urandom (ssh_subject_type))
 
+(call files_dontaudit_catchall_subject_type (ssh_subject_type))
 (call files_read_config (ssh_subject_type))
 
 (call auth_nsswitch_client_subject_type (ssh_subject_type))
@@ -44,12 +45,15 @@
 (call miscfiles_read_locale (ssh_subject_type))
 (call miscfiles_read_net_config_files (ssh_subject_type))
 
-(optional ssh_subject_type_optional_gpg
-    (call gpg_search_home (ssh_subject_type)))
-
 (call ssh_exec (ssh_subject_type))
 (call ssh_read_config_files (ssh_subject_type))
 (call ssh_tcp_connect_ssh_port (ssh_subject_type))
+
+(call usersubject_manage_user_home_files (ssh_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (ssh_subject_type file "*"))
+
+(optional ssh_subject_type_optional_gpg
+    (call gpg_search_home (ssh_subject_type)))
 
 (type sshagent_exec_t)
 (call applications_app (ssh_sshagent_subject_type sshagent_exec_t))
