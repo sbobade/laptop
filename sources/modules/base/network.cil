@@ -146,6 +146,9 @@
     (call network_port_object_type (ARG1))
     (typeattributeset network_unreserved_port_object_type ARG1))
 
+(macro network_tcp_bind_all_unreserved_ports ((type ARG1))
+    (allow ARG1 network_unreserved_port_object_type (tcp_socket (name_bind))))
+
 (macro network_udp_bind_all_unreserved_ports ((type ARG1))
     (allow ARG1 network_unreserved_port_object_type (udp_socket (name_bind))))
 

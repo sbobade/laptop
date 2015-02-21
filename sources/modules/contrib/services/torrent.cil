@@ -1,0 +1,15 @@
+(type torrent_port_t)
+(call network_unreserved_port_object_type (torrent_port_t))
+
+(context torrent_port (system_u object_r torrent_port_t (systemlow systemlow)))
+(portcon "tcp" 6881 torrent_port)
+(portcon "udp" 6881 torrent_port)
+
+(macro torrent_tcp_connect_torrent_port ((type ARG1))
+    (allow ARG1 torrent_port_t (tcp_socket (name_connect))))
+
+(macro torrent_tcp_bind_torrent_port ((type ARG1))
+    (allow ARG1 torrent_port_t (tcp_socket (name_bind))))
+
+(macro torrent_udp_bind_torrent_port ((type ARG1))
+    (allow ARG1 torrent_port_t (udp_socket (name_bind))))

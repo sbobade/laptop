@@ -1,3 +1,5 @@
+(roleattribute alsa_alsautil_role)
+
 (typeattribute alsa_admin_subject_type)
 
 (typeattribute alsa_object_type)
@@ -88,6 +90,47 @@
 
     (allow alsa_admin_subject_type alsactl_unit_t (service (all))))
 
+(type alsautil_t)
+(type alsautil_exec_t)
+(call applications_app (alsautil_t alsautil_exec_t))
+(roletype alsa_alsautil_role alsautil_t)
+
+(type alsautil_tmpfs_t)
+(call usersubject_tmpfs_object_type (alsautil_tmpfs_t))
+
+(context alsautil_exec (system_u object_r alsautil_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/aconnect" file alsautil_exec)
+(filecon "/usr/bin/alsa-loop" file alsautil_exec)
+(filecon "/usr/bin/alsamixer" file alsautil_exec)
+(filecon "/usr/bin/alsaucm" file alsautil_exec)
+(filecon "/usr/bin/alsaunmute" file alsautil_exec)
+(filecon "/usr/bin/amidi" file alsautil_exec)
+(filecon "/usr/bin/amixer" file alsautil_exec)
+(filecon "/usr/bin/aplay" file alsautil_exec)
+(filecon "/usr/bin/aplaymidi" file alsautil_exec)
+(filecon "/usr/bin/arecord" file alsautil_exec)
+(filecon "/usr/bin/arecordmidi" file alsautil_exec)
+(filecon "/usr/bin/aseqdump" file alsautil_exec)
+(filecon "/usr/bin/aseqnet" file alsautil_exec)
+(filecon "/usr/bin/iecset" file alsautil_exec)
+(filecon "/usr/bin/speaker-test" file alsautil_exec)
+
+(allow alsautil_t alsautil_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (alsautil_t alsautil_tmpfs_t file "*"))
+
+(call devices_rw_sound (alsautil_t))
+
+(call files_read_data (alsautil_t))
+
+(call miscfiles_read_all_terminfo (alsautil_t))
+(call miscfiles_read_locale (alsautil_t))
+
+(optional alsautil_optional_pa
+    (call pa_tmpfs_client_template (alsautil_t alsa_alsautil_role alsautil_tmpfs_t)))
+
+(optional alsautil_optional_xserver
+    (call xserver_client_subject_type (alsautil_t)))
+
 (allow alsa_admin_subject_type alsactl_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (alsa_admin_subject_type alsactl_t))
 
@@ -96,6 +139,21 @@
 
 (macro alsa_exec_alsactl ((type ARG1))
     (call can_exec (ARG1 alsactl_exec_t)))
+
+(macro alsa_exec_alsautil ((type ARG1))
+    (call can_exec (ARG1 alsautil_exec_t)))
+
+(macro alsa_auto_subject_type_transition_alsautil ((type ARG1))
+    (call alsa_send_signal_alsautil (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 alsautil_exec_t alsautil_t)))
+
+(macro alsa_send_signal_alsautil ((type ARG1))
+    (allow ARG1 alsautil_t (process (signal))))
+
+(macro alsa_run_alsautil ((type ARG1)(role ARG2))
+    (call alsa_auto_subject_type_transition_alsautil (ARG1))
+    (roleattributeset alsa_alsautil_role ARG2))
 
 (macro alsa_auto_subject_type_transition_alsactl ((type ARG1))
     (call alsa_send_signal_alsactl (ARG1))
@@ -176,6 +234,21 @@
 (macro alsa_manage_lock_files ((type ARG1))
     (call files_rw_lock_dirs (ARG1))
     (allow ARG1 alsa_lock_t manage_file_perms))
+
+(macro alsa_read_alsautil_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 alsautil_tmpfs_t read_file_perms))
+
+(macro alsa_manage_alsautil_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 alsautil_tmpfs_t manage_file_perms))
+
+(macro alsa_relabel_alsautil_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 alsautil_tmpfs_t relabel_file_perms))
 
 (macro alsa_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

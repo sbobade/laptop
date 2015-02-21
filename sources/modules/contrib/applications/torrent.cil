@@ -1,0 +1,104 @@
+(roleattribute torrent_rtorrent_role)
+
+(type rtorrent_t)
+(type rtorrent_exec_t)
+(call applications_app (rtorrent_t rtorrent_exec_t))
+(roletype torrent_rtorrent_role rtorrent_t)
+
+(context rtorrent_exec (system_u object_r rtorrent_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/rtorrent" file rtorrent_exec)
+
+(type rtorrent_home_t)
+(call usersubject_home_object_type (rtorrent_home_t))
+
+(type rtorrent_config_home_t)
+(call usersubject_config_home_object_type (rtorrent_config_home_t))
+
+(allow rtorrent_t self create_unix_stream_socket_perms)
+
+(allow rtorrent_t rtorrent_home_t manage_dir_perms)
+(allow rtorrent_t rtorrent_home_t manage_file_perms)
+(call torrent_home_dir_object_type_transition_rtorrent_home_dirs (rtorrent_t ".rtorrent"))
+
+(call network_tcp_bind_generic_node (rtorrent_t))
+(call network_tcp_bind_all_unreserved_ports (rtorrent_t))
+
+(call torrent_read_rtorrent_config_home_files (rtorrent_t))
+(call torrent_tcp_bind_torrent_port (rtorrent_t))
+
+(call miscfiles_read_all_terminfo (rtorrent_t))
+(call miscfiles_read_locale_files (rtorrent_t))
+
+(call usersubject_manage_user_home_files (rtorrent_t))
+(call usersubject_home_dir_object_type_transition_user_home (rtorrent_t file "*"))
+
+(macro torrent_exec_rtorrent ((type ARG1))
+    (call can_exec (ARG1 rtorrent_exec_t)))
+
+(macro torrent_auto_subject_type_transition_rtorrent ((type ARG1))
+    (call torrent_send_signal_rtorrent (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rtorrent_exec_t rtorrent_t)))
+
+(macro torrent_send_signal_rtorrent ((type ARG1))
+    (allow ARG1 rtorrent_t (process (signal))))
+
+(macro torrent_run_rtorrent ((type ARG1)(role ARG2))
+    (call torrent_auto_subject_type_transition_rtorrent (ARG1))
+    (roleattributeset torrent_rtorrent_role ARG2))
+
+(macro torrent_search_rtorrent_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 rtorrent_home_t search_dir_perms))
+
+(macro torrent_list_rtorrent_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 rtorrent_home_t list_dir_perms))
+
+(macro torrent_read_rtorrent_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 rtorrent_home_t rtorrent_home_t)))
+
+(macro torrent_read_rtorrent_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 rtorrent_home_t rtorrent_home_t)))
+
+(macro torrent_read_rtorrent_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 rtorrent_home_t read_file_perms)
+    (allow ARG1 rtorrent_home_t list_dir_perms)
+    (allow ARG1 rtorrent_home_t read_lnk_file_perms))
+
+(macro torrent_manage_rtorrent_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 rtorrent_home_t manage_file_perms)
+    (allow ARG1 rtorrent_home_t manage_dir_perms)
+    (allow ARG1 rtorrent_home_t manage_lnk_file_perms))
+
+(macro torrent_relabel_rtorrent_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 rtorrent_home_t relabel_file_perms)
+    (allow ARG1 rtorrent_home_t relabel_dir_perms)
+    (allow ARG1 rtorrent_home_t relabel_lnk_file_perms))
+
+(macro torrent_home_dir_object_type_transition_rtorrent_home_dirs ((type ARG1)(name ARG2))
+    (call usersubject_home_dir_object_type_transition (ARG1 rtorrent_home_t dir ARG2)))
+
+(macro torrent_read_rtorrent_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 rtorrent_config_home_t read_file_perms))
+
+(macro torrent_manage_rtorrent_config_home_files ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 rtorrent_config_home_t manage_file_perms))
+
+(macro torrent_relabel_rtorrent_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 rtorrent_config_home_t relabel_file_perms))
+
+(macro torrent_home_dir_object_type_transition_rtorrent_config_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 rtorrent_config_home_t file ".rtorrentrc")))
+
+(macro torrent_config_home_object_type_transition_rtorrent_config_home_files ((type ARG1))
+    (call usersubject_config_home_object_type_transition (ARG1 rtorrent_config_home_t file "rtorrentrc")))
