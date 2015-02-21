@@ -40,6 +40,9 @@
 
 (call selinux_get_enforce_mode (nettools_t))
 
+(call subject_getattr_all_common_subjects (nettools_t))
+(call subject_read_all_common_subjects_state (nettools_t))
+
 (call auth_nsswitch_client_subject_type (nettools_t))
 
 (call miscfiles_read_locale (nettools_t))

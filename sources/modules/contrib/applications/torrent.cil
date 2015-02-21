@@ -16,15 +16,24 @@
 
 (allow rtorrent_t self create_unix_stream_socket_perms)
 (allow rtorrent_t self create_tcp_stream_socket_perms)
+(allow rtorrent_t self create_udp_socket_perms)
 
 (allow rtorrent_t rtorrent_home_t manage_dir_perms)
 (allow rtorrent_t rtorrent_home_t manage_file_perms)
 (call torrent_home_dir_object_type_transition_rtorrent_home_dirs (rtorrent_t ".rtorrent"))
 
 (call files_dontaudit_catchall_subject_type (rtorrent_t))
+(call files_search_mnt (rtorrent_t))
+
+(call filesystems_getattr_filesystems (rtorrent_t))
+(call filesystems_list_rootfs (rtorrent_t))
+
+(call devices_read_urandom (rtorrent_t))
 
 (call network_tcp_bind_generic_node (rtorrent_t))
 (call network_tcp_bind_all_unreserved_ports (rtorrent_t))
+(call network_tcp_connect_all_unreserved_ports (rtorrent_t))
+(call network_tcp_connect_all_ephemeral_ports (rtorrent_t))
 
 (call torrent_read_rtorrent_config_home_files (rtorrent_t))
 (call torrent_tcp_bind_torrent_port (rtorrent_t))
