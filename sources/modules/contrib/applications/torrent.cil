@@ -41,6 +41,7 @@
 (call miscfiles_read_all_terminfo (rtorrent_t))
 (call miscfiles_read_locale_files (rtorrent_t))
 
+(call usersubject_manage_user_home_dirs (rtorrent_t))
 (call usersubject_manage_user_home_files (rtorrent_t))
 (call usersubject_home_dir_object_type_transition_user_home (rtorrent_t file "*"))
 
