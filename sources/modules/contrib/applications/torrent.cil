@@ -98,7 +98,7 @@
     (allow ARG1 rtorrent_config_home_t relabel_file_perms))
 
 (macro torrent_home_dir_object_type_transition_rtorrent_config_home_files ((type ARG1))
-    (call usersubject_home_dir_object_type_transition (ARG1 rtorrent_config_home_t file ".rtorrentrc")))
+    (call usersubject_home_dir_object_type_transition (ARG1 rtorrent_config_home_t file ".rtorrent.rc")))
 
 (macro torrent_config_home_object_type_transition_rtorrent_config_home_files ((type ARG1))
-    (call usersubject_config_home_object_type_transition (ARG1 rtorrent_config_home_t file "rtorrentrc")))
+    (call usersubject_config_home_object_type_transition (ARG1 rtorrent_config_home_t file "rtorrent.rc")))

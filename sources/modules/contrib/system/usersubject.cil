@@ -276,6 +276,10 @@
     (call usersubject_rw_home_dir_dirs (ARG1))
     (call manage_files_pattern (ARG1 user_home_t user_home_t)))
 
+(macro usersubject_manage_user_home_lnk_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (call manage_lnk_files_pattern (ARG1 user_home_t user_home_t)))
+
 (macro usersubject_manage_user_home_dirs ((type ARG1))
     (call usersubject_rw_home_dir_dirs (ARG1))
     (call manage_dirs_pattern (ARG1 user_home_t user_home_t)))
@@ -609,6 +613,14 @@
     (call usersubject_search_data_home (ARG1))
     (call manage_files_pattern (ARG1 exec_home_t exec_home_t)))
 
+(macro usersubject_manage_exec_home_dirs ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call manage_dirs_pattern (ARG1 exec_home_t exec_home_t)))
+
+(macro usersubject_manage_exec_home_lnk_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call manage_lnk_files_pattern (ARG1 exec_home_t exec_home_t)))
+
 (macro usersubject_read_exec_home_lnk_files ((type ARG1))
     (call usersubject_search_data_home (ARG1))
     (call read_lnk_files_pattern (ARG1 exec_home_t exec_home_t)))
@@ -878,10 +890,25 @@
 (macro usersubject_rw_inherited_tmpfs_files ((type ARG1))
     (allow ARG1 user_tmpfs_t rw_inherited_file_perms))
 
+(macro usersubject_manage_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
+
 (macro usersubject_manage_tmpfs_files ((type ARG1))
     (call files_search_user_runtime (ARG1))
-    (call filesystems_search_tmpfs (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
     (call manage_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
+
+(macro usersubject_manage_tmpfs_lnk_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_lnk_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
+
+(macro usersubject_manage_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_sock_files_pattern (ARG1 user_tmpfs_t user_tmpfs_t)))
 
 (macro usersubject_read_tmpfs_lnk_files ((type ARG1))
     (call files_search_user_runtime (ARG1))

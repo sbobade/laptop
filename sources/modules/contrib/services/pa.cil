@@ -49,15 +49,11 @@
 (call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t file "*"))
 (call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t dir "*"))
 
-(call system_dontaudit_catchall_subject_type (pa_t))
-
-(call devices_dontaudit_catchall_subject_type (pa_t))
 (call devices_rw_sound (pa_t))
 
 (call files_dontaudit_catchall_subject_type (pa_t))
 (call files_read_data (pa_t))
 
-(call filesystems_dontaudit_catchall_subject_type (pa_t))
 (call filesystems_getattr_proc_filesystems (pa_t))
 (call filesystems_list_devtmpfs (pa_t))
 (call filesystems_list_proc (pa_t))

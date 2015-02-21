@@ -134,6 +134,9 @@
 (optional sysadm_optional_dns
     (call dns_manage_resolve_config_files (sysadm_t)))
 
+(optional sysadm_optional_fop
+    (call fop_manage_config_files (sysadm_t)))
+
 (optional sysadm_optional_fstools
     (call fstools_run (sysadm_t sysadm_r)))
 
@@ -166,6 +169,9 @@
 
 (optional sysadm_optional_irc
     (call irc_manage_irssi_config_files (sysadm_t)))
+
+(optional sysadm_optional_java
+    (call java_manage_config (sysadm_t)))
 
 (optional sysadm_optional_kmod
     (call kmod_admin (sysadm_t))

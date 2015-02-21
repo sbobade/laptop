@@ -1,0 +1,185 @@
+(typeattribute emacs_subject_type)
+(typeattribute emacs_emacsclient_subject_type)
+
+(type emacs_exec_t)
+(call applications_app (emacs_subject_type emacs_exec_t))
+
+(context emacs_exec (system_u object_r emacs_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/emacs-.*" file emacs_exec)
+
+(allow emacs_subject_type self rw_fifo_file_perms)
+(allow emacs_subject_type self (unix_stream_socket (listen accept)))
+
+(allow emacs_subject_type emacs_home_t manage_dir_perms)
+(allow emacs_subject_type emacs_home_t manage_file_perms)
+(call emacs_home_dir_object_type_transition_emacs_home (emacs_subject_type))
+
+(allow emacs_subject_type emacs_tmpfs_t manage_dir_perms)
+(allow emacs_subject_type emacs_tmpfs_t manage_sock_file_perms)
+(call filesystems_tmpfs_object_type_transition (emacs_subject_type emacs_tmpfs_t dir "*"))
+(call filesystems_tmpfs_object_type_transition (emacs_subject_type emacs_tmpfs_t sock_file "server"))
+
+(call devices_read_urandom (emacs_subject_type))
+(call devices_rw_inherited_ptmx (emacs_subject_type))
+
+(call files_dontaudit_catchall_subject_type (emacs_subject_type))
+(call files_read_config_files (emacs_subject_type))
+(call files_read_data (emacs_subject_type))
+
+(call auth_nsswitch_client_subject_type (emacs_subject_type))
+(call auth_read_utmp_runtime_files (emacs_subject_type))
+
+(call miscfiles_read_net_config_files (emacs_subject_type))
+(call miscfiles_read_all_terminfo (emacs_subject_type))
+(call miscfiles_read_locale (emacs_subject_type))
+
+(call usersubject_manage_tmpfs_files (emacs_subject_type))
+(call usersubject_manage_tmpfs_lnk_files (emacs_subject_type))
+
+(call usersubject_tmpfs_object_type_transition_user_tmpfs (emacs_subject_type file "*"))
+(call usersubject_tmpfs_object_type_transition_user_tmpfs (emacs_subject_type lnk_file "*"))
+
+(call usersubject_use_terminals (emacs_subject_type))
+
+(call usersubject_manage_exec_home_files (emacs_subject_type))
+(call usersubject_manage_exec_home_lnk_files (emacs_subject_type))
+
+(call usersubject_manage_user_home_dirs (emacs_subject_type))
+(call usersubject_manage_user_home_files (emacs_subject_type))
+(call usersubject_manage_user_home_lnk_files (emacs_subject_type))
+
+(call usersubject_home_dir_object_type_transition_user_home (emacs_subject_type dir "*"))
+(call usersubject_home_dir_object_type_transition_user_home (emacs_subject_type file "*"))
+(call usersubject_home_dir_object_type_transition_user_home (emacs_subject_type lnk_file "*"))
+
+(call usersubject_read_mail_spool_files (emacs_subject_type))
+
+(type emacs_home_t)
+(call usersubject_home_object_type (emacs_home_t))
+
+(type emacs_tmpfs_t)
+(call usersubject_tmpfs_object_type (emacs_tmpfs_t))
+
+(type emacsclient_exec_t)
+(call applications_app (emacs_emacsclient_subject_type emacsclient_exec_t))
+
+(context emacsclient_exec (system_u object_r emacsclient_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/emacsclient" file emacsclient_exec)
+
+(call files_dontaudit_catchall_subject_type (emacs_emacsclient_subject_type))
+(call files_read_config_files (emacs_emacsclient_subject_type))
+
+(call filesystems_list_devtmpfs (emacs_emacsclient_subject_type))
+(call filesystems_search_tmpfs (emacs_emacsclient_subject_type))
+
+(call auth_nsswitch_client_subject_type (emacs_emacsclient_subject_type))
+
+(call usersubject_use_terminals (emacs_emacsclient_subject_type))
+
+(macro emacs_exec ((type ARG1))
+    (call can_exec (ARG1 emacs_exec_t)))
+
+(macro emacs_exec_emacsclient ((type ARG1))
+    (call can_exec (ARG1 emacsclient_exec_t)))
+
+(macro emacs_subject_type ((type ARG1))
+    (typeattributeset emacs_subject_type ARG1))
+
+(macro emacs_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 emacs_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call emacs_subject_type (ARG3)))
+
+(macro emacs_emacsclient_subject_type ((type ARG1))
+    (typeattributeset emacs_emacsclient_subject_type ARG1))
+
+(macro emacs_role_template_emacsclient ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 emacsclient_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call emacs_emacsclient_subject_type (ARG3)))
+
+(macro emacs_search_emacs_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 emacs_tmpfs_t search_dir_perms))
+
+(macro emacs_list_emacs_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 emacs_tmpfs_t list_dir_perms))
+
+(macro emacs_read_emacs_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_sock_files_pattern (ARG1 emacs_tmpfs_t emacs_tmpfs_t)))
+
+(macro emacs_manage_emacs_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_sock_files_pattern (ARG1 emacs_tmpfs_t emacs_tmpfs_t)))
+
+(macro emacs_relabel_emacs_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call relabel_sock_files_pattern (ARG1 emacs_tmpfs_t emacs_tmpfs_t)))
+
+(macro emacs_read_emacs_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 emacs_tmpfs_t list_dir_perms)
+    (allow ARG1 emacs_tmpfs_t read_sock_file_perms))
+
+(macro emacs_manage_emacs_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 emacs_tmpfs_t manage_dir_perms)
+    (allow ARG1 emacs_tmpfs_t manage_sock_file_perms))
+
+(macro emacs_relabel_emacs_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 emacs_tmpfs_t relabel_dir_perms)
+    (allow ARG1 emacs_tmpfs_t relabel_sock_file_perms))
+
+(macro emacs_search_emacs_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 emacs_home_t search_dir_perms))
+
+(macro emacs_list_emacs_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 emacs_home_t list_dir_perms))
+
+(macro emacs_read_emacs_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 emacs_home_t emacs_home_t)))
+
+(macro emacs_read_emacs_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 emacs_home_t emacs_home_t)))
+
+(macro emacs_read_emacs_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 emacs_home_t read_file_perms)
+    (allow ARG1 emacs_home_t list_dir_perms)
+    (allow ARG1 emacs_home_t read_lnk_file_perms))
+
+(macro emacs_manage_emacs_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 emacs_home_t manage_file_perms)
+    (allow ARG1 emacs_home_t manage_dir_perms)
+    (allow ARG1 emacs_home_t manage_lnk_file_perms))
+
+(macro emacs_relabel_emacs_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 emacs_home_t relabel_file_perms)
+    (allow ARG1 emacs_home_t relabel_dir_perms)
+    (allow ARG1 emacs_home_t relabel_lnk_file_perms))
+
+(macro emacs_home_dir_object_type_transition_emacs_home ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 emacs_home_t file ".emacs"))
+    (call usersubject_home_dir_object_type_transition (ARG1 emacs_home_t file ".emacs.el"))
+    (call usersubject_home_dir_object_type_transition (ARG1 emacs_home_t dir ".emacs.d")))

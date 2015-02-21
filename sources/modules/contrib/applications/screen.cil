@@ -43,14 +43,9 @@
 (call filesystems_tmpfs_object_type_transition (screen_subject_type screen_tmpfs_t file "*"))
 
 (call system_read_crypto_sysctl (screen_subject_type))
-(call system_dontaudit_catchall_subject_type (screen_subject_type))
-
-(call devices_dontaudit_catchall_subject_type (screen_subject_type))
 
 (call files_dontaudit_catchall_subject_type (screen_subject_type))
 (call files_read_config_files (screen_subject_type))
-
-(call filesystems_dontaudit_catchall_subject_type (screen_subject_type))
 
 (call audit_client_subject_type (screen_subject_type))
 

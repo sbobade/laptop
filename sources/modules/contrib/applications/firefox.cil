@@ -46,11 +46,9 @@
 (call commands_exec (firefox_t))
 (call commands_exec_shell (firefox_t))
 
-(call devices_dontaudit_catchall_subject_type (firefox_t))
 (call devices_read_urandom (firefox_t))
 (call devices_rw_dri (firefox_t))
 
-(call filesystems_dontaudit_catchall_subject_type (firefox_t))
 (call filesystems_getattr_filesystems (firefox_t))
 (call filesystems_read_devtmpfs_lnk_files (firefox_t))
 (call filesystems_read_sysfs (firefox_t))
