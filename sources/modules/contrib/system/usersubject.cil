@@ -617,6 +617,10 @@
     (call usersubject_search_data_home (ARG1))
     (call manage_dirs_pattern (ARG1 exec_home_t exec_home_t)))
 
+(macro usersubject_rw_exec_home_dirs ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 exec_home_t rw_dir_perms))
+
 (macro usersubject_manage_exec_home_lnk_files ((type ARG1))
     (call usersubject_search_data_home (ARG1))
     (call manage_lnk_files_pattern (ARG1 exec_home_t exec_home_t)))

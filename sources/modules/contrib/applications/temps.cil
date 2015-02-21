@@ -5,9 +5,6 @@
 (call applications_app (temps_t temps_exec_t))
 (roletype temps_role temps_t)
 
-(context temps_exec (staff_u object_r temps_exec_t (systemlow systemlow)))
-(filecon "/home/kcinimod/\.local/bin/temps" file temps_exec)
-
 (allow temps_t self rw_fifo_file_perms)
 
 (call commands_exec (temps_t))
@@ -33,3 +30,11 @@
 (macro temps_run ((type ARG1)(role ARG2))
     (call temps_auto_subject_type_transition (ARG1))
     (roleattributeset temps_role ARG2))
+
+(macro temps_manage_exec_files ((type ARG1))
+    (call usersubject_rw_exec_home_dirs (ARG1))
+    (allow ARG1 temps_exec_t manage_file_perms))
+
+(macro temps_relabel_exec_files ((type ARG1))
+    (call usersubject_search_exec_home (ARG1))
+    (allow ARG1 temps_exec_t relabel_file_perms))

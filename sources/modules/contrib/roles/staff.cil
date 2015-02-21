@@ -410,6 +410,13 @@
     (call pinentry_manage_tmpfs_files (staff_t))
     (call pinentry_relabel_tmpfs_files (staff_t)))
 
+(optional staff_optional_temps
+    (call temps_manage_exec_files (staff_t))
+    (call temps_relabel_exec_files (staff_t))
+
+    (context temps_exec (staff_u object_r temps_exec_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.local/bin/temps" file temps_exec))
+
 (optional staff_optional_torrent
     (call torrent_run_rtorrent (staff_t staff_r))
 
