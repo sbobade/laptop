@@ -526,6 +526,9 @@
     (optional staff_optional_askpwd
         (call askpwd_exec_askpwdagent (staff_t)))
 
+    (optional staff_optional_coredump
+        (call coredump_exec_coredumpctl (staff_t)))
+
     (optional staff_optional_journal
         (call journal_exec_journalctl (staff_t))))
 
