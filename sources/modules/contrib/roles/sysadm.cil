@@ -323,6 +323,7 @@
         (call locale_manage_config_files (sysadm_t)))
 
     (optional sysadm_optional_loginctl
+        (call login_logind_admin (sysadm_t))
         (call login_run_loginctl (sysadm_t sysadm_r)))
 
     (optional sysadm_optional_machine
