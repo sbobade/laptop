@@ -4,3 +4,5 @@
 
 * test all the systemd "ctl" apps (as staff_t) by commenting out systemctl_client_subject_type first because that provides a lot of permissions that all have in common.
 * do journal clients still need net_admin?
+
+* all journal client subject types need to write to kmsg_dev_t in case shit hits the fan

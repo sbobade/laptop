@@ -68,6 +68,8 @@
 (filecon "/var/log/journal(/.*)?" any journal_log)
 (filecon "/var/run/log(/.*)?" any journal_log)
 
+(allow journald_t self create_unix_stream_stream_socket_perms)
+
 (allow journald_t journal_log_t manage_dir_perms)
 (allow journald_t journal_log_t manage_file_perms)
 (call files_log_object_type_transition (journald_t journal_log_t dir "*"))
@@ -344,6 +346,10 @@
 (macro journal_test_for_systemd ((type ARG1))
     (allow ARG1 self (capability2 (audit_read)))
     (allow ARG1 journald_t create_netlink_audit_socket_perms))
+
+(macro journal_stream_connect_journald ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 journald_systemd_runtime_t journald_systemd_runtime_t journald_t)))
 
 (macro journal_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

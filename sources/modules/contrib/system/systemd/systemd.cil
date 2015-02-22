@@ -212,6 +212,7 @@
 (call journal_read_journald_systemd_runtime (systemd_t))
 (call journal_relabelto_log_dirs (systemd_t))
 (call journal_relabelto_log_files (systemd_t))
+(call journal_stream_connect_journald (systemd_t))
 (call journal_use_fd_journald (systemd_t))
 
 (call login_read_logind_systemd_runtime (systemd_t))
