@@ -440,6 +440,14 @@
     (call screen_manage_tmpfs_files (staff_t))
     (call screen_relabel_tmpfs_files (staff_t)))
 
+(optional staff_optional_setbacklight
+    (call setbacklight_exec (staff_t))
+    (call setbacklight_manage_exec_files (staff_t))
+    (call setbacklight_relabel_exec_files (staff_t))
+
+    (context setbacklight_exec (staff_u object_r setbacklight_exec_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.local/bin/setbacklight" file setbacklight_exec))
+
 (optional staff_optional_ssh
     (call ssh_run_sshkeygen (staff_t staff_r))
 

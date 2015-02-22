@@ -329,6 +329,9 @@
 (optional sysadm_optional_screen
     (call screen_manage_config_files (sysadm_t)))
 
+(optional sysadm_optional_setbacklight
+    (call setbacklight_run (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_ssh
     (call ssh_run_sshkeygen (sysadm_t sysadm_r))
 
