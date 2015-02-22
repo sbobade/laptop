@@ -1,5 +1,6 @@
 (roleattribute journal_journalctl_role)
 
+(typeattribute journal_journalctl_subject_type)
 (typeattribute journal_journalctl_client_subject_type)
 
 (typeattribute journal_admin_subject_type)
@@ -9,23 +10,24 @@
 
 (type journalctl_t)
 (type journalctl_exec_t)
-(call applications_app (journalctl_t journalctl_exec_t))
+(call applications_app (journal_journalctl_subject_type journalctl_exec_t))
 (call systemd_daemon (journalctl_t journalctl_exec_t))
 (roletype journal_journalctl_role journalctl_t)
 
-(call journal_journalctl_client_subject_type (journalctl_t))
+(call journal_journalctl_subject_type (journalctl_t))
 
 (context journalctl_exec (system_u object_r journalctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/journalctl" file journalctl_exec)
 
-(allow journalctl_t self (capability (dac_override net_admin)))
+(allow journal_journalctl_subject_type self (capability (dac_override net_admin)))
 
-(call devices_read_random (journalctl_t))
+(call devices_read_random (journal_journalctl_subject_type))
 
-(call journal_manage_log (journalctl_t))
-(call journal_manage_journald_systemd_lib_files (journalctl_t))
-(call journal_read_journald_systemd_runtime (journalctl_t))
-(call journal_stop_journald_units (journalctl_t))
+(call journal_manage_log (journal_journalctl_subject_type))
+(call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
+(call journal_journalctl_client_subject_type (journal_journalctl_subject_type))
+(call journal_read_journald_systemd_runtime (journal_journalctl_subject_type))
+(call journal_stop_journald_units (journal_journalctl_subject_type))
 
 (type journald_t)
 (type journald_exec_t)
@@ -185,6 +187,9 @@
     (call can_exec (ARG1 journalctl_exec_t))
     (call journal_journalctl_client_subject_type (ARG1)))
 
+(macro journal_journalctl_subject_type ((type ARG1))
+    (typeattributeset journal_journalctl_subject_type ARG1))
+
 (macro journal_journalctl_client_subject_type ((type ARG1))
     (typeattributeset journal_journalctl_client_subject_type ARG1))
 
@@ -206,6 +211,13 @@
 
 (macro journal_send_signal_journalctl ((type ARG1))
     (allow ARG1 journalctl_t (process (signal))))
+
+(macro journal_role_template_journalctl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 journalctl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call journal_journalctl_subject_type (ARG3)))
 
 (macro journal_run_journalctl ((type ARG1)(role ARG2))
     (call journal_auto_subject_type_transition_journalctl (ARG1))

@@ -1,13 +1,13 @@
 (roleattribute machine_machinectl_role)
 
-(typeattribute machine_machinectl_client_subject_type)
+(typeattribute machine_machinectl_subject_type)
 
 (type machinectl_t)
 (type machinectl_exec_t)
-(call applications_app (machinectl_t machinectl_exec_t))
+(call applications_app (machine_machinectl_subject_type machinectl_exec_t))
 (roletype machine_machinectl_role machinectl_t)
 
-(call machine_machinectl_client_subject_type (machinectl_t))
+(call machine_machinectl_subject_type (machinectl_t))
 
 (context machinectl_exec (system_u object_r machinectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/machinectl" file machinectl_exec)
@@ -43,11 +43,10 @@
 (call systemd_runtime_object_type_transition (machined_t machined_systemd_runtime_t dir "*"))
 
 (macro machine_exec_machinectl ((type ARG1))
-    (call can_exec (ARG1 machinectl_exec_t))
-    (call machine_machinectl_client_subject_type (ARG1)))
+    (call can_exec (ARG1 machinectl_exec_t)))
 
-(macro machine_machinectl_client_subject_type ((type ARG1))
-    (typeattributeset machine_machinectl_client_subject_type ARG1))
+(macro machine_machinectl_subject_type ((type ARG1))
+    (typeattributeset machine_machinectl_subject_type ARG1))
 
 (macro machine_exec_machined ((type ARG1))
     (call can_exec (ARG1 machined_exec_t)))
@@ -67,6 +66,13 @@
 
 (macro machine_send_signal_machinectl ((type ARG1))
     (allow ARG1 machinectl_t (process (signal))))
+
+(macro machine_role_template_machinectl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 machinectl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call machine_machinectl_subject_type (ARG3)))
 
 (macro machine_run_machinectl ((type ARG1)(role ARG2))
     (call machine_auto_subject_type_transition_machinectl (ARG1))

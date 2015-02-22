@@ -1,10 +1,14 @@
 (roleattribute hostname_hostnamectl_role)
 
+(typeattribute hostname_hostnamectl_subject_type)
+
 (type hostnamectl_t)
 (type hostnamectl_exec_t)
-(call applications_app (hostnamectl_t hostnamectl_exec_t))
+(call applications_app (hostname_hostnamectl_subject_type hostnamectl_exec_t))
 (call systemd_daemon (hostnamectl_t hostnamectl_exec_t))
 (roletype hostname_hostnamectl_role hostnamectl_t)
+
+(call hostname_hostnamectl_subject_type (hostnamectl_t))
 
 (context hostnamectl_exec (system_u object_r hostnamectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/hostnamectl" file hostnamectl_exec)
@@ -66,6 +70,16 @@
 
 (macro hostname_send_signal_hostnamectl ((type ARG1))
     (allow ARG1 hostnamectl_t (process (signal))))
+
+(macro hostname_hostnamectl_subject_type ((type ARG1))
+    (typeattributeset hostname_hostnamectl_subject_type ARG1))
+
+(macro hostname_role_template_hostnamectl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 hostnamectl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call hostname_hostnamectl_subject_type (ARG3)))
 
 (macro hostname_run_hostnamectl ((type ARG1)(role ARG2))
     (call hostname_auto_subject_type_transition_hostnamectl (ARG1))

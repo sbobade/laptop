@@ -149,6 +149,73 @@
     (call getty_admin (sysadm_t)))
 
 (optional sysadm_optional_gpg
+    (call gpg_run_dirmngr (sysadm_t sysadm_r))
+    (call gpg_run_gpg2keys (sysadm_t sysadm_r))
+    (call gpg_run_gpgpcsc (sysadm_t sysadm_r))
+    (call gpg_run_scd (sysadm_t sysadm_r))
+
+    (context sysadm_gpg_home (sysadm_u object_r gpg_home_t (systemlow systemlow)))
+    (filecon "/root/\.gnupg(/.*)?" any sysadm_gpg_home)
+
+    (call gpg_home_dir_object_type_transition_gpg_home_dirs (sysadm_t))
+
+    (call gpg_manage_home (sysadm_t))
+    (call gpg_relabel_home (sysadm_t))
+
+    (type sysadm_gpg_t)
+    (call gpg_role_template (sysadm_r sysadm_t sysadm_gpg_t))
+
+    (type sysadm_gpgagent_t)
+    (call gpg_role_template_gpgagent (sysadm_r sysadm_t sysadm_gpgagent_t))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_gpgagent_t sysadm_t))
+    (call commands_shell_exec_auto_subject_type_transition (sysadm_gpgagent_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_gpgagent_t sysadm_t))
+
+    (context sysadm_gpgagent_home (sysadm_u object_r gpgagent_home_t (systemlow systemlow)))
+    (filecon "/root/\.gnupg/gpg-agent\.conf" file sysadm_gpgagent_home)
+    (filecon "/root/\.gnupg/gpg-agent\.log" file sysadm_gpgagent_home)
+    (filecon "/root/\.gnupg/S\.gpg-agent" socket sysadm_gpgagent_home)
+    (filecon "/root/\.gnupg/S\.gpg-agent\.ssh" socket sysadm_gpgagent_home)
+    (filecon "/root/\.gnupg/sshcontrol" file sysadm_gpgagent_home)
+    (filecon "/root/\.gnupg/private-keys-v1\.d(/.*)?" any sysadm_gpgagent_home)
+
+    (call gpg_home_object_type_transition_gpgagent_home (sysadm_t file "gpg-agent.conf"))
+    (call gpg_home_object_type_transition_gpgagent_home (sysadm_t file "gpg-agent.log"))
+    (call gpg_home_object_type_transition_gpgagent_home (sysadm_t file "sshcontrol"))
+    (call gpg_home_object_type_transition_gpgagent_home (sysadm_t dir "private-keys-v1.d"))
+    (call gpg_home_object_type_transition_gpgagent_home (sysadm_t sock_file "S.gpg-agent"))
+    (call gpg_home_object_type_transition_gpgagent_home (sysadm_t sock_file "S.gpg-agent.ssh"))
+
+    (call gpg_manage_gpgagent_home (sysadm_t))
+    (call gpg_relabel_gpgagent_home (sysadm_t))
+
+    (context sysadm_scd_home (sysadm_u object_r scd_home_t (systemlow systemlow)))
+    (filecon "/root/\.gnupg/reader.*.status" file sysadm_scd_home)
+    (filecon "/root/\.gnupg/S\.scdaemon" socket sysadm_scd_home)
+
+    (call gpg_home_object_type_transition_scd_home (sysadm_t sock_file "S.scdaemon"))
+
+    (context sysadm_dirmngr_home (sysadm_u object_r dirmngr_home_t (systemlow systemlow)))
+    (filecon "/root/\.gnupg/crls\.d(/.*)?" any sysadm_dirmngr_home)
+    (filecon "/root/\.gnupg/S\.dirmngr" socket sysadm_dirmngr_home)
+
+    (call gpg_manage_dirmngr_home (sysadm_t))
+    (call gpg_relabel_dirmngr_home (sysadm_t))
+
+    (call gpg_home_object_type_transition_dirmngr_home (sysadm_t dir "crls.d"))
+    (call gpg_home_object_type_transition_dirmngr_home (sysadm_t sock_file "S.dirmngr"))
+
+    (call gpg_manage_scd_home (sysadm_t))
+    (call gpg_relabel_scd_home (sysadm_t))
+
+    (call gpg_manage_scd_tmpfs (sysadm_t))
+    (call gpg_relabel_scd_tmpfs (sysadm_t))
+
+    (call gpg_role_template_gpgagent (sysadm_r sysadm_gpg_t sysadm_gpgagent_t))
+    (call stream_connect_pattern (sysadm_gpg_t gpgagent_home_t gpgagent_home_t sysadm_gpgagent_t))
+
     (call gpg_manage_config (sysadm_t)))
 
 (optional sysadm_optional_hostname
@@ -233,6 +300,12 @@
 (optional sysadm_optional_pcsc
     (call pcsc_admin (sysadm_t)))
 
+(optional sysadm_optional_pinentry
+    (call pinentry_run (sysadm_t sysadm_r))
+
+    (call pinentry_manage_tmpfs_files (sysadm_t))
+    (call pinentry_relabel_tmpfs_files (sysadm_t)))
+
 (optional sysadm_optional_plymouth
     (call plymouth_admin (sysadm_t))
     (call plymouth_run (sysadm_t sysadm_r)))
@@ -255,6 +328,34 @@
 
 (optional sysadm_optional_screen
     (call screen_manage_config_files (sysadm_t)))
+
+(optional sysadm_optional_ssh
+    (call ssh_run_sshkeygen (sysadm_t sysadm_r))
+
+    (call ssh_manage_home (sysadm_t))
+    (call ssh_relabel_home (sysadm_t))
+
+    (call ssh_home_dir_object_type_transition_ssh_home_dirs (sysadm_t ".ssh"))
+
+    (context sysadm_ssh_home (sysadm_u object_r ssh_home_t (systemlow systemlow)))
+    (filecon "/root/\.ssh(/.*)?" any sysadm_ssh_home)
+
+    (type sysadm_ssh_t)
+    (call ssh_role_template (sysadm_r sysadm_t sysadm_ssh_t))
+
+    (type sysadm_sshagent_t)
+    (call ssh_role_template_sshagent (sysadm_r sysadm_t sysadm_sshagent_t))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_sshagent_t sysadm_t))
+    (call commands_shell_exec_auto_subject_type_transition (sysadm_sshagent_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_sshagent_t sysadm_t))
+
+    (call ssh_manage_sshagent_tmpfs (sysadm_t))
+    (call ssh_relabel_sshagent_tmpfs (sysadm_t))
+
+    (optional sysadm_ssh_optional_sysadm_gpg
+        (call stream_connect_pattern (sysadm_ssh_t gpgagent_home_t gpgagent_home_t sysadm_gpgagent_t))))
 
 (optional sysadm_optional_sudo
     (call sudo_send_signal (sysadm_t))
@@ -312,17 +413,31 @@
         (call coredump_run_coredumpctl (sysadm_t sysadm_r)))
 
     (optional sysadm_optional_hostnamectl
-        (call hostname_run_hostnamectl (sysadm_t sysadm_r)))
+        (type sysadm_hostnamectl_t)
+        (call hostname_role_template_hostnamectl (sysadm_r sysadm_t sysadm_hostnamectl_t))
+
+        (optional sysadm_hostnamectl_optional_ssh
+            (call ssh_role_template (sysadm_r sysadm_hostnamectl_t sysadm_ssh_t))))
 
     (optional sysadm_optional_journal
         (call journal_admin (sysadm_t))
-        (call journal_run_journalctl (sysadm_t sysadm_r)))
+
+        (type sysadm_journalctl_t)
+        (call journal_role_template_journalctl (sysadm_r sysadm_t sysadm_journalctl_t))
+
+        (optional sysadm_journalctl_optional_ssh
+            (call ssh_role_template (sysadm_r sysadm_journalctl_t sysadm_ssh_t))))
 
     (optional sysadm_optional_loadmodules
         (call loadmodules_manage_config (sysadm_t)))
 
     (optional sysadm_optional_locale
-        (call locale_run_localectl (sysadm_t sysadm_r))
+        (type sysadm_localectl_t)
+        (call locale_role_template_localectl (sysadm_r sysadm_t sysadm_localectl_t))
+
+        (optional sysadm_localectl_optional_ssh
+            (call ssh_role_template (sysadm_r sysadm_localectl_t sysadm_ssh_t)))
+
         (call locale_manage_config_files (sysadm_t)))
 
     (optional sysadm_optional_loginctl
@@ -330,14 +445,24 @@
         (call login_run_loginctl (sysadm_t sysadm_r)))
 
     (optional sysadm_optional_machine
-        (call machine_run_machinectl (sysadm_t sysadm_r))
+        (type sysadm_machinectl_t)
+        (call machine_role_template_machinectl (sysadm_r sysadm_t sysadm_machinectl_t))
+
+        (optional sysadm_machinectl_optional_ssh
+            (call ssh_role_template (sysadm_r sysadm_machinectl_t sysadm_ssh_t)))
+
         (call machine_manage_config_files (sysadm_t)))
 
     (optional sysadm_optional_notify
         (call notify_run (sysadm_t sysadm_r)))
 
+    (type sysadm_systemctl_t)
+    (call systemd_role_template_systemctl (sysadm_r sysadm_t sysadm_systemctl_t))
+
+    (optional sysadm_systemctl_optional_ssh
+        (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
+
     (call systemd_admin (sysadm_t))
-    (call systemd_run_systemctl (sysadm_t sysadm_r))
     (call systemd_manage_all_config (sysadm_t))
 
     (optional sysadm_optional_sysusers

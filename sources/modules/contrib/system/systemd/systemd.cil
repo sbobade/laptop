@@ -6,6 +6,7 @@
 (typeattribute systemd_socket_activated_subject_type)
 (typeattribute systemd_system_service_admin_subject_type)
 
+(typeattribute systemd_systemctl_subject_type)
 (typeattribute systemd_systemctl_client_subject_type)
 
 (typeattribute systemd_object_type)
@@ -288,37 +289,39 @@
 
 (type systemctl_t)
 (type systemctl_exec_t)
-(call applications_app (systemctl_t systemctl_exec_t))
+(call applications_app (systemd_systemctl_subject_type systemctl_exec_t))
 (call systemd_daemon (systemctl_t systemctl_exec_t))
 (roletype systemd_systemctl_role systemctl_t)
+
+(call systemd_systemctl_subject_type (systemctl_t))
 
 (context systemctl_exec (system_u object_r systemctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemctl" file systemctl_exec)
 
-(allow systemctl_t self (capability (dac_override net_admin)))
-(allow systemctl_t self (process (setfscreate)))
-(allow systemctl_t self rw_fifo_file_perms)
+(allow systemd_systemctl_subject_type self (capability (dac_override net_admin)))
+(allow systemd_systemctl_subject_type self (process (setfscreate)))
+(allow systemd_systemctl_subject_type self rw_fifo_file_perms)
 
-(call commands_exec (systemctl_t))
+(call commands_exec (systemd_systemctl_subject_type))
 
-(call filesystems_getattr_filesystems (systemctl_t))
+(call filesystems_getattr_filesystems (systemd_systemctl_subject_type))
 
-(call askpwd_exec_askpwdagent (systemctl_t))
-(call askpwd_manage_systemd_runtime (systemctl_t))
+(call askpwd_exec_askpwdagent (systemd_systemctl_subject_type))
+(call askpwd_manage_systemd_runtime (systemd_systemctl_subject_type))
 
-(call miscfiles_read_all_terminfo (systemctl_t))
-(call miscfiles_read_locale (systemctl_t))
+(call miscfiles_read_all_terminfo (systemd_systemctl_subject_type))
+(call miscfiles_read_locale (systemd_systemctl_subject_type))
 
-(call systemd_control_all_units (systemctl_t))
-(call systemd_read_state_all_systemd_daemon_subjects (systemctl_t))
-(call systemd_systemctl_client_subject_type (systemctl_t))
-(call systemd_read_config_home (systemctl_t))
-(call systemd_read_state (systemctl_t))
-(call systemd_reboot_system (systemctl_t))
-(call systemd_reload_system (systemctl_t))
-(call systemd_status_system (systemctl_t))
+(call systemd_control_all_units (systemd_systemctl_subject_type))
+(call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
+(call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
+(call systemd_read_config_home (systemd_systemctl_subject_type))
+(call systemd_read_state (systemd_systemctl_subject_type))
+(call systemd_reboot_system (systemd_systemctl_subject_type))
+(call systemd_reload_system (systemd_systemctl_subject_type))
+(call systemd_status_system (systemd_systemctl_subject_type))
 
-(call usersubject_dontaudit_read_user_home_files (systemctl_t))
+(call usersubject_dontaudit_read_user_home_files (systemd_systemctl_subject_type))
 
 (type systemd_generic_t)
 (call subject_common_type (systemd_generic_t))
@@ -483,6 +486,9 @@
     (call can_exec (ARG1 systemctl_exec_t))
     (call systemd_systemctl_client_subject_type (ARG1)))
 
+(macro systemd_systemctl_subject_type ((type ARG1))
+    (typeattributeset systemd_systemctl_subject_type ARG1))
+
 (macro systemd_systemctl_client_subject_type ((type ARG1))
     (typeattributeset systemd_systemctl_client_subject_type ARG1))
 
@@ -510,6 +516,13 @@
 
 (macro systemd_send_signal_systemctl ((type ARG1))
     (allow ARG1 systemctl_t (process (signal))))
+
+(macro systemd_role_template_systemctl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 systemctl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call systemd_systemctl_subject_type (ARG3)))
 
 (macro systemd_run_systemctl ((type ARG1)(role ARG2))
     (call systemd_auto_subject_type_transition_systemctl (ARG1))

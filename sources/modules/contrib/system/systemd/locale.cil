@@ -1,13 +1,13 @@
 (roleattribute locale_localectl_role)
 
-(typeattribute locale_localectl_client_subject_type)
+(typeattribute locale_localectl_subject_type)
 
 (type localectl_t)
 (type localectl_exec_t)
-(call applications_app (localectl_t localectl_exec_t))
+(call applications_app (locale_localectl_subject_type localectl_exec_t))
 (roletype locale_localectl_role localectl_t)
 
-(call locale_localectl_client_subject_type (localectl_t))
+(call locale_localectl_subject_type (localectl_t))
 
 (context localectl_exec (system_u object_r localectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/localectl" file localectl_exec)
@@ -54,11 +54,10 @@
     (call xserver_read_config_files (localed_t)))
 
 (macro locale_exec_localectl ((type ARG1))
-    (call can_exec (ARG1 localectl_exec_t))
-    (call locale_localectl_client_subject_type (ARG1)))
+    (call can_exec (ARG1 localectl_exec_t)))
 
-(macro locale_localectl_client_subject_type ((type ARG1))
-    (typeattributeset locale_localectl_client_subject_type ARG1))
+(macro locale_localectl_subject_type ((type ARG1))
+    (typeattributeset locale_localectl_subject_type ARG1))
 
 (macro locale_exec_localed ((type ARG1))
     (call can_exec (ARG1 localed_exec_t)))
@@ -78,6 +77,13 @@
 
 (macro locale_send_signal_localectl ((type ARG1))
     (allow ARG1 localectl_t (process (signal))))
+
+(macro locale_role_template_localectl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 localectl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call locale_localectl_subject_type (ARG3)))
 
 (macro locale_run_localectl ((type ARG1)(role ARG2))
     (call locale_auto_subject_type_transition_localectl (ARG1))
