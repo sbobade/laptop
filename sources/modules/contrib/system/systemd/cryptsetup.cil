@@ -17,6 +17,7 @@
 (call devices_read_random (cryptsetup_t))
 (call devices_read_urandom (cryptsetup_t))
 (call devices_rw_lvm_control (cryptsetup_t))
+(call devices_write_kmsg (cryptsetup_t))
 
 (call filesystems_getattr_devtmpfs_filesystems (cryptsetup_t))
 (call filesystems_list_debugfs (cryptsetup_t))

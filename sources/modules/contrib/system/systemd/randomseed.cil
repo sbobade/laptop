@@ -17,6 +17,7 @@
 (call system_read_kernel_sysctl (randomseed_t))
 
 (call devices_rw_urandom (randomseed_t))
+(call devices_write_kmsg (randomseed_t))
 
 (call files_search_config (randomseed_t))
 

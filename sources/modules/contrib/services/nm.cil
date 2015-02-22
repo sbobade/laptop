@@ -170,6 +170,7 @@
 (context nmdisp_exec (system_u object_r nmdisp_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/nm-dispatcher" file nmdisp_exec)
 
+(allow nmdisp_t self (capability (sys_tty_config)))
 (allow nmdisp_t self (process (setpgid)))
 (allow nmdisp_t self rw_fifo_file_perms)
 

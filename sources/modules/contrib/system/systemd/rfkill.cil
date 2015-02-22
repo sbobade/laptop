@@ -16,6 +16,7 @@
 (call systemd_lib_object_type_transition (rfkill_t rfkill_systemd_lib_t dir "*"))
 
 (call devices_read_event (rfkill_t))
+(call devices_write_kmsg (rfkill_t))
 
 (call filesystems_list_sysfs (rfkill_t))
 (call filesystems_rw_sysfs_files (rfkill_t))

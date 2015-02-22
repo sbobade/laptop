@@ -236,7 +236,6 @@
 (macro audit_test_for_journald ((type ARG1))
     (allow ARG1 self (capability (audit_control)))
     (allow ARG1 self create_netlink_audit_socket_perms))
-    ; (call system_rw_netlink_audit_sockets (ARG1)))
 
 (macro audit_exec_auditctl ((type ARG1))
     (call can_exec (ARG1 auditctl_exec_t)))

@@ -33,6 +33,8 @@
 (type journald_exec_t)
 (call systemd_daemon (journald_t journald_exec_t))
 
+(call systemd_socket_activated_subject_type (journald_t))
+
 (context journald_exec (system_u object_r journald_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-journald" file journald_exec)
 (filecon "/usr/lib/systemd/systemd-kmsg-syslogd" file journald_exec)
@@ -337,6 +339,9 @@
 
 (macro journal_use_fd_journald ((type ARG1))
     (allow ARG1 journald_t (fd (use))))
+
+(macro journal_create_journald_netlink_audit_sockets ((type ARG1))
+    (allow ARG1 journald_t create_netlink_audit_socket_perms))
 
 (macro journal_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

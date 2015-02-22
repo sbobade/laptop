@@ -92,6 +92,7 @@
 (call devices_getattr_sound (logind_t))
 (call devices_getattr_wireless (logind_t))
 (call devices_getattr_v4l (logind_t))
+(call devices_write_kmsg (logind_t))
 
 (call devices_read_urandom (logind_t))
 

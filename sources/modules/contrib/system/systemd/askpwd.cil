@@ -59,6 +59,8 @@
 (allow askpwdagent_t self (process (setfscreate)))
 (allow askpwdagent_t self create_unix_stream_socket_perms)
 
+(call devices_write_kmsg (askpwdagent_t))
+
 (call files_search_config (askpwdagent_t))
 
 (call terminals_use_console (askpwdagent_t))
