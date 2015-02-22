@@ -410,6 +410,7 @@
 (call auth_nsswitch_client_subject_type (systemd_session_subject_type))
 
 (call journal_client_subject_type (systemd_session_subject_type))
+(call journal_stream_connect_journald (systemd_session_subject_type))
 
 (call miscfiles_read_locale (systemd_session_subject_type))
 
