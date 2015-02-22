@@ -511,6 +511,10 @@
     (call system_search_sysctl (ARG1))
     (call rw_files_pattern (ARG1 dev_sysctl_t dev_sysctl_t)))
 
+(macro system_write_dev_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 dev_sysctl_t dev_sysctl_t)))
+
 (macro system_search_crypto_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (allow ARG1 crypto_sysctl_t search_dir_perms))
@@ -522,6 +526,10 @@
 (macro system_rw_crypto_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (call rw_files_pattern (ARG1 crypto_sysctl_t crypto_sysctl_t)))
+
+(macro system_write_crypto_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 crypto_sysctl_t crypto_sysctl_t)))
 
 (macro system_search_fs_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
@@ -535,6 +543,10 @@
     (call system_search_sysctl (ARG1))
     (call rw_files_pattern (ARG1 fs_sysctl_t fs_sysctl_t)))
 
+(macro system_write_fs_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 fs_sysctl_t fs_sysctl_t)))
+
 (macro system_search_sysctl ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 sysctl_t search_dir_perms))
@@ -546,6 +558,10 @@
 (macro system_rw_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (allow ARG1 sysctl_t rw_file_perms))
+
+(macro system_write_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 sysctl_t write_file_perms))
 
 (macro system_search_kernel_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
@@ -559,6 +575,10 @@
     (call system_search_sysctl (ARG1))
     (call rw_files_pattern (ARG1 kernel_sysctl_t kernel_sysctl_t)))
 
+(macro system_write_kernel_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 kernel_sysctl_t kernel_sysctl_t)))
+
 (macro system_search_net_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (allow ARG1 net_sysctl_t search_dir_perms))
@@ -570,6 +590,10 @@
 (macro system_rw_net_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (call rw_files_pattern (ARG1 net_sysctl_t net_sysctl_t)))
+
+(macro system_write_net_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 net_sysctl_t net_sysctl_t)))
 
 (macro system_read_security_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
@@ -611,6 +635,10 @@
     (call system_search_sysctl (ARG1))
     (call rw_files_pattern (ARG1 vm_sysctl_t vm_sysctl_t)))
 
+(macro system_write_vm_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 vm_sysctl_t vm_sysctl_t)))
+
 (macro system_read_vm_overcommit_sysctl ((type ARG1))
     (call system_search_vm_sysctl (ARG1))
     (allow ARG1 vm_overcommit_sysctl_t read_file_perms))
@@ -618,6 +646,10 @@
 (macro system_rw_vm_overcommit_sysctl ((type ARG1))
     (call system_search_vm_sysctl (ARG1))
     (allow ARG1 vm_overcommit_sysctl_t rw_file_perms))
+
+(macro system_write_vm_overcommit_sysctl ((type ARG1))
+    (call system_search_vm_sysctl (ARG1))
+    (allow ARG1 vm_overcommit_sysctl_t write_file_perms))
 
 (macro system_getattr_all_sysctl_files ((type ARG1))
     (call getattr_files_pattern (ARG1 system_sysctl_object_type system_sysctl_object_type)))

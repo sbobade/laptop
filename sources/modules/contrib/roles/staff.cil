@@ -410,31 +410,13 @@
     (call pinentry_manage_tmpfs_files (staff_t))
     (call pinentry_relabel_tmpfs_files (staff_t)))
 
-(optional staff_optional_temps
-    (call temps_manage_exec_files (staff_t))
-    (call temps_relabel_exec_files (staff_t))
+(optional staff_optional_power
+    (call power_exec (staff_t))
+    (call power_manage_exec_files (staff_t))
+    (call power_relabel_exec_files (staff_t))
 
-    (context temps_exec (staff_u object_r temps_exec_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.local/bin/temps" file temps_exec))
-
-(optional staff_optional_torrent
-    (call torrent_run_rtorrent (staff_t staff_r))
-
-    (call torrent_manage_rtorrent_config_home_files (staff_t))
-    (call torrent_relabel_rtorrent_config_home_files (staff_t))
-    (call torrent_home_dir_object_type_transition_rtorrent_config_home_files (staff_t))
-    (call torrent_config_home_object_type_transition_rtorrent_config_home_files (staff_t))
-
-    (context staff_rtorrent_config_home (staff_u object_r rtorrent_config_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.config/rtorrent\.rc" file staff_rtorrent_config_home)
-    (filecon "/home/kcinimod/\.rtorrent\.rc" file staff_rtorrent_config_home)
-
-    (call torrent_manage_rtorrent_home (staff_t))
-    (call torrent_relabel_rtorrent_home (staff_t))
-    (call torrent_home_dir_object_type_transition_rtorrent_home_dirs (staff_t ".rtorrent"))
-
-    (context staff_rtorrent_home (staff_u object_r rtorrent_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.rtorrent(/.*)?" any staff_rtorrent_home))
+    (context power_exec (staff_u object_r power_exec_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.local/bin/power" file power_exec))
 
 (optional staff_optional_screen
     (type staff_screen_t)
@@ -528,6 +510,32 @@
 
     (optional staff_optional_journal
         (call journal_exec_journalctl (staff_t))))
+
+(optional staff_optional_temps
+    (call temps_manage_exec_files (staff_t))
+    (call temps_relabel_exec_files (staff_t))
+
+    (context temps_exec (staff_u object_r temps_exec_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.local/bin/temps" file temps_exec))
+
+(optional staff_optional_torrent
+    (call torrent_run_rtorrent (staff_t staff_r))
+
+    (call torrent_manage_rtorrent_config_home_files (staff_t))
+    (call torrent_relabel_rtorrent_config_home_files (staff_t))
+    (call torrent_home_dir_object_type_transition_rtorrent_config_home_files (staff_t))
+    (call torrent_config_home_object_type_transition_rtorrent_config_home_files (staff_t))
+
+    (context staff_rtorrent_config_home (staff_u object_r rtorrent_config_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.config/rtorrent\.rc" file staff_rtorrent_config_home)
+    (filecon "/home/kcinimod/\.rtorrent\.rc" file staff_rtorrent_config_home)
+
+    (call torrent_manage_rtorrent_home (staff_t))
+    (call torrent_relabel_rtorrent_home (staff_t))
+    (call torrent_home_dir_object_type_transition_rtorrent_home_dirs (staff_t ".rtorrent"))
+
+    (context staff_rtorrent_home (staff_u object_r rtorrent_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.rtorrent(/.*)?" any staff_rtorrent_home))
 
 (optional staff_optional_xserver
     (type staff_xinit_t)

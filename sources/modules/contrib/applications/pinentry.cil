@@ -15,6 +15,7 @@
 (call commands_exec (pinentry_t))
 (call commands_mprot_read_shell_exec_files (pinentry_t))
 
+(call files_dontaudit_catchall_subject_type (pinentry_t))
 (call files_read_data (pinentry_t))
 
 (call filesystems_getattr_filesystems (pinentry_t))
@@ -26,7 +27,6 @@
 (call pinentry_exec (pinentry_t))
 
 (call usersubject_use_terminals (pinentry_t))
-(call usersubject_search_data_home (pinentry_t)) ; FIXME
 
 (optional pinentry_optional_gpg
     (call gpg_stream_connect_all_gpgagent (pinentry_t)))
