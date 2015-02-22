@@ -96,6 +96,7 @@
 (call miscfiles_read_locale (pactl_t))
 
 (call pa_client (pactl_t pactl_role))
+(call pa_read_state (pactl_t))
 (call pa_stream_connect (pactl_t))
 
 (allow pa_client_subject_type self (process (getsched)))
@@ -345,6 +346,12 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call stream_connect_pattern (ARG1 pa_tmpfs_t pa_tmpfs_t pa_t)))
+
+(macro pa_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 pa_t read_file_perms)
+    (allow ARG1 pa_t list_dir_perms)
+    (allow ARG1 pa_t read_lnk_file_perms))
 
 (macro pa_tmpfs_client_template ((type ARG1)(role ARG2)(type ARG3))
     (call pa_client (ARG1 ARG2))
