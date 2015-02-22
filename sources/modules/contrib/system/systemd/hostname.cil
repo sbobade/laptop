@@ -17,11 +17,20 @@
 
 (call system_read_kernel_sysctl (hostname_hostnamectl_subject_type))
 
+(call commands_exec (hostname_hostnamectl_subject_type))
+
 (call dbus_system_client_subject_type (hostname_hostnamectl_subject_type))
+
+(call hostname_dbus_chat_hostnamed (hostname_hostnamectl_subject_type))
 
 (call machine_read_config_files (hostname_hostnamectl_subject_type))
 
 (call miscfiles_read_locale (hostname_hostnamectl_subject_type))
+
+(call polkit_dbus_chat_polkitd (hostname_hostnamectl_subject_type))
+
+(call systemd_dbus_chat (hostname_hostnamectl_subject_type))
+(call systemd_status_system (hostname_hostnamectl_subject_type))
 
 (type hostnamed_t)
 (type hostnamed_exec_t)
@@ -36,6 +45,8 @@
 (context hostnamed_dbus_config (system_u object_r hostnamed_dbus_config_t (systemlow systemlow)))
 (filecon "/etc/dbus-1/system\.d/org\.freedesktop\.hostname1\.conf" file hostnamed_dbus_config)
 
+(allow hostnamed_t self (process (setfscreate)))
+
 (call system_read_kernel_sysctl (hostnamed_t))
 
 (call devices_read_urandom (hostnamed_t))
@@ -46,9 +57,11 @@
 (call files_read_config_lnk_files (hostnamed_t))
 (call files_read_config_files (hostnamed_t))
 
+(call selinux_get_enforce_mode (hostnamed_t))
+
 (call dbus_system_service (hostnamed_t))
 
-(call hostname_read_config_files (hostnamed_t))
+(call hostname_manage_config_files (hostnamed_t))
 
 (call journal_client_subject_type (hostnamed_t))
 
