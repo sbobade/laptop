@@ -33,6 +33,7 @@
 (call devices_read_random (gpg_subject_type))
 
 (call files_read_data_files (gpg_subject_type))
+(call files_search_mnt (gpg_subject_type))
 
 (call gpg_exec_gpghelper (gpg_subject_type))
 (call gpg_read_config (gpg_subject_type))
