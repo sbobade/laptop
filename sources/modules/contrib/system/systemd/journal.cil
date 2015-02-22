@@ -126,6 +126,7 @@
 (call audit_test_for_journald (journald_t))
 
 (call journal_read_journald_systemd_config_files (journald_t))
+(call journal_test_for_systemd (journald_t))
 
 (call machine_read_config_files (journald_t))
 
