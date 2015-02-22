@@ -419,6 +419,10 @@
 (macro gpg_home_object_type_transition_gpgagent_home ((type ARG1)(class ARG2)(name ARG3))
     (call gpg_home_object_type_transition (ARG1 gpgagent_home_t ARG2 ARG3)))
 
+(macro gpg_stream_connect_all_gpgagent ((type ARG1))
+    (call gpg_search_home (ARG1))
+    (call stream_connect_pattern (ARG1 gpgagent_home_t gpgagent_home_t gpg_gpgagent_subject_type)))
+
 (macro gpg_search_dirmngr_home ((type ARG1))
     (call gpg_search_home (ARG1))
     (allow ARG1 dirmngr_home_t search_dir_perms))
