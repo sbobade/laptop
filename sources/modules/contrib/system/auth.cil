@@ -268,6 +268,7 @@
 (call selinux_validate_context (auth_login_program_subject_type))
 
 (call subject_identity_change_exemption (auth_login_program_subject_type))
+(call subject_interactive_fd_subject_type (auth_login_program_subject_type))
 (call subject_role_change_exemption (auth_login_program_subject_type))
 (call subject_object_identity_change_exemption (auth_login_program_subject_type))
 

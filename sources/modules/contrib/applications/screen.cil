@@ -47,6 +47,8 @@
 (call files_dontaudit_catchall_subject_type (screen_subject_type))
 (call files_read_config_files (screen_subject_type))
 
+(call subject_interactive_fd_subject_type (screen_subject_type))
+
 (call audit_client_subject_type (screen_subject_type))
 
 (call auth_read_pam_config_files (screen_subject_type))

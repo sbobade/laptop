@@ -14,6 +14,8 @@
 
 (call filesystems_getattr_filesystems (xterm_subject_type))
 
+(call subject_interactive_fd_subject_type (xterm_subject_type))
+
 (call auth_nsswitch_client_subject_type (xterm_subject_type))
 
 (call miscfiles_read_all_terminfo (xterm_subject_type))

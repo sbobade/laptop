@@ -20,6 +20,9 @@
 (typeattribute subject_uncond_exempt)
 (typeattribute subject_user_target)
 
+(typeattribute subject_interactive_fd_subject_type)
+(typeattribute subject_use_interactive_fd_subject_type)
+
 (type subject_execheap_t)
 (call selinux_bool_object_type (subject_execheap_t))
 
@@ -181,12 +184,20 @@
 (call subject_dontaudit_getattr_all_common_subjects (subject_dontaudit_catchall_subject_type))
 (call subject_dontaudit_read_all_common_subjects_state (subject_dontaudit_catchall_subject_type))
 
+(allow subject_use_interactive_fd_subject_type subject_interactive_fd_subject_type (fd (use)))
+
 (macro subject_type ((type ARG1))
     (typeattributeset subject_type ARG1))
 
 (macro subject_common_type ((type ARG1))
     (call subject_type (ARG1))
     (typeattributeset subject_common_type ARG1))
+
+(macro subject_interactive_fd_subject_type ((type ARG1))
+    (typeattributeset subject_interactive_fd_subject_type ARG1))
+
+(macro subject_use_interactive_fd_subject_type ((type ARG1))
+    (typeattributeset subject_use_interactive_fd_subject_type ARG1))
 
 (macro subject_dontaudit_catchall_subject_type ((type ARG1))
     (typeattributeset subject_dontaudit_catchall_subject_type ARG1))

@@ -90,6 +90,7 @@
 (call filesystems_list_proc (usersubject_common_type))
 
 (call subject_dontaudit_catchall_subject_type (usersubject_common_type))
+(call subject_interactive_fd_subject_type (usersubject_common_type))
 (call subject_user_exemption_target (usersubject_common_type))
 
 (call network_dontaudit_catchall_subject_type (usersubject_common_type))

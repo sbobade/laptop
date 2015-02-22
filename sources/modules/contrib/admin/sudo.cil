@@ -71,6 +71,7 @@
 (call selinux_compute_relabel_context (sudo_subject_type))
 (call selinux_validate_context (sudo_subject_type))
 
+(call subject_interactive_fd_subject_type (sudo_subject_type))
 (call subject_role_change_exemption (sudo_subject_type))
 
 (call audit_client_subject_type (sudo_subject_type))

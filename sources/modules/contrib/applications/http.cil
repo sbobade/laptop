@@ -41,8 +41,6 @@
 (call filesystems_list_devtmpfs (http_lynx_subject_type))
 (call filesystems_read_devtmpfs_lnk_files (http_lynx_subject_type))
 
-(call terminals_dontaudit_use_unallocated_ttys (http_lynx_subject_type))
-
 (call http_tcp_connect_http_port (http_lynx_subject_type))
 (call http_read_lynx_config_files (http_lynx_subject_type))
 

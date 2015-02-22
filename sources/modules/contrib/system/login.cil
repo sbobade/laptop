@@ -102,6 +102,7 @@
 (call devices_getattr_all (sulogin_t))
 
 (call subject_identity_change_exemption (sulogin_t))
+(call subject_interactive_fd_subject_type (sulogin_t))
 (call subject_object_identity_change_exemption (sulogin_t))
 (call subject_role_change_exemption (sulogin_t))
 

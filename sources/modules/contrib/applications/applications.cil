@@ -1,24 +1,15 @@
 (typeattribute applications_subject_type)
 (typeattribute applications_exec_object_type)
 
-(call terminals_use_inherited_unallocated_ttys (applications_subject_type))
-
-(call auth_use_login_program_fd (applications_subject_type))
-
-(call login_use_fd_sulogin (applications_subject_type))
-
-(optional applications_optional_screen
-    (call screen_use_fd (applications_subject_type)))
+(call subject_use_interactive_fd_subject_type (applications_subject_type))
 
 (optional applications_optional_sudo
     (call sudo_send_sigchld (applications_subject_type))
-    (call sudo_use_fd (applications_subject_type))
     (call sudo_rw_inherited_fifo_files (applications_subject_type))
 
     (optional applications_optional_usersubject
         (call usersubject_rw_inherited_fifo_files_all_common_subjects (applications_subject_type))
-        (call usersubject_use_inherited_terminals (applications_subject_type))
-        (call usersubject_use_fd_all_common_subjects (applications_subject_type))))
+        (call usersubject_use_inherited_terminals (applications_subject_type))))
 
 (macro applications_subject_type ((type ARG1))
     (typeattributeset applications_subject_type ARG1))
