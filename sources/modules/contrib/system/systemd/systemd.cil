@@ -208,7 +208,7 @@
 
 (call journal_list_log (systemd_t))
 (call journal_client_subject_type (systemd_t))
-(call journal_create_journald_netlink_audit_sockets (systemd_t))
+(call journal_test_for_systemd (systemd_t))
 (call journal_read_journald_systemd_runtime (systemd_t))
 (call journal_relabelto_log_dirs (systemd_t))
 (call journal_relabelto_log_files (systemd_t))
