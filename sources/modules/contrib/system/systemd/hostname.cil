@@ -13,6 +13,16 @@
 (context hostnamectl_exec (system_u object_r hostnamectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/hostnamectl" file hostnamectl_exec)
 
+(allow hostname_hostnamectl_subject_type self (capability (net_admin)))
+
+(call system_read_kernel_sysctl (hostname_hostnamectl_subject_type))
+
+(call dbus_system_client_subject_type (hostname_hostnamectl_subject_type))
+
+(call machine_read_config_files (hostname_hostnamectl_subject_type))
+
+(call miscfiles_read_locale (hostname_hostnamectl_subject_type))
+
 (type hostnamed_t)
 (type hostnamed_exec_t)
 (call systemd_daemon (hostnamed_t hostnamed_exec_t))
@@ -33,9 +43,12 @@
 (call filesystems_read_sysfs (hostnamed_t))
 (call filesystems_search_tmpfs (hostnamed_t))
 
+(call files_read_config_lnk_files (hostnamed_t))
 (call files_read_config_files (hostnamed_t))
 
 (call dbus_system_service (hostnamed_t))
+
+(call hostname_read_config_files (hostnamed_t))
 
 (call journal_client_subject_type (hostnamed_t))
 
