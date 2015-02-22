@@ -663,6 +663,7 @@
         (call usersubject_exec_home_auto_subject_type_transition (staff_xterm_t staff_t))
 
         (optional staff_xserver_xterm_optional_staff_screen
+            (allow staff_xterm_t staff_screen_t (process (signal)))
             (call screen_role_template (staff_r staff_xterm_t staff_screen_t))))
 
     (optional staff_xserver_optional_xutil
