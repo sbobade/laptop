@@ -1,0 +1,69 @@
+(roleattribute b43fwcutter_role)
+
+(type b43fwcutter_t)
+(type b43fwcutter_exec_t)
+(call applications_app (b43fwcutter_t b43fwcutter_exec_t))
+(roletype b43fwcutter_role b43fwcutter_t)
+
+(context b43fwcutter_exec (system_u object_r b43fwcutter_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/b43-fwcutter" file b43fwcutter_exec)
+
+(type b43fwcutter_tmp_t)
+(call files_object_type (b43fwcutter_tmp_t))
+
+(context b43fwcutter_tmp (system_u object_r b43fwcutter_tmp_t (systemlow systemlow)))
+(filecon "/b43(/.*)?" any b43fwcutter_tmp)
+
+(allow b43fwcutter_t b43fwcutter_tmp_t manage_dir_perms)
+(allow b43fwcutter_t b43fwcutter_tmp_t manage_file_perms)
+(call filesystems_rootfs_object_type_transition (b43fwcutter_t b43fwcutter_tmp_t dir "*"))
+
+(allow b43fwcutter_t self (capability (dac_override)))
+
+(call libraries_manage_lib (b43fwcutter_t))
+
+(call usersubject_read_user_home_files (b43fwcutter_t))
+
+(macro b43fwcutter_exec ((type ARG1))
+    (call can_exec (ARG1 b43fwcutter_exec_t)))
+
+(macro b43fwcutter_auto_subject_type_transition ((type ARG1))
+    (call b43fwcutter_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 b43fwcutter_exec_t b43fwcutter_t)))
+
+(macro b43fwcutter_send_signal ((type ARG1))
+    (allow ARG1 b43fwcutter_t (process (signal))))
+
+(macro b43fwcutter_run ((type ARG1)(role ARG2))
+    (call b43fwcutter_auto_subject_type_transition (ARG1))
+    (roleattributeset b43fwcutter_role ARG2))
+
+(macro b43fwcutter_search_tmp ((type ARG1))
+    (allow ARG1 b43fwcutter_t search_dir_perms))
+
+(macro b43fwcutter_list_tmp ((type ARG1))
+    (allow ARG1 b43fwcutter_t list_dir_perms))
+
+(macro b43fwcutter_read_tmp_files ((type ARG1))
+    (call read_files_pattern (ARG1 b43fcutter_tmp_t b43fwcutter_tmp_t)))
+
+(macro b43fwcutter_read_tmp_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 b43fcutter_tmp_t b43fwcutter_tmp_t)))
+
+(macro b43fwcutter_read_tmp ((type ARG1))
+    (allow ARG1 b43fwcutter_tmp_t read_file_perms)
+    (allow ARG1 b43fwcutter_tmp_t list_dir_perms)
+    (allow ARG1 b43fwcutter_tmp_t read_lnk_file_perms))
+
+(macro b43fwcutter_manage_tmp ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 b43fwcutter_tmp_t manage_file_perms)
+    (allow ARG1 b43fwcutter_tmp_t manage_dir_perms)
+    (allow ARG1 b43fwcutter_tmp_t manage_lnk_file_perms))
+
+(macro b43fwcutter_relabel_tmp ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 b43fwcutter_tmp_t relabel_file_perms)
+    (allow ARG1 b43fwcutter_tmp_t relabel_dir_perms)
+    (allow ARG1 b43fwcutter_tmp_t relabel_lnk_file_perms))

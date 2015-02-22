@@ -86,3 +86,12 @@
     (call libraries_read_lnk_files (ARG1))
     (allow ARG1 libraries_object_type mmap_file_perms)
     (allow ARG1 textrel_shlib_t (file (execmod))))
+
+(macro libraries_manage_lib_files ((type ARG1))
+    (call manage_files_pattern (ARG1 lib_t lib_t)))
+
+(macro libraries_manage_lib ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 lib_t manage_file_perms)
+    (allow ARG1 lib_t manage_dir_perms)
+    (allow ARG1 lib_t manage_lnk_file_perms))

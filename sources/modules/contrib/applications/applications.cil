@@ -3,6 +3,8 @@
 
 (call subject_use_interactive_fd_subject_type (applications_subject_type))
 
+(call terminals_use_inherited_unallocated_ttys (applications_subject_type))
+
 (optional applications_optional_sudo
     (call sudo_send_sigchld (applications_subject_type))
     (call sudo_rw_inherited_fifo_files (applications_subject_type))
