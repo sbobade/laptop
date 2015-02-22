@@ -1,3 +1,5 @@
+* new "fs" to set up for labeling: nsfs
+
 * appropriately name: audit_test_for_journald() journal_test_for_systemd()
 
 * is there a pattern that all nsswitch client subjects want to read machine runtime files?
