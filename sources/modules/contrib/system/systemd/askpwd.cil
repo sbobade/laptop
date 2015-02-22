@@ -1,4 +1,5 @@
 (roleattribute askpwd_role)
+(roleattribute askpwd_askpwdagent_role)
 
 (typeattribute askpwd_admin_subject_type)
 (typeattribute askpwd_askpwdagent_client_subject_type)
@@ -29,6 +30,7 @@
 (type askpwdagent_t)
 (type askpwdagent_exec_t)
 (call systemd_daemon (askpwdagent_t askpwdagent_exec_t))
+(roletype askpwd_askpwdagent_role askpwdagent_t)
 
 (call askpwd_askpwdagent_client_subject_type (askpwdagent_t))
 
@@ -119,6 +121,10 @@
 
 (macro askpwd_send_signal_askpwdagent ((type ARG1))
     (allow ARG1 askpwdagent_t (process (signal))))
+
+(macro askpwd_run_askpwdagent ((type ARG1)(role ARG2))
+    (call askpwd_auto_subject_type_transition_askpwdagent (ARG1))
+    (roleattributeset askpwd_askpwdagent_role ARG2))
 
 (macro askpwd_search_systemd_runtime ((type ARG1))
     (call systemd_search_runtime (ARG1))

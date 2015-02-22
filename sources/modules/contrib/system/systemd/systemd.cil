@@ -308,9 +308,6 @@
 
 (call filesystems_getattr_filesystems (systemd_systemctl_subject_type))
 
-(call askpwd_exec_askpwdagent (systemd_systemctl_subject_type))
-(call askpwd_manage_systemd_runtime (systemd_systemctl_subject_type))
-
 (call miscfiles_read_all_terminfo (systemd_systemctl_subject_type))
 (call miscfiles_read_locale (systemd_systemctl_subject_type))
 
@@ -525,7 +522,8 @@
         (ARG2 systemctl_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call systemd_systemctl_subject_type (ARG3)))
+    (call systemd_systemctl_subject_type (ARG3))
+    (call askpwd_run_askpwdagent (ARG3 ARG1)))
 
 (macro systemd_run_systemctl ((type ARG1)(role ARG2))
     (call systemd_auto_subject_type_transition_systemctl (ARG1))
