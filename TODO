@@ -7,6 +7,8 @@
 * test all the systemd "ctl" apps (as staff_t) by commenting out systemctl_client_subject_type first because that provides a lot of permissions that all have in common.
 * do journal clients still need net_admin?
 
-* think about a solution for confined systemd session daemons (/lib/systemd/user/emacs.service /lib/systemd/user/obexd.service)
+* target /lib/systemd/user/obexd.service on e145
 
 * TrouSers
+
+* test and make work /usr/lib/systemd/user/systemd-exit.service
