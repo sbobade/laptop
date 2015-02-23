@@ -48,6 +48,9 @@
     (call alsa_manage_alsautil_tmpfs_files (staff_t))
     (call alsa_relabel_alsautil_tmpfs_files (staff_t)))
 
+(optional staff_optional_bluetooth
+    (call bluetooth_run_bluetoothctl (staff_t staff_r)))
+
 (optional staff_optional_bti
     (call bti_run (staff_t staff_r))
 

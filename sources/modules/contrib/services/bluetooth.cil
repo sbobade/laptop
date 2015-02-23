@@ -1,0 +1,207 @@
+(roleattribute bluetooth_bluetoothctl_role)
+
+(typeattribute bluetooth_admin_subject_type)
+
+(typeattribute bluetooth_object_type)
+
+(type bluetoothctl_t)
+(type bluetoothctl_exec_t)
+(call applications_app (bluetoothctl_t bluetoothctl_exec_t))
+(roletype bluetooth_bluetoothctl_role bluetoothctl_t)
+
+(roleattributeset bluetooth_bluetoothctl_role system_r)
+
+(context bluetoothctl_exec (system_u object_r bluetoothctl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/bccmd" file bluetoothctl_exec)
+(filecon "/usr/bin/bluemoon" file bluetoothctl_exec)
+(filecon "/usr/bin/bluetoothctl" file bluetoothctl_exec)
+(filecon "/usr/bin/btmon" file bluetoothctl_exec)
+(filecon "/usr/bin/ciptool" file bluetoothctl_exec)
+(filecon "/usr/bin/hciattach" file bluetoothctl_exec)
+(filecon "/usr/bin/hciconfig" file bluetoothctl_exec)
+(filecon "/usr/bin/hcidump" file bluetoothctl_exec)
+(filecon "/usr/bin/hcitool" file bluetoothctl_exec)
+(filecon "/usr/bin/l2ping" file bluetoothctl_exec)
+(filecon "/usr/bin/l2test" file bluetoothctl_exec)
+(filecon "/usr/bin/rctest" file bluetoothctl_exec)
+(filecon "/usr/bin/rfcomm" file bluetoothctl_exec)
+(filecon "/usr/bin/sdptool" file bluetoothctl_exec)
+
+(allow bluetoothctl_t self (capability (net_raw)))
+(allow bluetoothctl_t self create_socket_perms)
+
+(call files_read_config_files (bluetoothctl_t))
+
+(call bluetooth_dbus_chat_bluetoothd (bluetoothctl_t))
+
+(call dbus_system_client_subject_type (bluetoothctl_t))
+
+(call miscfiles_read_locale (bluetoothctl_t))
+(call miscfiles_read_all_terminfo (bluetoothctl_t))
+
+(type bluetoothd_t)
+(type bluetoothd_exec_t)
+(call subject_common_type (bluetoothd_t))
+(call subject_entry (bluetoothd_t bluetoothd_exec_t))
+(roletype system_r bluetoothd_t)
+
+(context bluetoothd_exec (system_u object_r bluetoothd_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/bluetooth/bluetoothd" file bluetoothd_exec)
+
+(type bluetoothd_dbus_config_t)
+(call dbus_config_object_type (bluetoothd_dbus_config_t))
+
+(typeattributeset bluetooth_object_type bluetoothd_dbus_config_t)
+
+(context bluetoothd_dbus_config (system_u object_r bluetoothd_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/bluetooth\.conf" file bluetoothd_dbus_config)
+
+(type bluetoothd_lib_t)
+(call files_lib_object_type (bluetoothd_lib_t))
+
+(typeattributeset bluetooth_object_type bluetoothd_lib_t)
+
+(context bluetoothd_lib (system_u object_r bluetoothd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/bluetooth(/.*)?" any bluetoothd_lib)
+
+(allow bluetoothd_t bluetoothd_lib_t manage_dir_perms)
+(allow bluetoothd_t bluetoothd_lib_t manage_file_perms)
+(allow bluetoothd_t bluetoothd_lib_t manage_sock_file_perms)
+(call files_lib_object_type_transition (bluetoothd_t bluetoothd_lib_t dir "*"))
+
+(type bluetoothd_tmpfs_t)
+(call files_tmpfs_object_type (bluetoothd_tmpfs_t))
+
+(typeattributeset bluetooth_object_type bluetoothd_tmpfs_t)
+
+(allow bluetoothd_t bluetoothd_tmpfs_t manage_fifo_file_perms)
+
+(allow bluetoothd_t self (capability (net_bind_service)))
+(allow bluetoothd_t self create_socket_perms)
+(allow bluetoothd_t self (socket (listen accept)))
+
+(call system_request_load_module (bluetoothd_t))
+
+(call devices_read_urandom (bluetoothd_t))
+(call devices_rw_wireless (bluetoothd_t))
+
+(call filesystems_getattr_filesystems (bluetoothd_t))
+(call filesystems_read_sysfs (bluetoothd_t))
+
+(call dbus_system_service (bluetoothd_t))
+
+(call miscfiles_read_locale (bluetoothd_t))
+
+(call udev_client_subject_type (bluetoothd_t))
+
+(optional bluetoothd_optional_hostname
+    (call hostname_dbus_chat_hostnamed (bluetoothd_t)))
+
+(optional bluetoothd_optional_journal
+    (call journal_client_subject_type (bluetoothd_t)))
+
+(optional bluetoothd_optional_nm
+    (call nm_dbus_chat (bluetoothd_t)))
+
+(optional bluetoothd_optional_systemd
+    (call systemd_daemon (bluetoothd_t bluetoothd_exec_t))
+
+    (type bluetoothd_unit_t)
+    (call systemd_unit_object_type (bluetoothd_unit_t))
+
+    (typeattributeset bluetooth_object_type bluetoothd_unit_t)
+
+    (context bluetoothd_unit (system_u object_r bluetoothd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*bluetooth.*" file bluetoothd_unit)
+
+    (allow bluetooth_admin_subject_type bluetoothd_unit_t (service (all)))
+
+    (call systemd_stream_connect (bluetoothd_t)))
+
+(allow bluetooth_admin_subject_type bluetoothd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (bluetooth_admin_subject_type bluetoothd_t))
+
+(allow bluetooth_admin_subject_type bluetooth_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro bluetooth_exec_bluetoothctl ((type ARG1))
+    (call can_exec (ARG1 bluetoothctl_exec_t)))
+
+(macro bluetooth_exec_bluetoothd ((type ARG1))
+    (call can_exec (ARG1 bluetoothd_exec_t)))
+
+(macro bluetooth_auto_subject_type_transition_bluetoothctl ((type ARG1))
+    (call bluetooth_send_signal_bluetoothctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 bluetoothctl_exec_t bluetoothctl_t)))
+
+(macro bluetooth_send_signal_bluetoothctl ((type ARG1))
+    (allow ARG1 bluetoothctl_t (process (signal))))
+
+(macro bluetooth_run_bluetoothctl ((type ARG1)(role ARG2))
+    (call bluetooth_auto_subject_type_transition_bluetoothctl (ARG1))
+    (roleattributeset bluetooth_bluetoothctl_role ARG2))
+
+(macro bluetooth_auto_subject_type_transition_bluetoothd ((type ARG1))
+    (call bluetooth_send_signal_bluetoothd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 bluetoothd_exec_t bluetoothd_t)))
+
+(macro bluetooth_send_signal_bluetoothd ((type ARG1))
+    (allow ARG1 bluetoothd_t (process (signal))))
+
+(macro bluetooth_read_bluetoothd_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 bluetoothd_dbus_config_t read_file_perms))
+
+(macro bluetooth_manage_bluetoothd_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 bluetoothd_dbus_config_t manage_file_perms))
+
+(macro bluetooth_search_bluetoothd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 bluetoothd_lib_t search_dir_perms))
+
+(macro bluetooth_list_bluetoothd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 bluetoothd_lib_t list_dir_perms))
+
+(macro bluetooth_read_bluetoothd_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 bluetoothd_lib_t bluetoothd_lib_t)))
+
+(macro bluetooth_read_bluetoothd_lnk_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 bluetoothd_lib_t bluetoothd_lib_t)))
+
+(macro bluetooth_read_bluetoothd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 bluetoothd_lib_t read_file_perms)
+    (allow ARG1 bluetoothd_lib_t list_dir_perms)
+    (allow ARG1 bluetoothd_lib_t read_lnk_file_perms)
+    (allow ARG1 bluetoothd_lib_t read_sock_file_perms))
+
+(macro bluetooth_manage_bluetoothd_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 bluetoothd_lib_t manage_file_perms)
+    (allow ARG1 bluetoothd_lib_t manage_dir_perms)
+    (allow ARG1 bluetoothd_lib_t manage_lnk_file_perms)
+    (allow ARG1 bluetoothd_lib_t manage_sock_file_perms))
+
+(macro bluetooth_read_tmpfs_fifo_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 bluetoothd_tmpfs_t read_fifo_file_perms))
+
+(macro bluetooth_manage_tmpfs_fifo_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 bluetoothd_tmpfs_t manage_fifo_file_perms))
+
+(macro bluetooth_dbus_chat_bluetoothd ((type ARG1))
+    (allow ARG1 bluetoothd_t (dbus (send_msg)))
+    (allow bluetoothd_t ARG1 (dbus (send_msg))))
+
+(macro bluetooth_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset bluetooth_admin_subject_type ARG1)
+    (optional bluetooth_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
