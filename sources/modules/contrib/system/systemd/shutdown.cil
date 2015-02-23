@@ -107,10 +107,13 @@
 (call systemd_runtime_object_type_transition (shutdownd_t shutdownd_systemd_runtime_t sock_file "*"))
 
 (allow shutdownd_t self (capability (dac_override sys_tty_config)))
+(allow shutdownd_t self (process (setfscreate)))
 
 (call auth_read_utmp_runtime_files (shutdownd_t))
 
 (call journal_client_subject_type (shutdownd_t))
+
+(call miscfiles_read_locale (shutdownd_t))
 
 (call sessions_manage_runtime_files (shutdownd_t))
 (call sessions_runtime_object_type_transition_runtime_files (shutdownd_t "*"))
