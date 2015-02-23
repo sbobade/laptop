@@ -77,12 +77,6 @@
 
 (call usersubject_use_inherited_terminals (askpwdagent_t))
 
-(call dbus_system_client_subject_type (askpwdagent_t))
-
-(call login_dbus_chat_logind (askpwdagent_t))
-(call login_list_logind_systemd_runtime (askpwdagent_t))
-(call login_read_logind_systemd_runtime_files (askpwdagent_t))
-
 (allow askpwd_admin_subject_type askpwdagent_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (askpwd_admin_subject_type askpwdagent_t))
 

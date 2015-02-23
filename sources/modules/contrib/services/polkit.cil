@@ -144,6 +144,9 @@
 
 (call files_read_config_files (pklagent_t))
 
+(call filesystems_list_devtmpfs (pklagent_t))
+(call filesystems_search_devpts (pklagent_t))
+
 (call audit_set_params (pklagent_t))
 
 (call auth_nsswitch_client_subject_type (pklagent_t))

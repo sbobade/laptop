@@ -257,8 +257,6 @@
 (type systemd_config_home_t)
 (call usersubject_config_home_object_type (systemd_config_home_t))
 
-(call systemd_unit_object_type (systemd_config_home_t))
-
 (type systemd_session_unit_t)
 (call systemd_session_unit_object_type (systemd_session_unit_t))
 
