@@ -513,6 +513,8 @@
     (call systemd_relabel_config_home (staff_t))
     (call systemd_config_home_object_type_transition_config_home_dirs (staff_t))
 
+    (call systemd_control_all_session_units (staff_t))
+
     (context staff_systemd_config_home (staff_u object_r systemd_config_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemd_config_home)
 
@@ -520,7 +522,14 @@
         (call askpwd_exec_askpwdagent (staff_t)))
 
     (optional staff_optional_journal
-        (call journal_exec_journalctl (staff_t))))
+        (call journal_exec_journalctl (staff_t)))
+
+    (optional staff_systemd_optional_staff_emacs
+        (call emacs_role_template (staff_r staff_systemd_t staff_emacs_t)))
+        (call systemd_session_daemon (staff_systemd_t staff_emacs_t))
+
+        (call emacs_role_template_emacsclient (staff_r staff_systemd_t staff_emacsclient_t))
+        (call systemd_session_daemon (staff_systemd_t staff_emacsclient_t)))
 
 (optional staff_optional_temps
     (call temps_manage_exec_files (staff_t))

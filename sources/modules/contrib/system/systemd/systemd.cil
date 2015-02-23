@@ -236,7 +236,7 @@
 (call systemd_exec (systemd_t))
 (call systemd_exec_systemdhelper (systemd_t))
 (call systemd_manage_all_unit_files (systemd_t))
-(call systemd_relabelto_unit_dirs (systemd_t))
+(call systemd_relabelto_all_unit_dirs (systemd_t))
 
 (call tmpfiles_read_runtime (systemd_t))
 
@@ -257,7 +257,15 @@
 (type systemd_config_home_t)
 (call usersubject_config_home_object_type (systemd_config_home_t))
 
-(call systemd_session_unit_object_type (systemd_config_home_t))
+(call systemd_unit_object_type (systemd_config_home_t))
+
+(type systemd_session_unit_t)
+(call systemd_session_unit_object_type (systemd_session_unit_t))
+
+(typeattributeset systemd_object_type systemd_session_unit_object_type)
+
+(context systemd_session_unit (system_u object_r systemd_session_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/user(/.*)?" any systemd_session_unit)
 
 (call commands_shell_exec_manual_subject_type_transition
     (systemd_t systemd_session_subject_type))
@@ -354,7 +362,6 @@
 (filecon "/usr/lib/dracut/modules\.d/.*\.service" file systemd_unit)
 (filecon "/usr/lib/dracut/modules\.d/.*\.target" file systemd_unit)
 (filecon "/usr/lib/systemd/system(/.*)?" any systemd_unit)
-(filecon "/usr/lib/systemd/user(/.*)?" any systemd_unit)
 (filecon "/usr/lib/systemd/ntp-units\.d(/.*)?" any systemd_unit)
 
 (call filesystems_associate_tmpfs (systemd_unit_object_type))
@@ -548,7 +555,18 @@
     (call systemd_exec_systemctl (ARG2))
     (call systemd_read_state_lnk_files (ARG2))
     (call systemd_control_session_units (ARG2))
+    (call systemd_control_config_home (ARG2))
     (call systemd_session_subject_type (ARG3)))
+
+(macro systemd_session_daemon ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (unix_stream_socket (read write)))
+    (allow ARG1 ARG2 (process (signal)))
+
+    (allow ARG1 ARG2 read_file_perms)
+    (allow ARG1 ARG2 list_dir_perms)
+    (allow ARG1 ARG2 read_lnk_file_perms)
+
+    (allow ARG2 ARG1 (unix_stream_socket (read write))))
 
 (macro systemd_daemon_subject_type ((type ARG1))
     (typeattributeset systemd_daemon_subject_type ARG1))
@@ -878,11 +896,15 @@
 (macro systemd_read_all_unit ((type ARG1))
     (call libraries_search (ARG1))
     (allow ARG1 systemd_unit_object_type read_file_perms)
-    (allow ARG1 systemd_unit_t list_dir_perms)
-    (allow ARG1 systemd_unit_t read_lnk_file_perms))
+    (allow ARG1 systemd_unit_object_type list_dir_perms)
+    (allow ARG1 systemd_unit_object_type read_lnk_file_perms))
+
+(macro systemd_relabelto_all_unit_dirs ((type ARG1))
+    (call libraries_search (ARG1))
+    (allow ARG1 systemd_unit_object_type relabelto_dir_perms))
 
 (macro systemd_session_unit_object_type ((type ARG1))
-    (call usersubject_config_home_object_type (ARG1))
+    (call files_object_type (ARG1))
     (typeattributeset systemd_session_unit_object_type ARG1))
 
 (macro systemd_search_config_home ((type ARG1))
@@ -1100,8 +1122,14 @@
 (macro systemd_stop_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (stop))))
 
-(macro systemd_stop_session_units ((type ARG1))
+(macro systemd_stop_config_home ((type ARG1))
     (allow ARG1 systemd_config_home_t (service (stop))))
+
+(macro systemd_stop_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_t (service (stop))))
+
+(macro systemd_stop_all_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (stop))))
 
 (macro systemd_stop_transient_units ((type ARG1))
     (allow ARG1 self (service (stop))))
@@ -1115,8 +1143,14 @@
 (macro systemd_status_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (status))))
 
-(macro systemd_status_session_units ((type ARG1))
+(macro systemd_status_config_home ((type ARG1))
     (allow ARG1 systemd_config_home_t (service (status))))
+
+(macro systemd_status_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (status))))
+
+(macro systemd_status_all_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (status))))
 
 (macro systemd_status_transient_units ((type ARG1))
     (allow ARG1 self (service (status))))
@@ -1130,8 +1164,14 @@
 (macro systemd_disable_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (disable))))
 
-(macro systemd_disable_session_units ((type ARG1))
+(macro systemd_disable_config_home ((type ARG1))
     (allow ARG1 systemd_config_home_t (service (disable))))
+
+(macro systemd_disable_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (disable))))
+
+(macro systemd_disable_all_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (disable))))
 
 (macro systemd_disable_transient_units ((type ARG1))
     (allow ARG1 self (service (disable))))
@@ -1145,8 +1185,14 @@
 (macro systemd_enable_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (enable))))
 
-(macro systemd_enable_session_units ((type ARG1))
+(macro systemd_enable_config_home ((type ARG1))
     (allow ARG1 systemd_config_home_t (service (enable))))
+
+(macro systemd_enable_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (enable))))
+
+(macro systemd_enable_all_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (enable))))
 
 (macro systemd_enable_transient_units ((type ARG1))
     (allow ARG1 self (service (enable))))
@@ -1160,8 +1206,14 @@
 (macro systemd_reload_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (reload))))
 
-(macro systemd_reload_session_units ((type ARG1))
+(macro systemd_reload_config_home ((type ARG1))
     (allow ARG1 systemd_config_home_t (service (reload))))
+
+(macro systemd_reload_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (reload))))
+
+(macro systemd_reload_all_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (reload))))
 
 (macro systemd_reload_transient_units ((type ARG1))
     (allow ARG1 self (service (reload))))
@@ -1175,8 +1227,14 @@
 (macro systemd_start_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (start))))
 
-(macro systemd_start_session_units ((type ARG1))
+(macro systemd_start_config_home ((type ARG1))
     (allow ARG1 systemd_config_home_t (service (start))))
+
+(macro systemd_start_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (start))))
+
+(macro systemd_start_all_session_units ((type ARG1))
+    (allow ARG1 systemd_session_unit_object_type (service (start))))
 
 (macro systemd_start_power_units ((type ARG1))
     (allow ARG1 systemd_power_unit_t (service (start))))
@@ -1198,6 +1256,14 @@
     (call systemd_reload_system_units (ARG1))
     (call systemd_start_system_units (ARG1)))
 
+(macro systemd_control_config_home ((type ARG1))
+    (call systemd_stop_config_home (ARG1))
+    (call systemd_status_config_home (ARG1))
+    (call systemd_disable_config_home (ARG1))
+    (call systemd_enable_config_home (ARG1))
+    (call systemd_reload_config_home (ARG1))
+    (call systemd_start_config_home (ARG1)))
+
 (macro systemd_control_session_units ((type ARG1))
     (call systemd_stop_session_units (ARG1))
     (call systemd_status_session_units (ARG1))
@@ -1205,6 +1271,14 @@
     (call systemd_enable_session_units (ARG1))
     (call systemd_reload_session_units (ARG1))
     (call systemd_start_session_units (ARG1)))
+
+(macro systemd_control_all_session_units ((type ARG1))
+    (call systemd_stop_all_session_units (ARG1))
+    (call systemd_status_all_session_units (ARG1))
+    (call systemd_disable_all_session_units (ARG1))
+    (call systemd_enable_all_session_units (ARG1))
+    (call systemd_reload_all_session_units (ARG1))
+    (call systemd_start_all_session_units (ARG1)))
 
 (macro systemd_control_transient_units ((type ARG1))
     (call systemd_stop_transient_units (ARG1))

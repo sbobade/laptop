@@ -76,6 +76,13 @@
 
 (call usersubject_use_terminals (emacs_emacsclient_subject_type))
 
+(optional emacs_optional_systemd
+    (type emacs_session_unit_t)
+    (call systemd_session_unit_object_type (emacs_session_unit_t))
+
+    (context emacs_session_unit (system_u object_r emacs_session_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/user/[^/]*emacs.*" file emacs_session_unit))
+
 (macro emacs_exec ((type ARG1))
     (call can_exec (ARG1 emacs_exec_t)))
 
