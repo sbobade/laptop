@@ -65,7 +65,7 @@
 
 (call usersubject_create_ptys (screen_subject_type))
 (call usersubject_setattr_ptys (screen_subject_type))
-(call usersubject_use_ptys (screen_subject_type))
+(call usersubject_use_terminals (screen_subject_type))
 
 (optional screen_subject_type_optional_dbus
     (call dbus_system_client_subject_type (screen_subject_type)))
