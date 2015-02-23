@@ -144,6 +144,10 @@
 (optional sysadm_optional_fstools
     (call fstools_run (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_fstrim
+    (call fstrim_admin (sysadm_t))
+    (call fstrim_run (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_fuse
     (call fuse_run_fusermount (sysadm_t sysadm_r))
     (call fuse_run_ulockmgr (sysadm_t sysadm_r))

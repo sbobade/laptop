@@ -109,6 +109,7 @@
 (call system_read_kernel_sysctl (journald_t))
 (call system_rw_unix_dgram_sockets (journald_t))
 (call system_rw_unix_stream_sockets (journald_t))
+(call system_rw_netlink_audit_sockets (journald_t))
 (call system_use_fd (journald_t))
 
 (call devices_rw_kmsg (journald_t))

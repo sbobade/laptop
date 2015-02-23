@@ -1,0 +1,63 @@
+(roleattribute fstrim_role)
+
+(typeattribute fstrim_admin_subject_type)
+
+(type fstrim_t)
+(type fstrim_exec_t)
+(call applications_app (fstrim_t fstrim_exec_t))
+(roletype fstrim_role fstrim_t)
+
+(roleattributeset fstrim_role system_r)
+
+(context fstrim_exec (system_u object_r fstrim_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/fstrim.*" file fstrim_exec)
+
+(allow fstrim_t self (capability (sys_admin)))
+
+(call system_list_mountpoints (fstrim_t))
+
+(call filesystems_read_sysfs (fstrim_t))
+
+(call storage_getattr_fixed_disk (fstrim_t))
+(call storage_getattr_removable (fstrim_t))
+(call storage_getattr_scsi_generic (fstrim_t))
+
+(call miscfiles_read_locale (fstrim_t))
+
+(optional fstrim_optional_systemd
+    (call systemd_daemon (fstrim_t fstrim_exec_t))
+
+    (type fstrim_unit_t)
+    (call systemd_unit_object_type (fstrim_unit_t))
+
+    (context fstrim_unit (system_u object_r fstrim_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*fstrim.*" file fstrim_unit)
+
+    (allow fstrim_admin_subject_type fstrim_unit_t (service (all)))
+
+    (allow fstrim_admin_subject_type fstrim_unit_t (all_file_objects
+        (not_mounton_entrypoint_and_execmod))))
+
+(allow fstrim_admin_subject_type fstrim_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (fstrim_admin_subject_type fstrim_t))
+
+(macro fstrim_exec ((type ARG1))
+    (call can_exec (ARG1 fstrim_exec_t)))
+
+(macro fstrim_auto_subject_type_transition ((type ARG1))
+    (call fstrim_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 fstrim_exec_t fstrim_t)))
+
+(macro fstrim_send_signal ((type ARG1))
+    (allow ARG1 fstrim_t (process (signal))))
+
+(macro fstrim_run ((type ARG1)(role ARG2))
+    (call fstrim_auto_subject_type_transition (ARG1))
+    (roleattributeset fstrim_role ARG2))
+
+(macro fstrim_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset fstrim_admin_subject_type ARG1)
+    (optional fstrim_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
