@@ -1,0 +1,39 @@
+(roleattribute usbutils_role)
+
+(type usbutils_t)
+(type usbutils_exec_t)
+(call applications_app (usbutils_t usbutils_exec_t))
+(roletype usbutils_role usbutils_t)
+
+(roleattributeset usbutils_role system_r)
+
+(context usbutils_exec (system_u object_r usbutils_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/lsusb" file usbutils_exec)
+(filecon "/usr/bin/lsusb\.pu" file usbutils_exec)
+(filecon "/usr/bin/usb-devices" file usbutils_exec)
+(filecon "/usr/bin/usbhid-dump" file usbutils_exec)
+
+(allow usbutils_t self rw_fifo_file_perms)
+
+(call filesystems_list_devtmpfs (usbutils_t))
+(call filesystems_read_sysfs (usbutils_t))
+
+(call miscfiles_read_hwdata (usbutils_t))
+(call miscfiles_read_locale (usbutils_t))
+
+(call udev_client_subject_type (usbutils_t))
+
+(macro usbutils_exec ((type ARG1))
+    (call can_exec (ARG1 usbutils_exec_t)))
+
+(macro usbutils_auto_subject_type_transition ((type ARG1))
+    (call usbutils_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 usbutils_exec_t usbutils_t)))
+
+(macro usbutils_run ((type ARG1)(role ARG2))
+    (call usbutils_auto_subject_type_transition (ARG1))
+    (roleattributeset usbutils_role (ARG2)))
+
+(macro usbutils_send_signal ((type ARG1))
+    (allow ARG1 usbutils_t (process (signal))))

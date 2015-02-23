@@ -491,6 +491,9 @@
     (call udev_admin (sysadm_t))
     (call udev_run_udevadm (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_usbutils
+    (call usbutils_run (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_wpa
     (call wpa_admin (sysadm_t))
     (call wpa_run_wpacli (sysadm_t sysadm_r)))
