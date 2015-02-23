@@ -15,9 +15,13 @@
 (typeattributeset rpm_subject_type rpm_t)
 
 (context rpm_exec (system_u object_r rpm_exec_t (systemlow systemlow)))
-(filecon "/usr/bin/rpm" file rpm_exec)
 (filecon "/usr/bin/dnf" file rpm_exec)
+(filecon "/usr/bin/repoquery" file rpm_exec)
+(filecon "/usr/bin/rpm" file rpm_exec)
 (filecon "/usr/bin/yum" file rpm_exec)
+(filecon "/usr/bin/yum-builddep" file rpm_exec)
+(filecon "/usr/sbin/yum-complete-transaction" file rpm_exec)
+(filecon "/usr/sbin/yumdb" file rpm_exec)
 
 (type rpm_config_t)
 (call files_config_object_type (rpm_config_t))
