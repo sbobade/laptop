@@ -526,10 +526,10 @@
 
     (optional staff_systemd_optional_staff_emacs
         (call emacs_role_template (staff_r staff_systemd_t staff_emacs_t)))
-        (call systemd_session_daemon (staff_systemd_t staff_emacs_t))
+        (call systemd_session_daemon_template (staff_systemd_t staff_emacs_t))
 
         (call emacs_role_template_emacsclient (staff_r staff_systemd_t staff_emacsclient_t))
-        (call systemd_session_daemon (staff_systemd_t staff_emacsclient_t)))
+        (call systemd_session_daemon_template (staff_systemd_t staff_emacsclient_t)))
 
 (optional staff_optional_temps
     (call temps_manage_exec_files (staff_t))

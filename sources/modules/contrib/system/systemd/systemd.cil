@@ -276,8 +276,6 @@
 (allow systemd_t systemd_session_subject_type (process (noatsecure sigchld)))
 (allow systemd_t systemd_session_subject_type (key (create search link write)))
 
-(call systemd_read_config_home (systemd_t))
-
 (call usersubject_link_keyring_all_common_login_subjects (systemd_t))
 (call usersubject_mounton_home_dir (systemd_t))
 (call usersubject_use_terminals (systemd_t))
@@ -558,9 +556,9 @@
     (call systemd_control_config_home (ARG2))
     (call systemd_session_subject_type (ARG3)))
 
-(macro systemd_session_daemon ((type ARG1)(type ARG2))
+(macro systemd_session_daemon_template ((type ARG1)(type ARG2))
     (allow ARG1 ARG2 (unix_stream_socket (read write)))
-    (allow ARG1 ARG2 (process (signal)))
+    (allow ARG1 ARG2 (process (signal signull)))
 
     (allow ARG1 ARG2 read_file_perms)
     (allow ARG1 ARG2 list_dir_perms)
