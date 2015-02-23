@@ -1,0 +1,165 @@
+(typeattribute dnsmasq_admin_subject_type)
+
+(typeattribute dnsmasq_object_type)
+
+(type dnsmasq_t)
+(type dnsmasq_exec_t)
+(call subject_common_type (dnsmasq_t))
+(call subject_entry (dnsmasq_t dnsmasq_exec_t))
+(roletype system_r dnsmasq_t)
+
+(context dnsmasq_exec (system_u object_r dnsmasq_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/dnsmasq" file dnsmasq_exec)
+
+(type dnsmasq_config_t)
+(call files_config_object_type (dnsmasq_config_t))
+
+(typeattributeset dnsmasq_object_type dnsmasq_config_t)
+
+(context dnsmasq_config (system_u object_r dnsmasq_config_t (systemlow systemlow)))
+(filecon "/etc/dnsmasq\.conf" file dnsmasq_config)
+(filecon "/etc/dnsmasq\.d(/.*)?" any dnsmasq_config)
+
+(type dnsmasq_dbus_config_t)
+(call dbus_config_object_type (dnsmasq_dbus_config_t))
+
+(typeattributeset dnsmasq_object_type dnsmasq_dbus_config_t)
+
+(context dnsmasq_dbus_config (system_u object_r dnsmasq_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/dnsmasq\.conf" file dnsmasq_dbus_config)
+
+(type dnsmasq_lib_t)
+(call files_lib_object_type (dnsmasq_lib_t))
+
+(typeattributeset dnsmasq_object_type dnsmasq_lib_t)
+
+(context dnsmasq_lib (system_u object_r dnsmasq_lib_t (systemlow systemlow)))
+(filecon "/var/lib/dnsmasq(/.*)?" any dnsmasq_lib)
+
+(allow dnsmasq_t dnsmasq_lib_t manage_dir_perms)
+(allow dnsmasq_t dnsmasq_lib_t manage_file_perms)
+(call files_lib_object_type_transition (dnsmasq_t dnsmasq_lib_t dir "*"))
+
+(allow dnsmasq_t self (capability (net_raw setgid setuid)))
+(allow dnsmasq_t self (process (setcap)))
+(allow dnsmasq_t self rw_fifo_file_perms)
+
+(call system_read_kernel_sysctl (dnsmasq_t))
+
+(call devices_read_urandom (dnsmasq_t))
+
+(call network_udp_bind_generic_node (dnsmasq_t))
+(call network_tcp_bind_generic_node (dnsmasq_t))
+
+(call auth_nsswitch_client_subject_type (dnsmasq_t))
+
+(call dhcp_udp_bind_dhcp_port (dnsmasq_t))
+
+(call dns_udp_bind_dns_port (dnsmasq_t))
+(call dns_tcp_bind_dns_port (dnsmasq_t))
+
+(call miscfiles_read_locale (dnsmasq_t))
+(call miscfiles_read_net_config_files (dnsmasq_t))
+
+(optional dnsmasq_optional_journal
+    (call journal_client_subject_type (dnsmasq_t)))
+
+(optional dnsmasq_optional_systemd
+    (call systemd_daemon (dnsmasq_t dnsmasq_exec_t))
+
+    (type dnsmasq_unit_t)
+    (call systemd_unit_object_type (dnsmasq_unit_t))
+
+    (typeattributeset dnsmasq_object_type dnsmasq_unit_t)
+
+    (context dnsmasq_unit (system_u object_r dnsmasq_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*dnsmasq.*" file dnsmasq_unit)
+
+    (allow dnsmasq_admin_subject_type dnsmasq_unit_t (service (all))))
+
+(allow dnsmasq_admin_subject_type dnsmasq_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (dnsmasq_admin_subject_type dnsmasq_t))
+
+(allow dnsmasq_admin_subject_type dnsmasq_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro dnsmasq_exec ((type ARG1))
+    (call can_exec (ARG1 dnsmasq_exec_t)))
+
+(macro dnsmasq_auto_subject_type_transition ((type ARG1))
+    (call dnsmasq_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dnsmasq_exec_t dnsmasq_t)))
+
+(macro dnsmasq_send_signal ((type ARG1))
+    (allow ARG1 dnsmasq_t (process (signal))))
+
+(macro dnsmasq_read_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 dnsmasq_dbus_config_t read_file_perms))
+
+(macro dnsmasq_manage_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 dnsmasq_dbus_config_t manage_file_perms))
+
+(macro dnsmasq_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dnsmasq_config_t search_dir_perms))
+
+(macro dnsmasq_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dnsmasq_config_t list_dir_perms))
+
+(macro dnsmasq_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 dnsmasq_config_t dnsmasq_config_t)))
+
+(macro dnsmasq_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 dnsmasq_config_t dnsmasq_config_t)))
+
+(macro dnsmasq_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dnsmasq_config_t read_file_perms)
+    (allow ARG1 dnsmasq_config_t list_dir_perms)
+    (allow ARG1 dnsmasq_config_t read_lnk_file_perms))
+
+(macro dnsmasq_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 dnsmasq_config_t manage_file_perms)
+    (allow ARG1 dnsmasq_config_t manage_dir_perms)
+    (allow ARG1 dnsmasq_config_t manage_lnk_file_perms))
+
+(macro dnsmasq_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dnsmasq_lib_t search_dir_perms))
+
+(macro dnsmasq_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dnsmasq_lib_t list_dir_perms))
+
+(macro dnsmasq_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 dnsmasq_lib_t dnsmasq_lib_t)))
+
+(macro dnsmasq_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 dnsmasq_lib_t dnsmasq_lib_t)))
+
+(macro dnsmasq_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 dnsmasq_lib_t read_file_perms)
+    (allow ARG1 dnsmasq_lib_t list_dir_perms)
+    (allow ARG1 dnsmasq_lib_t read_lnk_file_perms))
+
+(macro dnsmasq_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 dnsmasq_lib_t manage_file_perms)
+    (allow ARG1 dnsmasq_lib_t manage_dir_perms)
+    (allow ARG1 dnsmasq_lib_t manage_lnk_file_perms))
+
+(macro dnsmasq_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset dnsmasq_admin_subject_type ARG1)
+    (optional dnsmasq_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
