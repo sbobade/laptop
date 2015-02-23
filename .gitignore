@@ -1,3 +1,4 @@
 contexts/files/file_contexts
+EXCLUDE.local
 LISTING
 policy/policy.*
