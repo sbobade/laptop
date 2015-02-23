@@ -519,7 +519,7 @@
     (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemd_config_home)
 
     (optional staff_optional_askpwd
-        (call askpwd_exec_askpwdagent (staff_t)))
+        (call askpwd_run_askpwdagent (staff_t staff_r)))
 
     (optional staff_optional_journal
         (call journal_exec_journalctl (staff_t)))

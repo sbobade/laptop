@@ -2,7 +2,6 @@
 (roleattribute askpwd_askpwdagent_role)
 
 (typeattribute askpwd_admin_subject_type)
-(typeattribute askpwd_askpwdagent_client_subject_type)
 
 (typeattribute askpwd_object_type)
 
@@ -31,8 +30,6 @@
 (type askpwdagent_exec_t)
 (call systemd_daemon (askpwdagent_t askpwdagent_exec_t))
 (roletype askpwd_askpwdagent_role askpwdagent_t)
-
-(call askpwd_askpwdagent_client_subject_type (askpwdagent_t))
 
 (context askpwdagent_exec (system_u object_r askpwdagent_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-tty-ask-password-agent" file askpwdagent_exec)
@@ -80,6 +77,12 @@
 
 (call usersubject_use_inherited_terminals (askpwdagent_t))
 
+(call dbus_system_client_subject_type (askpwdagent_t))
+
+(call login_dbus_chat_logind (askpwdagent_t))
+(call login_list_logind_systemd_runtime (askpwdagent_t))
+(call login_read_logind_systemd_runtime_files (askpwdagent_t))
+
 (allow askpwd_admin_subject_type askpwdagent_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (askpwd_admin_subject_type askpwdagent_t))
 
@@ -88,21 +91,11 @@
 (allow askpwd_admin_subject_type askpwd_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
-(call dbus_system_client_subject_type (askpwd_askpwdagent_client_subject_type))
-
-(call login_dbus_chat_logind (askpwd_askpwdagent_client_subject_type))
-(call login_list_logind_systemd_runtime (askpwd_askpwdagent_client_subject_type))
-(call login_read_logind_systemd_runtime_files (askpwd_askpwdagent_client_subject_type))
-
 (macro askpwd_exec ((type ARG1))
     (call can_exec (ARG1 askpwd_exec_t)))
 
-(macro askpwd_askpwdagent_client_subject_type ((type ARG1))
-    (typeattributeset askpwd_askpwdagent_client_subject_type ARG1))
-
 (macro askpwd_exec_askpwdagent ((type ARG1))
-    (call can_exec (ARG1 askpwdagent_exec_t))
-    (call askpwd_askpwdagent_client_subject_type (ARG1)))
+    (call can_exec (ARG1 askpwdagent_exec_t)))
 
 (macro askpwd_auto_subject_type_transition ((type ARG1))
     (call askpwd_send_signal (ARG1))
@@ -126,7 +119,9 @@
 
 (macro askpwd_run_askpwdagent ((type ARG1)(role ARG2))
     (call askpwd_auto_subject_type_transition_askpwdagent (ARG1))
-    (roleattributeset askpwd_askpwdagent_role ARG2))
+    (roleattributeset askpwd_askpwdagent_role ARG2)
+    (optional askpwd_run_optional_polkit
+        (call polkit_run_pklagent (ARG1 ARG2))))
 
 (macro askpwd_search_systemd_runtime ((type ARG1))
     (call systemd_search_runtime (ARG1))

@@ -1,11 +1,9 @@
-(roleattribute pkladm_role)
-(roleattribute pklauth_role)
+(roleattribute polkit_pkladm_role)
+(roleattribute polkit_pklauth_role)
+(roleattribute polkit_pklagent_role)
 
 (typeattribute polkit_admin_subject_type)
 (typeattribute polkit_subject_type)
-
-(typeattribute polkit_pkladm_client_subject_type)
-(typeattribute polkit_pklauth_client_subject_type)
 
 (typeattribute polkit_object_type)
 
@@ -109,12 +107,11 @@
 (type pkladm_t)
 (type pkladm_exec_t)
 (call applications_app (pkladm_t pkladm_exec_t))
-(roletype pkladm_role pkladm_t)
+(roletype polkit_pkladm_role pkladm_t)
 
-(roleattributeset pkladm_role system_r)
+(roleattributeset polkit_pkladm_role system_r)
 
 (typeattributeset polkit_subject_type pkladm_t)
-(typeattributeset polkit_pkladm_client_subject_type pkladm_t)
 
 (context pkladm_exec (system_u object_r pkladm_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pkla-admin-identities" file pkladm_exec)
@@ -125,12 +122,11 @@
 (type pklauth_t)
 (type pklauth_exec_t)
 (call applications_app (pklauth_t pklauth_exec_t))
-(roletype pklauth_role pklauth_t)
+(roletype polkit_pklauth_role pklauth_t)
 
-(roleattributeset pklauth_role system_r)
+(roleattributeset polkit_pklauth_role system_r)
 
 (typeattributeset polkit_subject_type pklauth_t)
-(typeattributeset polkit_pklauth_client_subject_type pklauth_t)
 
 (context pklauth_exec (system_u object_r pklauth_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pkla-check-authorization" file pklauth_exec)
@@ -138,11 +134,30 @@
 (optional pklauth_optional_systemd
     (call systemd_daemon (pklauth_t pklauth_exec_t)))
 
-(type polkit_helper_exec_t)
-(call commands_exec_object_type (polkit_helper_exec_t))
+(type pklagent_t)
+(type pklagent_exec_t)
+(call applications_app (pklagent_t pklagent_exec_t))
+(roletype polkit_pklagent_role pklagent_t)
 
-(context polkit_helper_exec (system_u object_r polkit_helper_exec_t (systemlow systemlow)))
-(filecon "/usr/lib/polkit-1/polkit-agent-helper-1" file polkit_helper_exec)
+(allow pklagent_t self (capability (setuid)))
+(allow pklagent_t self rw_fifo_file_perms)
+
+(call files_read_config_files (pklagent_t))
+
+(call audit_set_params (pklagent_t))
+
+(call auth_nsswitch_client_subject_type (pklagent_t))
+(call auth_read_authconfig_pam_config (pklagent_t))
+(call auth_read_pam_config_files (pklagent_t))
+(call auth_run_chkpwd (pklagent_t polkit_pklagent_role))
+
+(call dbus_system_client_subject_type (pklagent_t))
+
+(call polkit_dbus_chat_polkitd (pklagent_t))
+(call polkit_read_pam_config_files (pklagent_t))
+
+(context pklagent_exec (system_u object_r pklagent_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/polkit-1/polkit-agent-helper-1" file pklagent_exec)
 
 (allow polkit_admin_subject_type polkit_subject_type (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (polkit_admin_subject_type polkit_subject_type))
@@ -154,21 +169,13 @@
     (call can_exec (ARG1 polkitd_exec_t)))
 
 (macro polkit_exec_pkladm ((type ARG1))
-    (call can_exec (ARG1 pkladm_exec_t))
-    (call polkit_pkladm_client_subject_type (ARG1)))
-
-(macro polkit_pkladm_client_subject_type ((type ARG1))
-    (typeattributeset polkit_pkladm_client_subject_type ARG1))
+    (call can_exec (ARG1 pkladm_exec_t)))
 
 (macro polkit_exec_pklauth ((type ARG1))
-    (call can_exec (ARG1 pklauth_exec_t))
-    (call polkit_pklauth_client_subject_type (ARG1)))
+    (call can_exec (ARG1 pklauth_exec_t)))
 
-(macro polkit_pklauth_client_subject_type ((type ARG1))
-    (typeattributeset polkit_pklauth_client_subject_type ARG1))
-
-(macro polkit_exec_polkit_helper ((type ARG1))
-    (call can_exec (ARG1 polkit_helper_exec_t)))
+(macro polkit_exec_polagent ((type ARG1))
+    (call can_exec (ARG1 pklagent_exec_t)))
 
 (macro polkit_auto_subject_type_transition_pattern_polkitd ((type ARG1))
     (call polkit_send_signal_polkitd (ARG1))
@@ -188,7 +195,7 @@
 
 (macro polkit_run_pkladm ((type ARG1)(role ARG2))
     (call polkit_auto_subject_type_transition_pkladm (ARG1))
-    (roleattributeset pkladm_role ARG2))
+    (roleattributeset polkit_pkladm_role ARG2))
 
 (macro polkit_auto_subject_type_transition_pklauth ((type ARG1))
     (call polkit_send_signal_pklauth (ARG1))
@@ -200,7 +207,19 @@
 
 (macro polkit_run_pklauth ((type ARG1)(role ARG2))
     (call polkit_auto_subject_type_transition_pklauth (ARG1))
-    (roleattributeset pklauth_role ARG2))
+    (roleattributeset polkit_pklauth_role ARG2))
+
+(macro polkit_auto_subject_type_transition_pklagent ((type ARG1))
+    (call polkit_send_signal_pklagent (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pklagent_exec_t pklagent_t)))
+
+(macro polkit_send_signal_pklagent ((type ARG1))
+    (allow ARG1 pklagent_t (process (signal))))
+
+(macro polkit_run_pklagent ((type ARG1)(role ARG2))
+    (call polkit_auto_subject_type_transition_pklagent (ARG1))
+    (roleattributeset polkit_pklagent_role ARG2))
 
 (macro polkit_search_config ((type ARG1))
     (call files_search_config (ARG1))
