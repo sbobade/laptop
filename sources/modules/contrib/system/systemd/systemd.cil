@@ -318,7 +318,9 @@
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_reboot_system (systemd_systemctl_subject_type))
 (call systemd_reload_system (systemd_systemctl_subject_type))
+(call systemd_start_system (systemd_systemctl_subject_type))
 (call systemd_status_system (systemd_systemctl_subject_type))
+(call systemd_stop_system (systemd_systemctl_subject_type))
 
 (call usersubject_dontaudit_read_user_home_files (systemd_systemctl_subject_type))
 
@@ -451,6 +453,8 @@
 (call journal_read_log (systemd_systemctl_client_subject_type))
 
 (call machine_read_config_files (systemd_systemctl_client_subject_type))
+
+(call polkit_dbus_chat_polkitd (systemd_systemctl_client_subject_type))
 
 (call systemd_dbus_chat (systemd_systemctl_client_subject_type))
 (call systemd_dgram_send (systemd_systemctl_client_subject_type))

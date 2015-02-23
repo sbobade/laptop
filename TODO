@@ -10,3 +10,5 @@
 * all journal client subject types need to write to kmsg_dev_t in case shit hits the fan
 
 * think about a solution for confined systemd session daemons (/lib/systemd/user/emacs.service /lib/systemd/user/obexd.service)
+
+* TrouSers, dnsmasq

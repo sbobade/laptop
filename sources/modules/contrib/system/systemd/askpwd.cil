@@ -65,6 +65,8 @@
 
 (call files_search_config (askpwdagent_t))
 
+(call subject_use_interactive_fd_subject_type (askpwdagent_t))
+
 (call terminals_use_console (askpwdagent_t))
 
 (call askpwd_manage_systemd_runtime (askpwdagent_t))
@@ -75,6 +77,8 @@
 (call journal_client_subject_type (askpwdagent_t))
 
 (call systemd_use_fd (askpwdagent_t))
+
+(call usersubject_use_inherited_terminals (askpwdagent_t))
 
 (allow askpwd_admin_subject_type askpwdagent_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (askpwd_admin_subject_type askpwdagent_t))
@@ -89,8 +93,6 @@
 (call login_dbus_chat_logind (askpwd_askpwdagent_client_subject_type))
 (call login_list_logind_systemd_runtime (askpwd_askpwdagent_client_subject_type))
 (call login_read_logind_systemd_runtime_files (askpwd_askpwdagent_client_subject_type))
-
-(call polkit_dbus_chat_polkitd (askpwd_askpwdagent_client_subject_type))
 
 (macro askpwd_exec ((type ARG1))
     (call can_exec (ARG1 askpwd_exec_t)))
