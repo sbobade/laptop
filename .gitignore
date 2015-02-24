@@ -1,4 +1,5 @@
 contexts/files/file_contexts
 EXCLUDE.local
+laptop.conf
 LISTING
 policy/policy.*

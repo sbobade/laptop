@@ -1,0 +1,241 @@
+#!/bin/bash
+
+shopt -o -s nounset
+
+declare CONFIG="laptop.conf"
+declare SECILC="/usr/bin/secilc"
+declare VERSION="$(/bin/cat /sys/fs/selinux/policyvers)"
+
+declare DISABLE_DONTAUDIT="0"
+declare ALLOW_UNKNOWN="0"
+declare VERBOSE="0"
+
+declare -a EXCL="EXCLUDE"
+declare -a EXCL_LOCAL="EXCLUDE.local"
+
+if [ -e "${PWD}/${CONFIG}" -a -s "${PWD}/${CONFIG}" ] ; then
+    source "${PWD}/${CONFIG}" 2>/dev/null
+fi
+
+do_default () {
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+}
+
+do_tests () {
+    echo "
+    TODO
+    "
+}
+
+get_help () {
+    echo "
+    laptop - A crappy bash script to wrap around the SELinux CIL compiler.
+
+    Local configuration:
+        If wish to specify an alternate location for your SELinux CIL compiler or if you wish to specify an alternate policy version then
+        you can do so in an "laptop.conf" file.
+
+        Example:
+
+        declare SECILC="/my/alternate/location/secilc"
+        declare VERSION="21"
+
+    Local modules:
+        If you wish to maintain local modules then you can store those in the "sources.d" drop-in directory.
+        Make sure to use the ".cil" suffix with your modules.
+
+        Example:
+
+        sources.d/mymodule.cil
+
+    Local excludes:
+        If you wish to exclude modules then you can store relative paths of these modules in a "EXCLUDE.local" file.
+
+        Example:
+
+        sources/modules/contrib/app/b43fwcutter.cil
+        sources/modules/contrib/services/bluetooth.cil
+
+    Options:
+        -d | --disable-dontaudit    Build policy without "dontaudit" av rules inserted.
+        -u | --allow-unknown        Build policy that will allow unknown access vectors.
+        -v | --verbose              Build policy in verbose mode.
+
+    Running this script with no options will build the policy silently with "dontaudit" av rules, and with defaults as specified in "sources/config.cil".
+    "
+}
+
+get_secilc () {
+    if [ ! -x "${SECILC}" ] ; then
+        declare SECILC="/usr/bin/secilc"
+    fi
+
+    if [ ! -x "${SECILC}" ] ; then
+        echo "SELinux CIL compiler at ${SECILC} cannot be executed!"
+        return 192
+    fi
+}
+
+get_version () {
+    local POLICYVERS="$(/bin/cat /sys/fs/selinux/policyvers)"
+
+    if [ -z "${POLICYVERS}" ] ; then
+        echo "Unable to determine MAX_POLICYDB_VERSION!"
+        return 192
+    fi
+
+    if [ -z "${VERSION}" -o "${VERSION}" -gt "${POLICYVERS}" ] ; then
+        echo "Specified policy version (${VERSION}) is greater than MAX_POLICYDB_VERSION (${POLICYVERS}). Defaulting to ${POLICYVERS}!"
+        declare VERSION="$(/bin/cat /sys/fs/selinux/policyvers)"
+    fi
+}
+
+gen_listing () {
+    local MODULES+=$(/bin/find . -type f \( -iname "*.cil" \) | /bin/cut -d/ -f2-)
+
+    if [ -z "${MODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
+
+    for i in ${IGNORE[*]} ; do
+        MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
+    done
+
+    printf "%s\n" "${MODULES[*]}" | /bin/sort > LISTING
+}
+
+get_ignore () {
+    if [ -e "${PWD}/${EXCL_LOCAL}" -a -s "${PWD}/${EXCL_LOCAL}" ] ; then
+        IGNORE+=($(/bin/cat "${PWD}/${EXCL}"))
+        IGNORE+=($(/bin/cat "${PWD}/${EXCL_LOCAL}"))
+    else
+        IGNORE+=($(/bin/cat "${PWD}/${EXCL}"))
+    fi
+}
+
+if [ $# -eq 0 ] ; then
+    do_default
+    exit $(echo $?)
+fi
+
+while (($# > 0)) ;
+    do
+        case $1 in
+            -h|--help)
+                get_help
+                exit $(echo $?)
+                ;;
+            -d|--disable-dontaudit)
+                DISABLE_DONTAUDIT=1
+                ;;
+            -t|--test)
+                do_tests
+                exit $(echo $?)
+                ;;
+            -u|--allow-unknown)
+                ALLOW_UNKNOWN=1
+                ;;
+            -v|--verbose)
+                VERBOSE=1
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
+
+if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 0 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} --handle-unknown=deny \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 0 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} -D --handle-unknow=deny \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 0 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} --handle-unknow=allow \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 1 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} -v --handle-unknow=deny \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 0 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} -D --handle-unknow=allow \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 1 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} -v --handle-unknow=allow \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 1 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} -v -D --handle-unknown=deny \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+exit $(echo $?)
+
+#EOF
