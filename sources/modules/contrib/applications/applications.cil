@@ -7,11 +7,11 @@
 
 (optional applications_optional_sudo
     (call sudo_send_sigchld (applications_subject_type))
-    (call sudo_rw_inherited_fifo_files (applications_subject_type))
+    (call sudo_rw_inherited_fifo_files (applications_subject_type)))
 
-    (optional applications_optional_usersubject
-        (call usersubject_rw_inherited_fifo_files_all_common_subjects (applications_subject_type))
-        (call usersubject_use_inherited_terminals (applications_subject_type))))
+(optional applications_optional_usersubject
+    (call usersubject_rw_inherited_fifo_files_all_common_subjects (applications_subject_type))
+    (call usersubject_use_inherited_terminals (applications_subject_type)))
 
 (macro applications_subject_type ((type ARG1))
     (typeattributeset applications_subject_type ARG1))

@@ -92,13 +92,13 @@
 (call xserver_tmpfs_client_template (firefox_t firefox_tmpfs_t))
 
 (optional firefox_optional_dbus
-    (call dbus_system_client_subject_type (firefox_t))
-
-    (optional firefox_optional_nm
-        (call nm_dbus_chat (firefox_t))))
+    (call dbus_system_client_subject_type (firefox_t)))
 
 (optional firefox_optional_machine
     (call machine_read_config_files (firefox_t)))
+
+(optional firefox_optional_nm
+    (call nm_dbus_chat (firefox_t)))
 
 (optional firefox_optional_tor
     (call tor_tcp_connect_tor_port (firefox_t)))
