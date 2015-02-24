@@ -1,0 +1,130 @@
+(typeattribute tcs_admin_subject_type)
+
+(typeattribute tcs_object_type)
+
+(type tcs_port_t)
+(call network_unreserved_port_object_type (tcs_port_t))
+
+(context tcs_port (system_u object_r tcs_port_t (systemlow systemlow)))
+(portcon "tcp" 30003 tcs_port)
+(portcon "udp" 30003 tcs_port)
+
+(type tcsd_t)
+(type tcsd_exec_t)
+(call subject_common_type (tcsd_t))
+(call subject_entry (tcsd_t tcsd_exec_t))
+(roletype system_r tcsd_t)
+
+(context tcsd_exec (system_u object_r tcsd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/tcsd" file tcsd_exec)
+
+(type tcsd_config_t)
+(call files_config_object_type (tcsd_config_t))
+
+(typeattributeset tcs_object_type tcsd_config_t)
+
+(context tcsd_config (system_u object_r tcsd_config_t (systemlow systemlow)))
+(filecon "/etc/tcsd\.conf" file tcsd_config)
+
+(type tcsd_lib_t)
+(call files_lib_object_type (tcsd_lib_t))
+
+(typeattributeset tcs_object_type tcsd_lib_t)
+
+(context tcsd_lib (system_u object_r tcsd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/tpm(/.*)?" any tcsd_lib)
+
+(allow tcsd_t tcsd_lib_t manage_dir_perms)
+(allow tcsd_t tcsd_lib_t manage_file_perms)
+(call files_lib_object_type_transition (tcsd_t tcsd_lib_t dir "*"))
+
+(allow tcsd_t self (capability (dac_override setuid)))
+(allow tcsd_t self create_tcp_stream_socket_perms)
+
+(call network_tcp_bind_generic_node (tcsd_t))
+
+(call tcs_tcp_bind_tcs_port (tcsd_t))
+
+(call devices_read_urandom (tcsd_t))
+(call devices_rw_tpm (tcsd_t))
+
+(call auth_nsswitch_client_subject_type (tcsd_t))
+(call auth_read_utmp_runtime_files (tcsd_t))
+
+(optional tcsd_optional_journal
+    (call journal_client_subject_type (tcsd_t)))
+
+(optional tcsd_optional_systemd
+    (call systemd_daemon (tcsd_t tcsd_exec_t))
+
+    (type tcsd_unit_t)
+    (call systemd_unit_object_type (tcsd_unit_t))
+
+    (typeattributeset tcs_object_type tcsd_unit_t)
+
+    (context tcsd_unit (system_u object_r tcsd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*tcsd.*" file tcsd_unit)
+
+    (allow tcs_admin_subject_type tcsd_unit_t (service (all))))
+
+(allow tcs_admin_subject_type tcsd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (tcs_admin_subject_type tcsd_t))
+
+(allow tcs_admin_subject_type tcs_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro tcs_exec_tcsd ((type ARG1))
+    (call can_exec (ARG1 tcsd_exec_t)))
+
+(macro tcs_auto_subject_type_transition_tcsd ((type ARG1))
+    (call tcs_send_signal_tcsd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 tcsd_exec_t tcsd_t)))
+
+(macro tcs_send_signal_tcsd ((type ARG1))
+    (allow ARG1 tcs_t (process (signal))))
+
+(macro tcs_read_tcsd_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 tcsd_config_t read_file_perms))
+
+(macro tcs_manage_tcsd_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 tcsd_config_t manage_file_perms))
+
+(macro tcs_search_tcsd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tcsd_lib_t search_dir_perms))
+
+(macro tcs_list_tcsd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tcsd_lib_t list_dir_perms))
+
+(macro tcs_read_tcsd_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 tcsd_lib_t tcsd_lib_t)))
+
+(macro tcs_read_tcsd_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 tcsd_lib_t tcsd_lib_t)))
+
+(macro tcs_read_tcsd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tcsd_lib_t read_file_perms)
+    (allow ARG1 tcsd_lib_t list_dir_perms)
+    (allow ARG1 tcsd_lib_t read_lnk_file_perms))
+
+(macro tcs_manage_tcsd_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 tcsd_lib_t manage_file_perms)
+    (allow ARG1 tcsd_lib_t manage_dir_perms)
+    (allow ARG1 tcsd_lib_t manage_lnk_file_perms))
+
+(macro tcs_tcp_bind_tcs_port ((type ARG1))
+    (allow ARG1 tcs_port_t (tcp_socket (name_bind))))
+
+(macro tcs_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset tcs_admin_subject_type ARG1)
+    (optional tcs_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

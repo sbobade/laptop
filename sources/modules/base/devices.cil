@@ -141,6 +141,12 @@
 (context sound_dev (system_u object_r sound_dev_t (systemlow systemlow)))
 (filecon "/dev/snd/.+" char sound_dev)
 
+(type tpm_dev_t)
+(call devices_object_type (tpm_dev_t))
+
+(context tpm_dev (system_u object_r tpm_dev_t (systemlow systemlow)))
+(filecon "/dev/tpm[0-9]+" char tpm_dev)
+
 (type tun_tap_dev_t)
 (call devices_object_type (tun_tap_dev_t))
 
@@ -422,6 +428,10 @@
 (macro devices_rw_sound ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 sound_dev_t rw_chr_file_perms))
+
+(macro devices_rw_tpm ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tpm_dev_t rw_chr_file_perms))
 
 (macro devices_rw_urandom ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))

@@ -493,6 +493,9 @@
 (optional sysadm_systemctl_optional_ssh
     (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
 
+(optional sysadm_optional_tcs
+    (call tcs_admin (sysadm_t)))
+
 (optional sysadm_optional_udev
     (call udev_admin (sysadm_t))
     (call udev_run_udevadm (sysadm_t sysadm_r)))
