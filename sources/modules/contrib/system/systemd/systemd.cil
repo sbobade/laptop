@@ -21,8 +21,6 @@
 
 (typeattribute systemd_unconfined_subject_type)
 
-(typeattributeset systemd_unit_object_type systemd_session_unit_object_type)
-
 (type systemd_t)
 (type systemd_exec_t)
 (call subject_common_type (systemd_t))
@@ -576,6 +574,14 @@
     (roletype system_r ARG1)
     (call auto_subject_type_transition_pattern (systemd_t ARG2 ARG1)))
 
+(macro systemd_unit_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset systemd_unit_object_type ARG1))
+
+(macro systemd_session_unit_object_type ((type ARG1))
+    (call systemd_unit_object_type (ARG1))
+    (typeattributeset systemd_session_unit_object_type ARG1))
+
 (macro systemd_pid_object_type ((type ARG1))
     (typeattributeset systemd_pid_object_type ARG1))
 
@@ -815,10 +821,6 @@
     (allow ARG1 systemd_lib_object_type manage_sock_file_perms)
     (allow ARG1 systemd_lib_object_type manage_lnk_file_perms))
 
-(macro systemd_unit_object_type ((type ARG1))
-    (call files_object_type (ARG1))
-    (typeattributeset systemd_unit_object_type ARG1))
-
 (macro systemd_search_unit ((type ARG1))
     (call libraries_search (ARG1))
     (allow ARG1 systemd_unit_t search_dir_perms))
@@ -900,10 +902,6 @@
 (macro systemd_relabelto_all_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
     (allow ARG1 systemd_unit_object_type relabelto_dir_perms))
-
-(macro systemd_session_unit_object_type ((type ARG1))
-    (call files_object_type (ARG1))
-    (typeattributeset systemd_session_unit_object_type ARG1))
 
 (macro systemd_search_config_home ((type ARG1))
     (call usersubject_search_config_home (ARG1))

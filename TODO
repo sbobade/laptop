@@ -10,5 +10,3 @@
 * target /lib/systemd/user/obexd.service on e145
 
 * TrouSers
-
-* test and make work /usr/lib/systemd/user/systemd-exit.service
