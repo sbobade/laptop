@@ -2,6 +2,8 @@
 
 (typeattribute bluetooth_admin_subject_type)
 
+(typeattribute bluetooth_obexd_subject_type)
+
 (typeattribute bluetooth_object_type)
 
 (type bluetoothctl_t)
@@ -119,6 +121,31 @@
 
     (call systemd_stream_connect (bluetoothd_t)))
 
+(type obexd_exec_t)
+(call applications_app (bluetooth_obexd_subject_type obexd_exec_t))
+
+(context obexd_exec (system_u object_r obexd_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/bluetooth/obexd" file obexd_exec)
+
+(allow bluetooth_obexd_subject_type self rw_fifo_file_perms)
+
+(call devices_read_urandom (bluetooth_obexd_subject_type))
+
+(call miscfiles_read_locale (bluetooth_obexd_subject_type))
+
+(optional obexd_optional_journal
+    (call journal_client_subject_type (bluetooth_obexd_subject_type)))
+
+(optional obexd_optional_machine
+    (call machine_read_config_files (bluetooth_obexd_subject_type)))
+
+(optional obexd_optional_systemd
+    (type obexd_session_unit_t)
+    (call systemd_session_unit_object_type (obexd_session_unit_t))
+
+    (context obexd_session_unit (system_u object_r obexd_session_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/user/[^/]*obex.*" file obexd_session_unit))
+
 (allow bluetooth_admin_subject_type bluetoothd_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (bluetooth_admin_subject_type bluetoothd_t))
 
@@ -130,6 +157,9 @@
 
 (macro bluetooth_exec_bluetoothd ((type ARG1))
     (call can_exec (ARG1 bluetoothd_exec_t)))
+
+(macro bluetooth_exec_obexd ((type ARG1))
+    (call can_exec (ARG1 obexd_exec_t)))
 
 (macro bluetooth_auto_subject_type_transition_bluetoothctl ((type ARG1))
     (call bluetooth_send_signal_bluetoothctl (ARG1))
@@ -150,6 +180,16 @@
 
 (macro bluetooth_send_signal_bluetoothd ((type ARG1))
     (allow ARG1 bluetoothd_t (process (signal))))
+
+(macro bluetooth_obexd_subject_type ((type ARG1))
+    (typeattributeset bluetooth_obexd_subject_type ARG1))
+
+(macro bluetooth_role_template_obexd ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 obexd_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call bluetooth_obexd_subject_type (ARG3)))
 
 (macro bluetooth_read_bluetoothd_dbus_config_files ((type ARG1))
     (call dbus_search_config (ARG1))

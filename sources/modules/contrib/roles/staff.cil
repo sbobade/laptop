@@ -48,8 +48,18 @@
     (call alsa_manage_alsautil_tmpfs_files (staff_t))
     (call alsa_relabel_alsautil_tmpfs_files (staff_t)))
 
+(optional staff_optional_askpwd
+    (call askpwd_run_askpwdagent (staff_t staff_r)))
+
 (optional staff_optional_bluetooth
-    (call bluetooth_run_bluetoothctl (staff_t staff_r)))
+    (call bluetooth_run_bluetoothctl (staff_t staff_r))
+
+    (type staff_obexd_t)
+    (call bluetooth_role_template_obexd (staff_r staff_t staff_obexd_t)))
+
+(optional staff_systemd_optional_staff_obexd
+    (call bluetooth_role_template_obexd (staff_r staff_systemd_t staff_obexd_t))
+    (call systemd_session_daemon_template (staff_systemd_t staff_obexd_t)))
 
 (optional staff_optional_bti
     (call bti_run (staff_t staff_r))
@@ -88,13 +98,14 @@
 
     (allow staff_emacsclient_t staff_emacs_t (process (signal)))
 
-    (call stream_connect_pattern (staff_emacsclient_t emacs_tmpfs_t emacs_tmpfs_t staff_emacs_t))
+    (call stream_connect_pattern (staff_emacsclient_t emacs_tmpfs_t emacs_tmpfs_t staff_emacs_t)))
 
-    (optional staff_emacs_optional_staff_ssh
-        (call ssh_role_template (staff_r staff_emacs_t staff_ssh_t)))
+(optional staff_systemd_optional_staff_emacs
+    (call emacs_role_template (staff_r staff_systemd_t staff_emacs_t))
+    (call systemd_session_daemon_template (staff_systemd_t staff_emacs_t))
 
-    (optional staff_emacs_optional_staff_git
-        (call git_role_template (staff_r staff_emacs_t staff_git_t))))
+    (call emacs_role_template_emacsclient (staff_r staff_systemd_t staff_emacsclient_t))
+    (call systemd_session_daemon_template (staff_systemd_t staff_emacsclient_t)))
 
 (optional staff_optional_ffmpeg
     (call ffmpeg_run (staff_t staff_r))
@@ -140,18 +151,6 @@
 
     (call git_role_template_gitemail (staff_r staff_git_t staff_gitemail_t))
 
-    (optional staff_git_optional_staff_gpg
-        (call gpg_role_template (staff_r staff_git_t staff_gpg_t)))
-
-    (optional staff_git_optional_pass
-        (call pass_home_object_type_transition (staff_t git_config_home_t file ".gitattributes"))
-
-        (filecon "/home/kcinimod/\.password-store/\.gitattributes" file staff_git_config_home)
-        (filecon "/home/kcinimod/\.password-store/\.git(/.*)?" any staff_git_home))
-
-    (optional staff_git_optional_staff_ssh
-        (call ssh_role_template (staff_r staff_git_t staff_ssh_t)))
-
     (type staff_gitemail_t)
     (call git_role_template_gitemail (staff_r staff_t staff_gitemail_t))
 
@@ -167,6 +166,9 @@
     (call git_relabel_gitemail_home_files (staff_t))
 
     (call git_role_template (staff_r staff_gitemail_t staff_git_t)))
+
+(optional staff_emacs_optional_staff_git
+    (call git_role_template (staff_r staff_emacs_t staff_git_t)))
 
 (optional staff_optional_gpg
     (call gpg_run_dirmngr (staff_t staff_r))
@@ -245,6 +247,13 @@
     (context staff_gstreamer_cache_home (staff_u object_r gstreamer_cache_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.cache/gstreamer-1\.0(/.*)?" any staff_gstreamer_cache_home))
 
+(optional staff_git_optional_staff_gpg
+    (call gpg_role_template (staff_r staff_git_t staff_gpg_t)))
+
+(optional staff_mutt_optional_staff_pgp
+    (call gpg_role_template (staff_r staff_muttpgp_t staff_gpg_t))
+    (call gpg_role_template (staff_r staff_mutt_t staff_gpg_t)))
+
 (optional staff_optional_http
     (type staff_lynx_t)
     (call http_role_template_lynx (staff_r staff_t staff_lynx_t))
@@ -262,13 +271,10 @@
     (filecon "/home/kcinimod/\.lynxrc" file staff_lynx_home)
 
     (call http_manage_lynx_tmpfs_files (staff_t))
-    (call http_relabel_lynx_tmpfs_files (staff_t))
+    (call http_relabel_lynx_tmpfs_files (staff_t)))
 
-    (optional staff_http_optional_staff_mutt
-        (call mail_role_template_mutt (staff_r staff_lynx_t staff_mutt_t)))
-
-    (optional staff_http_optional_staff_irssi
-        (call irc_role_template_irssi (staff_r staff_lynx_t staff_irssi_t))))
+(optional staff_nb_optional_staff_lynx
+    (call http_role_template_lynx (staff_r staff_nb_t staff_lynx_t)))
 
 (optional staff_optional_irc
     (type staff_irssi_t)
@@ -283,6 +289,9 @@
     (context staff_irssi_home (staff_u object_r irssi_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.irssi(/.*)?" any staff_irssi_home))
 
+(optional staff_http_optional_staff_irc
+    (call irc_role_template_irssi (staff_r staff_lynx_t staff_irssi_t)))
+
 (optional staff_optional_java
     (call java_manage_home (staff_t))
     (call java_relabel_home (staff_t))
@@ -292,17 +301,20 @@
     (filecon "/home/kcinimod/\.java(/.*)?" any staff_java_home)
 
     (call java_manage_tmpfs (staff_t))
-    (call java_relabel_tmpfs (staff_t))
+    (call java_relabel_tmpfs (staff_t)))
 
-    (optional staff_fop_optional_staff_java
-        (call fop_run (staff_t staff_r))
+(optional staff_fop_optional_staff_java
+    (call fop_run (staff_t staff_r))
 
-        (call fop_manage_home (staff_t))
-        (call fop_relabel_home (staff_t))
-        (call fop_home_dir_object_type_transition_fop_home_dirs (staff_t))
+    (call fop_manage_home (staff_t))
+    (call fop_relabel_home (staff_t))
+    (call fop_home_dir_object_type_transition_fop_home_dirs (staff_t))
 
-        (context staff_fop_home (staff_u object_r fop_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.fop(/.*)?" any staff_fop_home)))
+    (context staff_fop_home (staff_u object_r fop_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.fop(/.*)?" any staff_fop_home))
+
+(optional staff_optional_journal
+    (call journal_exec_journalctl (staff_t)))
 
 (optional staff_optional_mail
     (type staff_mutt_t)
@@ -334,11 +346,13 @@
     (filecon "/home/kcinimod/\.mutt_certificates" file staff_mutt_home)
     (filecon "/home/kcinimod/\.mutt_passwords\.gpg" file staff_mutt_home)
 
-    (call mail_role_template_muttpgp (staff_r staff_mutt_t staff_muttpgp_t))
+    (call mail_role_template_muttpgp (staff_r staff_mutt_t staff_muttpgp_t)))
 
-    (optional staff_mutt_optional_staff_pgp
-        (call gpg_role_template (staff_r staff_muttpgp_t staff_gpg_t))
-        (call gpg_role_template (staff_r staff_mutt_t staff_gpg_t))))
+(optional staff_http_optional_staff_mail
+    (call mail_role_template_mutt (staff_r staff_lynx_t staff_mutt_t)))
+
+(optional staff_nb_optional_mutt
+    (call mail_role_template_mutt (staff_r staff_nb_t staff_mutt_t)))
 
 (optional staff_optional_nb
     (type staff_nb_t)
@@ -353,13 +367,7 @@
     (call usersubject_exec_home_auto_subject_type_transition (staff_nb_t staff_t))
 
     (context staff_nb_home (staff_u object_r nb_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.newsbeuter(/.*)?" any staff_nb_home)
-
-    (optional staff_nb_optional_staff_lynx
-        (call http_role_template_lynx (staff_r staff_nb_t staff_lynx_t)))
-
-    (optional staff_nb_optional_mutt
-        (call mail_role_template_mutt (staff_r staff_nb_t staff_mutt_t))))
+    (filecon "/home/kcinimod/\.newsbeuter(/.*)?" any staff_nb_home))
 
 (optional staff_optional_nm
     (call nm_run_nmcli (staff_t staff_r)))
@@ -384,20 +392,20 @@
     (call pa_home_dir_object_type_transition_home_files (staff_t))
 
     (context staff_pa_home (staff_u object_r pa_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home)
+    (filecon "/home/kcinimod/\.esd_auth" file staff_pa_home))
 
-    (optional mplayer_optional_pa
-        (call mplayer_run (staff_t staff_r)))
+(optional mplayer_optional_pa
+    (call mplayer_run (staff_t staff_r))
 
-        (context staff_mplayer_home (staff_u object_r mplayer_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.mplayer(/.*)?" any staff_mplayer_home)
+    (context staff_mplayer_home (staff_u object_r mplayer_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.mplayer(/.*)?" any staff_mplayer_home)
 
-        (call mplayer_manage_home (staff_t))
-        (call mplayer_relabel_home (staff_t))
-        (call mplayer_home_dir_object_type_transition_home_dirs (staff_t))
+    (call mplayer_manage_home (staff_t))
+    (call mplayer_relabel_home (staff_t))
+    (call mplayer_home_dir_object_type_transition_home_dirs (staff_t))
 
-        (call mplayer_manage_tmpfs_files (staff_t))
-        (call mplayer_relabel_tmpfs_files (staff_t)))
+    (call mplayer_manage_tmpfs_files (staff_t))
+    (call mplayer_relabel_tmpfs_files (staff_t)))
 
 (optional staff_optional_pass
     (call pass_manage_home (staff_t))
@@ -406,6 +414,12 @@
 
     (context staff_pass_home (staff_u object_r pass_home_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.password-store(/.*)?" any staff_pass_home))
+
+(optional staff_git_optional_pass
+    (call pass_home_object_type_transition (staff_t git_config_home_t file ".gitattributes"))
+
+    (filecon "/home/kcinimod/\.password-store/\.gitattributes" file staff_git_config_home)
+    (filecon "/home/kcinimod/\.password-store/\.git(/.*)?" any staff_git_home))
 
 (optional staff_optional_pinentry
     (call pinentry_run (staff_t staff_r))
@@ -479,6 +493,12 @@
     (optional staff_ssh_optional_staff_gpg
         (call stream_connect_pattern (staff_ssh_t gpgagent_home_t gpgagent_home_t staff_gpgagent_t))))
 
+(optional staff_emacs_optional_staff_ssh
+    (call ssh_role_template (staff_r staff_emacs_t staff_ssh_t)))
+
+(optional staff_git_optional_staff_ssh
+    (call ssh_role_template (staff_r staff_git_t staff_ssh_t)))
+
 (optional staff_optional_sudo
     (type staff_sudo_t)
     (call sudo_role_template (staff_r staff_t staff_sudo_t))
@@ -486,15 +506,15 @@
     (call commands_exec_auto_subject_type_transition (staff_sudo_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_sudo_t staff_t))
 
-    (call usersubject_exec_home_auto_subject_type_transition (staff_sudo_t staff_t))
+    (call usersubject_exec_home_auto_subject_type_transition (staff_sudo_t staff_t)))
 
-    (optional staff_optional_sysadm
-        (call sysadm_manage_keyring (staff_sudo_t))
-        (call sysadm_send_signal (staff_sudo_t))
-        (call sysadm_shell_exec_manual_subject_type_transition (staff_sudo_t))
-        (call sysadm_userrole (staff_u))
-        (call sysadm_roleallow (staff_r))
-        (call sysadm_send_signal (staff_t))))
+(optional staff_optional_sysadm
+    (call sysadm_manage_keyring (staff_sudo_t))
+    (call sysadm_send_signal (staff_sudo_t))
+    (call sysadm_shell_exec_manual_subject_type_transition (staff_sudo_t))
+    (call sysadm_userrole (staff_u))
+    (call sysadm_roleallow (staff_r))
+    (call sysadm_send_signal (staff_t)))
 
 (optional staff_optional_systemd
     (type staff_systemd_t)
@@ -516,20 +536,7 @@
     (call systemd_control_all_session_units (staff_t))
 
     (context staff_systemd_config_home (staff_u object_r systemd_config_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemd_config_home)
-
-    (optional staff_optional_askpwd
-        (call askpwd_run_askpwdagent (staff_t staff_r)))
-
-    (optional staff_optional_journal
-        (call journal_exec_journalctl (staff_t)))
-
-    (optional staff_systemd_optional_staff_emacs
-        (call emacs_role_template (staff_r staff_systemd_t staff_emacs_t)))
-        (call systemd_session_daemon_template (staff_systemd_t staff_emacs_t))
-
-        (call emacs_role_template_emacsclient (staff_r staff_systemd_t staff_emacsclient_t))
-        (call systemd_session_daemon_template (staff_systemd_t staff_emacsclient_t)))
+    (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemd_config_home))
 
 (optional staff_optional_temps
     (call temps_manage_exec_files (staff_t))
@@ -587,107 +594,107 @@
     (call xserver_manage_tmpfs (staff_t))
     (call xserver_relabel_tmpfs (staff_t))
 
-    (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc"))
+    (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc")))
 
-    (optional staff_xserver_firefox
-        (call firefox_run (staff_t staff_r))
-        (call firefox_run_xremotec (staff_t staff_r))
+(optional staff_xserver_firefox
+    (call firefox_run (staff_t staff_r))
+    (call firefox_run_xremotec (staff_t staff_r))
 
-        (call firefox_manage_home (staff_t))
-        (call firefox_relabel_home (staff_t))
-        (call firefox_home_dir_object_type_transition_home_dirs (staff_t))
+    (call firefox_manage_home (staff_t))
+    (call firefox_relabel_home (staff_t))
+    (call firefox_home_dir_object_type_transition_home_dirs (staff_t))
 
-        (context staff_firefox_home (staff_u object_r firefox_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.mozilla(/.*)?" any staff_firefox_home)
+    (context staff_firefox_home (staff_u object_r firefox_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.mozilla(/.*)?" any staff_firefox_home)
 
-        (call firefox_manage_cache_home (staff_t))
-        (call firefox_relabel_cache_home (staff_t))
-        (call firefox_cache_home_object_type_transition_cache_home_dirs (staff_t))
+    (call firefox_manage_cache_home (staff_t))
+    (call firefox_relabel_cache_home (staff_t))
+    (call firefox_cache_home_object_type_transition_cache_home_dirs (staff_t))
 
-        (context staff_firefox_cache_home (staff_u object_r firefox_cache_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.cache/mozilla(/.*)?" any staff_firefox_cache_home)
+    (context staff_firefox_cache_home (staff_u object_r firefox_cache_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.cache/mozilla(/.*)?" any staff_firefox_cache_home)
 
-        (call firefox_manage_tmpfs_files (staff_t))
-        (call firefox_relabel_tmpfs_files (staff_t))
+    (call firefox_manage_tmpfs_files (staff_t))
+    (call firefox_relabel_tmpfs_files (staff_t))
 
-        (call firefox_manage_plugs_tmpfs_files (staff_t))
-        (call firefox_relabel_plugs_tmpfs_files (staff_t)))
+    (call firefox_manage_plugs_tmpfs_files (staff_t))
+    (call firefox_relabel_plugs_tmpfs_files (staff_t)))
 
-    (optional staff_xserver_optional_qiv
-        (call qiv_run (staff_t staff_r))
+(optional staff_xserver_optional_qiv
+    (call qiv_run (staff_t staff_r))
 
-        (call qiv_manage_tmpfs_files (staff_t))
-        (call qiv_relabel_tmpfs_files (staff_t)))
+    (call qiv_manage_tmpfs_files (staff_t))
+    (call qiv_relabel_tmpfs_files (staff_t)))
 
-    (optional staff_xserver_optional_rp
-        (type staff_rp_t)
-        (call rp_role_template (staff_r staff_xinit_t staff_rp_t))
+(optional staff_xserver_optional_rp
+    (type staff_rp_t)
+    (call rp_role_template (staff_r staff_xinit_t staff_rp_t))
 
-        (call commands_exec_auto_subject_type_transition (staff_rp_t staff_t))
-        (call commands_shell_exec_auto_subject_type_transition (staff_rp_t staff_t))
+    (call commands_exec_auto_subject_type_transition (staff_rp_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_rp_t staff_t))
 
-        (call usersubject_exec_home_auto_subject_type_transition (staff_rp_t staff_t))
+    (call usersubject_exec_home_auto_subject_type_transition (staff_rp_t staff_t))
 
-        (call rp_manage_home_files (staff_t))
-        (call rp_relabel_home_files (staff_t))
-        (call rp_home_dir_object_type_transition_home_files (staff_t))
+    (call rp_manage_home_files (staff_t))
+    (call rp_relabel_home_files (staff_t))
+    (call rp_home_dir_object_type_transition_home_files (staff_t))
 
-        (context staff_rp_home (staff_u object_r rp_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.ratpoisonrc" file staff_rp_home)
-        (filecon "/home/kcinimod/\.ratpoison_history" file staff_rp_home)
+    (context staff_rp_home (staff_u object_r rp_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.ratpoisonrc" file staff_rp_home)
+    (filecon "/home/kcinimod/\.ratpoison_history" file staff_rp_home)
 
-        (call rp_run_rpws (staff_t staff_r))
+    (call rp_run_rpws (staff_t staff_r))
 
-        (call rp_manage_rpws_tmpfs_files (staff_t))
-        (call rp_relabel_rpws_tmpfs_files (staff_t)))
+    (call rp_manage_rpws_tmpfs_files (staff_t))
+    (call rp_relabel_rpws_tmpfs_files (staff_t)))
 
-    (optional staff_xserver_optional_xlock
-        (call xlock_run (staff_t staff_r))
+(optional staff_xserver_optional_xlock
+    (call xlock_run (staff_t staff_r))
 
-        (call xlock_manage_home_files (staff_t))
-        (call xlock_relabel_home_files (staff_t))
+    (call xlock_manage_home_files (staff_t))
+    (call xlock_relabel_home_files (staff_t))
 
-        (call xlock_home_dir_object_type_transition_home_files (staff_t))
+    (call xlock_home_dir_object_type_transition_home_files (staff_t))
 
-        (context staff_xlock_home (staff_u object_r xlock_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.xlockrc" file staff_xlock_home))
+    (context staff_xlock_home (staff_u object_r xlock_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.xlockrc" file staff_xlock_home))
 
-    (optional staff_xserver_optional_xpdf
-        (call xpdf_run (staff_t staff_r))
+(optional staff_xserver_optional_xpdf
+    (call xpdf_run (staff_t staff_r))
 
-        (call xpdf_manage_home_files (staff_t))
-        (call xpdf_relabel_home_files (staff_t))
-        (call xpdf_home_dir_object_type_transition_home_files (staff_t))
+    (call xpdf_manage_home_files (staff_t))
+    (call xpdf_relabel_home_files (staff_t))
+    (call xpdf_home_dir_object_type_transition_home_files (staff_t))
 
-        (context staff_xpdf_home (staff_u object_r xpdf_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.xpdfrc" file staff_xpdf_home)
+    (context staff_xpdf_home (staff_u object_r xpdf_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.xpdfrc" file staff_xpdf_home)
 
-        (call xpdf_manage_tmpfs_files (staff_t))
-        (call xpdf_relabel_tmpfs_files (staff_t)))
+    (call xpdf_manage_tmpfs_files (staff_t))
+    (call xpdf_relabel_tmpfs_files (staff_t)))
 
-    (optional staff_xserver_optional_xterm
-        (type staff_xterm_t)
-        (call xterm_role_template (staff_r staff_t staff_xterm_t))
+(optional staff_xserver_optional_xterm
+    (type staff_xterm_t)
+    (call xterm_role_template (staff_r staff_t staff_xterm_t))
 
-        (call commands_exec_auto_subject_type_transition (staff_xterm_t staff_t))
-        (call commands_shell_exec_auto_subject_type_transition (staff_xterm_t staff_t))
+    (call commands_exec_auto_subject_type_transition (staff_xterm_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_xterm_t staff_t))
 
-        (call usersubject_exec_home_auto_subject_type_transition (staff_xterm_t staff_t))
+    (call usersubject_exec_home_auto_subject_type_transition (staff_xterm_t staff_t)))
 
-        (optional staff_xserver_xterm_optional_staff_screen
-            (allow staff_xterm_t staff_screen_t (process (signal)))
-            (call screen_role_template (staff_r staff_xterm_t staff_screen_t))))
+(optional staff_xserver_xterm_optional_staff_screen
+    (allow staff_xterm_t staff_screen_t (process (signal)))
+    (call screen_role_template (staff_r staff_xterm_t staff_screen_t)))
 
-    (optional staff_xserver_optional_xutil
-        (call xutil_run (staff_t staff_r))
+(optional staff_xserver_optional_xutil
+    (call xutil_run (staff_t staff_r))
 
-        (call xutil_manage_home_files (staff_t))
-        (call xutil_relabel_home_files (staff_t))
+    (call xutil_manage_home_files (staff_t))
+    (call xutil_relabel_home_files (staff_t))
 
-        (call xutil_home_dir_object_type_transition_home_files (staff_t))
+    (call xutil_home_dir_object_type_transition_home_files (staff_t))
 
-        (context staff_xutil_home (staff_u object_r xutil_home_t (systemlow systemlow)))
-        (filecon "/home/kcinimod/\.Xresources" file staff_xutil_home)))
+    (context staff_xutil_home (staff_u object_r xutil_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.Xresources" file staff_xutil_home))
 
 (macro staff_rw_inherited_fifo_files ((type ARG1))
     (allow ARG1 staff_t rw_inherited_fifo_file_perms))

@@ -369,10 +369,10 @@
     (call usersubject_exec_home_auto_subject_type_transition (sysadm_sshagent_t sysadm_t))
 
     (call ssh_manage_sshagent_tmpfs (sysadm_t))
-    (call ssh_relabel_sshagent_tmpfs (sysadm_t))
+    (call ssh_relabel_sshagent_tmpfs (sysadm_t)))
 
-    (optional sysadm_ssh_optional_sysadm_gpg
-        (call stream_connect_pattern (sysadm_ssh_t gpgagent_home_t gpgagent_home_t sysadm_gpgagent_t))))
+(optional sysadm_ssh_optional_sysadm_gpg
+    (call stream_connect_pattern (sysadm_ssh_t gpgagent_home_t gpgagent_home_t sysadm_gpgagent_t)))
 
 (optional sysadm_optional_sudo
     (call sudo_send_signal (sysadm_t))
@@ -384,11 +384,11 @@
 
     (call commands_exec_auto_subject_type_transition (sysadm_visudo_t sysadm_t))
 
-    (call usersubject_exec_home_auto_subject_type_transition (sysadm_visudo_t sysadm_t))
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_visudo_t sysadm_t)))
 
-    (optional sysadm_optional_staff
-        (call staff_rw_inherited_fifo_files (sysadm_t))
-        (call staff_use_fd (sysadm_t))))
+(optional sysadm_optional_staff
+    (call staff_rw_inherited_fifo_files (sysadm_t))
+    (call staff_use_fd (sysadm_t)))
 
 (optional sysadm_optional_sysctl
     (call sysctl_run (sysadm_t sysadm_r))
@@ -416,82 +416,82 @@
     (context sysadm_systemd_config_home (sysadm_u object_r systemd_config_home_t (systemlow systemlow)))
     (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemd_config_home)
 
-    (optional sysadm_optional_askpwd
-        (call askpwd_admin (sysadm_t))
-        (call askpwd_run (sysadm_t sysadm_r)))
-
-    (optional sysadm_optional_autorelabel
-        (call autorelabel_manage_flag_files (sysadm_t)))
-
-    (optional sysadm_optional_binfmt
-        (call binfmt_manage_config (sysadm_t)))
-
-    (optional sysadm_optional_coredump
-        (call coredump_run_coredumpctl (sysadm_t sysadm_r)))
-
-    (optional sysadm_optional_hostnamectl
-        (type sysadm_hostnamectl_t)
-        (call hostname_role_template_hostnamectl (sysadm_r sysadm_t sysadm_hostnamectl_t))
-
-        (optional sysadm_hostnamectl_optional_ssh
-            (call ssh_role_template (sysadm_r sysadm_hostnamectl_t sysadm_ssh_t))))
-
-    (optional sysadm_optional_journal
-        (call journal_admin (sysadm_t))
-
-        (type sysadm_journalctl_t)
-        (call journal_role_template_journalctl (sysadm_r sysadm_t sysadm_journalctl_t))
-
-        (optional sysadm_journalctl_optional_ssh
-            (call ssh_role_template (sysadm_r sysadm_journalctl_t sysadm_ssh_t))))
-
-    (optional sysadm_optional_loadmodules
-        (call loadmodules_manage_config (sysadm_t)))
-
-    (optional sysadm_optional_locale
-        (type sysadm_localectl_t)
-        (call locale_role_template_localectl (sysadm_r sysadm_t sysadm_localectl_t))
-
-        (optional sysadm_localectl_optional_ssh
-            (call ssh_role_template (sysadm_r sysadm_localectl_t sysadm_ssh_t)))
-
-        (call locale_manage_config_files (sysadm_t)))
-
-    (optional sysadm_optional_loginctl
-        (call login_logind_admin (sysadm_t))
-        (call login_run_loginctl (sysadm_t sysadm_r)))
-
-    (optional sysadm_optional_machine
-        (type sysadm_machinectl_t)
-        (call machine_role_template_machinectl (sysadm_r sysadm_t sysadm_machinectl_t))
-
-        (optional sysadm_machinectl_optional_ssh
-            (call ssh_role_template (sysadm_r sysadm_machinectl_t sysadm_ssh_t)))
-
-        (call machine_manage_config_files (sysadm_t)))
-
-    (optional sysadm_optional_notify
-        (call notify_run (sysadm_t sysadm_r)))
-
     (type sysadm_systemctl_t)
     (call systemd_role_template_systemctl (sysadm_r sysadm_t sysadm_systemctl_t))
 
-    (optional sysadm_systemctl_optional_ssh
-        (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
-
     (call systemd_admin (sysadm_t))
-    (call systemd_manage_all_config (sysadm_t))
+    (call systemd_manage_all_config (sysadm_t)))
 
-    (optional sysadm_optional_sysusers
-        (call sysusers_run (sysadm_t sysadm_r))
-        (call sysusers_manage_config (sysadm_t)))
+(optional sysadm_optional_askpwd
+    (call askpwd_admin (sysadm_t))
+    (call askpwd_run (sysadm_t sysadm_r)))
 
-    (optional sysadm_optional_tmpfiles
-        (call tmpfiles_run (sysadm_t sysadm_r))
-        (call tmpfiles_manage_config (sysadm_t)))
+(optional sysadm_optional_autorelabel
+    (call autorelabel_manage_flag_files (sysadm_t)))
 
-    (optional sysadm_optional_vconsole
-        (call vconsole_manage_config_files (sysadm_t))))
+(optional sysadm_optional_binfmt
+    (call binfmt_manage_config (sysadm_t)))
+
+(optional sysadm_optional_coredump
+    (call coredump_run_coredumpctl (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_hostnamectl
+    (type sysadm_hostnamectl_t)
+    (call hostname_role_template_hostnamectl (sysadm_r sysadm_t sysadm_hostnamectl_t)))
+
+(optional sysadm_optional_journal
+    (call journal_admin (sysadm_t))
+
+    (type sysadm_journalctl_t)
+    (call journal_role_template_journalctl (sysadm_r sysadm_t sysadm_journalctl_t)))
+
+(optional sysadm_optional_loadmodules
+    (call loadmodules_manage_config (sysadm_t)))
+
+(optional sysadm_optional_locale
+    (type sysadm_localectl_t)
+    (call locale_role_template_localectl (sysadm_r sysadm_t sysadm_localectl_t))
+
+    (call locale_manage_config_files (sysadm_t)))
+
+(optional sysadm_optional_loginctl
+    (call login_logind_admin (sysadm_t))
+    (call login_run_loginctl (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_machine
+    (type sysadm_machinectl_t)
+    (call machine_role_template_machinectl (sysadm_r sysadm_t sysadm_machinectl_t))
+
+    (call machine_manage_config_files (sysadm_t)))
+
+(optional sysadm_machinectl_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_machinectl_t sysadm_ssh_t)))
+
+(optional sysadm_optional_notify
+    (call notify_run (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_sysusers
+    (call sysusers_run (sysadm_t sysadm_r))
+    (call sysusers_manage_config (sysadm_t)))
+
+(optional sysadm_optional_tmpfiles
+    (call tmpfiles_run (sysadm_t sysadm_r))
+    (call tmpfiles_manage_config (sysadm_t)))
+
+(optional sysadm_optional_vconsole
+    (call vconsole_manage_config_files (sysadm_t)))
+
+(optional sysadm_hostnamectl_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_hostnamectl_t sysadm_ssh_t)))
+
+(optional sysadm_journalctl_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_journalctl_t sysadm_ssh_t)))
+
+(optional sysadm_localectl_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_localectl_t sysadm_ssh_t)))
+
+(optional sysadm_systemctl_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
 
 (optional sysadm_optional_udev
     (call udev_admin (sysadm_t))
