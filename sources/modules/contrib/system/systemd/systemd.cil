@@ -218,6 +218,7 @@
 (call miscfiles_read_locale (systemd_t))
 (call miscfiles_read_modules (systemd_t))
 
+(call mount_manage_runtime_dirs (systemd_t))
 (call mount_read_runtime (systemd_t))
 
 (call plymouth_exec (systemd_t))

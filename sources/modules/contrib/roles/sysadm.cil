@@ -288,7 +288,8 @@
     (call md_run_mdadm (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_mount
-    (call mount_run (sysadm_t sysadm_r)))
+    (call mount_run (sysadm_t sysadm_r))
+    (call mount_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_nettools
     (call nettools_admin (sysadm_t))
