@@ -7,3 +7,8 @@
 * test all the systemd "ctl" apps (as staff_t) by commenting out systemctl_client_subject_type first because that provides a lot of permissions that all have in common.
 
 * do journal clients still need net_admin?
+
+* fix all nested optionals (dont nest them) i already did the roles, need to do the remainder
+    cil handles this differently: if a nested optional is disabled, then so is its parent; i had to find out the hard way.)
+
+    nested optionals do not make sense any way. if you use optionals properly.
