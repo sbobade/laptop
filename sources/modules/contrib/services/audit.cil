@@ -143,9 +143,10 @@
 (call files_getattr_all (auditctl_t))
 
 (call audit_client_subject_type (auditctl_t))
-
 (call audit_read_auditd_config (auditctl_t))
 (call audit_set_params (auditctl_t))
+
+(call auth_read_pam_config_files (auditctl_t))
 
 (optional auditctl_optional_systemd
     (call systemd_daemon (auditctl_t auditctl_exec_t)))

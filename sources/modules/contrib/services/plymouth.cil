@@ -126,6 +126,9 @@
 
     (call systemd_send_signal (plymouthd_t)))
 
+(optional plymouthd_optional_usersubject
+    (call usersubject_use_inherited_ttys (plymouthd_t)))
+
 (call plymouth_stream_connect_plymouthd (plymouth_client_subject_type))
 
 (allow plymouth_admin_subject_type plymouthd_t (process (ptrace signal signull sigkill sigstop)))
