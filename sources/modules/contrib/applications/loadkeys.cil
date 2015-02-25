@@ -19,9 +19,12 @@
 (call commands_exec (loadkeys_t))
 (call commands_exec_shell (loadkeys_t))
 
+(call files_list_tmp (loadkeys_t))
+
 (call filesystems_list_rootfs (loadkeys_t))
 
 (call terminals_use_console (loadkeys_t))
+(call terminals_use_unallocated_ttys (loadkeys_t))
 
 (call auth_nsswitch_client_subject_type (loadkeys_t))
 (call auth_read_passwd_config_files (loadkeys_t))
