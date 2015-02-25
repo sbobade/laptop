@@ -295,6 +295,13 @@
 (macro udev_rw_inherited_udevd_udp_sockets ((type ARG1))
     (allow ARG1 udevd_t (udp_socket (read write))))
 
+(macro udev_use_fd_udevd ((type ARG1))
+    (allow ARG1 udevd_t (fd (use))))
+
+(macro udev_write_inherited_fifo_files_udevd ((type ARG1))
+    (call udev_use_fd_udevd (ARG1))
+    (allow ARG1 udevd_t (fifo_file (write))))
+
 (macro udev_stream_connect_udevd ((type ARG1))
     (call files_search_runtime (ARG1))
     (call stream_connect_pattern (ARG1 udev_runtime_t udev_runtime_t udevd_t)))

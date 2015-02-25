@@ -90,6 +90,7 @@
 
 (call seutil_read_selinux_config_files (setfiles_t))
 (call seutil_read_file_context_files (setfiles_t))
+(call seutil_read_default_context_files (setfiles_t))
 (call seutil_relabel_policy_config (setfiles_t))
 
 (optional setfiles_optional_systemd

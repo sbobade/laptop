@@ -1,5 +1,3 @@
-(typepermissive loadkeys_t) ; FIXME
-
 (roleattribute loadkeys_role)
 
 (type loadkeys_t)
@@ -12,15 +10,26 @@
 (context loadkeys_exec (system_u object_r loadkeys_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/loadkeys" file loadkeys_exec)
 
+(allow loadkeys_t self (capability (sys_tty_config)))
 (allow loadkeys_t self rw_fifo_file_perms)
+
+(call system_use_fd (loadkeys_t))
+(call system_rw_unix_stream_sockets (loadkeys_t))
 
 (call commands_exec (loadkeys_t))
 (call commands_exec_shell (loadkeys_t))
 
+(call filesystems_list_rootfs (loadkeys_t))
+
 (call terminals_use_console (loadkeys_t))
 (call terminals_use_unallocated_ttys (loadkeys_t))
 
+(call auth_nsswitch_client_subject_type (loadkeys_t))
+(call auth_read_passwd_config_files (loadkeys_t))
+
 (call miscfiles_read_locale (loadkeys_t))
+
+(call udev_write_inherited_fifo_files_udevd (loadkeys_t))
 
 (macro loadkeys_exec ((type ARG1))
     (call can_exec (ARG1 loadkeys_exec_t)))
