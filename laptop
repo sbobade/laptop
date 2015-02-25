@@ -13,7 +13,7 @@ declare VERBOSE="0"
 declare -a EXCL="EXCLUDE"
 declare -a EXCL_LOCAL="EXCLUDE.local"
 
-if [ -e "${PWD}/${CONFIG}" -a -s "${PWD}/${CONFIG}" ] ; then
+if [ -r "${PWD}/${CONFIG}" -a -s "${PWD}/${CONFIG}" ] ; then
     source "${PWD}/${CONFIG}" 2>/dev/null
 fi
 
@@ -22,7 +22,7 @@ do_default () {
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} \
+    ${SECILC} --policyvers="${VERSION}" \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 }
@@ -72,7 +72,7 @@ get_help () {
 
 get_secilc () {
     if [ ! -x "${SECILC}" ] ; then
-        declare SECILC="/usr/bin/secilc"
+        SECILC="/usr/bin/secilc"
     fi
 
     if [ ! -x "${SECILC}" ] ; then
@@ -89,9 +89,9 @@ get_version () {
         return 192
     fi
 
-    if [ -z "${VERSION}" -o "${VERSION}" -gt "${POLICYVERS}" ] ; then
+    if [[ -z "${VERSION}" ]] || ! [[ "${VERSION}" =~ "^[0-9]+$" ]] || [[ "${VERSION}" -gt "${POLICYVERS}" ]] ; then
         echo "Specified policy version (${VERSION}) is greater than MAX_POLICYDB_VERSION (${POLICYVERS}). Defaulting to ${POLICYVERS}!"
-        declare VERSION="$(/bin/cat /sys/fs/selinux/policyvers)"
+        VERSION="$(/bin/cat /sys/fs/selinux/policyvers)"
     fi
 }
 
@@ -129,39 +129,38 @@ if [ $# -eq 0 ] ; then
     exit $(echo $?)
 fi
 
-while (($# > 0)) ;
-    do
-        case $1 in
-            -h|--help)
-                get_help
-                exit $(echo $?)
-                ;;
-            -d|--disable-dontaudit)
-                DISABLE_DONTAUDIT=1
-                ;;
-            -t|--test)
-                do_tests
-                exit $(echo $?)
-                ;;
-            -u|--allow-unknown)
-                ALLOW_UNKNOWN=1
-                ;;
-            -v|--verbose)
-                VERBOSE=1
-                ;;
-            *)
-                break
-                ;;
-        esac
-        shift
-    done
+while (($# > 0)) ; do
+    case $1 in
+        -h|--help)
+            get_help
+            exit $(echo $?)
+            ;;
+        -d|--disable-dontaudit)
+            DISABLE_DONTAUDIT=1
+            ;;
+        -t|--test)
+            do_tests
+            exit $(echo $?)
+            ;;
+        -u|--allow-unknown)
+            ALLOW_UNKNOWN=1
+            ;;
+        -v|--verbose)
+            VERBOSE=1
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
 
 if [ "{$DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} --handle-unknown=deny \
+    ${SECILC} --policyvers="${VERSION}" --handle-unknown=deny \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
@@ -173,7 +172,7 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} -D --handle-unknow=deny \
+    ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=deny \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
@@ -185,7 +184,7 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} --handle-unknow=allow \
+    ${SECILC} --policyvers="${VERSION}" --handle-unknow=allow \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
@@ -197,7 +196,7 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} -v --handle-unknow=deny \
+    ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=deny \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
@@ -209,7 +208,7 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} -D --handle-unknow=allow \
+    ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=allow \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
@@ -221,7 +220,7 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} -v --handle-unknow=allow \
+    ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=allow \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
@@ -233,7 +232,7 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} -v -D --handle-unknown=deny \
+    ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=deny \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
@@ -245,7 +244,7 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} -v -D --handle-unknown=allow \
+    ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=allow \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 

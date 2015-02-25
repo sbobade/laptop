@@ -62,9 +62,8 @@ modular_set_ignore () {
 }
 
 modular_run_tests () {
-    while (($# > 0)) ;
-        do
-            case $1 in
+    while (($# > 0)) ; do
+        case $1 in
             -v|--verbose)
                 MODULAR_VERBOSE=1
                 ;;
