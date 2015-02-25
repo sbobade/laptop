@@ -465,6 +465,10 @@
     (context setbacklight_exec (staff_u object_r setbacklight_exec_t (systemlow systemlow)))
     (filecon "/home/kcinimod/\.local/bin/setbacklight" file setbacklight_exec))
 
+(optional staff_optional_seutil
+    (call seutil_exec_secilc (staff_t))
+    (call seutil_exec_setools (staff_t)))
+
 (optional staff_optional_ssh
     (call ssh_run_sshkeygen (staff_t staff_r))
 
