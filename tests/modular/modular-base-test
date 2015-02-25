@@ -1,0 +1,29 @@
+#!/bin/bash
+
+modular_base_modules () {
+    modular_set_ignore sources.d sources/modules/contrib/admin sources/modules/contrib/applications sources/modules/contrib/roles \
+        sources/modules/contrib/services sources/modules/contrib/system sources/modules/base/libraries.cil sources/modules/base/storage.cil \
+        sources/modules/base/unconfined.cil
+
+    unset MODULAR_BASE_MODULES
+
+    MODULAR_BASE_MODULES+=("${MODULAR_SMODULES[*]}")
+}
+
+modular_base_run_test () {
+    modular_base_modules
+
+    if [ "${MODULAR_VERBOSE}" == "1" ] ; then
+        ${SECILC} -v $(echo ${MODULAR_BASE_MODULES[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+    else
+        ${SECILC} $(echo ${MODULAR_BASE_MODULES[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+    fi
+
+    if [ "$?" -ne 0 ] ; then
+        return 192
+    fi
+}
+
+#EOF

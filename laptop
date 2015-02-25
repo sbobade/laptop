@@ -28,9 +28,8 @@ do_default () {
 }
 
 do_tests () {
-    echo "
-    TODO
-    "
+    source tests/modular/functions
+    modular_run_tests
 }
 
 get_help () {
@@ -55,7 +54,7 @@ get_help () {
         sources.d/mymodule.cil
 
     Local excludes:
-        If you wish to exclude modules then you can store relative paths of these modules in a "EXCLUDE.local" file.
+        If you wish to exclude modules then you can store relative paths of these modules in an "EXCLUDE.local" file.
 
         Example:
 
@@ -108,6 +107,11 @@ gen_listing () {
         MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
     done
 
+    if [ -z "${MODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
+
     printf "%s\n" "${MODULES[*]}" | /bin/sort > LISTING
 }
 
@@ -152,7 +156,7 @@ while (($# > 0)) ;
         shift
     done
 
-if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 0 ] ; then
+if [ "{$DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
@@ -164,7 +168,7 @@ if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 0 ] ; t
     exit $(echo $?)
 fi
 
-if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 0 ] ; then
+if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
@@ -176,7 +180,7 @@ if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 0 ] ; t
     exit $(echo $?)
 fi
 
-if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 0 ] ; then
+if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
@@ -188,7 +192,7 @@ if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 0 ] ; t
     exit $(echo $?)
 fi
 
-if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 1 ] ; then
+if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
@@ -200,7 +204,7 @@ if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 1 ] ; t
     exit $(echo $?)
 fi
 
-if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 0 ] ; then
+if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
@@ -212,7 +216,7 @@ if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 0 ] ; t
     exit $(echo $?)
 fi
 
-if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 1 ] ; then
+if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
@@ -224,12 +228,24 @@ if [ "$DISABLE_DONTAUDIT" == 0 -a "$ALLOW_UNKNOWN" == 1 -a "$VERBOSE" == 1 ] ; t
     exit $(echo $?)
 fi
 
-if [ "$DISABLE_DONTAUDIT" == 1 -a "$ALLOW_UNKNOWN" == 0 -a "$VERBOSE" == 1 ] ; then
+if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1 ] ; then
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
     ${SECILC} -v -D --handle-unknown=deny \
+        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+
+    exit $(echo $?)
+fi
+
+if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1 ] ; then
+    get_secilc || exit $(echo $?)
+    get_version || exit $(echo $?)
+    get_ignore || exit $(echo $?)
+
+    ${SECILC} -v -D --handle-unknown=allow \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 

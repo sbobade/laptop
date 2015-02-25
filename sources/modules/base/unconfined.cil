@@ -59,7 +59,8 @@
 
 (call unconfined_subject_type (unconfined_user_subject_type))
 
-(call usersubject_priv_login_subject_type (unconfined_user_subject_type))
+(optional unconfined_optional_usersubject
+    (call usersubject_priv_login_subject_type (unconfined_user_subject_type)))
 
 (macro unconfined_subject_type ((type ARG1))
     (typeattributeset unconfined_subject_type ARG1))
@@ -69,7 +70,8 @@
 
 (macro unconfined_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
     (call unconfined_user_subject_type (ARG3))
-    (call usersubject_common_login_subject_template (ARG1 ARG2 ARG3)))
+    (optional unconfined_common_login_subject_template_optional_usersubject
+        (call usersubject_common_login_subject_template (ARG1 ARG2 ARG3))))
 
 (macro unconfined_read_state_all_subjects ((type ARG1))
     (call filesystems_search_proc (ARG1))

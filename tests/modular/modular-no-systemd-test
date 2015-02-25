@@ -1,0 +1,27 @@
+#!/bin/bash
+
+modular_no_systemd_modules () {
+    modular_set_ignore sources.d sources/modules/contrib/system/systemd
+
+    unset MODULAR_NO_SYSTEMD_MODULES
+
+    MODULAR_NO_SYSTEMD_MODULES+=("${MODULAR_SMODULES[*]}")
+}
+
+modular_no_systemd_run_test () {
+    modular_no_systemd_modules
+
+    if [ "${MODULAR_VERBOSE}" == "1" ] ; then
+        ${SECILC} -v $(echo ${MODULAR_NO_SYSTEMD_MODULES[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+    else
+        ${SECILC} $(echo ${MODULAR_NO_SYSTEMD_MODULES[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+    fi
+
+    if [ "$?" -ne 0 ] ; then
+        return 192
+    fi
+}
+
+#EOF

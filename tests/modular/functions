@@ -1,0 +1,89 @@
+#!/bin/bash
+
+source tests/modular/modular-base-test
+source tests/modular/modular-base-plus-test
+source tests/modular/modular-no-systemd-test
+
+declare MODULAR_VERBOSE="0"
+declare MODULAR_TESTS="modular_base_run_test modular_base_plus_run_test modular_no_systemd_run_test"
+
+modular_get_ignore () {
+    unset MODULAR_GIGNORE
+
+    MODULAR_GIGNORE+=($(/bin/cat "${PWD}/${EXCL}"))
+}
+
+modular_gen_listing () {
+    modular_get_ignore
+
+    unset MODULAR_GMODULES
+
+    MODULAR_GMODULES+=$(/bin/find . -type f \( -iname "*.cil" \) | /bin/cut -d/ -f2-)
+
+    if [ -z "${MODULAR_GMODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
+
+    for i in ${MODULAR_GIGNORE[*]} ; do
+        MODULAR_GMODULES=$(printf "%s\n" "${MODULAR_GMODULES[*]}" | /bin/grep -v $i)
+    done
+
+    if [ -z "${MODULAR_GMODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
+}
+
+modular_set_ignore () {
+    unset MODULAR_SIGNORE
+
+    MODULAR_SIGNORE+=($(echo "$*"))
+
+    modular_gen_listing
+
+    unset MODULAR_SMODULES
+
+    MODULAR_SMODULES="${MODULAR_GMODULES}"
+
+    if [ -z "${MODULAR_GMODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
+
+    for i in ${MODULAR_SIGNORE[*]} ; do
+        MODULAR_SMODULES=$(printf "%s\n" "${MODULAR_SMODULES[*]}" | /bin/grep -v $i)
+    done
+
+    if [ -z "${MODULAR_SMODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
+}
+
+modular_run_tests () {
+    while (($# > 0)) ;
+        do
+            case $1 in
+            -v|--verbose)
+                MODULAR_VERBOSE=1
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
+
+    for modular_test in ${MODULAR_TESTS} ; do
+        $(${modular_test})
+
+        if [ "${?}" -eq "0" ] ; then
+            echo "Modular tests: $modular_test succeeded!"
+        else
+            echo "Modular tests: $modular_test failed!"
+        fi
+    done
+}
+
+#EOF
