@@ -1,0 +1,38 @@
+(typepermissive loadkeys_t) ; FIXME
+
+(roleattribute loadkeys_role)
+
+(type loadkeys_t)
+(type loadkeys_exec_t)
+(call applications_app (loadkeys_t loadkeys_exec_t))
+(roletype loadkeys_role loadkeys_t)
+
+(roleattributeset loadkeys_role system_r)
+
+(context loadkeys_exec (system_u object_r loadkeys_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/loadkeys" file loadkeys_exec)
+
+(allow loadkeys_t self rw_fifo_file_perms)
+
+(call commands_exec (loadkeys_t))
+(call commands_exec_shell (loadkeys_t))
+
+(call terminals_use_console (loadkeys_t))
+(call terminals_use_unallocated_ttys (loadkeys_t))
+
+(call miscfiles_read_locale (loadkeys_t))
+
+(macro loadkeys_exec ((type ARG1))
+    (call can_exec (ARG1 loadkeys_exec_t)))
+
+(macro loadkeys_auto_subject_type_transition ((type ARG1))
+    (call loadkeys_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 loadkeys_exec_t loadkeys_t)))
+
+(macro loadkeys_send_signal ((type ARG1))
+    (allow ARG1 loadkeys_t (process (signal))))
+
+(macro loadkeys_run ((type ARG1)(role ARG2))
+    (call loadkeys_auto_subject_type_transition (ARG1))
+    (roleattributeset loadkeys_role ARG2))

@@ -265,6 +265,9 @@
     (call ld_admin (sysadm_t))
     (call ld_run_ldconfig (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_loadkeys
+    (call loadkeys_run (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_login
     (call login_admin (sysadm_t)))
 
