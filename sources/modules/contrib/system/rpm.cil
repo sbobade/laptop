@@ -140,7 +140,10 @@
 (call filesystems_tmpfs_object_type_transition (rpm_subject_type rpm_tmpfs_t chr_file "*"))
 
 (call devices_unconfined_subject_type (rpm_subject_type))
+
 (call files_unconfined_subject_type (rpm_subject_type))
+(call files_rootfs_object_type_transition_file (rpm_subject_type))
+
 (call filesystems_unconfined_subject_type (rpm_subject_type))
 (call network_unconfined_subject_type (rpm_subject_type))
 (call selinux_unconfined_subject_type (rpm_subject_type))
