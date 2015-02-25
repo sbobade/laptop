@@ -195,6 +195,7 @@
 (roleattributeset setools_role system_r)
 
 (context setools_exec (system_u object_r setools_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/sediff" file setools_exec)
 (filecon "/usr/bin/seinfo" file setools_exec)
 (filecon "/usr/bin/sesearch" file setools_exec)
 
