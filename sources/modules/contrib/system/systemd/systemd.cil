@@ -325,11 +325,7 @@
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
 (call systemd_read_config_home (systemd_systemctl_subject_type))
 (call systemd_read_state (systemd_systemctl_subject_type))
-(call systemd_reboot_system (systemd_systemctl_subject_type))
-(call systemd_reload_system (systemd_systemctl_subject_type))
-(call systemd_start_system (systemd_systemctl_subject_type))
-(call systemd_status_system (systemd_systemctl_subject_type))
-(call systemd_stop_system (systemd_systemctl_subject_type))
+(call systemd_control_system (systemd_systemctl_subject_type))
 
 (call usersubject_dontaudit_read_user_home_files (systemd_systemctl_subject_type))
 
@@ -1105,6 +1101,9 @@
     (call systemd_socket_activated_subject_type (ARG1))
     (call systemd_socket_activated_object_type (ARG2)))
 
+(macro systemd_halt_system ((type ARG1))
+    (allow ARG1 systemd_t (system (halt))))
+
 (macro systemd_reboot_system ((type ARG1))
     (allow ARG1 systemd_t (system (reboot))))
 
@@ -1248,6 +1247,14 @@
 
 (macro systemd_start_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (start))))
+
+(macro systemd_control_system ((type ARG1))
+    (call systemd_halt_system (ARG1))
+    (call systemd_reboot_system (ARG1))
+    (call systemd_reload_system (ARG1))
+    (call systemd_status_system (ARG1))
+    (call systemd_start_system (ARG1))
+    (call systemd_stop_system (ARG1)))
 
 (macro systemd_control_system_units ((type ARG1))
     (call systemd_stop_system_units (ARG1))
