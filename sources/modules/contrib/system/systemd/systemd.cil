@@ -311,6 +311,10 @@
 
 (call filesystems_getattr_filesystems (systemd_systemctl_subject_type))
 
+(call terminals_use_inherited_console (systemd_systemctl_subject_type))
+
+(call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role))
+
 (call miscfiles_read_all_terminfo (systemd_systemctl_subject_type))
 (call miscfiles_read_locale (systemd_systemctl_subject_type))
 
@@ -529,9 +533,9 @@
     (call auto_subject_type_transition_pattern
         (ARG2 systemctl_exec_t ARG3))
     (roletype ARG1 ARG3)
+    (roleattributeset systemd_systemctl_role ARG1)
     (allow ARG3 ARG2 (process (signal)))
-    (call systemd_systemctl_subject_type (ARG3))
-    (call askpwd_run_askpwdagent (ARG3 ARG1)))
+    (call systemd_systemctl_subject_type (ARG3)))
 
 (macro systemd_run_systemctl ((type ARG1)(role ARG2))
     (call systemd_auto_subject_type_transition_systemctl (ARG1))

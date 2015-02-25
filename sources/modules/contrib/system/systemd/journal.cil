@@ -23,6 +23,8 @@
 
 (call devices_read_random (journal_journalctl_subject_type))
 
+(call askpwd_run_askpwdagent (journal_journalctl_subject_type journal_journalctl_role))
+
 (call journal_manage_log (journal_journalctl_subject_type))
 (call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
 (call journal_journalctl_client_subject_type (journal_journalctl_subject_type))
@@ -222,6 +224,7 @@
     (call auto_subject_type_transition_pattern
         (ARG2 journalctl_exec_t ARG3))
     (roletype ARG1 ARG3)
+    (roleattributeset journal_journalctl_role ARG1)
     (allow ARG3 ARG2 (process (signal)))
     (call journal_journalctl_subject_type (ARG3)))
 

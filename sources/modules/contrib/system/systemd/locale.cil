@@ -12,6 +12,8 @@
 (context localectl_exec (system_u object_r localectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/localectl" file localectl_exec)
 
+(call askpwd_run_askpwdagent (locale_localectl_subject_type locale_localectl_role))
+
 (type localed_t)
 (type localed_exec_t)
 (call systemd_daemon (localed_t localed_exec_t))
@@ -82,6 +84,7 @@
     (call auto_subject_type_transition_pattern
         (ARG2 localectl_exec_t ARG3))
     (roletype ARG1 ARG3)
+    (roleattributeset locale_localectl_role ARG1)
     (allow ARG3 ARG2 (process (signal)))
     (call locale_localectl_subject_type (ARG3)))
 

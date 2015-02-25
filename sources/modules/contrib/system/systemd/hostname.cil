@@ -19,6 +19,8 @@
 
 (call commands_exec (hostname_hostnamectl_subject_type))
 
+(call askpwd_run_askpwdagent (hostname_hostnamectl_subject_type hostname_hostnamectl_role))
+
 (call dbus_system_client_subject_type (hostname_hostnamectl_subject_type))
 
 (call hostname_dbus_chat_hostnamed (hostname_hostnamectl_subject_type))
@@ -104,6 +106,7 @@
     (call auto_subject_type_transition_pattern
         (ARG2 hostnamectl_exec_t ARG3))
     (roletype ARG1 ARG3)
+    (roleattributeset hostname_hostnamectl_role ARG1)
     (allow ARG3 ARG2 (process (signal)))
     (call hostname_hostnamectl_subject_type (ARG3)))
 
