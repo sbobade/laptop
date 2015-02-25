@@ -1078,11 +1078,11 @@
     (allow ARG1 files_spool_object_type manage_lnk_file_perms))
 
 (macro files_search_tmp ((type ARG1))
-    (call files_search_var (ARG1))
+    (call files_read_tmp_lnk_files (ARG1))
     (allow ARG1 var_tmp_t search_dir_perms))
 
 (macro files_list_tmp ((type ARG1))
-    (call files_search_var (ARG1))
+    (call files_read_tmp_lnk_files (ARG1))
     (allow ARG1 var_tmp_t list_dir_perms))
 
 (macro files_read_tmp_files ((type ARG1))
