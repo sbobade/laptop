@@ -4,7 +4,9 @@ shopt -o -s nounset
 
 declare CONFIG="laptop.conf"
 declare SECILC="/usr/bin/secilc"
+
 declare VERSION="$(/bin/cat /sys/fs/selinux/policyvers)"
+declare POLICYVERS="$(/bin/cat /sys/fs/selinux/policyvers)"
 
 declare DISABLE_DONTAUDIT="0"
 declare ALLOW_UNKNOWN="0"
@@ -19,12 +21,16 @@ fi
 
 do_default () {
     get_secilc || exit $(echo $?)
-    get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" \
+    if [ -z "${POLICYVERS}" ] ; then
+        echo "Unable to determine MAX_POLICYDB_VERSION!"
+        return 192
+    fi
+
+    ${SECILC} \
         $(test -f LISTING || gen_listing && /bin/cat LISTING) \
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${POLICYVERS} -f contexts/files/file_contexts
 }
 
 do_tests () {
@@ -82,14 +88,12 @@ get_secilc () {
 }
 
 get_version () {
-    local POLICYVERS="$(/bin/cat /sys/fs/selinux/policyvers)"
-
     if [ -z "${POLICYVERS}" ] ; then
         echo "Unable to determine MAX_POLICYDB_VERSION!"
         return 192
     fi
 
-    if [[ -z "${VERSION}" ]] || ! [[ "${VERSION}" =~ "^[0-9]+$" ]] || [[ "${VERSION}" -gt "${POLICYVERS}" ]] ; then
+    if [[ -z ${VERSION} ]] || ! [[ "${VERSION}" =~ ^[0-9]+$ ]] || [[ "${VERSION}" -gt ${POLICYVERS} ]] ; then
         echo "Specified policy version (${VERSION}) is greater than MAX_POLICYDB_VERSION (${POLICYVERS}). Defaulting to ${POLICYVERS}!"
         VERSION="$(/bin/cat /sys/fs/selinux/policyvers)"
     fi
@@ -125,8 +129,7 @@ get_ignore () {
 }
 
 if [ $# -eq 0 ] ; then
-    do_default
-    exit $(echo $?)
+    do_default || exit $(echo $?)
 fi
 
 while (($# > 0)) ; do
