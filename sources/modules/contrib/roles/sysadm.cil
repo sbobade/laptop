@@ -48,6 +48,7 @@
 
 (call files_manage_file (sysadm_t))
 (call files_rootfs_object_type_transition_file (sysadm_t))
+(call files_rw_lock_dirs (sysadm_t))
 
 (call filesystems_getattr_all_filesystems (sysadm_t))
 (call filesystems_getattr_devpts_chr_files (sysadm_t))
@@ -125,7 +126,9 @@
     (call dbus_manage_all_config (sysadm_t)))
 
 (optional sysadm_optional_dhcp
-    (call dhcp_manage_config (sysadm_t)))
+    (call dhcp_manage_config (sysadm_t))
+    (call dhcp_manage_dhclient_lib (sysadm_t))
+    (call dhcp_manage_dhclient_runtime_files (sysadm_t)))
 
 (optional sysadm_optional_dm
     (call dm_admin (sysadm_t))
@@ -345,7 +348,8 @@
     (call rtkit_run_rtkitctl (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_screen
-    (call screen_manage_config_files (sysadm_t)))
+    (call screen_manage_config_files (sysadm_t))
+    (call screen_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_setbacklight
     (call setbacklight_run (sysadm_t sysadm_r)))
@@ -382,6 +386,7 @@
     (call sudo_send_signal (sysadm_t))
 
     (call sudo_manage_config (sysadm_t))
+    (call sudo_manage_runtime (sysadm_t))
 
     (type sysadm_visudo_t)
     (call sudo_role_template_visudo (sysadm_r sysadm_t sysadm_visudo_t))
@@ -480,7 +485,8 @@
 
 (optional sysadm_optional_tmpfiles
     (call tmpfiles_run (sysadm_t sysadm_r))
-    (call tmpfiles_manage_config (sysadm_t)))
+    (call tmpfiles_manage_config (sysadm_t))
+    (call tmpfiles_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_vconsole
     (call vconsole_manage_config_files (sysadm_t)))
