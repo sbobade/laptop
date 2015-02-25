@@ -29,7 +29,12 @@
 
 (call journal_client_subject_type (vconsole_t))
 
+(call miscfiles_read_locale (vconsole_t))
+
 (call vconsole_read_config_files (vconsole_t))
+
+(optional vconsole_optional_plymouth
+    (call plymouth_use_fd_plymouthd (vconsole_t)))
 
 (macro vconsole_exec ((type ARG1))
     (call can_exec (ARG1 vconsole_exec_t)))

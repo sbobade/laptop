@@ -90,6 +90,9 @@
 (call system_manage_log_files (plymouthd_t))
 (call system_log_object_type_transition_log_files (plymouthd_t))
 
+(call system_manage_invalid_files (plymouthd_t)) ; FIXME
+(call system_manage_invalid_dirs (plymouthd_t))
+
 (call devices_rw_dri (plymouthd_t))
 (call devices_rw_framebuf (plymouthd_t))
 (call devices_rw_ptmx (plymouthd_t))
