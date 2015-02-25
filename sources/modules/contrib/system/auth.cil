@@ -491,7 +491,7 @@
 
 (macro auth_read_pam_config_files ((type ARG1))
     (call files_search_config (ARG1))
-    (allow ARG1 pam_config_t read_file_perms))
+    (call read_files_pattern (ARG1 pam_config_t pam_config_t)))
 
 (macro auth_read_pam_config ((type ARG1))
     (call files_search_config (ARG1))
