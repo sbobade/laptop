@@ -25,7 +25,11 @@
 (allow sysusers_t sysusers_runtime_t manage_file_perms)
 (call files_runtime_object_type_transition (sysusers_t sysusers_runtime_t dir "*"))
 
+(call devices_write_kmsg (sysusers_t))
+
 (call auth_read_shadow (sysusers_t))
+
+(call journal_client_subject_type (sysusers_t))
 
 (macro sysusers_exec ((type ARG1))
     (call can_exec (ARG1 sysusers_exec_t)))

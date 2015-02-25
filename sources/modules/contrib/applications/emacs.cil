@@ -20,7 +20,7 @@
 (call filesystems_tmpfs_object_type_transition (emacs_subject_type emacs_tmpfs_t sock_file "server"))
 
 (call devices_read_urandom (emacs_subject_type))
-(call devices_rw_inherited_ptmx (emacs_subject_type))
+(call devices_rw_ptmx (emacs_subject_type))
 
 (call files_dontaudit_catchall_subject_type (emacs_subject_type))
 (call files_read_config_files (emacs_subject_type))
