@@ -316,7 +316,8 @@
     (call ntp_run (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_pa
-    (call pa_manage_config (sysadm_t)))
+    (call pa_manage_config (sysadm_t))
+    (call pa_manage_lib (sysadm_t)))
 
 (optional sysadm_optional_pcitools
     (call pcitools_run (sysadm_t sysadm_r)))
@@ -525,6 +526,11 @@
 
 (optional sysadm_optional_xpdf
     (call xpdf_manage_config (sysadm_t)))
+
+(optional sysadm_optional_xserver
+    (call xserver_manage_config (sysadm_t))
+    (call xserver_manage_lib (sysadm_t))
+    (call xserver_manage_log_files (sysadm_t)))
 
 (optional sysadm_optional_xutil
     (call xutil_run (sysadm_t sysadm_r)))
