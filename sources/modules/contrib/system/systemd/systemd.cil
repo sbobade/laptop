@@ -436,6 +436,9 @@
 
 (call udev_client_subject_type (systemd_session_subject_type))
 
+(call usersubject_create_config_home_dirs (systemd_session_subject_type))
+(call usersubject_home_dir_object_type_transition_config_home_dirs (systemd_session_subject_type))
+
 (call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
 (call systemd_read_state (systemd_daemon_subject_type))
 
