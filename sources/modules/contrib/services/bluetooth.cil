@@ -139,9 +139,9 @@
 (optional obexd_optional_machine
     (call machine_read_config_files (bluetooth_obexd_subject_type)))
 
-(optional obexd_optional_systemd
+(optional obexd_optional_systemduser
     (type obexd_session_unit_t)
-    (call systemd_session_unit_object_type (obexd_session_unit_t))
+    (call systemduser_session_unit_object_type (obexd_session_unit_t))
 
     (context obexd_session_unit (system_u object_r obexd_session_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/user/[^/]*obex.*" file obexd_session_unit))

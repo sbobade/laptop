@@ -76,9 +76,9 @@
 
 (call usersubject_use_terminals (emacs_emacsclient_subject_type))
 
-(optional emacs_optional_systemd
+(optional emacs_optional_systemduser
     (type emacs_session_unit_t)
-    (call systemd_session_unit_object_type (emacs_session_unit_t))
+    (call systemduser_unit_object_type (emacs_session_unit_t))
 
     (context emacs_session_unit (system_u object_r emacs_session_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/user/[^/]*emacs.*" file emacs_session_unit))

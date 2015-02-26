@@ -407,28 +407,29 @@
     (call sysctl_run (sysadm_t sysadm_r))
     (call sysctl_manage_config (sysadm_t)))
 
+(optional sysadm_optional_systemduser
+    (type sysadm_systemduser_t)
+    (call systemduser_role_template (sysadm_r sysadm_t sysadm_systemduser_t))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_systemduser_t sysadm_t))
+    (call commands_shell_exec_auto_subject_type_transition (sysadm_systemduser_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_systemduser_t sysadm_t))
+
+    (allow sysadm_systemduser_t self (capability (dac_override)))
+
+    (call systemduser_manage_tmpfs (sysadm_t))
+    (call systemduser_relabel_tmpfs (sysadm_t))
+    (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (sysadm_t))
+
+    (call systemduser_manage_config_home (sysadm_t))
+    (call systemduser_relabel_config_home (sysadm_t))
+    (call systemduser_config_home_object_type_transition_config_home_dirs (sysadm_t))
+
+    (context sysadm_systemduser_config_home (sysadm_u object_r systemduser_config_home_t (systemlow systemlow)))
+    (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemduser_config_home))
+
 (optional sysadm_optional_systemd
-    (type sysadm_systemd_t)
-    (call systemd_session_role_template (sysadm_r sysadm_t sysadm_systemd_t))
-
-    (call commands_exec_auto_subject_type_transition (sysadm_systemd_t sysadm_t))
-    (call commands_shell_exec_auto_subject_type_transition (sysadm_systemd_t sysadm_t))
-
-    (call usersubject_exec_home_auto_subject_type_transition (sysadm_systemd_t sysadm_t))
-
-    (allow sysadm_systemd_t self (capability (dac_override)))
-
-    (call systemd_manage_tmpfs (sysadm_t))
-    (call systemd_relabel_tmpfs (sysadm_t))
-    (call systemd_tmpfs_object_type_transition_tmpfs_dirs (sysadm_t))
-
-    (call systemd_manage_config_home (sysadm_t))
-    (call systemd_relabel_config_home (sysadm_t))
-    (call systemd_config_home_object_type_transition_config_home_dirs (sysadm_t))
-
-    (context sysadm_systemd_config_home (sysadm_u object_r systemd_config_home_t (systemlow systemlow)))
-    (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemd_config_home)
-
     (type sysadm_systemctl_t)
     (call systemd_role_template_systemctl (sysadm_r sysadm_t sysadm_systemctl_t))
 

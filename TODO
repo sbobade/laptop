@@ -11,3 +11,5 @@
 * split out the systemd session policy from systemd system (session depends on usersubject whereas system doesnt)
 
 * target bootchart
+
+* rename all "*subject_entry*" to "*exec_object_entry_subject*"

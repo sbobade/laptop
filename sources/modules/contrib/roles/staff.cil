@@ -57,9 +57,9 @@
     (type staff_obexd_t)
     (call bluetooth_role_template_obexd (staff_r staff_t staff_obexd_t)))
 
-(optional staff_systemd_optional_staff_obexd
-    (call bluetooth_role_template_obexd (staff_r staff_systemd_t staff_obexd_t))
-    (call systemd_session_daemon_template (staff_systemd_t staff_obexd_t)))
+(optional staff_systemduser_optional_staff_obexd
+    (call bluetooth_role_template_obexd (staff_r staff_systemduser_t staff_obexd_t))
+    (call systemduser_daemon_template (staff_systemduser_t staff_obexd_t)))
 
 (optional staff_optional_bti
     (call bti_run (staff_t staff_r))
@@ -100,12 +100,12 @@
 
     (call stream_connect_pattern (staff_emacsclient_t emacs_tmpfs_t emacs_tmpfs_t staff_emacs_t)))
 
-(optional staff_systemd_optional_staff_emacs
-    (call emacs_role_template (staff_r staff_systemd_t staff_emacs_t))
-    (call systemd_session_daemon_template (staff_systemd_t staff_emacs_t))
+(optional staff_systemduser_optional_staff_emacs
+    (call emacs_role_template (staff_r staff_systemduser_t staff_emacs_t))
+    (call systemduser_daemon_template (staff_systemduser_t staff_emacs_t))
 
-    (call emacs_role_template_emacsclient (staff_r staff_systemd_t staff_emacsclient_t))
-    (call systemd_session_daemon_template (staff_systemd_t staff_emacsclient_t)))
+    (call emacs_role_template_emacsclient (staff_r staff_systemduser_t staff_emacsclient_t))
+    (call systemduser_daemon_template (staff_systemduser_t staff_emacsclient_t)))
 
 (optional staff_optional_ffmpeg
     (call ffmpeg_run (staff_t staff_r))
@@ -520,27 +520,27 @@
     (call sysadm_roleallow (staff_r))
     (call sysadm_send_signal (staff_t)))
 
-(optional staff_optional_systemd
-    (type staff_systemd_t)
-    (call systemd_session_role_template (staff_r staff_t staff_systemd_t))
+(optional staff_optional_systemduser
+    (type staff_systemduser_t)
+    (call systemduser_role_template (staff_r staff_t staff_systemduser_t))
 
-    (call commands_exec_auto_subject_type_transition (staff_systemd_t staff_t))
-    (call commands_shell_exec_auto_subject_type_transition (staff_systemd_t staff_t))
+    (call commands_exec_auto_subject_type_transition (staff_systemduser_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_systemduser_t staff_t))
 
-    (call usersubject_exec_home_auto_subject_type_transition (staff_systemd_t staff_t))
+    (call usersubject_exec_home_auto_subject_type_transition (staff_systemduser_t staff_t))
 
-    (call systemd_manage_tmpfs (staff_t))
-    (call systemd_relabel_tmpfs (staff_t))
-    (call systemd_tmpfs_object_type_transition_tmpfs_dirs (staff_t))
+    (call systemduser_manage_tmpfs (staff_t))
+    (call systemduser_relabel_tmpfs (staff_t))
+    (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (staff_t))
 
-    (call systemd_manage_config_home (staff_t))
-    (call systemd_relabel_config_home (staff_t))
-    (call systemd_config_home_object_type_transition_config_home_dirs (staff_t))
+    (call systemduser_manage_config_home (staff_t))
+    (call systemduser_relabel_config_home (staff_t))
+    (call systemduser_config_home_object_type_transition_config_home_dirs (staff_t))
 
-    (call systemd_control_all_session_units (staff_t))
+    (call systemduser_control_all_units (staff_t))
 
-    (context staff_systemd_config_home (staff_u object_r systemd_config_home_t (systemlow systemlow)))
-    (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemd_config_home))
+    (context staff_systemduser_config_home (staff_u object_r systemduser_config_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.config/systemd(/.*)?" any staff_systemduser_config_home))
 
 (optional staff_optional_temps
     (call temps_manage_exec_files (staff_t))

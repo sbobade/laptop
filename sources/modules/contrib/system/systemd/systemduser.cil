@@ -1,0 +1,336 @@
+(typeattribute systemduser_subject_type)
+
+(typeattribute systemduser_unit_object_type)
+
+(type systemduser_tmpfs_t)
+(call usersubject_tmpfs_object_type (systemduser_tmpfs_t))
+
+(type systemduser_config_home_t)
+(call usersubject_config_home_object_type (systemduser_config_home_t))
+
+(type systemduser_unit_t)
+(call systemduser_unit_object_type (systemduser_unit_t))
+
+(call systemd_object_type (systemduser_unit_object_type))
+
+(context systemduser_unit (system_u object_r systemduser_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/user(/.*)?" any systemduser_unit)
+
+(allow systemduser_subject_type self (process (getsched setfscreate)))
+(allow systemduser_subject_type self create_unix_stream_stream_socket_perms)
+(allow systemduser_subject_type self create_netlink_selinux_socket_perms)
+
+(call system_read_kernel_sysctl (systemduser_subject_type))
+
+(call devices_getattr_all (systemduser_subject_type))
+(call devices_read_urandom (systemduser_subject_type))
+
+(call files_read_data (systemduser_subject_type))
+
+(call filesystems_getattr_sysfs_filesystems (systemduser_subject_type))
+(call filesystems_manage_cgroup_dirs (systemduser_subject_type))
+(call filesystems_read_sysfs (systemduser_subject_type))
+(call filesystems_rw_cgroup_files (systemduser_subject_type))
+
+(call selinux_compute_access_vector (systemduser_subject_type))
+(call selinux_list_securityfs (systemduser_subject_type))
+
+(call subject_common_type (systemduser_subject_type))
+(call subject_user_exemption_target (systemduser_subject_type))
+
+(call audit_client_subject_type (systemduser_subject_type))
+
+(call auth_nsswitch_client_subject_type (systemduser_subject_type))
+
+(call journal_client_subject_type (systemduser_subject_type))
+(call journal_stream_connect_journald (systemduser_subject_type))
+
+(call miscfiles_read_locale (systemduser_subject_type))
+
+(call mount_read_runtime (systemduser_subject_type))
+
+(call systemd_exec_object_entry_subject (systemduser_subject_type))
+(call systemd_dgram_send (systemduser_subject_type))
+(call systemd_read_all_unit (systemduser_subject_type))
+(call systemd_read_config_files (systemduser_subject_type))
+(call systemd_read_state (systemduser_subject_type))
+(call systemd_rw_unix_stream_sockets (systemduser_subject_type))
+(call systemd_send_signal (systemduser_subject_type))
+
+(call systemduser_config_home_object_type_transition_config_home_dirs (systemduser_subject_type))
+(call systemduser_manage_config_home_dirs (systemduser_subject_type))
+(call systemduser_manage_config_home_lnk_files (systemduser_subject_type))
+(call systemduser_manage_tmpfs (systemduser_subject_type))
+(call systemduser_tmpfs_object_type_transition_tmpfs_dirs (systemduser_subject_type))
+(call systemduser_tmpfs_object_type_transition_tmpfs_files (systemduser_subject_type))
+(call systemduser_read_config_home_files (systemduser_subject_type))
+
+(call udev_client_subject_type (systemduser_subject_type))
+
+(call usersubject_create_config_home_dirs (systemduser_subject_type))
+(call usersubject_home_dir_object_type_transition_config_home_dirs (systemduser_subject_type))
+
+(macro systemduser_subject_type ((type ARG1))
+    (typeattributeset systemduser_subject_type ARG1))
+
+(macro systemduser_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG2 ARG3 (process (signal)))
+    (allow ARG2 ARG3 rw_unix_stream_socket_perms)
+    (allow ARG2 ARG3 (unix_stream_socket (connectto)))
+    (allow ARG2 ARG3 (system (reload disable)))
+    (call ps_subject_pattern (ARG2 ARG3))
+    (call ps_subject_pattern (ARG3 ARG2))
+    (call filesystems_manage_cgroup_dirs (ARG3))
+    (call systemd_exec_systemctl (ARG2))
+    (call systemd_read_state_lnk_files (ARG2))
+    (call systemduser_control_config_home (ARG2))
+    (call systemduser_control_units (ARG2))
+    (call systemduser_subject_type (ARG3)))
+
+(macro systemduser_daemon_template ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (unix_stream_socket (read write)))
+    (allow ARG1 ARG2 (process (signal signull sigkill)))
+
+    (allow ARG1 ARG2 read_file_perms)
+    (allow ARG1 ARG2 list_dir_perms)
+    (allow ARG1 ARG2 read_lnk_file_perms)
+
+    (allow ARG2 ARG1 (unix_stream_socket (read write))))
+
+(macro systemduser_unit_object_type ((type ARG1))
+    (call systemd_unit_object_type (ARG1))
+    (typeattributeset systemduser_unit_object_type ARG1))
+
+(macro systemduser_search_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemduser_config_home_t search_dir_perms))
+
+(macro systemduser_list_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemduser_config_home_t list_dir_perms))
+
+(macro systemduser_read_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_files_pattern (ARG1 systemduser_config_home_t systemduser_config_home_t)))
+
+(macro systemduser_manage_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call manage_files_pattern (ARG1 systemduser_config_home_t systemduser_config_home_t)))
+
+(macro systemduser_rw_config_home_dirs ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemduser_config_home_t rw_dir_perms))
+
+(macro systemduser_manage_config_home_dirs ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 systemduser_config_home_t systemduser_config_home_t)))
+
+(macro systemduser_read_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemduser_config_home_t systemduser_config_home_t)))
+
+(macro systemduser_manage_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call manage_lnk_files_pattern (ARG1 systemduser_config_home_t systemduser_config_home_t)))
+
+(macro systemduser_read_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemduser_config_home_t read_file_perms)
+    (allow ARG1 systemduser_config_home_t list_dir_perms)
+    (allow ARG1 systemduser_config_home_t read_lnk_file_perms))
+
+(macro systemduser_manage_config_home ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
+    (allow ARG1 systemduser_config_home_t manage_file_perms)
+    (allow ARG1 systemduser_config_home_t manage_dir_perms)
+    (allow ARG1 systemduser_config_home_t manage_lnk_file_perms))
+
+(macro systemduser_relabel_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemduser_config_home_t relabel_file_perms)
+    (allow ARG1 systemduser_config_home_t relabel_dir_perms)
+    (allow ARG1 systemduser_config_home_t relabel_lnk_file_perms))
+
+(macro systemduser_config_home_object_type_transition_config_home_dirs ((type ARG1))
+    (call usersubject_config_home_object_type_transition (ARG1 systemduser_config_home_t dir "systemd")))
+
+(macro systemduser_search_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_tmpfs_t search_dir_perms))
+
+(macro systemduser_list_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_tmpfs_t list_dir_perms))
+
+(macro systemduser_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_delete_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_del_entry_tmpfs (ARG1))
+    (call delete_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_read_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_sock_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_manage_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call manage_sock_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_delete_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call delete_sock_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_manage_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_delete_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_del_entry_tmpfs (ARG1))
+    (call delete_dirs_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_relabel_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call relabel_dirs_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
+(macro systemduser_rw_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_tmpfs_t rw_dir_perms))
+
+(macro systemduser_read_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_tmpfs_t list_dir_perms)
+    (allow ARG1 systemduser_tmpfs_t read_file_perms)
+    (allow ARG1 systemduser_tmpfs_t read_sock_file_perms))
+
+(macro systemduser_manage_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 systemduser_tmpfs_t manage_dir_perms)
+    (allow ARG1 systemduser_tmpfs_t manage_file_perms)
+    (allow ARG1 systemduser_tmpfs_t manage_sock_file_perms))
+
+(macro systemduser_relabel_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_tmpfs_t relabel_dir_perms)
+    (allow ARG1 systemduser_tmpfs_t relabel_file_perms)
+    (allow ARG1 systemduser_tmpfs_t relabel_sock_file_perms))
+
+(macro systemduser_stop_config_home ((type ARG1))
+    (allow ARG1 systemduser_config_home_t (service (stop))))
+
+(macro systemduser_stop_units ((type ARG1))
+    (allow ARG1 systemduser_unit_t (service (stop))))
+
+(macro systemduser_stop_all_units ((type ARG1))
+    (allow ARG1 systemduser_unit_object_type (service (stop))))
+
+(macro systemduser_status_config_home ((type ARG1))
+    (allow ARG1 systemduser_config_home_t (service (status))))
+
+(macro systemduser_status_units ((type ARG1))
+    (allow ARG1 systemduser_unit_t (service (status))))
+
+(macro systemduser_status_all_units ((type ARG1))
+    (allow ARG1 systemduser_unit_object_type (service (status))))
+
+(macro systemduser_disable_config_home ((type ARG1))
+    (allow ARG1 systemduser_config_home_t (service (disable))))
+
+(macro systemduser_disable_units ((type ARG1))
+    (allow ARG1 systemduser_unit_t (service (disable))))
+
+(macro systemduser_disable_all_units ((type ARG1))
+    (allow ARG1 systemduser_unit_object_type (service (disable))))
+
+(macro systemduser_enable_config_home ((type ARG1))
+    (allow ARG1 systemduser_config_home_t (service (enable))))
+
+(macro systemduser_enable_units ((type ARG1))
+    (allow ARG1 systemduser_unit_t (service (enable))))
+
+(macro systemduser_enable_all_units ((type ARG1))
+    (allow ARG1 systemduser_unit_object_type (service (enable))))
+
+(macro systemduser_reload_config_home ((type ARG1))
+    (allow ARG1 systemduser_config_home_t (service (reload))))
+
+(macro systemduser_reload_units ((type ARG1))
+    (allow ARG1 systemduser_unit_t (service (reload))))
+
+(macro systemduser_reload_all_units ((type ARG1))
+    (allow ARG1 systemduser_unit_object_type (service (reload))))
+
+(macro systemduser_start_config_home ((type ARG1))
+    (allow ARG1 systemduser_config_home_t (service (start))))
+
+(macro systemduser_start_units ((type ARG1))
+    (allow ARG1 systemduser_unit_t (service (start))))
+
+(macro systemduser_start_all_units ((type ARG1))
+    (allow ARG1 systemduser_unit_object_type (service (start))))
+
+(macro systemduser_control_config_home ((type ARG1))
+    (call systemduser_stop_config_home (ARG1))
+    (call systemduser_status_config_home (ARG1))
+    (call systemduser_disable_config_home (ARG1))
+    (call systemduser_enable_config_home (ARG1))
+    (call systemduser_reload_config_home (ARG1))
+    (call systemduser_start_config_home (ARG1)))
+
+(macro systemduser_control_units ((type ARG1))
+    (call systemduser_stop_units (ARG1))
+    (call systemduser_status_units (ARG1))
+    (call systemduser_disable_units (ARG1))
+    (call systemduser_enable_units (ARG1))
+    (call systemduser_reload_units (ARG1))
+    (call systemduser_start_units (ARG1)))
+
+(macro systemduser_control_all_units ((type ARG1))
+    (call systemduser_stop_all_units (ARG1))
+    (call systemduser_status_all_units (ARG1))
+    (call systemduser_disable_all_units (ARG1))
+    (call systemduser_enable_all_units (ARG1))
+    (call systemduser_reload_all_units (ARG1))
+    (call systemduser_start_all_units (ARG1)))
+
+(macro systemduser_tmpfs_object_type_transition_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 systemduser_tmpfs_t dir "systemd")))
+
+(macro systemduser_tmpfs_object_type_transition_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 systemduser_tmpfs_t file "*")))
+
+(macro systemduser_shell_exec_manual_subject_type_transition_all_session_subjects ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition
+        (ARG1 systemduser_subject_type)))
+
+(macro systemduser_noatsecure_all_session_subjects ((type ARG1))
+    (allow ARG1 systemduser_subject_type (process (noatsecure))))
+
+(macro systemduser_send_sigchld_all_session_subjects ((type ARG1))
+    (allow ARG1 systemduser_subject_type (process (sigchld))))
+
+(macro systemduser_manage_keyring_all_session_subjects ((type ARG1))
+    (allow ARG1 systemduser_subject_type (key (create search link write))))
