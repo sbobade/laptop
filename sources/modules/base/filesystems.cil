@@ -137,6 +137,7 @@
 (type rootfs_fs_t)
 (call filesystems_object_type (rootfs_fs_t))
 (call system_mountpoint_object_type (rootfs_fs_t))
+(call filesystems_associate_fs (rootfs_fs_t))
 
 (context rootfs_fs (system_u object_r rootfs_fs_t (systemlow systemlow)))
 (genfscon "rootfs" "/" rootfs_fs)
