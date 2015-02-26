@@ -1,5 +1,9 @@
 (roleattribute sysusers_role)
 
+(typeattribute sysusers_admin_subject_type)
+
+(typeattribute sysusers_object_type)
+
 (type sysusers_t)
 (type sysusers_exec_t)
 (call applications_app (sysusers_t sysusers_exec_t))
@@ -9,14 +13,26 @@
 (context sysusers_exec (system_u object_r sysusers_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-sysusers" file sysusers_exec)
 
+(type sysusers_unit_t)
+(call systemd_unit_object_type (sysusers_unit_t))
+
+(typeattributeset sysusers_object_type sysusers_unit_t)
+
+(context sysusers_unit (system_u object_r sysusers_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-sysusers.*" file sysusers_unit)
+
 (type sysusers_config_t)
 (call files_config_object_type (sysusers_config_t))
+
+(typeattributeset sysusers_object_type sysusers_config_t)
 
 (context sysusers_config (system_u object_r sysusers_config_t (systemlow systemlow)))
 (filecon "/etc/sysusers\.d(/.*)?" any sysusers_config)
 
 (type sysusers_runtime_t)
 (call files_runtime_object_type (sysusers_runtime_t))
+
+(typeattributeset sysusers_object_type sysusers_runtime_t)
 
 (context sysusers_runtime (system_u object_r sysusers_runtime_t (systemlow systemlow)))
 (filecon "/var/run/sysusers\.d(/.*)?" any sysusers_runtime)
@@ -30,6 +46,14 @@
 (call auth_read_shadow (sysusers_t))
 
 (call journal_client_subject_type (sysusers_t))
+
+(allow sysusers_admin_subject_type sysusers_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (sysusers_admin_subject_type sysusers_t))
+
+(allow sysusers_admin_subject_type sysusers_unit_t (service (all)))
+
+(allow sysusers_admin_subject_type sysusers_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
 
 (macro sysusers_exec ((type ARG1))
     (call can_exec (ARG1 sysusers_exec_t)))
@@ -101,3 +125,8 @@
     (allow ARG1 sysusers_runtime_t manage_file_perms)
     (allow ARG1 sysusers_runtime_t manage_dir_perms)
     (allow ARG1 sysusers_runtime_t manage_lnk_file_perms))
+
+(macro sysusers_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset sysusers_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

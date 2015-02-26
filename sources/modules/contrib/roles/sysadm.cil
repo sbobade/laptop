@@ -484,8 +484,8 @@
     (call notify_run (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_sysusers
-    (call sysusers_run (sysadm_t sysadm_r))
-    (call sysusers_manage_config (sysadm_t)))
+    (call sysusers_admin (sysadm_t))
+    (call sysusers_run (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_tmpfiles
     (call tmpfiles_run (sysadm_t sysadm_r))
