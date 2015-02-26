@@ -175,7 +175,7 @@
 
 (allow xserver_xinit_subject_type xserver_t (process (signal)))
 
-(call commands_shell_exec_object_entry (xserver_xinit_subject_type))
+(call commands_shell_exec_object_entry_subject (xserver_xinit_subject_type))
 (call commands_exec_shell (xserver_xinit_subject_type))
 
 (call filesystems_search_tmpfs (xserver_xinit_subject_type))

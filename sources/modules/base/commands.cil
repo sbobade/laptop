@@ -63,7 +63,7 @@
     (call commands_read_lnk_files (ARG1))
     (allow ARG1 exec_t list_dir_perms))
 
-(macro commands_exec_object_entry ((type ARG1))
+(macro commands_exec_object_entry_subject ((type ARG1))
     (call subject_entry (ARG1 exec_t)))
 
 (macro commands_exec_auto_subject_type_transition ((type ARG1)(type ARG2))
@@ -94,7 +94,7 @@
 (macro commands_dontaudit_getattr_all_exec_files ((type ARG1))
     (dontaudit ARG1 commands_exec_object_type (file (getattr))))
 
-(macro commands_shell_exec_object_entry ((type ARG1))
+(macro commands_shell_exec_object_entry_subject ((type ARG1))
     (call subject_entry (ARG1 shell_exec_t)))
 
 (macro commands_shell_exec_auto_subject_type_transition ((type ARG1)(type ARG2))

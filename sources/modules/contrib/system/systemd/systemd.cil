@@ -323,8 +323,8 @@
 
 (typeattributeset systemd_daemon_subject_type systemd_generic_t)
 
-(call commands_exec_object_entry (systemd_generic_t))
-(call commands_shell_exec_object_entry (systemd_generic_t))
+(call commands_exec_object_entry_subject (systemd_generic_t))
+(call commands_shell_exec_object_entry_subject (systemd_generic_t))
 
 (call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
 (call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
