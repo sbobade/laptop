@@ -8,7 +8,6 @@
 
 * do journal clients still need net_admin?
 
-* fix all nested optionals (dont nest them) i already did the roles, need to do the remainder
-    cil handles this differently: if a nested optional is disabled, then so is its parent; i had to find out the hard way.)
+* split out the systemd session policy from systemd system (session depends on usersubject whereas system doesnt)
 
-    nested optionals do not make sense any way. if you use optionals properly.
+* target bootchart
