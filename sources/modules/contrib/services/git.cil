@@ -59,9 +59,10 @@
 (call miscfiles_read_all_terminfo (git_subject_type))
 (call miscfiles_read_locale (git_subject_type))
 
-(call usersubject_read_user_home_lnk_files (git_subject_type))
+(call usersubject_manage_user_home_dirs (git_subject_type))
 (call usersubject_manage_user_home_files (git_subject_type))
-(call usersubject_home_dir_object_type_transition_user_home (git_subject_type file "*"))
+(call usersubject_manage_user_home_lnk_files (git_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (git_subject_type dir "*"))
 
 (optional git_optional_http
     (call http_tcp_connect_http_port (git_subject_type)))
