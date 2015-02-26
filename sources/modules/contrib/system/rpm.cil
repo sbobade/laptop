@@ -151,7 +151,7 @@
 (call subject_unconfined_subject_type (rpm_subject_type))
 (call system_unconfined_subject_type (rpm_subject_type))
 
-(call libraries_config_object_type_transition_ld_so_cache_files (rpm_script_t))
+(call libraries_config_object_type_transition_ld_so_cache_files (rpm_subject_type))
 
 (optional rpm_script_optional_auth
     (call auth_unconfined_subject_type (rpm_script_t)))
