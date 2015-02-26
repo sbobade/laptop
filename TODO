@@ -9,3 +9,5 @@
 * do journal clients still need net_admin?
 
 * target bootchart
+
+* decouple unconfineduser from unconfined so that unconfineduser can depend on usersubject but unconfined does not depend on unconfineduser
