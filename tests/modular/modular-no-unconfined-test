@@ -1,0 +1,27 @@
+#!/bin/bash
+
+modular_no_unconfined_module () {
+    modular_set_ignore sources.d sources/modules/base/unconfined.cil sources/modules/contrib/roles/unconfineduser.cil
+
+    unset MODULAR_NO_UNCONFINED_MODULE
+
+    MODULAR_NO_UNCONFINED_MODULE+=("${MODULAR_SMODULES[*]}")
+}
+
+modular_no_unconfined_run_test () {
+    modular_no_unconfined_module
+
+    if [ "${MODULAR_VERBOSE}" == "1" ] ; then
+        ${SECILC} -v $(echo ${MODULAR_NO_UNCONFINED_MODULE[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+    else
+        ${SECILC} $(echo ${MODULAR_NO_UNCONFINED_MODULE[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+    fi
+
+    if [ "$?" -ne 0 ] ; then
+        return 192
+    fi
+}
+
+#EOF

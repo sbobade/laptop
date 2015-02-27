@@ -16,6 +16,14 @@
 (context systemduser_unit (system_u object_r systemduser_unit_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/user(/.*)?" any systemduser_unit)
 
+(type systemduser_pam_config_t)
+(call auth_pam_config_object_type (systemduser_pam_config_t))
+
+(call systemd_object_type (systemduser_pam_config_t))
+
+(context systemduser_pam_config (system_u object_r systemduser_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/systemd-user" file systemduser_pam_config)
+
 (allow systemduser_subject_type self (process (getsched setfscreate)))
 (allow systemduser_subject_type self create_unix_stream_stream_socket_perms)
 (allow systemduser_subject_type self create_netlink_selinux_socket_perms)
@@ -101,6 +109,14 @@
 (macro systemduser_unit_object_type ((type ARG1))
     (call systemd_unit_object_type (ARG1))
     (typeattributeset systemduser_unit_object_type ARG1))
+
+(macro systemduser_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 systemduser_pam_config_t read_file_perms))
+
+(macro systemduser_manage_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 systemduser_pam_config_t manage_file_perms))
 
 (macro systemduser_search_config_home ((type ARG1))
     (call usersubject_search_config_home (ARG1))

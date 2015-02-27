@@ -1,0 +1,28 @@
+#!/bin/bash
+
+modular_no_usersubject_module () {
+    modular_set_ignore sources.d sources/modules/contrib/system/usersubject sources/modules/contrib/system sources/modules/contrib/applications \
+        sources/modules/contrib/admin sources/modules/contrib/roles sources/modules/contrib/system sources/modules/contrib/services
+
+    unset MODULAR_NO_USERSUBJECT_MODULE
+
+    MODULAR_NO_USERSUBJECT_MODULE+=("${MODULAR_SMODULES[*]}")
+}
+
+modular_no_usersubject_run_test () {
+    modular_no_usersubject_module
+
+    if [ "${MODULAR_VERBOSE}" == "1" ] ; then
+        ${SECILC} -v $(echo ${MODULAR_NO_USERSUBJECT_MODULE[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+    else
+        ${SECILC} $(echo ${MODULAR_NO_USERSUBJECT_MODULE[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+    fi
+
+    if [ "$?" -ne 0 ] ; then
+        return 192
+    fi
+}
+
+#EOF

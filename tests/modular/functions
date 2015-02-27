@@ -3,9 +3,13 @@
 source tests/modular/modular-base-test
 source tests/modular/modular-base-plus-test
 source tests/modular/modular-no-systemd-test
+source tests/modular/modular-no-systemduser-test
+source tests/modular/modular-no-unconfined-test
+source tests/modular/modular-no-unconfineduser-test
+source tests/modular/modular-no-usersubject-test
 
 declare MODULAR_VERBOSE="0"
-declare MODULAR_TESTS="modular_base_run_test modular_base_plus_run_test modular_no_systemd_run_test"
+declare MODULAR_TESTS="modular_base_run_test modular_base_plus_run_test modular_no_systemd_run_test modular_no_systemduser_run_test modular_no_unconfined_run_test modular_no_unconfineduser_run_test modular_no_usersubject_run_test"
 
 modular_get_ignore () {
     unset MODULAR_GIGNORE

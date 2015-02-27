@@ -1,0 +1,27 @@
+#!/bin/bash
+
+modular_no_systemduser_module () {
+    modular_set_ignore sources.d sources/modules/contrib/system/systemd/systemduser.cil
+
+    unset MODULAR_NO_SYSTEMDUSER_MODULE
+
+    MODULAR_NO_SYSTEMDUSER_MODULE+=("${MODULAR_SMODULES[*]}")
+}
+
+modular_no_systemduser_run_test () {
+    modular_no_systemduser_module
+
+    if [ "${MODULAR_VERBOSE}" == "1" ] ; then
+        ${SECILC} -v $(echo ${MODULAR_NO_SYSTEMDUSER_MODULE[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+    else
+        ${SECILC} $(echo ${MODULAR_NO_SYSTEMDUSER_MODULE[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+    fi
+
+    if [ "$?" -ne 0 ] ; then
+        return 192
+    fi
+}
+
+#EOF

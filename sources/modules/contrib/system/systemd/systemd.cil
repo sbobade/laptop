@@ -28,14 +28,6 @@
 (context systemd_exec (system_u object_r systemd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd" file systemd_exec)
 
-(type systemd_pam_config_t)
-(call auth_pam_config_object_type (systemd_pam_config_t))
-
-(typeattributeset systemd_object_type systemd_pam_config_t)
-
-(context systemd_pam_config (system_u object_r systemd_pam_config_t (systemlow systemlow)))
-(filecon "/etc/pam\.d/systemd-user" file systemd_pam_config)
-
 (type systemd_dbus_config_t)
 (call dbus_config_object_type (systemd_dbus_config_t))
 
@@ -573,14 +565,6 @@
     (call dbus_rw_config_dirs (ARG1))
     (allow ARG1 systemd_dbus_config_t manage_file_perms))
 
-(macro systemd_read_pam_config_files ((type ARG1))
-    (call auth_search_pam_config (ARG1))
-    (allow ARG1 systemd_pam_config_t read_file_perms))
-
-(macro systemd_manage_pam_config_files ((type ARG1))
-    (call auth_rw_pam_config_dirs (ARG1))
-    (allow ARG1 systemd_pam_config_t manage_file_perms))
-
 (macro systemd_runtime_object_type ((type ARG1))
     (call files_runtime_object_type (ARG1))
     (typeattributeset systemd_runtime_object_type ARG1))
@@ -785,12 +769,10 @@
 
 (macro systemd_list_all_unit ((type ARG1))
     (call libraries_search (ARG1))
-    (call usersubject_search_config_home (ARG1))
     (allow ARG1 systemd_unit_object_type list_dir_perms))
 
 (macro systemd_rw_all_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
-    (call usersubject_search_config_home (ARG1))
     (allow ARG1 systemd_unit_object_type rw_dir_perms))
 
 (macro systemd_read_all_unit_files ((type ARG1))
