@@ -180,15 +180,11 @@
 
 (call terminals_use_unallocated_ttys (systemd_t))
 
-(call askpwd_read_systemd_runtime (systemd_t))
-
 (call audit_client_subject_type (systemd_t))
 
 (call auth_nsswitch_client_subject_type (systemd_t))
 (call auth_rw_utmp_runtime_files (systemd_t))
 (call auth_write_wtmp_log_files (systemd_t))
-
-(call dbus_system_service (systemd_t))
 
 (call dracut_search_runtime (systemd_t))
 
@@ -203,8 +199,6 @@
 (call journal_stream_connect_journald (systemd_t))
 (call journal_use_fd_journald (systemd_t))
 
-(call login_read_logind_systemd_runtime (systemd_t))
-
 (call miscfiles_read_locale (systemd_t))
 (call miscfiles_read_modules (systemd_t))
 
@@ -214,8 +208,6 @@
 (call plymouth_exec (systemd_t))
 (call plymouth_read_plymouthd_runtime (systemd_t))
 (call plymouth_use_fd_plymouthd (systemd_t))
-
-(call polkit_dbus_chat_polkitd (systemd_t))
 
 (call seutil_read_default_context_files (systemd_t))
 (call seutil_read_file_context_files (systemd_t))
@@ -234,11 +226,23 @@
 
 (call updatedone_getattr_flag_files (systemd_t))
 
+(optional systemd_optional_askpwd
+    (call askpwd_read_systemd_runtime (systemd_t)))
+
+(optional systemd_optional_dbus
+    (call dbus_system_service (systemd_t)))
+
 (optional systemd_optional_dhcp
     (call dhcp_read_dhclient_lib (systemd_t)))
 
+(optional systemd_optional_login_logind
+    (call login_read_logind_systemd_runtime (systemd_t)))
+
 (optional systemd_optional_ntp
     (call ntp_exec_ntphelper (systemd_t)))
+
+(optional systemd_optional_polkit
+    (call polkit_dbus_chat_polkitd (systemd_t)))
 
 (optional systemd_optional_systemduser
     (allow systemd_t self (process (setkeycreate)))
