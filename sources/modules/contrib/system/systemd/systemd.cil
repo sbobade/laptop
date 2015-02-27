@@ -238,9 +238,6 @@
 (optional systemd_optional_login_logind
     (call login_read_logind_systemd_runtime (systemd_t)))
 
-(optional systemd_optional_ntp
-    (call ntp_exec_ntphelper (systemd_t)))
-
 (optional systemd_optional_polkit
     (call polkit_dbus_chat_polkitd (systemd_t)))
 
