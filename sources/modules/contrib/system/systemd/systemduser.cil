@@ -322,15 +322,15 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_tmpfs_object_type_transition (ARG1 systemduser_tmpfs_t file "*")))
 
-(macro systemduser_shell_exec_manual_subject_type_transition_all_session_subjects ((type ARG1))
+(macro systemduser_shell_exec_manual_subject_type_transition_all_subjects ((type ARG1))
     (call commands_shell_exec_manual_subject_type_transition
         (ARG1 systemduser_subject_type)))
 
-(macro systemduser_noatsecure_all_session_subjects ((type ARG1))
+(macro systemduser_noatsecure_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (process (noatsecure))))
 
-(macro systemduser_send_sigchld_all_session_subjects ((type ARG1))
+(macro systemduser_send_sigchld_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (process (sigchld))))
 
-(macro systemduser_manage_keyring_all_session_subjects ((type ARG1))
+(macro systemduser_manage_keyring_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (key (create search link write))))

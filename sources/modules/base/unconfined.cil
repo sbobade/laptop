@@ -1,5 +1,4 @@
 (typeattribute unconfined_subject_type)
-(typeattribute unconfined_user_subject_type)
 
 (allow unconfined_subject_type self
     all_capability_perms_except_sys_module_and_sys_nice)
@@ -57,21 +56,8 @@
 (optional unconfined_subject_type_optional_systemd
     (call systemd_unconfined_subject_type (unconfined_subject_type)))
 
-(call unconfined_subject_type (unconfined_user_subject_type))
-
-(optional unconfined_optional_usersubject
-    (call usersubject_priv_login_subject_type (unconfined_user_subject_type)))
-
 (macro unconfined_subject_type ((type ARG1))
     (typeattributeset unconfined_subject_type ARG1))
-
-(macro unconfined_user_subject_type ((type ARG1))
-    (typeattributeset unconfined_user_subject_type ARG1))
-
-(macro unconfined_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
-    (call unconfined_user_subject_type (ARG3))
-    (optional unconfined_common_login_subject_template_optional_usersubject
-        (call usersubject_common_login_subject_template (ARG1 ARG2 ARG3))))
 
 (macro unconfined_read_state_all_subjects ((type ARG1))
     (call filesystems_search_proc (ARG1))
@@ -102,22 +88,3 @@
 
 (macro unconfined_use_fd_all_subjects ((type ARG1))
     (allow ARG1 unconfined_subject_type (fd (use))))
-
-(macro unconfined_create_keyring_all_user_subjects ((type ARG1))
-    (allow ARG1 unconfined_user_subject_type (process (setkeycreate)))
-    (allow ARG1 unconfined_user_subject_type (key (create search link write))))
-
-(macro unconfined_noatsecure_all_user_subjects ((type ARG1))
-    (allow ARG1 unconfined_user_subject_type (process (noatsecure))))
-
-(macro unconfined_read_state_all_user_subjects ((type ARG1))
-    (call filesystems_search_proc (ARG1))
-    (allow ARG1 unconfined_user_subject_type read_file_perms)
-    (allow ARG1 unconfined_user_subject_type list_dir_perms)
-    (allow ARG1 unconfined_user_subject_type read_lnk_file_perms))
-
-(macro unconfined_send_sigchld_all_user_subjects ((type ARG1))
-    (allow ARG1 unconfined_user_subject_type (process (sigchld))))
-
-(macro unconfined_shell_exec_manual_subject_type_transition_all_user_subjects ((type ARG1))
-    (call commands_shell_exec_manual_subject_type_transition (ARG1 unconfined_user_subject_type)))

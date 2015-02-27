@@ -254,21 +254,21 @@
     (call selinux_validate_context (systemd_t))
     (call selinux_compute_user_contexts (systemd_t))
 
-    (call systemduser_manage_keyring_all_session_subjects (systemd_t))
-    (call systemduser_noatsecure_all_session_subjects (systemd_t))
-    (call systemduser_send_sigchld_all_session_subjects (systemd_t))
-    (call systemduser_shell_exec_manual_subject_type_transition_all_session_subjects (systemd_t)))
+    (call systemduser_manage_keyring_all_subjects (systemd_t))
+    (call systemduser_noatsecure_all_subjects (systemd_t))
+    (call systemduser_send_sigchld_all_subjects (systemd_t))
+    (call systemduser_shell_exec_manual_subject_type_transition_all_subjects (systemd_t)))
 
 (optional systemd_optional_usersubject
     (call usersubject_link_keyring_all_common_login_subjects (systemd_t))
     (call usersubject_mounton_home_dir (systemd_t))
     (call usersubject_use_terminals (systemd_t)))
 
-(optional systemd_optional_unconfined
-    (call unconfined_noatsecure_all_user_subjects (systemd_t))
-    (call unconfined_send_sigchld_all_user_subjects (systemd_t))
-    (call unconfined_create_keyring_all_user_subjects (systemd_t))
-    (call unconfined_shell_exec_manual_subject_type_transition_all_user_subjects (systemd_t)))
+(optional systemd_optional_unconfineduser
+    (call unconfineduser_noatsecure_all_subjects (systemd_t))
+    (call unconfineduser_send_sigchld_all_subjects (systemd_t))
+    (call unconfineduser_create_keyring_all_subjects (systemd_t))
+    (call unconfineduser_shell_exec_manual_subject_type_transition_all_subjects (systemd_t)))
 
 (type systemdhelper_exec_t)
 (call commands_exec_object_type (systemdhelper_exec_t))

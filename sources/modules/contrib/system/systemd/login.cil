@@ -167,8 +167,8 @@
 
 (call udev_client_subject_type (logind_t))
 
-(optional logind_optional_unconfined
-    (call unconfined_read_state_all_user_subjects (logind_t)))
+(optional logind_optional_unconfineduser
+    (call unconfineduser_read_state_all_subjects (logind_t)))
 
 (allow login_logind_admin_subject_type logind_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (login_logind_admin_subject_type logind_t))

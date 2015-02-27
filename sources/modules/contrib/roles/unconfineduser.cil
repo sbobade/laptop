@@ -1,0 +1,30 @@
+(typeattribute unconfineduser_subject_type)
+
+(call unconfined_subject_type (unconfineduser_subject_type))
+(call usersubject_priv_login_subject_type (unconfineduser_subject_type))
+
+(macro unconfineduser_subject_type ((type ARG1))
+    (typeattributeset unconfineduser_subject_type ARG1))
+
+(macro unconfineduser_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
+    (call unconfineduser_subject_type (ARG3))
+    (call usersubject_common_login_subject_template (ARG1 ARG2 ARG3)))
+
+(macro unconfineduser_create_keyring_all_subjects ((type ARG1))
+    (allow ARG1 unconfineduser_subject_type (process (setkeycreate)))
+    (allow ARG1 unconfineduser_subject_type (key (create search link write))))
+
+(macro unconfineduser_noatsecure_all_subjects ((type ARG1))
+    (allow ARG1 unconfineduser_subject_type (process (noatsecure))))
+
+(macro unconfineduser_read_state_all_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 unconfineduser_subject_type read_file_perms)
+    (allow ARG1 unconfineduser_subject_type list_dir_perms)
+    (allow ARG1 unconfineduser_subject_type read_lnk_file_perms))
+
+(macro unconfineduser_send_sigchld_all_subjects ((type ARG1))
+    (allow ARG1 unconfineduser_subject_type (process (sigchld))))
+
+(macro unconfineduser_shell_exec_manual_subject_type_transition_all_subjects ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 unconfineduser_subject_type)))
