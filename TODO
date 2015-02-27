@@ -8,9 +8,9 @@
 
 * do journal clients still need net_admin?
 
-* target bootchart
-
 * decouple unconfineduser from unconfined so that unconfineduser can depend on usersubject but unconfined does not depend on unconfineduser
 
 * systemd indirectly depends on usersubject one way or another via auth.
     if i were to strip auth_nsswitch_client_subject and utmp related from auth then i might be able to get rid of the systemd usersubject dependency.
+
+* there might be some redundant net_admins' in there because journal_client_subject_type also has it.

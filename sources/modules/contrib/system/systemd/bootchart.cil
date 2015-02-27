@@ -1,0 +1,41 @@
+(roleattribute bootchart_role)
+
+(type bootchart_t)
+(type bootchart_exec_t)
+(call applications_app (bootchart_t bootchart_exec_t))
+(call systemd_daemon (bootchart_t bootchart_exec_t))
+(roletype bootchart_role bootchart_t)
+
+(context bootchart_exec (system_u object_r bootchart_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-bootchart" file bootchart_exec)
+
+(type bootchart_systemd_config_t)
+(call systemd_config_object_type (bootchart_systemd_config_t))
+
+(context bootchart_systemd_config (system_u object_r bootchart_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/bootchart\.conf" file bootchart_systemd_config)
+
+(call systemd_auto_subject_type_transition (bootchart_t))
+
+(macro bootchart_exec ((type ARG1))
+    (call can_exec (ARG1 bootchart_exec_t)))
+
+(macro bootchart_auto_subject_type_transition ((type ARG1))
+    (call bootchart_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 bootchart_exec_t bootchart_t)))
+
+(macro bootchart_send_signal ((type ARG1))
+    (allow ARG1 bootchart_t (process (signal))))
+
+(macro bootchart_run ((type ARG1)(role ARG2))
+    (call bootchart_auto_subject_type_transition (ARG1))
+    (roleattributeset bootchart_role ARG2))
+
+(macro bootchart_read_systemd_config_files ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 bootchart_config_t read_file_perms))
+
+(macro bootchart_manage_systemd_config_files ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 bootchart_config_t manage_file_perms))
