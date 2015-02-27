@@ -291,8 +291,6 @@
 
 (call terminals_use_inherited_console (systemd_systemctl_subject_type))
 
-(call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role))
-
 (call miscfiles_read_all_terminfo (systemd_systemctl_subject_type))
 (call miscfiles_read_locale (systemd_systemctl_subject_type))
 
@@ -303,6 +301,9 @@
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_control_system (systemd_systemctl_subject_type))
+
+(optional systemd_systemctl_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role)))
 
 (optional systemd_systemctl_subject_type_optional_systemduser
     (call systemduser_read_config_home (systemd_systemctl_subject_type)))
@@ -382,20 +383,22 @@
 (call filesystems_read_sysfs_files (systemd_systemctl_client_subject_type))
 (call filesystems_read_cgroup (systemd_systemctl_client_subject_type))
 
-(call dbus_system_client_subject_type (systemd_systemctl_client_subject_type))
-
 (call journal_read_log (systemd_systemctl_client_subject_type))
 
 (call machine_read_config_files (systemd_systemctl_client_subject_type))
 
-(call polkit_dbus_chat_polkitd (systemd_systemctl_client_subject_type))
-
-(call systemd_dbus_chat (systemd_systemctl_client_subject_type))
 (call systemd_dgram_send (systemd_systemctl_client_subject_type))
 (call systemd_read_state_lnk_files (systemd_systemctl_client_subject_type))
 (call systemd_search_unit (systemd_systemctl_client_subject_type))
 (call systemd_stream_connect (systemd_systemctl_client_subject_type))
 (call systemd_use_fd (systemd_systemctl_client_subject_type))
+
+(optional systemd_systemctl_client_subject_type_optional_dbus
+    (call dbus_system_client_subject_type (systemd_systemctl_client_subject_type))
+    (call systemd_dbus_chat (systemd_systemctl_client_subject_type)))
+
+(optional systemd_systemctl_client_subject_type_optional_polkit
+    (call polkit_dbus_chat_polkitd (systemd_systemctl_client_subject_type)))
 
 (allow systemd_admin_subject_type systemd_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (systemd_admin_subject_type systemd_t))
