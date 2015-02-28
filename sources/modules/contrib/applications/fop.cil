@@ -31,8 +31,7 @@
 
 (call fop_read_config_files (fop_t))
 
-(call java_client_subject_type (fop_t))
-(call java_tmpfs_object_type_transition_java_tmpfs (fop_t file "*"))
+(call java_client (fop_t))
 
 (call miscfiles_read_all_fonts (fop_t))
 (call miscfiles_read_net_config_files (fop_t))

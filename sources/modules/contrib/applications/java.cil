@@ -45,14 +45,27 @@
 
 (call ns_nsswitch_client_subject_type (java_client_subject_type))
 
-(optional java_client_subject_type_optional_xserver
-    (call xserver_tmpfs_client_template (java_client_subject_type java_tmpfs_t)))
-
 (macro java_exec ((type ARG1))
     (call can_exec (ARG1 java_exec_t)))
 
 (macro java_client_subject_type ((type ARG1))
     (typeattributeset java_client_subject_type ARG1))
+
+(macro java_client ((type ARG1))
+    (call java_client_subject_type (ARG1))
+    (call java_tmpfs_object_type_transition_java_tmpfs (ARG1 dir "*"))
+
+    (optional java_client_subject_type_optional_xserver
+        (call java_tmpfs_object_type_transition_java_tmpfs (ARG1 file "*"))
+        (call xserver_tmpfs_client_template (ARG1 java_tmpfs_t))))
+
+(macro java_tmpfs_client_template ((type ARG1)(type ARG2))
+    (call java_client_subject_type (ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 ARG2 dir "*"))
+
+    (optional java_tmpfs_client_template_optional_xserver
+        (call filesystems_tmpfs_object_type_transition (ARG1 ARG2 file "*"))
+        (call xserver_tmpfs_client_template (ARG1 ARG2))))
 
 (macro java_search_config ((type ARG1))
     (call files_search_config (ARG1))
