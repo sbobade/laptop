@@ -16,11 +16,11 @@
 
 (call subject_interactive_fd_subject_type (xterm_subject_type))
 
-(call auth_nsswitch_client_subject_type (xterm_subject_type))
-
 (call miscfiles_read_all_terminfo (xterm_subject_type))
 (call miscfiles_read_all_fonts (xterm_subject_type))
 (call miscfiles_read_locale (xterm_subject_type))
+
+(call ns_nsswitch_client_subject_type (xterm_subject_type))
 
 (call usersubject_create_ptys (xterm_subject_type))
 (call usersubject_setattr_ptys (xterm_subject_type))

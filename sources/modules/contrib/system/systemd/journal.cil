@@ -23,13 +23,14 @@
 
 (call devices_read_random (journal_journalctl_subject_type))
 
-(call askpwd_run_askpwdagent (journal_journalctl_subject_type journal_journalctl_role))
-
 (call journal_manage_log (journal_journalctl_subject_type))
 (call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
 (call journal_journalctl_client_subject_type (journal_journalctl_subject_type))
 (call journal_read_journald_systemd_runtime (journal_journalctl_subject_type))
 (call journal_stop_journald_units (journal_journalctl_subject_type))
+
+(optional journal_journalctl_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (journal_journalctl_subject_type journal_journalctl_role)))
 
 (type journald_t)
 (type journald_exec_t)
@@ -133,15 +134,17 @@
 (call journal_read_journald_systemd_config_files (journald_t))
 (call journal_test_for_systemd (journald_t))
 
-(call machine_read_config_files (journald_t))
-
 (call miscfiles_read_locale (journald_t))
-
-(call plymouth_use_fd_plymouthd (journald_t))
 
 (call systemd_dgram_send (journald_t))
 
 (call udev_client_subject_type (journald_t))
+
+(optional journald_optional_machine
+    (call machine_read_config_files (journald_t)))
+
+(optional journald_optional_plymouth
+    (call plymouth_use_fd_plymouthd (journald_t)))
 
 (allow journal_journalctl_client_subject_type self (capability (sys_resource ipc_lock)))
 (allow journal_journalctl_client_subject_type self (process (setrlimit)))
@@ -159,14 +162,16 @@
 
 (call journal_read_log (journal_journalctl_client_subject_type))
 
-(call machine_read_config_files (journal_journalctl_client_subject_type))
-
 (call miscfiles_read_all_terminfo (journal_journalctl_client_subject_type))
 (call miscfiles_read_locale (journal_journalctl_client_subject_type))
 
 (call systemd_stream_connect (journal_journalctl_client_subject_type))
 
-(call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type))
+(optional journal_journalctl_client_subject_type_optional_machine
+    (call machine_read_config_files (journal_journalctl_client_subject_type)))
+
+(optional journal_journalctl_client_subject_type_optional_usersubject
+    (call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type)))
 
 (allow journal_client_subject_type self (capability (net_admin))) ; FIXME
 (allow journal_client_subject_type self (unix_dgram_socket (sendto)))

@@ -123,11 +123,11 @@
 (call selinux_list_securityfs (setsebool_t))
 (call selinux_set_all_booleans (setsebool_t))
 
-(call auth_nsswitch_client_subject_type (setsebool_t))
-
 (call seutil_read_selinux_config_files (setsebool_t))
 
 (call miscfiles_read_locale (setsebool_t))
+
+(call ns_nsswitch_client_subject_type (setsebool_t))
 
 (optional setsebool_optional_journal
     (call journal_client_subject_type (setsebool_t)))

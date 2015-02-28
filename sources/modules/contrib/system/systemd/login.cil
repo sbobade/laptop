@@ -131,7 +131,6 @@
 (call terminals_use_unallocated_ttys (logind_t))
 
 (call auth_read_state_all_login_program_subjects (logind_t))
-(call auth_nsswitch_client_subject_type (logind_t))
 
 (call dbus_system_service (logind_t))
 
@@ -140,6 +139,8 @@
 (call journal_client_subject_type (logind_t))
 
 (call login_read_logind_systemd_config_files (logind_t))
+
+(call ns_nsswitch_client_subject_type (logind_t))
 
 (call polkit_dbus_chat_polkitd (logind_t))
 

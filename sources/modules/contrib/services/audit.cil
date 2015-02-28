@@ -105,9 +105,9 @@
 
 (call filesystems_getattr_filesystems (auditd_t))
 
-(call auth_nsswitch_client_subject_type (auditd_t))
-
 (call miscfiles_read_locale (auditd_t))
+
+(call ns_nsswitch_client_subject_type (auditd_t))
 
 (call audit_auto_subject_type_transition_audispd (auditd_t))
 (call audit_read_auditd_config (auditd_t))
@@ -179,9 +179,9 @@
 (call audit_read_auditd_config (ausearch_t))
 (call audit_read_auditd_log (ausearch_t))
 
-(call auth_nsswitch_client_subject_type (ausearch_t))
-
 (call miscfiles_read_locale (ausearch_t))
+
+(call ns_nsswitch_client_subject_type (ausearch_t))
 
 (call audit_rw_audispd_unix_stream_sockets (audit_audispd_subject_type))
 (call audit_use_fd_auditd (audit_audispd_subject_type))

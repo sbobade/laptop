@@ -23,14 +23,14 @@
 
 (call coredump_read_systemd_lib_files (coredumpctl_t))
 
-(call auth_nsswitch_client_subject_type (coredumpctl_t))
-
 (call journal_read_log (coredumpctl_t))
 
 (call machine_read_config_files (coredumpctl_t))
 
 (call miscfiles_read_all_terminfo (coredumpctl_t))
 (call miscfiles_read_locale (coredumpctl_t))
+
+(call ns_nsswitch_client_subject_type (coredumpctl_t))
 
 (call usersubject_dontaudit_read_user_home_files (coredumpctl_t))
 

@@ -78,10 +78,10 @@
 
 (call auth_read_authconfig_pam_config (sudo_subject_type))
 (call auth_read_pam_config (sudo_subject_type))
-(call auth_read_utmp_runtime_files (sudo_subject_type))
-(call auth_nsswitch_client_subject_type (sudo_subject_type))
 
 (call miscfiles_read_locale (sudo_subject_type))
+
+(call ns_nsswitch_client_subject_type (sudo_subject_type))
 
 (call seutil_read_selinux_config_files (sudo_subject_type))
 (call seutil_read_default_context_files (sudo_subject_type))
@@ -93,11 +93,13 @@
 (call usersubject_setattr_terminals (sudo_subject_type))
 (call usersubject_use_terminals (sudo_subject_type))
 
+(call utmp_read_utmp_runtime_files (sudo_subject_type))
+
 (optional sudo_optional_dbus
     (call dbus_system_client_subject_type (sudo_subject_type)))
 
 (optional sudo_subject_type_optional_initctl
-    (call initctl_getattr_systemd_runtime_fifo_files (sudo_subject_type)))
+    (call initctl_getattr_runtime_fifo_files (sudo_subject_type)))
 
 (optional sudo_subject_type_optional_journal
     (call journal_client_subject_type (sudo_subject_type)))
@@ -121,9 +123,9 @@
 (call manage_files_pattern (sudo_visudo_subject_type sudo_config_t sudo_config_t))
 (call files_config_object_type_transition (sudo_visudo_subject_type sudo_config_t file "*"))
 
-(call auth_nsswitch_client_subject_type (sudo_visudo_subject_type))
-
 (call miscfiles_read_locale (sudo_visudo_subject_type))
+
+(call ns_nsswitch_client_subject_type (sudo_visudo_subject_type))
 
 (call sudo_list_config (sudo_visudo_subject_type))
 

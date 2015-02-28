@@ -77,15 +77,14 @@
 
 (call filesystems_getattr_proc_filesystems (iptables_t))
 
-(call auth_nsswitch_client_subject_type (iptables_t))
-
 (call iptables_exec (iptables_t))
 
 (call kmod_read_config (iptables_t))
 (call kmod_run (iptables_t iptables_role))
 
 (call miscfiles_read_locale (iptables_t))
-(call miscfiles_read_net_config_files (iptables_t))
+
+(call ns_nsswitch_client_subject_type (iptables_t))
 
 (optional iptables_optional_plymouth
     (call plymouth_exec (iptables_t)))

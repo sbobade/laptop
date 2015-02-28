@@ -69,11 +69,11 @@
 
 (call subject_read_all_common_subjects_state (polkitd_t))
 
-(call auth_nsswitch_client_subject_type (polkitd_t))
-
 (call dbus_system_service (polkitd_t))
 
 (call miscfiles_read_locale (polkitd_t))
+
+(call ns_nsswitch_client_subject_type (polkitd_t))
 
 (call polkit_exec_pkladm (polkitd_t))
 (call polkit_exec_pklauth (polkitd_t))
@@ -149,12 +149,13 @@
 
 (call audit_set_params (pklagent_t))
 
-(call auth_nsswitch_client_subject_type (pklagent_t))
 (call auth_read_authconfig_pam_config (pklagent_t))
 (call auth_read_pam_config_files (pklagent_t))
 (call auth_run_chkpwd (pklagent_t polkit_pklagent_role))
 
 (call dbus_system_client_subject_type (pklagent_t))
+
+(call ns_nsswitch_client_subject_type (pklagent_t))
 
 (call polkit_dbus_chat_polkitd (pklagent_t))
 (call polkit_read_pam_config_files (pklagent_t))

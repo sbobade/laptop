@@ -44,18 +44,18 @@
 (call http_tcp_connect_http_port (http_lynx_subject_type))
 (call http_read_lynx_config_files (http_lynx_subject_type))
 
-(call auth_nsswitch_client_subject_type (http_lynx_subject_type))
-(call auth_read_utmp_runtime_files (http_lynx_subject_type))
-
-(call miscfiles_read_net_config_files (http_lynx_subject_type))
 (call miscfiles_read_all_terminfo (http_lynx_subject_type))
 (call miscfiles_read_all_certs (http_lynx_subject_type))
 (call miscfiles_read_locale (http_lynx_subject_type))
+
+(call ns_nsswitch_client_subject_type (http_lynx_subject_type))
 
 (call usersubject_manage_user_home_files (http_lynx_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (http_lynx_subject_type file "*"))
 
 (call usersubject_use_terminals (http_lynx_subject_type))
+
+(call utmp_read_utmp_runtime_files (http_lynx_subject_type))
 
 (optional http_lynx_subject_type_optional_nb
     (call nb_rw_inherited_home_files (http_lynx_subject_type)))

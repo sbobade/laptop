@@ -107,7 +107,7 @@
 (call terminals_use_console (plymouthd_t))
 (call terminals_use_unallocated_ttys (plymouthd_t))
 
-(call auth_nsswitch_client_subject_type (plymouthd_t))
+(call ns_nsswitch_client_subject_type (plymouthd_t))
 
 (call plymouth_read_config_files (plymouthd_t))
 

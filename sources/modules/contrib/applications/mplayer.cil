@@ -35,12 +35,11 @@
 
 (call files_search_mnt (mplayer_t))
 
-(call auth_nsswitch_client_subject_type (mplayer_t))
-
 (call miscfiles_read_locale (mplayer_t))
-(call miscfiles_read_net_config_files (mplayer_t))
 
 (call mplayer_read_config_files (mplayer_t))
+
+(call ns_nsswitch_client_subject_type (mplayer_t))
 
 (call pa_tmpfs_client_template (mplayer_t mplayer_role mplayer_tmpfs_t))
 

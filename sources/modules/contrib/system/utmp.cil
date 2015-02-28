@@ -1,0 +1,92 @@
+(type utmp_t)
+(type utmp_exec_t)
+(call subject_common_type (utmp_t))
+(call subject_entry (utmp_t utmp_exec_t))
+(roletype system_r utmp_t)
+
+(type utmp_runtime_t)
+(call files_runtime_object_type (utmp_runtime_t))
+
+(context utmp_runtime (system_u object_r utmp_runtime_t (systemlow systemlow)))
+(filecon "/var/run/utmp" file utmp_runtime)
+
+(type wtmp_log_t)
+(call files_log_object_type (wtmp_log_t))
+
+(context wtmp_log (system_u object_r wtmp_log_t (systemlow systemlow)))
+(filecon "/var/log/wtmp.*" file wtmp_log)
+
+(call files_search_config (utmp_t))
+
+(call audit_client_subject_type (utmp_t))
+
+(call utmp_manage_utmp_runtime_files (utmp_t))
+(call utmp_runtime_type_transition_utmp_runtime_files (utmp_t "utmp"))
+(call utmp_write_wtmp_log_files (utmp_t))
+
+(optional utmp_optional_logrotate
+    (call logrotate_log_object_type (wtmp_log_t)))
+
+(optional utmp_optional_systemd
+    (call systemd_daemon (utmp_t utmp_exec_t))
+
+    (context utmp_exec (system_u object_r utmp_exec_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/systemd-update-utmp" file utmp_exec)
+
+    (call devices_write_kmsg (utmp_t))
+
+    (call journal_client_subject_type (utmp_t))
+
+    (call systemd_status_system_units (utmp_t))
+    (call systemd_status_system (utmp_t))
+    (call systemd_status_transient_systemd_units (utmp_t))
+    (call systemd_stream_connect (utmp_t)))
+
+(macro utmp_exec ((type ARG1))
+    (call can_exec (ARG1 utmp_exec_t)))
+
+(macro utmp_auto_subject_type_transition ((type ARG1))
+    (call utmp_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 utmp_exec_t utmp_t)))
+
+(macro utmp_send_signal ((type ARG1))
+    (allow ARG1 utmp_t (process (signal))))
+
+(macro utmp_append_wtmp_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 wtmp_log_t append_file_perms))
+
+(macro utmp_read_wtmp_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 wtmp_log_t read_file_perms))
+
+(macro utmp_write_wtmp_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 wtmp_log_t write_file_perms))
+
+(macro utmp_manage_wtmp_log_files ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 wtmp_log_t manage_file_perms))
+
+(macro utmp_dontaudit_write_wtmp_log_files ((type ARG1))
+    (dontaudit ARG1 wtmp_log_t write_file_perms))
+
+(macro utmp_read_utmp_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 utmp_runtime_t read_file_perms))
+
+(macro utmp_write_utmp_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 utmp_runtime_t write_file_perms))
+
+(macro utmp_rw_utmp_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 utmp_runtime_t rw_file_perms))
+
+(macro utmp_manage_utmp_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 utmp_runtime_t manage_file_perms))
+
+(macro utmp_runtime_type_transition_utmp_runtime_files ((type ARG1)(name ARG2))
+    (call files_runtime_object_type_transition (ARG1 utmp_runtime_t file ARG2)))

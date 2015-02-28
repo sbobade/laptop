@@ -17,13 +17,14 @@
 
 (call files_read_config_files (getty_t))
 
-(call auth_nsswitch_client_subject_type (getty_t))
-(call auth_rw_utmp_runtime_files (getty_t))
-(call auth_write_wtmp_log_files (getty_t))
-
 (call miscfiles_read_locale (getty_t))
 
+(call ns_nsswitch_client_subject_type (getty_t))
+
 (call login_auto_subject_type_transition (getty_t))
+
+(call utmp_rw_utmp_runtime_files (getty_t))
+(call utmp_write_wtmp_log_files (getty_t))
 
 (booleanif terminals_console_login
     (true

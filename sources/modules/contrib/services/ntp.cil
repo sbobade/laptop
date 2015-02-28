@@ -18,9 +18,9 @@
 
 (call commands_mprot_read_shell_exec_files (ntp_t))
 
-(call auth_nsswitch_client_subject_type (ntp_t))
-
 (call miscfiles_read_locale (ntp_t))
+
+(call ns_nsswitch_client_subject_type (ntp_t))
 
 (call ntp_read_config_files (ntp_t))
 
@@ -121,16 +121,15 @@
 
 (call devices_read_urandom (ntpd_t))
 
-(call auth_nsswitch_client_subject_type (ntpd_t))
+(call miscfiles_read_locale (ntpd_t))
+
+(call ns_nsswitch_client_subject_type (ntpd_t))
 
 (call ntp_append_config_files (ntpd_t))
 (call ntp_read_config_files (ntpd_t))
 (call ntp_setattr_config_files (ntpd_t))
 (call ntp_udp_bind_ntp_port (ntpd_t))
 (call ntp_udp_bind_ntp_cmdmon_port (ntpd_t))
-
-(call miscfiles_read_locale (ntpd_t))
-(call miscfiles_read_net_config_files (ntpd_t))
 
 (optional ntpd_optional_dhcp
     (call dhcp_list_dhclient_lib (ntpd_t)))

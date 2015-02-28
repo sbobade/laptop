@@ -16,9 +16,9 @@
 
 (call selinux_get_enforce_mode (readonly_t))
 
-(call auth_nsswitch_client_subject_type (readonly_t))
-
 (call miscfiles_read_locale (readonly_t))
+
+(call ns_nsswitch_client_subject_type (readonly_t))
 
 (macro readonly_exec ((type ARG1))
     (call can_exec (ARG1 readonly_exec_t)))

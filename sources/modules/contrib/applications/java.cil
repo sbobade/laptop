@@ -40,10 +40,10 @@
 
 (call subject_execmem_uncond (java_client_subject_type))
 
-(call auth_nsswitch_client_subject_type (java_client_subject_type))
-
 (call java_exec (java_client_subject_type))
 (call java_read_config (java_client_subject_type))
+
+(call ns_nsswitch_client_subject_type (java_client_subject_type))
 
 (macro java_exec ((type ARG1))
     (call can_exec (ARG1 java_exec_t)))

@@ -51,16 +51,15 @@
 (call files_read_data_files (mail_mutt_subject_type))
 (call files_read_config_files (mail_mutt_subject_type))
 
-(call auth_nsswitch_client_subject_type (mail_mutt_subject_type))
-
 (call mail_tcp_connect_imap_port (mail_mutt_subject_type))
 (call mail_tcp_connect_smtp_port (mail_mutt_subject_type))
 
 (call mail_read_mutt_config_files (mail_mutt_subject_type))
 
-(call miscfiles_read_net_config_files (mail_mutt_subject_type))
 (call miscfiles_read_all_terminfo (mail_mutt_subject_type))
 (call miscfiles_read_locale (mail_mutt_subject_type))
+
+(call ns_nsswitch_client_subject_type (mail_mutt_subject_type))
 
 (call usersubject_manage_user_home_files (mail_mutt_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (mail_mutt_subject_type file "*"))

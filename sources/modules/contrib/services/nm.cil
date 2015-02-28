@@ -92,8 +92,6 @@
 (call files_manage_config_lnk_files (nm_t))
 (call files_read_data (nm_t))
 
-(call auth_nsswitch_client_subject_type (nm_t))
-
 (call dbus_system_service (nm_t))
 
 (call dns_manage_resolve_config_files (nm_t))
@@ -118,6 +116,8 @@
 (call nm_manage_config_files (nm_t))
 (call nm_read_state_all_client_subjects (nm_t))
 (call nm_read_state_nmonline (nm_t))
+
+(call ns_nsswitch_client_subject_type (nm_t))
 
 (call sysctl_read_config (nm_t))
 
@@ -181,14 +181,11 @@
 
 (call files_read_config (nmdisp_t))
 
-(call auth_nsswitch_client_subject_type (nmdisp_t))
-
 (call dbus_system_service (nmdisp_t))
 
 (call iptools_exec (nmdisp_t))
 (call iptools_read_config_files (nmdisp_t))
 
-(call miscfiles_read_net_config_files (nmdisp_t))
 (call miscfiles_read_locale (nmdisp_t))
 
 (call mount_exec (nmdisp_t))
@@ -197,6 +194,8 @@
 (call nm_exec_nmhelper (nmdisp_t))
 (call nm_read_config (nmdisp_t))
 (call nm_read_runtime (nmdisp_t))
+
+(call ns_nsswitch_client_subject_type (nmdisp_t))
 
 (optional nmdisp_optional_dhcp
     (call dhcp_auto_subject_type_transition_dhclient (nmdisp_t)))

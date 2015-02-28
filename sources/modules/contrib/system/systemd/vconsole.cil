@@ -25,11 +25,11 @@
 (call commands_exec (vconsole_t))
 (call commands_exec_shell (vconsole_t))
 
-(call auth_nsswitch_client_subject_type (vconsole_t))
-
 (call journal_client_subject_type (vconsole_t))
 
 (call miscfiles_read_locale (vconsole_t))
+
+(call ns_nsswitch_client_subject_type (vconsole_t))
 
 (call vconsole_read_config_files (vconsole_t))
 

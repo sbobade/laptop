@@ -48,16 +48,15 @@
 (call filesystems_list_tmpfs (git_subject_type))
 (call filesystems_read_sysfs (git_subject_type))
 
-(call auth_nsswitch_client_subject_type (git_subject_type))
-
 (call git_exec (git_subject_type))
 (call git_tcp_connect_git_port (git_subject_type))
 (call git_read_config_home (git_subject_type))
 
 (call miscfiles_read_all_certs (git_subject_type))
-(call miscfiles_read_net_config_files (git_subject_type))
 (call miscfiles_read_all_terminfo (git_subject_type))
 (call miscfiles_read_locale (git_subject_type))
+
+(call ns_nsswitch_client_subject_type (git_subject_type))
 
 (call usersubject_manage_user_home_dirs (git_subject_type))
 (call usersubject_manage_user_home_files (git_subject_type))
@@ -91,11 +90,10 @@
 (call files_read_data (git_gitemail_subject_type))
 (call files_read_config_files (git_gitemail_subject_type))
 
-(call auth_nsswitch_client_subject_type (git_gitemail_subject_type))
-
 (call miscfiles_read_all_certs (git_gitemail_subject_type))
-(call miscfiles_read_net_config_files (git_gitemail_subject_type))
 (call miscfiles_read_locale (git_gitemail_subject_type))
+
+(call ns_nsswitch_client_subject_type (git_gitemail_subject_type))
 
 (call usersubject_read_user_home_files (git_gitemail_subject_type))
 

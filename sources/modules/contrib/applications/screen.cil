@@ -53,11 +53,11 @@
 
 (call auth_read_pam_config_files (screen_subject_type))
 (call auth_read_authconfig_pam_config (screen_subject_type))
-(call auth_nsswitch_client_subject_type (screen_subject_type))
-(call auth_read_utmp_runtime_files (screen_subject_type))
 
 (call miscfiles_read_all_terminfo (screen_subject_type))
 (call miscfiles_read_locale (screen_subject_type))
+
+(call ns_nsswitch_client_subject_type (screen_subject_type))
 
 (call screen_read_config_files (screen_subject_type))
 (call screen_read_home_files (screen_subject_type))
@@ -66,6 +66,8 @@
 (call usersubject_create_ptys (screen_subject_type))
 (call usersubject_setattr_ptys (screen_subject_type))
 (call usersubject_use_terminals (screen_subject_type))
+
+(call utmp_read_utmp_runtime_files (screen_subject_type))
 
 (optional screen_subject_type_optional_dbus
     (call dbus_system_client_subject_type (screen_subject_type)))

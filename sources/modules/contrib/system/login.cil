@@ -113,9 +113,10 @@
 (call terminals_use_unallocated_ttys (sulogin_t))
 
 (call auth_read_shadow (sulogin_t))
-(call auth_nsswitch_client_subject_type (sulogin_t))
 
 (call miscfiles_read_locale (sulogin_t))
+
+(call ns_nsswitch_client_subject_type (sulogin_t))
 
 (call seutil_read_selinux_config_files (sulogin_t))
 (call seutil_read_default_context_files (sulogin_t))

@@ -37,18 +37,19 @@
 
 (call audit_client_subject_type (xlock_t))
 
-(call auth_nsswitch_client_subject_type (xlock_t))
-
 (call auth_read_pam_config_files (xlock_t))
 (call auth_read_authconfig_pam_config (xlock_t))
-(call auth_read_utmp_runtime_files (xlock_t))
 (call auth_run_chkpwd (xlock_t xlock_role))
 
 (call miscfiles_read_locale (xlock_t))
 
+(call ns_nsswitch_client_subject_type (xlock_t))
+
 (call udev_client_subject_type (xlock_t))
 
 (call usersubject_read_user_home_files (xlock_t))
+
+(call utmp_read_utmp_runtime_files (xlock_t))
 
 (call xlock_read_home_files (xlock_t))
 (call xlock_read_pam_config_files (xlock_t))

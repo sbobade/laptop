@@ -48,14 +48,13 @@
 (call network_udp_bind_all_unreserved_ports (dhclient_t))
 (call network_udp_bind_generic_node (dhclient_t))
 
-(call auth_nsswitch_client_subject_type (dhclient_t))
-
 (call dhcp_read_config (dhclient_t))
 (call dhcp_udp_bind_dhcp_port (dhclient_t))
 
 (call miscfiles_read_cert_files (dhclient_t))
 (call miscfiles_read_locale (dhclient_t))
-(call miscfiles_read_net_config_files (dhclient_t))
+
+(call ns_nsswitch_client_subject_type (dhclient_t))
 
 (optional dhclient_optional_nm
     (call nm_exec_nmhelper (dhclient_t))

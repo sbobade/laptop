@@ -78,10 +78,9 @@
 
 (call files_read_config_files (gpg2keys_t)) ; FIXME
 
-(call auth_nsswitch_client_subject_type (gpg2keys_t))
-
 (call miscfiles_read_all_certs (gpg2keys_t))
-(call miscfiles_read_net_config_files (gpg2keys_t))
+
+(call ns_nsswitch_client_subject_type (gpg2keys_t))
 
 (optional gpg2keys_subject_optional_http
     (call http_tcp_connect_http_port (gpg2keys_t)))

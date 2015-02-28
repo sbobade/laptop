@@ -27,14 +27,13 @@
 (call filesystems_list_tmpfs (nb_subject_type))
 (call filesystems_dontaudit_audit_access_tmpfs_dirs (nb_subject_type))
 
-(call auth_nsswitch_client_subject_type (nb_subject_type))
-
 (call http_tcp_connect_http_port (nb_subject_type))
 
 (call miscfiles_read_all_certs (nb_subject_type))
-(call miscfiles_read_net_config_files (nb_subject_type))
 (call miscfiles_read_all_terminfo (nb_subject_type))
 (call miscfiles_read_locale (nb_subject_type))
+
+(call ns_nsswitch_client_subject_type (nb_subject_type))
 
 (call usersubject_manage_user_home_dirs (nb_subject_type))
 (call usersubject_manage_user_home_files (nb_subject_type))

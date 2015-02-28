@@ -21,13 +21,13 @@
 
 (call selinux_get_enforce_mode (importstate_t))
 
-(call auth_nsswitch_client_subject_type (importstate_t))
-
 (call dracut_search_runtime (importstate_t))
 
 (call miscfiles_read_locale (importstate_t))
 (call miscfiles_read_net_config (importstate_t))
 (call miscfiles_setattr_net_config (importstate_t))
+
+(call ns_nsswitch_client_subject_type (importstate_t))
 
 (call seutil_auto_subject_type_transition_setfiles (importstate_t))
 

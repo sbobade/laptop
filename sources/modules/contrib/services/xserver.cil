@@ -109,11 +109,10 @@
 
 (call network_tcp_bind_generic_node (xserver_t))
 
-(call auth_nsswitch_client_subject_type (xserver_t))
-
-(call miscfiles_read_net_config_files (xserver_t))
 (call miscfiles_read_fonts_data_files (xserver_t))
 (call miscfiles_read_locale (xserver_t))
+
+(call ns_nsswitch_client_subject_type (xserver_t))
 
 (call udev_client_subject_type (xserver_t))
 
@@ -180,10 +179,9 @@
 
 (call filesystems_search_tmpfs (xserver_xinit_subject_type))
 
-(call auth_nsswitch_client_subject_type (xserver_xinit_subject_type))
-
-(call miscfiles_read_net_config_files (xserver_xinit_subject_type))
 (call miscfiles_read_locale (xserver_xinit_subject_type))
+
+(call ns_nsswitch_client_subject_type (xserver_xinit_subject_type))
 
 (call xserver_read_home_files (xserver_xinit_subject_type))
 (call xserver_read_xauth_home_files (xserver_xinit_subject_type))
@@ -203,9 +201,7 @@
 (call filesystems_getattr_filesystems (xauth_t))
 (call filesystems_read_sysfs (xauth_t))
 
-(call auth_nsswitch_client_subject_type (xauth_t))
-
-(call miscfiles_read_net_config_files (xauth_t))
+(call ns_nsswitch_client_subject_type (xauth_t))
 
 (call usersubject_read_inherited_tmpfs_files (xauth_t))
 

@@ -53,13 +53,14 @@
 
 (call audit_client_subject_type (usermanage_passwd_subject_type))
 
-(call auth_nsswitch_client_subject_type (usermanage_passwd_subject_type))
-(call auth_manage_shadow (usermanage_passwd_subject_type))
 (call auth_manage_passwd_config_files (usermanage_passwd_subject_type))
+(call auth_manage_shadow (usermanage_passwd_subject_type))
 (call auth_read_authconfig_pam_config (usermanage_passwd_subject_type))
 (call auth_read_pam_config_files (usermanage_passwd_subject_type))
 
 (call miscfiles_read_locale (usermanage_passwd_subject_type))
+
+(call ns_nsswitch_client_subject_type (usermanage_passwd_subject_type))
 
 (call usermanage_read_passwd_pam_config_files (usermanage_passwd_subject_type))
 
@@ -121,13 +122,14 @@
 
 (call audit_client_subject_type (useradd_t))
 
-(call auth_rw_lastlog_log_files (useradd_t))
-(call auth_manage_shadow (useradd_t))
 (call auth_manage_passwd_config_files (useradd_t))
 (call auth_config_object_type_transition_passwd_config_files (useradd_t "*"))
-(call auth_nsswitch_client_subject_type (useradd_t))
+(call auth_manage_shadow (useradd_t))
+(call auth_rw_lastlog_log_files (useradd_t))
 
 (call miscfiles_read_locale (useradd_t))
+
+(call ns_nsswitch_client_subject_type (useradd_t))
 
 (call seutil_read_selinux_config_files (useradd_t))
 (call seutil_read_file_context_files (useradd_t))
@@ -170,12 +172,13 @@
 
 (call audit_client_subject_type (groupadd_t))
 
-(call auth_manage_shadow (groupadd_t))
 (call auth_manage_passwd_config_files (groupadd_t))
 (call auth_config_object_type_transition_passwd_config_files (groupadd_t "*"))
-(call auth_nsswitch_client_subject_type (groupadd_t))
+(call auth_manage_shadow (groupadd_t))
 
 (call miscfiles_read_locale (groupadd_t))
+
+(call ns_nsswitch_client_subject_type (groupadd_t))
 
 (call seutil_read_selinux_config_files (groupadd_t))
 (call seutil_read_file_context_files (groupadd_t))

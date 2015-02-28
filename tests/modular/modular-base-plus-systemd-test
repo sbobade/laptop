@@ -1,0 +1,61 @@
+#!/bin/bash
+
+modular_base_plus_systemd_modules () {
+    modular_set_ignore sources.d sources/modules/contrib/admin sources/modules/contrib/roles \
+        sources/modules/base/unconfined.cil sources/modules/contrib/services/alsa.cil sources/modules/contrib/services/bluetooth.cil \
+        sources/modules/contrib/services/dhcp.cil sources/modules/contrib/services/dnsmasq.cil \
+        sources/modules/contrib/services/fstrim.cil sources/modules/contrib/services/getty.cil sources/modules/contrib/services/git \
+        sources/modules/contrib/services/http.cil sources/modules/contrib/services/icecast.cil sources/modules/contrib/services/iptables.cil \
+        sources/modules/contrib/services/irc.cil sources/modules/contrib/services/logrotate.cil sources/modules/contrib/services/mail.cil \
+        sources/modules/contrib/services/mandb.cil sources/modules/contrib/services/nm.cil sources/modules/contrib/services/ntp.cil \
+        sources/modules/contrib/services/pa.cil sources/modules/contrib/services/pcsc.cil sources/modules/contrib/services/plymouth.cil \
+        sources/modules/contrib/services/polkit.cil sources/modules/contrib/services/rtkit.cil sources/modules/contrib/services/ssh.cil \
+        sources/modules/contrib/services/tcs.cil sources/modules/contrib/services/tor.cil sources/modules/contrib/services/torrent.cil \
+        sources/modules/contrib/services/wpa.cil sources/modules/contrib/services/xserver.cil sources/modules/contrib/system/bootloader.cil \
+        sources/modules/contrib/system/dm.cil sources/modules/contrib/system/dmesg.cil sources/modules/contrib/system/dmi.cil \
+        source/modules/contrib/system/dracut.cil sources/modules/contrib/system/fuse.cil sources/modules/contrib/system/hostname.cil \
+        sources/modules/contrib/system/hwclock.cil sources/modules/contrib/system/ld.cil sources/modules/contrib/system/login.cil \
+        sources/modules/contrib/system/lvm.cil sources/modules/contrib/system/md.cil sources/modules/contrib/system/nettools.cil \
+        sources/modules/contrib/system/pcitools.cil sources/modules/contrib/system/rpm.cil sources/modules/contrib/system/usbutils.cil \
+        sources/modules/contrib/system/usersubject.cil sources/modules/contrib/system/systemd/askpwd.cil sources/modules/contrib/system/systemd/autorelabel.cil \
+        sources/modules/contrib/system/systemd/backlight.cil sources/modules/contrib/system/systemd/binfmt.cil sources/modules/contrib/system/systemd/bootchart.cil \
+        sources/modules/contrib/system/systemd/cgagent.cil sources/modules/contrib/system/systemd/coredump.cil sources/modules/contrib/system/systemd/cryptsetup.cil \
+        sources/modules/contrib/system/systemd/fsck.cil sources/modules/contrib/system/systemd/hostname.cil sources/modules/contrib/system/systemd/importstate.cil \
+        sources/modules/contrib/system/systemd/loadmodules.cil sources/modules/contrib/system/systemd/locale.cil sources/modules/contrib/system/systemd/login.cil \
+        sources/modules/contrib/system/systemd/machine.cil sources/modules/contrib/system/systemd/notify.cil sources/modules/contrib/system/systemd/randomseed.cil \
+        sources/modules/contrib/system/systemd/readonly.cil sources/modules/contrib/system/systemd/remountfs.cil sources/modules/contrib/system/systemd/rfkill.cil \
+        sources/modules/contrib/system/systemd/sessions.cil sources/modules/contrib/system/systemd/sleep.cil sources/modules/contrib/system/systemd/systemduser.cil \
+        sources/modules/contrib/system/systemd/sysusers.cil sources/modules/contrib/system/systemd/tmpfiles.cil sources/modules/contrib/system/systemd/updatedone.cil \
+        sources/modules/contrib/system/systemd/vconsole.cil sources/modules/contrib/applications/b43fwcutter.cil sources/modules/contrib/applications/bti.cil \
+        sources/modules/contrib/applications/emacs.cil sources/modules/contrib/applications/ffmpeg.cil sources/modules/contrib/applications/firefox.cil \
+        sources/modules/contrib/applications/fop.cil sources/modules/contrib/applications/gpg.cil sources/modules/contrib/applications/gstreamer.cil \
+        sources/modules/contrib/applications/http.cil sources/modules/contrib/applications/irc.cil sources/modules/contrib/applications/java.cil \
+        sources/modules/contrib/applications/loadkeys.cil sources/modules/contrib/applications/mail.cil sources/modules/contrib/applications/mplayer.cil \
+        sources/modules/contrib/applications/nb.cil sources/modules/contrib/applications/pass.cil sources/modules/contrib/applications/pinentry.cil \
+        sources/modules/contrib/applications/power.cil sources/modules/contrib/applications/qiv.cil sources/modules/contrib/applications/rp.cil \
+        sources/modules/contrib/applications/screen.cil sources/modules/contrib/applications/setbacklight.cil sources/modules/contrib/applications/temps.cil \
+        sources/modules/contrib/applications/torrent.cil sources/modules/contrib/applications/xlock.cil sources/modules/contrib/applications/xpdf.cil \
+        sources/modules/contrib/applications/xterm.cil sources/modules/contrib/applications/xutil.cil
+
+    unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
+
+    MODULAR_BASE_PLUS_SYSTEMD_MODULES+=("${MODULAR_SMODULES[*]}")
+}
+
+modular_base_plus_systemd_run_test () {
+    modular_base_plus_systemd_modules
+
+    if [ "${MODULAR_VERBOSE}" == "1" ] ; then
+        ${SECILC} -v $(echo ${MODULAR_BASE_PLUS_SYSTEMD_MODULES[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+    else
+        ${SECILC} $(echo ${MODULAR_BASE_PLUS_SYSTEMD_MODULES[@]}) \
+            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+    fi
+
+    if [ "$?" -ne 0 ] ; then
+        return 192
+    fi
+}
+
+#EOF

@@ -68,8 +68,6 @@
 (call storage_read_removable (bootloader_t))
 (call storage_read_scsi_generic (bootloader_t))
 
-(call auth_nsswitch_client_subject_type (bootloader_t))
-
 (call bootloader_exec (bootloader_t))
 
 (call fstools_run (bootloader_t bootloader_role))
@@ -82,6 +80,8 @@
 (call miscfiles_read_locale (bootloader_t))
 
 (call mount_exec (bootloader_t))
+
+(call ns_nsswitch_client_subject_type (bootloader_t))
 
 (call udev_run_udevadm (bootloader_t bootloader_role))
 

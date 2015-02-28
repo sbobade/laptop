@@ -102,12 +102,12 @@
 (call applications_send_sigstop_all_subjects (usersubject_common_type))
 (call applications_read_state_all_subjects (usersubject_common_type))
 
-(call auth_read_utmp_runtime_files (usersubject_common_type))
-
 (call miscfiles_read_all_terminfo (usersubject_common_type))
 (call miscfiles_read_locale (usersubject_common_type))
 
 (call usersubject_use_inherited_terminals (usersubject_common_type))
+
+(call utmp_read_utmp_runtime_files (usersubject_common_type))
 
 (allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
 
@@ -129,14 +129,13 @@
 
 (call selinux_get_enforce_mode (usersubject_common_login_subject_type))
 
-(call auth_nsswitch_client_subject_type (usersubject_common_login_subject_type))
-
 (call hostname_exec (usersubject_common_login_subject_type))
 
 (call login_send_signull (usersubject_common_login_subject_type))
 
 (call miscfiles_read_man (usersubject_common_login_subject_type))
-(call miscfiles_read_net_config_files (usersubject_common_login_subject_type))
+
+(call ns_nsswitch_client_subject_type (usersubject_common_login_subject_type))
 
 (call seutil_read_selinux_config_files (usersubject_common_login_subject_type))
 (call seutil_read_file_context_files (usersubject_common_login_subject_type))

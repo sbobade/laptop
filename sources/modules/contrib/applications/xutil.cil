@@ -26,10 +26,9 @@
 (call files_dontaudit_catchall_subject_type (xutil_t))
 (call files_read_config_files (xutil_t))
 
-(call auth_nsswitch_client_subject_type (xutil_t))
-
 (call miscfiles_read_locale (xutil_t))
-(call miscfiles_read_net_config_files (xutil_t))
+
+(call ns_nsswitch_client_subject_type (xutil_t))
 
 (call usersubject_read_user_home_files (xutil_t))
 

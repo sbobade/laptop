@@ -182,14 +182,6 @@
 
 (call audit_client_subject_type (systemd_t))
 
-(call auth_nsswitch_client_subject_type (systemd_t))
-(call auth_rw_utmp_runtime_files (systemd_t))
-(call auth_write_wtmp_log_files (systemd_t))
-
-(call dracut_search_runtime (systemd_t))
-
-(call fsck_read_runtime (systemd_t))
-
 (call journal_list_log (systemd_t))
 (call journal_client_subject_type (systemd_t))
 (call journal_test_for_systemd (systemd_t))
@@ -205,9 +197,7 @@
 (call mount_manage_runtime_dirs (systemd_t))
 (call mount_read_runtime (systemd_t))
 
-(call plymouth_exec (systemd_t))
-(call plymouth_read_plymouthd_runtime (systemd_t))
-(call plymouth_use_fd_plymouthd (systemd_t))
+(call ns_nsswitch_client_subject_type (systemd_t))
 
 (call seutil_read_default_context_files (systemd_t))
 (call seutil_read_file_context_files (systemd_t))
@@ -219,12 +209,11 @@
 (call systemd_manage_all_unit_files (systemd_t))
 (call systemd_relabelto_all_unit_dirs (systemd_t))
 
-(call tmpfiles_read_runtime (systemd_t))
-
 (call udev_client_subject_type (systemd_t))
 (call udev_create_udevd_netlink_kobject_uevent_socket (systemd_t))
 
-(call updatedone_getattr_flag_files (systemd_t))
+(call utmp_rw_utmp_runtime_files (systemd_t))
+(call utmp_write_wtmp_log_files (systemd_t))
 
 (optional systemd_optional_askpwd
     (call askpwd_read_systemd_runtime (systemd_t)))
@@ -235,8 +224,19 @@
 (optional systemd_optional_dhcp
     (call dhcp_read_dhclient_lib (systemd_t)))
 
+(optional systemd_optional_dracut
+    (call dracut_search_runtime (systemd_t)))
+
+(optional systemd_optional_fsck
+    (call fsck_read_runtime (systemd_t)))
+
 (optional systemd_optional_login_logind
     (call login_read_logind_systemd_runtime (systemd_t)))
+
+(optional systemd_optional_plymouth
+    (call plymouth_exec (systemd_t))
+    (call plymouth_read_plymouthd_runtime (systemd_t))
+    (call plymouth_use_fd_plymouthd (systemd_t)))
 
 (optional systemd_optional_polkit
     (call polkit_dbus_chat_polkitd (systemd_t)))
@@ -251,6 +251,12 @@
     (call systemduser_noatsecure_all_subjects (systemd_t))
     (call systemduser_send_sigchld_all_subjects (systemd_t))
     (call systemduser_shell_exec_manual_subject_type_transition_all_subjects (systemd_t)))
+
+(optional systemd_optional_tmpfiles
+    (call tmpfiles_read_runtime (systemd_t)))
+
+(optional systemd_optional_updatedone
+    (call updatedone_getattr_flag_files (systemd_t)))
 
 (optional systemd_optional_usersubject
     (call usersubject_link_keyring_all_common_login_subjects (systemd_t))
@@ -385,8 +391,6 @@
 
 (call journal_read_log (systemd_systemctl_client_subject_type))
 
-(call machine_read_config_files (systemd_systemctl_client_subject_type))
-
 (call systemd_dgram_send (systemd_systemctl_client_subject_type))
 (call systemd_read_state_lnk_files (systemd_systemctl_client_subject_type))
 (call systemd_search_unit (systemd_systemctl_client_subject_type))
@@ -396,6 +400,9 @@
 (optional systemd_systemctl_client_subject_type_optional_dbus
     (call dbus_system_client_subject_type (systemd_systemctl_client_subject_type))
     (call systemd_dbus_chat (systemd_systemctl_client_subject_type)))
+
+(optional systemd_systemctl_client_subject_type_optional_machine
+    (call machine_read_config_files (systemd_systemctl_client_subject_type)))
 
 (optional systemd_systemctl_client_subject_type_optional_polkit
     (call polkit_dbus_chat_polkitd (systemd_systemctl_client_subject_type)))

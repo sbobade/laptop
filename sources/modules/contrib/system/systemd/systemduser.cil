@@ -48,14 +48,14 @@
 
 (call audit_client_subject_type (systemduser_subject_type))
 
-(call auth_nsswitch_client_subject_type (systemduser_subject_type))
-
 (call journal_client_subject_type (systemduser_subject_type))
 (call journal_stream_connect_journald (systemduser_subject_type))
 
 (call miscfiles_read_locale (systemduser_subject_type))
 
 (call mount_read_runtime (systemduser_subject_type))
+
+(call ns_nsswitch_client_subject_type (systemduser_subject_type))
 
 (call systemd_exec_object_entry_subject (systemduser_subject_type))
 (call systemd_dgram_send (systemduser_subject_type))

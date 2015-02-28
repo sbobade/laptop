@@ -26,12 +26,10 @@
 (call files_read_config_files (emacs_subject_type))
 (call files_read_data (emacs_subject_type))
 
-(call auth_nsswitch_client_subject_type (emacs_subject_type))
-(call auth_read_utmp_runtime_files (emacs_subject_type))
-
-(call miscfiles_read_net_config_files (emacs_subject_type))
 (call miscfiles_read_all_terminfo (emacs_subject_type))
 (call miscfiles_read_locale (emacs_subject_type))
+
+(call ns_nsswitch_client_subject_type (emacs_subject_type))
 
 (call usersubject_manage_tmpfs_files (emacs_subject_type))
 (call usersubject_manage_tmpfs_lnk_files (emacs_subject_type))
@@ -54,6 +52,8 @@
 
 (call usersubject_read_mail_spool_files (emacs_subject_type))
 
+(call utmp_read_utmp_runtime_files (emacs_subject_type))
+
 (type emacs_home_t)
 (call usersubject_home_object_type (emacs_home_t))
 
@@ -72,7 +72,7 @@
 (call filesystems_list_devtmpfs (emacs_emacsclient_subject_type))
 (call filesystems_search_tmpfs (emacs_emacsclient_subject_type))
 
-(call auth_nsswitch_client_subject_type (emacs_emacsclient_subject_type))
+(call ns_nsswitch_client_subject_type (emacs_emacsclient_subject_type))
 
 (call usersubject_use_terminals (emacs_emacsclient_subject_type))
 

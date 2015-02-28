@@ -1,0 +1,85 @@
+(type initctl_t)
+(type initctl_exec_t)
+(call subject_common_type (initctl_t))
+(call subject_entry (initctl_t initctl_exec_t))
+(roletype system_r initctl_t)
+
+(type initctl_runtime_t)
+(call files_runtime_object_type (initctl_runtime_t))
+
+(allow initctl_t initctl_runtime_t manage_dir_perms)
+(allow initctl_t initctl_runtime_t manage_fifo_file_perms)
+
+(optional initctl_optional_systemd
+    (call systemd_daemon (initctl_t initctl_exec_t))
+
+    (call systemd_socket_activated (initctl_t initctl_runtime_t))
+
+    (context initctl_exec (system_u object_r initctl_exec_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/systemd-initctl" file initctl_exec)
+
+    (call systemd_runtime_object_type (initctl_runtime_t))
+
+    (context initctl_runtime (system_u object_r initctl_runtime_t (systemlow systemlow)))
+    (filecon "/var/run/systemd/initctl(/.*)?" any initctl_runtime)
+
+    (call systemd_runtime_object_type_transition (initctl_t initctl_runtime_t dir "*")))
+
+(macro initctl_exec ((type ARG1))
+    (call can_exec (ARG1 initctl_exec_t)))
+
+(macro initctl_auto_subject_type_transition ((type ARG1))
+    (call initctl_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 initctl_exec_t initctl_t)))
+
+(macro initctl_send_signal ((type ARG1))
+    (allow ARG1 initctl_t (process (signal))))
+
+(macro initctl_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 initctl_runtime_t search_dir_perms)
+    (optional initctl_search_runtime_optional_systemd
+        (call systemd_search_runtime (ARG1))))
+
+(macro initctl_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 initctl_runtime_t list_dir_perms)
+    (optional initctl_list_runtime_optional_systemd
+        (call systemd_search_runtime (ARG1))))
+
+(macro initctl_read_runtime_fifo_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_fifo_files_pattern (ARG1 initctl_runtime_t initctl_runtime_t))
+    (optional initctl_read_runtime_fifo_files_optional_systemd
+        (call systemd_search_runtime (ARG1))))
+
+(macro initctl_getattr_runtime_fifo_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call getattr_fifo_files_pattern (ARG1 initctl_runtime_t initctl_runtime_t))
+    (optional initctl_getattr_runtime_fifo_files_optional_systemd
+        (call systemd_search_runtime (ARG1))))
+
+(macro initctl_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 initctl_runtime_t initctl_runtime_t))
+    (optional initctl_read_runtime_lnk_files_optional_systemd
+        (call systemd_search_runtime (ARG1))))
+
+(macro initctl_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 initctl_runtime_t read_file_perms)
+    (allow ARG1 initctl_runtime_t list_dir_perms)
+    (allow ARG1 initctl_runtime_t read_fifo_file_perms)
+    (allow ARG1 initctl_runtime_t read_lnk_file_perms)
+    (optional initctl_read_runtime_optional_systemd
+        (call systemd_search_runtime (ARG1))))
+
+(macro initctl_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 initctl_runtime_t manage_file_perms)
+    (allow ARG1 initctl_runtime_t manage_dir_perms)
+    (allow ARG1 initctl_runtime_t manage_fifo_file_perms)
+    (allow ARG1 initctl_runtime_t manage_lnk_file_perms)
+    (optional initctl_manage_runtime_optional_systemd
+        (call systemd_rw_runtime_dirs (ARG1))))

@@ -67,8 +67,6 @@
 (call subject_dontaudit_catchall_subject_type (firefox_t))
 (call subject_execmem_uncond (firefox_t))
 
-(call auth_nsswitch_client_subject_type (firefox_t))
-
 (call firefox_exec (firefox_t))
 (call firefox_run_plugs (firefox_t firefox_role))
 (call firefox_run_xremotec (firefox_t firefox_role))
@@ -76,9 +74,10 @@
 (call http_tcp_connect_http_port (firefox_t))
 
 (call miscfiles_read_all_certs (firefox_t))
-(call miscfiles_read_net_config_files (firefox_t))
 (call miscfiles_read_all_fonts (firefox_t))
 (call miscfiles_read_locale (firefox_t))
+
+(call ns_nsswitch_client_subject_type (firefox_t))
 
 (call pa_tmpfs_client_template (firefox_t firefox_role firefox_tmpfs_t))
 

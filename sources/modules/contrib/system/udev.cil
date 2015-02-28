@@ -112,20 +112,16 @@
 
 (call selinux_get_enforce_mode (udevd_t))
 
-(call auth_nsswitch_client_subject_type (udevd_t))
-
-(call dm_auto_subject_type_transition_dmsetup (udevd_t))
-
 (call iptools_exec (udevd_t))
 
 (call kmod_read_config (udevd_t))
 (call kmod_auto_subject_type_transition (udevd_t))
 
-(call lvm_auto_subject_type_transition (udevd_t))
-
 (call miscfiles_read_modules (udevd_t))
 (call miscfiles_read_net_config_files (udevd_t))
 (call miscfiles_read_locale (udevd_t))
+
+(call ns_nsswitch_client_subject_type (udevd_t))
 
 (call seutil_read_selinux_config_files (udevd_t))
 (call seutil_read_file_context_files (udevd_t))
@@ -139,11 +135,17 @@
     (call alsa_auto_subject_type_transition_alsactl (udevd_t))
     (call alsa_read_config (udevd_t)))
 
+(optional udevd_optional_dm
+    (call dm_auto_subject_type_transition_dmsetup (udevd_t)))
+
 (optional udevd_optional_journal
     (call journal_client_subject_type (udevd_t)))
 
 (optional udevd_optional_login_logind
     (call login_read_logind_systemd_runtime (udevd_t)))
+
+(optional udevd_optional_lvm
+    (call lvm_auto_subject_type_transition (udevd_t)))
 
 (optional udevd_optional_systemd
     (call systemd_daemon (udevd_t udevd_exec_t))

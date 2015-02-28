@@ -43,9 +43,9 @@
 (call subject_getattr_all_common_subjects (nettools_t))
 (call subject_read_all_common_subjects_state (nettools_t))
 
-(call auth_nsswitch_client_subject_type (nettools_t))
-
 (call miscfiles_read_locale (nettools_t))
+
+(call ns_nsswitch_client_subject_type (nettools_t))
 
 (type ping_t)
 (type ping_exec_t)
@@ -61,10 +61,9 @@
 (allow ping_t self (process (getcap setcap)))
 (allow ping_t self create_rawip_socket_perms)
 
-(call auth_nsswitch_client_subject_type (ping_t))
-
-(call miscfiles_read_net_config_files (ping_t))
 (call miscfiles_read_locale (ping_t))
+
+(call ns_nsswitch_client_subject_type (ping_t))
 
 (type traceroute_t)
 (type traceroute_exec_t)
@@ -92,10 +91,9 @@
 
 (call network_udp_bind_generic_node (traceroute_t))
 
-(call auth_nsswitch_client_subject_type (traceroute_t))
-
-(call miscfiles_read_net_config_files (traceroute_t))
 (call miscfiles_read_locale (traceroute_t))
+
+(call ns_nsswitch_client_subject_type (traceroute_t))
 
 (type arp_t)
 (type arp_exec_t)

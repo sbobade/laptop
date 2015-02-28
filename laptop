@@ -35,7 +35,7 @@ do_default () {
 
 do_tests () {
     source tests/modular/functions
-    modular_run_tests
+    modular_run_tests -v
 }
 
 get_help () {

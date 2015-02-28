@@ -99,9 +99,9 @@
 (call selinux_compute_access_vector (dbus_subject_type))
 (call selinux_list_securityfs (dbus_subject_type))
 
-(call auth_nsswitch_client_subject_type (dbus_subject_type))
-
 (call miscfiles_read_locale (dbus_subject_type))
+
+(call ns_nsswitch_client_subject_type (dbus_subject_type))
 
 (call seutil_read_selinux_config_files (dbus_subject_type))
 (call seutil_read_default_context_files (dbus_subject_type))
