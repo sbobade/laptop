@@ -45,6 +45,9 @@
 
 (call ns_nsswitch_client_subject_type (java_client_subject_type))
 
+(optional java_client_subject_type_optional_xserver
+    (call xserver_tmpfs_client_template (java_client_subject_type java_tmpfs_t)))
+
 (macro java_exec ((type ARG1))
     (call can_exec (ARG1 java_exec_t)))
 
