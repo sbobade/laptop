@@ -27,6 +27,9 @@
 (filecon "/etc/X11(/.*)?" any xserver_config)
 (filecon "/etc/X.*\.hosts" file xserver_config)
 
+(type xserver_data_home_t)
+(call usersubject_data_home_object_type (xserver_data_home_t))
+
 (type xserver_log_t)
 (call files_log_object_type (xserver_log_t))
 
@@ -121,6 +124,12 @@
 (call xserver_run_wrap (xserver_t xserver_role))
 (call xserver_tcp_bind_xserver_port (xserver_t))
 
+(call xserver_manage_data_home (xserver_t))
+(call xserver_data_home_object_type_transition_xserver_data_home_dirs (xserver_t))
+
+(call usersubject_create_data_home_dirs (xserver_t))
+(call usersubject_home_dir_object_type_transition_data_home_dirs (xserver_t))
+
 (call usersubject_rw_inherited_tmpfs_files (xserver_t))
 (call usersubject_use_ttys (xserver_t))
 
@@ -155,6 +164,10 @@
 (context xserver_wrap_exec (system_u object_r xserver_wrap_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/Xorg\.wrap" file xserver_wrap_exec)
 
+(allow xserver_wrap_t self (capability (setuid setgid)))
+
+(call devices_rw_dri (xserver_wrap_t))
+
 (call xserver_run (xserver_wrap_t xserver_wrap_role))
 (call xserver_read_config_files (xserver_wrap_t))
 
@@ -180,6 +193,7 @@
 (call filesystems_search_tmpfs (xserver_xinit_subject_type))
 
 (call miscfiles_read_locale (xserver_xinit_subject_type))
+(call miscfiles_read_net_config (xserver_xinit_subject_type))
 
 (call ns_nsswitch_client_subject_type (xserver_xinit_subject_type))
 
@@ -429,6 +443,43 @@
 (macro xserver_stream_connect ((type ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call stream_connect_pattern (ARG1 xserver_tmpfs_t xserver_tmpfs_t xserver_t)))
+
+(macro xserver_search_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 xserver_data_home_t search_dir_perms))
+
+(macro xserver_list_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 xserver_data_home_t list_dir_perms))
+
+(macro xserver_read_data_home_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call read_files_pattern (ARG1 xserver_data_home_t xserver_data_home_t)))
+
+(macro xserver_read_data_home_lnk_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 xserver_data_home_t xserver_data_home_t)))
+
+(macro xserver_read_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 xserver_data_home_t read_file_perms)
+    (allow ARG1 xserver_data_home_t list_dir_perms)
+    (allow ARG1 xserver_data_home_t read_lnk_file_perms))
+
+(macro xserver_manage_data_home ((type ARG1))
+    (call usersubject_rw_data_home_dirs (ARG1))
+    (allow ARG1 xserver_data_home_t manage_file_perms)
+    (allow ARG1 xserver_data_home_t manage_dir_perms)
+    (allow ARG1 xserver_data_home_t manage_lnk_file_perms))
+
+(macro xserver_relabel_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 xserver_data_home_t relabel_file_perms)
+    (allow ARG1 xserver_data_home_t relabel_dir_perms)
+    (allow ARG1 xserver_data_home_t relabel_lnk_file_perms))
+
+(macro xserver_data_home_object_type_transition_xserver_data_home_dirs ((type ARG1))
+    (call usersubject_data_home_object_type_transition (ARG1 xserver_data_home_t dir "xorg")))
 
 (macro xserver_tmpfs_client_template ((type ARG1)(type ARG2))
     (call xserver_client_subject_type (ARG1))

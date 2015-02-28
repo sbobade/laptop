@@ -598,7 +598,15 @@
     (call xserver_manage_tmpfs (staff_t))
     (call xserver_relabel_tmpfs (staff_t))
 
-    (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc")))
+    (call xserver_home_dir_object_type_transition_xserver_home (staff_t file ".xserverrc"))
+
+    (context staff_xserver_data_home (staff_u object_r xserver_data_home_t (systemlow systemlow)))
+    (filecon "/home/kcinimod/\.local/share/xorg(/.*)?" any staff_xserver_data_home)
+
+    (call xserver_manage_data_home (staff_t))
+    (call xserver_relabel_data_home (staff_t))
+
+    (call xserver_data_home_object_type_transition_xserver_data_home_dirs (staff_t)))
 
 (optional staff_xserver_firefox
     (call firefox_run (staff_t staff_r))

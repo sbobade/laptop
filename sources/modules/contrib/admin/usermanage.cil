@@ -161,8 +161,8 @@
 (filecon "/usr/sbin/groupmod" file groupadd_exec)
 (filecon "/usr/bin/gpasswd" file groupadd_exec)
 
-(allow groupadd_t self (capability (dac_override)))
-(allow groupadd_t self (process (setfscreate)))
+(allow groupadd_t self (capability (dac_override setuid)))
+(allow groupadd_t self (process (setfscreate setrlimit)))
 
 (call files_read_config_files (groupadd_t))
 
