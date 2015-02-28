@@ -201,6 +201,8 @@
 (call filesystems_getattr_filesystems (xauth_t))
 (call filesystems_read_sysfs (xauth_t))
 
+(call miscfiles_read_net_config_files (xauth_t))
+
 (call ns_nsswitch_client_subject_type (xauth_t))
 
 (call usersubject_read_inherited_tmpfs_files (xauth_t))

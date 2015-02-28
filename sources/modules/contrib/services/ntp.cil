@@ -122,6 +122,7 @@
 (call devices_read_urandom (ntpd_t))
 
 (call miscfiles_read_locale (ntpd_t))
+(call miscfiles_read_net_config_files (ntpd_t))
 
 (call ns_nsswitch_client_subject_type (ntpd_t))
 
