@@ -11,3 +11,5 @@
 * there might be some redundant net_admins' in there because journal_client_subject_type also has it.
 
 * i allowed mplayer_t execmem but that is probably due to an xserver bug.. remove it once xserver becomes a bit more stable
+
+* implement system_map_t for /boot/System.map.* files?
