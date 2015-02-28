@@ -53,6 +53,7 @@
 
 (call miscfiles_read_cert_files (dhclient_t))
 (call miscfiles_read_locale (dhclient_t))
+(call miscfiles_read_net_config_files (dhclient_t))
 
 (call ns_nsswitch_client_subject_type (dhclient_t))
 

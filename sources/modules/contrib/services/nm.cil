@@ -187,6 +187,7 @@
 (call iptools_read_config_files (nmdisp_t))
 
 (call miscfiles_read_locale (nmdisp_t))
+(call miscfiles_read_net_config_files (nmdisp_t))
 
 (call mount_exec (nmdisp_t))
 
