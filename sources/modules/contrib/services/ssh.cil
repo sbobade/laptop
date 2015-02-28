@@ -41,6 +41,7 @@
 (call miscfiles_read_all_terminfo (ssh_subject_type))
 (call miscfiles_read_all_certs (ssh_subject_type))
 (call miscfiles_read_locale (ssh_subject_type))
+(call miscfiles_read_net_config_files (ssh_subject_type))
 
 (call ns_nsswitch_client_subject_type (ssh_subject_type))
 
