@@ -312,8 +312,7 @@
     (call nm_run_nmcli (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_ns
-    (call ns_manage_host_config_files (sysadm_t))
-    (call ns_manage_nsswitch_config_files (sysadm_t)))
+    (call ns_manage_config_files (sysadm_t)))
 
 (optional sysadm_optional_ntp
     (call ntp_admin (sysadm_t))

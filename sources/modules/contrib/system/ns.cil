@@ -1,16 +1,11 @@
 (typeattribute ns_nsswitch_client_subject_type)
 
-(type nsswitch_config_t)
-(call files_config_object_type (nsswitch_config_t))
+(type ns_config_t)
+(call files_config_object_type (ns_config_t))
 
-(context nsswitch_config (system_u object_r nsswitch_config_t (systemlow systemlow)))
-(filecon "/etc/nsswitch\.conf.*" file nsswitch_config)
-
-(type host_config_t)
-(call files_config_object_type (host_config_t))
-
-(context host_config (system_u object_r host_config_t (systemlow systemlow)))
-(filecon "/etc/host\.conf" file host_config)
+(context ns_config (system_u object_r ns_config_t (systemlow systemlow)))
+(filecon "/etc/nsswitch\.conf.*" file ns_config)
+(filecon "/etc/host\.conf" file ns_config)
 
 (allow ns_nsswitch_client_subject_type self create_unix_stream_socket_perms)
 
@@ -20,25 +15,15 @@
 
 (call dns_resolve_client_subject_type (ns_nsswitch_client_subject_type))
 
-(call ns_read_host_config_files (ns_nsswitch_client_subject_type))
-(call ns_read_nsswitch_config_files (ns_nsswitch_client_subject_type))
+(call ns_read_config_files (ns_nsswitch_client_subject_type))
 
 (macro ns_nsswitch_client_subject_type ((type ARG1))
     (typeattributeset ns_nsswitch_client_subject_type ARG1))
 
-(macro ns_read_nsswitch_config_files ((type ARG1))
+(macro ns_read_config_files ((type ARG1))
     (call files_search_config (ARG1))
-    (allow ARG1 nsswitch_config_t read_file_perms))
+    (allow ARG1 ns_config_t read_file_perms))
 
-(macro ns_manage_nsswitch_config_files ((type ARG1))
+(macro ns_manage_config_files ((type ARG1))
     (call files_rw_config_dirs (ARG1))
-    (allow ARG1 nsswitch_config_t manage_file_perms))
-
-(macro ns_read_host_config_files ((type ARG1))
-    (call files_search_config (ARG1))
-    (allow ARG1 host_config_t read_file_perms))
-
-(macro ns_manage_host_config_files ((type ARG1))
-    (call files_rw_config_dirs (ARG1))
-    (allow ARG1 host_config_t manage_file_perms))
-
+    (allow ARG1 ns_config_t manage_file_perms))
