@@ -58,6 +58,7 @@
 
 (call miscfiles_read_all_terminfo (mail_mutt_subject_type))
 (call miscfiles_read_locale (mail_mutt_subject_type))
+(call miscfiles_read_net_config (mail_mutt_subject_type))
 
 (call ns_nsswitch_client_subject_type (mail_mutt_subject_type))
 
