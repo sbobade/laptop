@@ -1,4 +1,5 @@
 contexts/files/file_contexts*
+!contexts/files/file_contexts.subs_dist
 EXCLUDE.local
 laptop.conf
 LISTING
