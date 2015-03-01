@@ -73,7 +73,7 @@ get_help () {
         -d | --disable-dontaudit    Build policy without "dontaudit" av rules inserted.
         -h | --help                 Show this help. (exclusive option)
         -l | --listing              Generate a LISTING file with the modules configured to compile. (exclusive option)
-        -t | --tests                Run all available tests. (exclusive option)
+        -t | --test                 Run all available tests. (exclusive option)
         -u | --allow-unknown        Build policy that will allow unknown access vectors.
         -v | --verbose              Build policy in verbose mode.
 
