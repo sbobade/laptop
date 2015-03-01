@@ -346,6 +346,10 @@
 (optional sysadm_optional_power
     (call power_run (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_qemu
+    (call qemu_admin (sysadm_t))
+    (call qemu_run (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_rpm
     (call rpm_admin (sysadm_t))
     (call rpm_run (sysadm_t sysadm_r)))

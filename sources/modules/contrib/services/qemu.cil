@@ -1,0 +1,99 @@
+(roleattribute qemu_role)
+
+(typeattribute qemu_admin_subject_type)
+
+(typeattribute qemu_object_type)
+
+(type qemu_t)
+(type qemu_exec_t)
+(call applications_app (qemu_t qemu_exec_t))
+(roletype qemu_role qemu_t)
+
+(roleattributeset qemu_role system_r)
+
+(context qemu_exec (system_u object_r qemu_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/qemu-img" file qemu_exec)
+(filecon "/usr/bin/qemu-io" file qemu_exec)
+(filecon "/usr/bin/qemu-kvm" file qemu_exec)
+(filecon "/usr/bin/qemu-nbd" file qemu_exec)
+(filecon "/usr/bin/qemu-system-i386" file qemu_exec)
+(filecon "/usr/bin/qemu-system-x86_64" file qemu_exec)
+
+(type qemuga_t)
+(type qemuga_exec_t)
+(call subject_common_type (qemuga_t))
+(call subject_entry (qemuga_t qemuga_exec_t))
+(roletype system_r qemuga_t)
+
+(context qemuga_exec (system_u object_r qemu_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/qemu-ga" file qemuga_exec)
+
+(type qemuga_runtime_t)
+(call files_runtime_object_type (qemuga_runtime_t))
+
+(typeattributeset qemu_object_type qemuga_runtime_t)
+
+(allow qemuga_t qemuga_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (qemuga_t qemuga_runtime_t file "*"))
+
+(context qemuga_runtime (system_u object_r qemuga_runtime_t (systemlow systemlow)))
+(filecon "/var/run/qga\.state" file qemuga_runtime)
+
+(optional qemu_optional_systemd
+    (call systemd_daemon (qemuga_t qemuga_exec_t))
+
+    (type qemuga_unit_t)
+    (call systemd_unit_object_type (qemuga_unit_t))
+
+    (typeattributeset qemu_object_type qemuga_unit_t)
+
+    (context qemuga_unit (system_u object_r qemuga_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*qemu-guest-agent.*" file qemuga_unit)
+
+    (allow qemu_admin_subject_type qemuga_unit_t (service (all))))
+
+(allow qemu_admin_subject_type qemuga_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (qemu_admin_subject_type qemuga_t))
+
+(allow qemu_admin_subject_type qemu_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro qemu_exec ((type ARG1))
+    (call can_exec (ARG1 qemu_exec_t)))
+
+(macro qemu_exec_qemuga ((type ARG1))
+    (call can_exec (ARG1 qemuga_exec_t)))
+
+(macro qemu_auto_subject_type_transition ((type ARG1))
+    (call qemu_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 qemu_exec_t qemu_t)))
+
+(macro qemu_send_signal ((type ARG1))
+    (allow ARG1 qemu_t (process (signal))))
+
+(macro qemu_run ((type ARG1)(role ARG2))
+    (call qemu_auto_subject_type_transition (ARG1))
+    (roleattributeset qemu_role ARG2))
+
+(macro qemu_auto_subject_type_transition_qemuga ((type ARG1))
+    (call qemu_send_signal_qemuga (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 qemuga_exec_t qemuga_t)))
+
+(macro qemu_send_signal_qemuga ((type ARG1))
+    (allow ARG1 qemuga_t (process (signal))))
+
+(macro qemu_read_qemuga_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 qemuga_runtime_t read_file_perms))
+
+(macro qemu_manage_qemuga_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 qemuga_runtime_t manage_file_perms))
+
+(macro qemu_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset qemu_admin_subject_type ARG1)
+    (optional qemu_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

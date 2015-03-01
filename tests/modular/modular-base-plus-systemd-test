@@ -12,6 +12,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/services/polkit.cil sources/modules/contrib/services/rtkit.cil sources/modules/contrib/services/ssh.cil \
         sources/modules/contrib/services/tcs.cil sources/modules/contrib/services/tor.cil sources/modules/contrib/services/torrent.cil \
         sources/modules/contrib/services/wpa.cil sources/modules/contrib/services/xserver.cil sources/modules/contrib/system/bootloader.cil \
+        sources/modules/contrib/services/qemu.cil \
         sources/modules/contrib/system/dm.cil sources/modules/contrib/system/dmesg.cil sources/modules/contrib/system/dmi.cil \
         sources/modules/contrib/system/dracut.cil sources/modules/contrib/system/fuse.cil sources/modules/contrib/system/hostname.cil \
         sources/modules/contrib/system/hwclock.cil sources/modules/contrib/system/ld.cil sources/modules/contrib/system/login.cil \

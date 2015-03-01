@@ -202,6 +202,12 @@
 (context vhost_dev (system_u object_r vhost_dev_t (systemlow systemlow)))
 (filecon "/dev/vhost-net" char vhost_dev)
 
+(type virtio_dev_t)
+(call devices_object_type (virtio_dev_t))
+
+(context virtio_dev (system_u object_r virtio_dev_t (systemlow systemlow)))
+(filecon "/dev/vport[0-9]p[0-9]+" char virtio_dev)
+
 (type wireless_dev_t)
 (call devices_object_type (wireless_dev_t))
 
