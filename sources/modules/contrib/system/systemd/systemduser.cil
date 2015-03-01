@@ -82,6 +82,8 @@
 
 (call udev_client_subject_type (systemduser_subject_type))
 
+(call usersubject_read_exec_home_lnk_files (systemduser_subject_type))
+
 (call usersubject_create_config_home_dirs (systemduser_subject_type))
 (call usersubject_home_dir_object_type_transition_config_home_dirs (systemduser_subject_type))
 
