@@ -12,8 +12,11 @@ declare DISABLE_DONTAUDIT="0"
 declare ALLOW_UNKNOWN="0"
 declare VERBOSE="0"
 
-declare -a EXCL="EXCLUDE"
-declare -a EXCL_LOCAL="EXCLUDE.local"
+declare EXCL="EXCLUDE"
+declare EXCL_LOCAL="EXCLUDE.local"
+
+unset MODULES
+declare -a MODULES+=$(/bin/find . -type f \( -iname "*.cil" \) | /bin/cut -d/ -f2-)
 
 if [ -r "${PWD}/${CONFIG}" -a -s "${PWD}/${CONFIG}" ] ; then
     source "${PWD}/${CONFIG}" 2>/dev/null
@@ -22,15 +25,14 @@ fi
 do_default () {
     get_secilc || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
     if [ -z "${POLICYVERS}" ] ; then
         echo "Unable to determine MAX_POLICYDB_VERSION!"
         return 192
     fi
 
-    ${SECILC} \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
-        -o policy/policy.${POLICYVERS} -f contexts/files/file_contexts
+    ${SECILC} ${MODULES[@]} -o policy/policy.${POLICYVERS} -f contexts/files/file_contexts
 }
 
 do_tests () {
@@ -69,11 +71,32 @@ get_help () {
 
     Options:
         -d | --disable-dontaudit    Build policy without "dontaudit" av rules inserted.
+        -h | --help                 Show this help. (exclusive option)
+        -l | --listing              Generate a LISTING file with the modules configured to compile. (exclusive option)
+        -t | --tests                Run all available tests. (exclusive option)
         -u | --allow-unknown        Build policy that will allow unknown access vectors.
         -v | --verbose              Build policy in verbose mode.
 
+    Exclusive options can not be combined with other options. Only the first of the specified exclusive options will be executed.
+
     Running this script with no options will build the policy silently with "dontaudit" av rules, and with defaults as specified in "sources/config.cil".
     "
+}
+
+get_modules () {
+    if [ -z "${MODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
+
+    for i in ${IGNORE[*]} ; do
+        MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
+    done
+
+    if [ -z "${MODULES}" ] ; then
+        echo "No modules to compile!"
+        return 192
+    fi
 }
 
 get_secilc () {
@@ -100,7 +123,7 @@ get_version () {
 }
 
 gen_listing () {
-    local MODULES+=$(/bin/find . -type f \( -iname "*.cil" \) | /bin/cut -d/ -f2-)
+    get_ignore
 
     if [ -z "${MODULES}" ] ; then
         echo "No modules to compile!"
@@ -120,6 +143,8 @@ gen_listing () {
 }
 
 get_ignore () {
+    unset IGNORE
+
     if [ -e "${PWD}/${EXCL_LOCAL}" -a -s "${PWD}/${EXCL_LOCAL}" ] ; then
         IGNORE+=($(/bin/cat "${PWD}/${EXCL}"))
         IGNORE+=($(/bin/cat "${PWD}/${EXCL_LOCAL}"))
@@ -141,6 +166,10 @@ while (($# > 0)) ; do
         -d|--disable-dontaudit)
             DISABLE_DONTAUDIT=1
             ;;
+        -l|--listing)
+            gen_listing
+            exit $(echo $?)
+            ;;
         -t|--test)
             do_tests
             exit $(echo $?)
@@ -151,7 +180,12 @@ while (($# > 0)) ; do
         -v|--verbose)
             VERBOSE=1
             ;;
+        -*)
+            echo "switch ${1} not supported"
+            break
+            ;;
         *)
+            echo "extra argument or missing switch"
             break
             ;;
     esac
@@ -162,9 +196,9 @@ if [ "{$DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" --handle-unknown=deny \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" --handle-unknown=deny ${MODULES[@]}\
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
@@ -174,9 +208,9 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=deny \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=deny ${MODULES[@]} \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
@@ -186,9 +220,9 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" --handle-unknow=allow \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" --handle-unknow=allow ${MODULES[@]}\
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
@@ -198,9 +232,9 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=deny \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=deny ${MODULES[@]} \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
@@ -210,9 +244,9 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=allow \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=allow ${MODULES[@]} \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
@@ -222,9 +256,9 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=allow \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=allow ${MODULES[@]} \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
@@ -234,9 +268,9 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=deny \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=deny ${MODULES[@]} \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
@@ -246,9 +280,9 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
     get_secilc || exit $(echo $?)
     get_version || exit $(echo $?)
     get_ignore || exit $(echo $?)
+    get_modules || exit $(echo $?)
 
-    ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=allow \
-        $(test -f LISTING || gen_listing && /bin/cat LISTING) \
+    ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=allow ${MODULES[@]} \
         -o policy/policy.${VERSION} -f contexts/files/file_contexts
 
     exit $(echo $?)
