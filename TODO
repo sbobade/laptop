@@ -13,3 +13,5 @@
 * i allowed mplayer_t execmem but that is probably due to an xserver bug.. remove it once xserver becomes a bit more stable
 
 * implement system_map_t for /boot/System.map.* files?
+
+* target ppp lirc because they are installed but i dont use them (dependencies)
