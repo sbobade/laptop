@@ -45,7 +45,7 @@
 
 (call miscfiles_read_locale (nettools_t))
 
-(call ns_nsswitch_client_subject_type (nettools_t))
+(call ns_client_subject_type (nettools_t))
 
 (type ping_t)
 (type ping_exec_t)
@@ -63,7 +63,7 @@
 
 (call miscfiles_read_locale (ping_t))
 
-(call ns_nsswitch_client_subject_type (ping_t))
+(call ns_client_subject_type (ping_t))
 
 (type traceroute_t)
 (type traceroute_exec_t)
@@ -93,7 +93,7 @@
 
 (call miscfiles_read_locale (traceroute_t))
 
-(call ns_nsswitch_client_subject_type (traceroute_t))
+(call ns_client_subject_type (traceroute_t))
 
 (type arp_t)
 (type arp_exec_t)

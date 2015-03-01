@@ -48,7 +48,7 @@
 (call miscfiles_read_all_certs (http_lynx_subject_type))
 (call miscfiles_read_locale (http_lynx_subject_type))
 
-(call ns_nsswitch_client_subject_type (http_lynx_subject_type))
+(call ns_client_subject_type (http_lynx_subject_type))
 
 (call usersubject_manage_user_home_files (http_lynx_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (http_lynx_subject_type file "*"))

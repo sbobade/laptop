@@ -32,7 +32,7 @@
 
 (call terminals_use_console (autorelabel_t))
 
-(call ns_nsswitch_client_subject_type (autorelabel_t))
+(call ns_client_subject_type (autorelabel_t))
 
 (call plymouth_exec (autorelabel_t))
 

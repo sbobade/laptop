@@ -19,7 +19,7 @@
 
 (call miscfiles_read_locale (getty_t))
 
-(call ns_nsswitch_client_subject_type (getty_t))
+(call ns_client_subject_type (getty_t))
 
 (call login_auto_subject_type_transition (getty_t))
 

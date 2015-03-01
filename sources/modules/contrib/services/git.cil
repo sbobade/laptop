@@ -56,7 +56,7 @@
 (call miscfiles_read_all_terminfo (git_subject_type))
 (call miscfiles_read_locale (git_subject_type))
 
-(call ns_nsswitch_client_subject_type (git_subject_type))
+(call ns_client_subject_type (git_subject_type))
 
 (call usersubject_manage_user_home_dirs (git_subject_type))
 (call usersubject_manage_user_home_files (git_subject_type))
@@ -93,7 +93,7 @@
 (call miscfiles_read_all_certs (git_gitemail_subject_type))
 (call miscfiles_read_locale (git_gitemail_subject_type))
 
-(call ns_nsswitch_client_subject_type (git_gitemail_subject_type))
+(call ns_client_subject_type (git_gitemail_subject_type))
 
 (call usersubject_read_user_home_files (git_gitemail_subject_type))
 

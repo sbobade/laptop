@@ -70,7 +70,7 @@
 
 (call miscfiles_read_locale (chkpwd_t))
 
-(call ns_nsswitch_client_subject_type (chkpwd_t))
+(call ns_client_subject_type (chkpwd_t))
 
 (optional chkpwd_optional_journal
     (call journal_client_subject_type (chkpwd_t)))
@@ -148,7 +148,7 @@
 
 (call filesystems_search_devpts (utempter_t))
 
-(call ns_nsswitch_client_subject_type (utempter_t))
+(call ns_client_subject_type (utempter_t))
 
 (call utmp_rw_utmp_runtime_files (utempter_t))
 (call utmp_write_wtmp_log_files (utempter_t))
@@ -276,7 +276,7 @@
 (call auth_rw_lastlog_log_files (auth_pam_client_subject_type))
 (call auth_log_object_type_transition_lastlog_log_files (auth_pam_client_subject_type))
 
-(call ns_nsswitch_client_subject_type (auth_pam_client_subject_type))
+(call ns_client_subject_type (auth_pam_client_subject_type))
 
 (call utmp_append_wtmp_log_files (auth_pam_client_subject_type))
 (call utmp_read_wtmp_log_files (auth_pam_client_subject_type))

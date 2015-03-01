@@ -50,7 +50,7 @@
 
 (call miscfiles_read_locale (logrotate_t))
 
-(call ns_nsswitch_client_subject_type (logrotate_t))
+(call ns_client_subject_type (logrotate_t))
 
 (optional logrotate_optional_ntp
     (call ntp_auto_subject_type_transition (logrotate_t)))

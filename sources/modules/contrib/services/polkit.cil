@@ -73,7 +73,7 @@
 
 (call miscfiles_read_locale (polkitd_t))
 
-(call ns_nsswitch_client_subject_type (polkitd_t))
+(call ns_client_subject_type (polkitd_t))
 
 (call polkit_exec_pkladm (polkitd_t))
 (call polkit_exec_pklauth (polkitd_t))
@@ -155,7 +155,7 @@
 
 (call dbus_system_client_subject_type (pklagent_t))
 
-(call ns_nsswitch_client_subject_type (pklagent_t))
+(call ns_client_subject_type (pklagent_t))
 
 (call polkit_dbus_chat_polkitd (pklagent_t))
 (call polkit_read_pam_config_files (pklagent_t))

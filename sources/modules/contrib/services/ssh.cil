@@ -43,7 +43,7 @@
 (call miscfiles_read_locale (ssh_subject_type))
 (call miscfiles_read_net_config_files (ssh_subject_type))
 
-(call ns_nsswitch_client_subject_type (ssh_subject_type))
+(call ns_client_subject_type (ssh_subject_type))
 
 (call ssh_exec (ssh_subject_type))
 (call ssh_read_config_files (ssh_subject_type))
@@ -79,7 +79,7 @@
 
 (call miscfiles_read_all_certs (ssh_sshagent_subject_type))
 
-(call ns_nsswitch_client_subject_type (ssh_sshagent_subject_type))
+(call ns_client_subject_type (ssh_sshagent_subject_type))
 
 (call ssh_read_home (ssh_sshagent_subject_type))
 
@@ -102,7 +102,7 @@
 
 (call miscfiles_read_all_certs (sshkeygen_t))
 
-(call ns_nsswitch_client_subject_type (sshkeygen_t))
+(call ns_client_subject_type (sshkeygen_t))
 
 (type sshhelper_exec_t)
 (call commands_exec_object_type (sshhelper_exec_t))

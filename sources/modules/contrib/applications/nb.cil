@@ -33,7 +33,7 @@
 (call miscfiles_read_all_terminfo (nb_subject_type))
 (call miscfiles_read_locale (nb_subject_type))
 
-(call ns_nsswitch_client_subject_type (nb_subject_type))
+(call ns_client_subject_type (nb_subject_type))
 
 (call usersubject_manage_user_home_dirs (nb_subject_type))
 (call usersubject_manage_user_home_files (nb_subject_type))

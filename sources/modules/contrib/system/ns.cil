@@ -1,4 +1,4 @@
-(typeattribute ns_nsswitch_client_subject_type)
+(typeattribute ns_client_subject_type)
 
 (type ns_config_t)
 (call files_config_object_type (ns_config_t))
@@ -7,18 +7,18 @@
 (filecon "/etc/nsswitch\.conf.*" file ns_config)
 (filecon "/etc/host\.conf" file ns_config)
 
-(allow ns_nsswitch_client_subject_type self create_unix_stream_socket_perms)
+(allow ns_client_subject_type self create_unix_stream_socket_perms)
 
-(call auth_read_passwd_config_files (ns_nsswitch_client_subject_type))
+(call auth_read_passwd_config_files (ns_client_subject_type))
 
-(call files_list_runtime (ns_nsswitch_client_subject_type))
+(call files_list_runtime (ns_client_subject_type))
 
-(call dns_resolve_client_subject_type (ns_nsswitch_client_subject_type))
+(call dns_resolve_client_subject_type (ns_client_subject_type))
 
-(call ns_read_config_files (ns_nsswitch_client_subject_type))
+(call ns_read_config_files (ns_client_subject_type))
 
-(macro ns_nsswitch_client_subject_type ((type ARG1))
-    (typeattributeset ns_nsswitch_client_subject_type ARG1))
+(macro ns_client_subject_type ((type ARG1))
+    (typeattributeset ns_client_subject_type ARG1))
 
 (macro ns_read_config_files ((type ARG1))
     (call files_search_config (ARG1))

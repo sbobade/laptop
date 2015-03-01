@@ -20,7 +20,7 @@
 
 (call miscfiles_read_locale (ntp_t))
 
-(call ns_nsswitch_client_subject_type (ntp_t))
+(call ns_client_subject_type (ntp_t))
 
 (call ntp_read_config_files (ntp_t))
 
@@ -124,7 +124,7 @@
 (call miscfiles_read_locale (ntpd_t))
 (call miscfiles_read_net_config_files (ntpd_t))
 
-(call ns_nsswitch_client_subject_type (ntpd_t))
+(call ns_client_subject_type (ntpd_t))
 
 (call ntp_append_config_files (ntpd_t))
 (call ntp_read_config_files (ntpd_t))

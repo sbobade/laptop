@@ -27,7 +27,7 @@
 (call miscfiles_read_net_config (importstate_t))
 (call miscfiles_setattr_net_config (importstate_t))
 
-(call ns_nsswitch_client_subject_type (importstate_t))
+(call ns_client_subject_type (importstate_t))
 
 (call seutil_auto_subject_type_transition_setfiles (importstate_t))
 

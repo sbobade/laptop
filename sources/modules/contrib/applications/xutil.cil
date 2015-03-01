@@ -28,7 +28,7 @@
 
 (call miscfiles_read_locale (xutil_t))
 
-(call ns_nsswitch_client_subject_type (xutil_t))
+(call ns_client_subject_type (xutil_t))
 
 (call usersubject_read_user_home_files (xutil_t))
 

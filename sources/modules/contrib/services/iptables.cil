@@ -84,7 +84,7 @@
 
 (call miscfiles_read_locale (iptables_t))
 
-(call ns_nsswitch_client_subject_type (iptables_t))
+(call ns_client_subject_type (iptables_t))
 
 (optional iptables_optional_plymouth
     (call plymouth_exec (iptables_t)))

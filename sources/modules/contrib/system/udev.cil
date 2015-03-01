@@ -121,7 +121,7 @@
 (call miscfiles_read_net_config_files (udevd_t))
 (call miscfiles_read_locale (udevd_t))
 
-(call ns_nsswitch_client_subject_type (udevd_t))
+(call ns_client_subject_type (udevd_t))
 
 (call seutil_read_selinux_config_files (udevd_t))
 (call seutil_read_file_context_files (udevd_t))

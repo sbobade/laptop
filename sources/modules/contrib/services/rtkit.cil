@@ -37,7 +37,7 @@
 
 (call dbus_system_service (rtkitd_t))
 
-(call ns_nsswitch_client_subject_type (rtkitd_t))
+(call ns_client_subject_type (rtkitd_t))
 
 (call polkit_dbus_chat_polkitd (rtkitd_t))
 

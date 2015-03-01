@@ -58,7 +58,7 @@
 
 (call miscfiles_read_locale (dnsmasq_t))
 
-(call ns_nsswitch_client_subject_type (dnsmasq_t))
+(call ns_client_subject_type (dnsmasq_t))
 
 (optional dnsmasq_optional_journal
     (call journal_client_subject_type (dnsmasq_t)))

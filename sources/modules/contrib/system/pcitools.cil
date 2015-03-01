@@ -21,7 +21,7 @@
 (call miscfiles_read_hwdata (pcitools_t))
 (call miscfiles_read_modules (pcitools_t))
 
-(call ns_nsswitch_client_subject_type (pcitools_t))
+(call ns_client_subject_type (pcitools_t))
 
 (macro pcitools_exec ((type ARG1))
     (call can_exec (ARG1 pcitools_exec_t)))

@@ -43,7 +43,7 @@
 
 (call miscfiles_read_locale (xlock_t))
 
-(call ns_nsswitch_client_subject_type (xlock_t))
+(call ns_client_subject_type (xlock_t))
 
 (call udev_client_subject_type (xlock_t))
 

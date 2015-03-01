@@ -28,7 +28,7 @@
 
 (call storage_rw_fuse (fusermount_t))
 
-(call ns_nsswitch_client_subject_type (fusermount_t))
+(call ns_client_subject_type (fusermount_t))
 
 (type ulockmgr_t)
 (type ulockmgr_exec_t)

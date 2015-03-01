@@ -29,7 +29,7 @@
 
 (call miscfiles_read_locale (vconsole_t))
 
-(call ns_nsswitch_client_subject_type (vconsole_t))
+(call ns_client_subject_type (vconsole_t))
 
 (call vconsole_read_config_files (vconsole_t))
 

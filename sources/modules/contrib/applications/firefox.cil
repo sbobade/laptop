@@ -77,7 +77,7 @@
 (call miscfiles_read_all_fonts (firefox_t))
 (call miscfiles_read_locale (firefox_t))
 
-(call ns_nsswitch_client_subject_type (firefox_t))
+(call ns_client_subject_type (firefox_t))
 
 (call pa_tmpfs_client_template (firefox_t firefox_role firefox_tmpfs_t))
 

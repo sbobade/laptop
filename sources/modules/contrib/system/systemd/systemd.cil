@@ -197,7 +197,7 @@
 (call mount_manage_runtime_dirs (systemd_t))
 (call mount_read_runtime (systemd_t))
 
-(call ns_nsswitch_client_subject_type (systemd_t))
+(call ns_client_subject_type (systemd_t))
 
 (call seutil_read_default_context_files (systemd_t))
 (call seutil_read_file_context_files (systemd_t))

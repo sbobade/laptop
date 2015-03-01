@@ -127,7 +127,7 @@
 
 (call miscfiles_read_locale (setsebool_t))
 
-(call ns_nsswitch_client_subject_type (setsebool_t))
+(call ns_client_subject_type (setsebool_t))
 
 (optional setsebool_optional_journal
     (call journal_client_subject_type (setsebool_t)))

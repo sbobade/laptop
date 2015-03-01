@@ -60,7 +60,7 @@
 (call miscfiles_read_locale (mail_mutt_subject_type))
 (call miscfiles_read_net_config (mail_mutt_subject_type))
 
-(call ns_nsswitch_client_subject_type (mail_mutt_subject_type))
+(call ns_client_subject_type (mail_mutt_subject_type))
 
 (call usersubject_manage_user_home_files (mail_mutt_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (mail_mutt_subject_type file "*"))

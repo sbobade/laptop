@@ -117,7 +117,7 @@
 (call nm_read_state_all_client_subjects (nm_t))
 (call nm_read_state_nmonline (nm_t))
 
-(call ns_nsswitch_client_subject_type (nm_t))
+(call ns_client_subject_type (nm_t))
 
 (call sysctl_read_config (nm_t))
 
@@ -196,7 +196,7 @@
 (call nm_read_config (nmdisp_t))
 (call nm_read_runtime (nmdisp_t))
 
-(call ns_nsswitch_client_subject_type (nmdisp_t))
+(call ns_client_subject_type (nmdisp_t))
 
 (optional nmdisp_optional_dhcp
     (call dhcp_auto_subject_type_transition_dhclient (nmdisp_t)))

@@ -48,7 +48,7 @@
 (call devices_read_urandom (tcsd_t))
 (call devices_rw_tpm (tcsd_t))
 
-(call ns_nsswitch_client_subject_type (tcsd_t))
+(call ns_client_subject_type (tcsd_t))
 
 (call utmp_read_utmp_runtime_files (tcsd_t))
 

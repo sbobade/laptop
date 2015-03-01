@@ -31,7 +31,7 @@
 (call miscfiles_read_all_certs (bti_t))
 (call miscfiles_read_locale (bti_t))
 
-(call ns_nsswitch_client_subject_type (bti_t))
+(call ns_client_subject_type (bti_t))
 
 (macro bti_exec ((type ARG1))
     (call can_exec (ARG1 bti_exec_t)))

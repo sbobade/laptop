@@ -41,7 +41,7 @@
 
 (call mplayer_read_config_files (mplayer_t))
 
-(call ns_nsswitch_client_subject_type (mplayer_t))
+(call ns_client_subject_type (mplayer_t))
 
 (call pa_tmpfs_client_template (mplayer_t mplayer_role mplayer_tmpfs_t))
 

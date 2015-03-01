@@ -18,7 +18,7 @@
 
 (call miscfiles_read_locale (readonly_t))
 
-(call ns_nsswitch_client_subject_type (readonly_t))
+(call ns_client_subject_type (readonly_t))
 
 (macro readonly_exec ((type ARG1))
     (call can_exec (ARG1 readonly_exec_t)))

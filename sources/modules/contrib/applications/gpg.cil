@@ -80,7 +80,7 @@
 
 (call miscfiles_read_all_certs (gpg2keys_t))
 
-(call ns_nsswitch_client_subject_type (gpg2keys_t))
+(call ns_client_subject_type (gpg2keys_t))
 
 (optional gpg2keys_subject_optional_http
     (call http_tcp_connect_http_port (gpg2keys_t)))

@@ -57,7 +57,7 @@
 (call miscfiles_read_all_terminfo (screen_subject_type))
 (call miscfiles_read_locale (screen_subject_type))
 
-(call ns_nsswitch_client_subject_type (screen_subject_type))
+(call ns_client_subject_type (screen_subject_type))
 
 (call screen_read_config_files (screen_subject_type))
 (call screen_read_home_files (screen_subject_type))

@@ -60,7 +60,7 @@
 
 (call miscfiles_read_locale (usermanage_passwd_subject_type))
 
-(call ns_nsswitch_client_subject_type (usermanage_passwd_subject_type))
+(call ns_client_subject_type (usermanage_passwd_subject_type))
 
 (call usermanage_read_passwd_pam_config_files (usermanage_passwd_subject_type))
 
@@ -129,7 +129,7 @@
 
 (call miscfiles_read_locale (useradd_t))
 
-(call ns_nsswitch_client_subject_type (useradd_t))
+(call ns_client_subject_type (useradd_t))
 
 (call seutil_read_selinux_config_files (useradd_t))
 (call seutil_read_file_context_files (useradd_t))
@@ -178,7 +178,7 @@
 
 (call miscfiles_read_locale (groupadd_t))
 
-(call ns_nsswitch_client_subject_type (groupadd_t))
+(call ns_client_subject_type (groupadd_t))
 
 (call seutil_read_selinux_config_files (groupadd_t))
 (call seutil_read_file_context_files (groupadd_t))

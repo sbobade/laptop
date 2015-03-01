@@ -55,7 +55,7 @@
 
 (call mount_read_runtime (systemduser_subject_type))
 
-(call ns_nsswitch_client_subject_type (systemduser_subject_type))
+(call ns_client_subject_type (systemduser_subject_type))
 
 (call systemd_exec_object_entry_subject (systemduser_subject_type))
 (call systemd_dgram_send (systemduser_subject_type))

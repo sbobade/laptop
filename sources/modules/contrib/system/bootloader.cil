@@ -81,7 +81,7 @@
 
 (call mount_exec (bootloader_t))
 
-(call ns_nsswitch_client_subject_type (bootloader_t))
+(call ns_client_subject_type (bootloader_t))
 
 (call udev_run_udevadm (bootloader_t bootloader_role))
 

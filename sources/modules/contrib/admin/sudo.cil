@@ -81,7 +81,7 @@
 
 (call miscfiles_read_locale (sudo_subject_type))
 
-(call ns_nsswitch_client_subject_type (sudo_subject_type))
+(call ns_client_subject_type (sudo_subject_type))
 
 (call seutil_read_selinux_config_files (sudo_subject_type))
 (call seutil_read_default_context_files (sudo_subject_type))
@@ -125,7 +125,7 @@
 
 (call miscfiles_read_locale (sudo_visudo_subject_type))
 
-(call ns_nsswitch_client_subject_type (sudo_visudo_subject_type))
+(call ns_client_subject_type (sudo_visudo_subject_type))
 
 (call sudo_list_config (sudo_visudo_subject_type))
 

@@ -30,7 +30,7 @@
 
 (call miscfiles_read_locale (loadkeys_t))
 
-(call ns_nsswitch_client_subject_type (loadkeys_t))
+(call ns_client_subject_type (loadkeys_t))
 
 (call udev_write_inherited_fifo_files_udevd (loadkeys_t))
 

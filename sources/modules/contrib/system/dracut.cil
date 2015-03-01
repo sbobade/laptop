@@ -47,7 +47,7 @@
 
 (call miscfiles_read_locale (dracut_initramfs_restore_t))
 
-(call ns_nsswitch_client_subject_type (dracut_initramfs_restore_t))
+(call ns_client_subject_type (dracut_initramfs_restore_t))
 
 (optional dracut_initramfs_restore_optional_machine
     (call machine_read_config_files (dracut_initramfs_restore_t)))

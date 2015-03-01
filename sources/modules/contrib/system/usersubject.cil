@@ -135,7 +135,7 @@
 
 (call miscfiles_read_man (usersubject_common_login_subject_type))
 
-(call ns_nsswitch_client_subject_type (usersubject_common_login_subject_type))
+(call ns_client_subject_type (usersubject_common_login_subject_type))
 
 (call seutil_read_selinux_config_files (usersubject_common_login_subject_type))
 (call seutil_read_file_context_files (usersubject_common_login_subject_type))

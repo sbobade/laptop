@@ -140,7 +140,7 @@
 
 (call login_read_logind_systemd_config_files (logind_t))
 
-(call ns_nsswitch_client_subject_type (logind_t))
+(call ns_client_subject_type (logind_t))
 
 (call polkit_dbus_chat_polkitd (logind_t))
 
