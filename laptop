@@ -84,11 +84,6 @@ get_help () {
 }
 
 get_modules () {
-    if [ -z "${MODULES}" ] ; then
-        echo "No modules to compile!"
-        return 192
-    fi
-
     for i in ${IGNORE[*]} ; do
         MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
     done
@@ -125,21 +120,16 @@ get_version () {
 gen_listing () {
     get_ignore
 
-    if [ -z "${MODULES}" ] ; then
-        echo "No modules to compile!"
-        return 192
-    fi
-
     for i in ${IGNORE[*]} ; do
         MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
     done
 
     if [ -z "${MODULES}" ] ; then
-        echo "No modules to compile!"
+        echo "No modules to list!"
         return 192
+    else
+        printf "%s\n" "${MODULES[*]}" | /bin/sort > LISTING
     fi
-
-    printf "%s\n" "${MODULES[*]}" | /bin/sort > LISTING
 }
 
 get_ignore () {
