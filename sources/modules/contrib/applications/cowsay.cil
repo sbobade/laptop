@@ -1,0 +1,69 @@
+(roleattribute cowsay_role)
+
+(type cowsay_t)
+(type cowsay_exec_t)
+(call applications_app (cowsay_t cowsay_exec_t))
+(roletype cowsay_role cowsay_t)
+
+(context cowsay_exec (system_u object_r cowsay_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xcowdream" file cowsay_exec)
+(filecon "/usr/bin/xcowfortune" file cowsay_exec)
+(filecon "/usr/bin/xcowsay" file cowsay_exec)
+(filecon "/usr/bin/xcowthink" file cowsay_exec)
+
+(type cowsay_tmpfs_t)
+(call usersubject_tmpfs_object_type (cowsay_tmpfs_t))
+
+(allow cowsay_t cowsay_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (cowsay_t cowsay_tmpfs_t file "*"))
+
+(allow cowsay_t self rw_fifo_file_perms)
+
+(call devices_read_urandom (cowsay_t))
+
+(call files_read_data (cowsay_t))
+(call files_dontaudit_catchall_subject_type (cowsay_t))
+
+(call filesystems_getattr_filesystems (cowsay_t))
+
+(call miscfiles_read_all_fonts (cowsay_t))
+(call miscfiles_read_locale (cowsay_t))
+
+(optional cowsay_optional_dbus
+    (call dbus_search_lib (cowsay_t)))
+
+(optional cowsay_optional_machine
+    (call machine_read_config_files (cowsay_t)))
+
+(optional cowsay_optional_xserver
+    (call xserver_tmpfs_client_template (cowsay_t cowsay_tmpfs_t)))
+
+(macro cowsay_exec ((type ARG1))
+    (call can_exec (ARG1 cowsay_exec_t)))
+
+(macro cowsay_auto_subject_type_transition ((type ARG1))
+    (call cowsay_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 cowsay_exec_t cowsay_t)))
+
+(macro cowsay_send_signal ((type ARG1))
+    (allow ARG1 cowsay_t (process (signal))))
+
+(macro cowsay_run ((type ARG1)(role ARG2))
+    (call cowsay_auto_subject_type_transition (ARG1))
+    (roleattributeset cowsay_role ARG2))
+
+(macro cowsay_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 cowsay_tmpfs_t read_file_perms))
+
+(macro cowsay_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 cowsay_tmpfs_t manage_file_perms))
+
+(macro cowsay_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 cowsay_tmpfs_t relabel_file_perms))

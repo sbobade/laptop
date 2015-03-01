@@ -155,10 +155,15 @@
 
 (call dbus_system_client_subject_type (pklagent_t))
 
+(call miscfiles_read_locale (pklagent_t))
+
 (call ns_client_subject_type (pklagent_t))
 
 (call polkit_dbus_chat_polkitd (pklagent_t))
 (call polkit_read_pam_config_files (pklagent_t))
+
+(optional pklagent_optional_journal
+   (call journal_client_subject_type (pklagent_t)))
 
 (context pklagent_exec (system_u object_r pklagent_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/polkit-1/polkit-agent-helper-1" file pklagent_exec)

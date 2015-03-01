@@ -72,6 +72,16 @@
     (filecon "/home/kcinimod/\.bti" file staff_bti_home)
     (filecon "/home/kcinimod/\.bti\.log.*" file staff_bti_home))
 
+(optional staff_optional_cowsay
+    (call cowsay_run (staff_t staff_r))
+
+    (call cowsay_manage_tmpfs_files (staff_t))
+    (call cowsay_relabel_tmpfs_files (staff_t)))
+
+(optional staff_systemduser_optional_cowsay
+    (call cowsay_run (staff_systemduser_t staff_r))
+    (call systemduser_daemon_template (staff_systemduser_t cowsay_t)))
+
 (optional staff_optional_emacs
     (type staff_emacs_t)
     (call emacs_role_template (staff_r staff_t staff_emacs_t))
