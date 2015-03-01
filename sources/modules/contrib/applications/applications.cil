@@ -9,6 +9,9 @@
     (call sudo_send_sigchld (applications_subject_type))
     (call sudo_rw_inherited_fifo_files (applications_subject_type)))
 
+(optional applications_optional_systemduser
+    (call systemduser_rw_unix_stream_sockets_all_subjects (applications_subject_type)))
+
 (optional applications_optional_usersubject
     (call usersubject_rw_inherited_fifo_files_all_common_subjects (applications_subject_type))
     (call usersubject_use_inherited_terminals (applications_subject_type)))
@@ -41,6 +44,9 @@
 
 (macro applications_send_sigstop_all_subjects ((type ARG1))
     (allow ARG1 applications_subject_type (process (sigstop))))
+
+(macro applications_rw_unix_stream_sockets_all_subjects ((type ARG1))
+    (allow ARG1 applications_subject_type (unix_stream_socket (read write))))
 
 (macro applications_read_state_all_subjects ((type ARG1))
     (call filesystems_search_proc (ARG1))

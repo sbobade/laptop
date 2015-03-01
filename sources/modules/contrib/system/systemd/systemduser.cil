@@ -46,6 +46,13 @@
 (call subject_common_type (systemduser_subject_type))
 (call subject_user_exemption_target (systemduser_subject_type))
 
+(call applications_read_state_all_subjects (systemduser_subject_type))
+(call applications_rw_unix_stream_sockets_all_subjects (systemduser_subject_type))
+(call applications_send_signal_all_subjects (systemduser_subject_type))
+(call applications_send_signull_all_subjects (systemduser_subject_type))
+(call applications_send_sigkill_all_subjects (systemduser_subject_type))
+(call applications_send_sigstop_all_subjects (systemduser_subject_type))
+
 (call audit_client_subject_type (systemduser_subject_type))
 
 (call journal_client_subject_type (systemduser_subject_type))
@@ -96,15 +103,8 @@
     (call systemduser_control_units (ARG2))
     (call systemduser_subject_type (ARG3)))
 
-(macro systemduser_daemon_template ((type ARG1)(type ARG2))
-    (allow ARG1 ARG2 (unix_stream_socket (read write)))
-    (allow ARG1 ARG2 (process (signal signull sigkill)))
-
-    (allow ARG1 ARG2 read_file_perms)
-    (allow ARG1 ARG2 list_dir_perms)
-    (allow ARG1 ARG2 read_lnk_file_perms)
-
-    (allow ARG2 ARG1 (unix_stream_socket (read write))))
+(macro systemduser_rw_unix_stream_sockets_all_subjects ((type ARG1))
+    (allow ARG1 systemduser_subject_type (unix_stream_socket (read write))))
 
 (macro systemduser_unit_object_type ((type ARG1))
     (call systemd_unit_object_type (ARG1))

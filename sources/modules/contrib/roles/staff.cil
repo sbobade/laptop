@@ -58,8 +58,7 @@
     (call bluetooth_role_template_obexd (staff_r staff_t staff_obexd_t)))
 
 (optional staff_systemduser_optional_staff_obexd
-    (call bluetooth_role_template_obexd (staff_r staff_systemduser_t staff_obexd_t))
-    (call systemduser_daemon_template (staff_systemduser_t staff_obexd_t)))
+    (call bluetooth_role_template_obexd (staff_r staff_systemduser_t staff_obexd_t)))
 
 (optional staff_optional_bti
     (call bti_run (staff_t staff_r))
@@ -79,8 +78,7 @@
     (call cowsay_relabel_tmpfs_files (staff_t)))
 
 (optional staff_systemduser_optional_cowsay
-    (call cowsay_run (staff_systemduser_t staff_r))
-    (call systemduser_daemon_template (staff_systemduser_t cowsay_t)))
+    (call cowsay_run (staff_systemduser_t staff_r)))
 
 (optional staff_optional_emacs
     (type staff_emacs_t)
@@ -112,10 +110,7 @@
 
 (optional staff_systemduser_optional_staff_emacs
     (call emacs_role_template (staff_r staff_systemduser_t staff_emacs_t))
-    (call systemduser_daemon_template (staff_systemduser_t staff_emacs_t))
-
-    (call emacs_role_template_emacsclient (staff_r staff_systemduser_t staff_emacsclient_t))
-    (call systemduser_daemon_template (staff_systemduser_t staff_emacsclient_t)))
+    (call emacs_role_template_emacsclient (staff_r staff_systemduser_t staff_emacsclient_t)))
 
 (optional staff_optional_festival
     (call festival_run (staff_t staff_r))
@@ -124,8 +119,7 @@
     (call festival_relabel_tmpfs_files (staff_t)))
 
 (optional staff_systemduser_optional_festival
-    (call festival_run (staff_systemduser_t staff_r))
-    (call systemduser_daemon_template (staff_systemduser_t festival_t)))
+    (call festival_run (staff_systemduser_t staff_r)))
 
 (optional staff_optional_ffmpeg
     (call ffmpeg_run (staff_t staff_r))
