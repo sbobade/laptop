@@ -25,10 +25,13 @@
 (allow iptools_t self (capability (net_admin)))
 (allow iptools_t self create_udp_socket_perms)
 (allow iptools_t self create_netlink_route_socket_perms)
+(allow iptools_t self create_netlink_socket_perms)
 (allow iptools_t self create_unix_dgram_socket_perms)
 
+(call system_load_kernel_module (iptools_t))
 (call system_read_net_sysctl (iptools_t))
 (call system_read_net_proc (iptools_t))
+(call system_request_load_module (iptools_t))
 
 (call iptools_read_config (iptools_t))
 
