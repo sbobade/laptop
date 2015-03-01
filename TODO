@@ -13,3 +13,5 @@
 * i allowed mplayer_t execmem but that is probably due to an xserver bug.. remove it once xserver becomes a bit more stable
 
 * implement system_map_t for /boot/System.map.* files?
+
+* make /etc/ls.so.config ld_config_t? maybe even mode ld.so.cache to ld.cil?
