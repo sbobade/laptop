@@ -117,6 +117,16 @@
     (call emacs_role_template_emacsclient (staff_r staff_systemduser_t staff_emacsclient_t))
     (call systemduser_daemon_template (staff_systemduser_t staff_emacsclient_t)))
 
+(optional staff_optional_festival
+    (call festival_run (staff_t staff_r))
+
+    (call festival_manage_tmpfs_files (staff_t))
+    (call festival_relabel_tmpfs_files (staff_t)))
+
+(optional staff_systemduser_optional_festival
+    (call festival_run (staff_systemduser_t staff_r))
+    (call systemduser_daemon_template (staff_systemduser_t festival_t)))
+
 (optional staff_optional_ffmpeg
     (call ffmpeg_run (staff_t staff_r))
 

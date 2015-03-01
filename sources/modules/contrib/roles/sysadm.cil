@@ -151,6 +151,9 @@
 (optional sysadm_optional_dracut
     (call dracut_admin (sysadm_t)))
 
+(optional sysadm_optional_festival
+    (call festival_manage_config (sysadm_t)))
+
 (optional sysadm_optional_fop
     (call fop_manage_config_files (sysadm_t)))
 

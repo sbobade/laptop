@@ -36,7 +36,8 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/applications/power.cil sources/modules/contrib/applications/qiv.cil sources/modules/contrib/applications/rp.cil \
         sources/modules/contrib/applications/screen.cil sources/modules/contrib/applications/setbacklight.cil sources/modules/contrib/applications/temps.cil \
         sources/modules/contrib/applications/torrent.cil sources/modules/contrib/applications/xlock.cil sources/modules/contrib/applications/xpdf.cil \
-        sources/modules/contrib/applications/xterm.cil sources/modules/contrib/applications/xutil.cil
+        sources/modules/contrib/applications/xterm.cil sources/modules/contrib/applications/xutil.cil sources/modules/contrib/applications/cowsay.cil \
+        sources/modules/contrib/applications/festival.cil
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 

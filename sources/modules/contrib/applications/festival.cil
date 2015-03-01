@@ -1,0 +1,96 @@
+(roleattribute festival_role)
+
+(type festival_t)
+(type festival_exec_t)
+(call applications_app (festival_t festival_exec_t))
+(roletype festival_role festival_t)
+
+(context festival_exec (system_u object_r festival_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/festival" file festival_exec)
+(filecon "/usr/bin/festival_client" file festival_exec)
+(filecon "/usr/bin/festival_server" file festival_exec)
+(filecon "/usr/bin/festival_server_control" file festival_exec)
+(filecon "/usr/bin/saytime" file festival_exec)
+(filecon "/usr/bin/text2wave" file festival_exec)
+(filecon "/usr/lib/festival/etc/audsp" file festival_exec)
+
+(type festival_config_t)
+(call files_config_object_type (festival_config_t))
+
+(context festival_config (system_u object_r festival_config_t (systemlow systemlow)))
+(filecon "/etc/festival(/.*)?" any festival_config)
+
+(type festival_tmpfs_t)
+(call usersubject_tmpfs_object_type (festival_tmpfs_t))
+
+(allow festival_t festival_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (festival_t festival_tmpfs_t file "*"))
+
+(call files_dontaudit_catchall_subject_type (festival_t))
+(call files_read_data (festival_t))
+
+(call festival_exec (festival_t))
+(call festival_read_config_files (festival_t))
+
+(call pa_tmpfs_client_template (festival_t festival_role festival_tmpfs_t))
+
+(optional festival_optional_xserver
+    (call xserver_client_subject_type (festival_t)))
+
+(macro festival_exec ((type ARG1))
+    (call can_exec (ARG1 festival_exec_t)))
+
+(macro festival_auto_subject_type_transition ((type ARG1))
+    (call festival_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 festival_exec_t festival_t)))
+
+(macro festival_send_signal ((type ARG1))
+    (allow ARG1 festival_t (process (signal))))
+
+(macro festival_run ((type ARG1)(role ARG2))
+    (call festival_auto_subject_type_transition (ARG1))
+    (roleattributeset festival_role ARG2))
+
+(macro festival_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 festival_config_t search_dir_perms))
+
+(macro festival_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 festival_config_t list_dir_perms))
+
+(macro festival_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 festival_config_t festival_config_t)))
+
+(macro festival_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 festival_config_t festival_config_t)))
+
+(macro festival_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 festival_config_t read_file_perms)
+    (allow ARG1 festival_config_t list_dir_perms)
+    (allow ARG1 festival_config_t read_lnk_file_perms))
+
+(macro festival_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 festival_config_t manage_file_perms)
+    (allow ARG1 festival_config_t manage_dir_perms)
+    (allow ARG1 festival_config_t manage_lnk_file_perms))
+
+(macro festival_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 festival_tmpfs_t read_file_perms))
+
+(macro festival_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 festival_tmpfs_t manage_file_perms))
+
+(macro festival_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 festival_tmpfs_t relabel_file_perms))
