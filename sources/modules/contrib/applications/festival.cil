@@ -26,6 +26,9 @@
 (allow festival_t festival_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (festival_t festival_tmpfs_t file "*"))
 
+(call commands_exec (festival_t))
+(call commands_exec_shell (festival_t))
+
 (call files_dontaudit_catchall_subject_type (festival_t))
 (call files_read_data (festival_t))
 
