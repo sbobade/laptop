@@ -12,12 +12,14 @@ modular_base_plus_modules () {
 modular_base_plus_run_test () {
     modular_base_plus_modules
 
+    local TEST="modular_base_plus_modules"
+
     if [ "${MODULAR_VERBOSE}" == "1" ] ; then
         ${SECILC} -v $(echo ${MODULAR_BASE_PLUS_MODULES[@]}) \
-            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+            -o policy/policy.${VERSION}.${TEST} -f contexts/files/file_contexts.${TEST}
     else
         ${SECILC} $(echo ${MODULAR_BASE_PLUS_MODULES[@]}) \
-            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+            -o policy/policy.${VERSION}.${TEST} -f contexts/files/file_contexts.${TEST} 2>/dev/null
     fi
 
     if [ "$?" -ne 0 ] ; then

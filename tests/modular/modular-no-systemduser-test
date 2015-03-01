@@ -11,12 +11,14 @@ modular_no_systemduser_module () {
 modular_no_systemduser_run_test () {
     modular_no_systemduser_module
 
+    local TEST="modular_no_systemduser_module"
+
     if [ "${MODULAR_VERBOSE}" == "1" ] ; then
         ${SECILC} -v $(echo ${MODULAR_NO_SYSTEMDUSER_MODULE[@]}) \
-            -o policy/policy.${VERSION} -f contexts/files/file_contexts
+            -o policy/policy.${VERSION}.${TEST} -f contexts/files/file_contexts.${TEST}
     else
         ${SECILC} $(echo ${MODULAR_NO_SYSTEMDUSER_MODULE[@]}) \
-            -o policy/policy.${VERSION} -f contexts/files/file_contexts 2>/dev/null
+            -o policy/policy.${VERSION}.${TEST} -f contexts/files/file_contexts.${TEST} 2>/dev/null
     fi
 
     if [ "$?" -ne 0 ] ; then
