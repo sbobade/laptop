@@ -1,0 +1,85 @@
+(typeattribute dbuslaunch_subject_type)
+(typeattribute dbuslaunch_client_subject_type)
+
+(type dbuslaunch_exec_t)
+(call applications_app (dbuslaunch_subject_type dbuslaunch_exec_t))
+
+(context dbuslaunch_exec (system_u object_r dbuslaunch_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dbus-launch" file dbuslaunch_exec)
+
+(type dbuslaunch_home_t)
+(call usersubject_home_object_type (dbuslaunch_home_t))
+
+(allow dbuslaunch_subject_type dbuslaunch_home_t manage_dir_perms)
+(allow dbuslaunch_subject_type dbuslaunch_home_t manage_file_perms)
+(call dbuslaunch_home_dir_object_type_transition_dbuslaunch_home_dirs (dbuslaunch_subject_type))
+
+(allow dbuslaunch_subject_type self rw_fifo_file_perms)
+
+(call dbus_read_lib_files (dbuslaunch_subject_type))
+
+(call ns_client_subject_type (dbuslaunch_subject_type))
+
+(call xserver_client_subject_type (dbuslaunch_subject_type))
+
+(macro dbuslaunch_exec ((type ARG1))
+    (call can_exec (ARG1 dbuslaunch_exec_t))
+    (call dbuslaunch_client_subject_type (ARG1)))
+
+(macro dbuslaunch_subject_type ((type ARG1))
+    (typeattributeset dbuslaunch_subject_type ARG1))
+
+(macro dbuslaunch_client_subject_type ((type ARG1))
+    (typeattributeset dbuslaunch_client_subject_type ARG1))
+
+(macro dbuslaunch_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call dbuslaunch_subject_type (ARG3))
+    (call dbuslaunch_client_subject_type (ARG2))
+    (call auto_subject_type_transition_pattern
+        (ARG2 dbuslaunch_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal))))
+
+(macro dbuslaunch_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 dbuslaunch_home_t search_dir_perms))
+
+(macro dbuslaunch_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 dbuslaunch_home_t list_dir_perms))
+
+(macro dbuslaunch_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 dbuslaunch_home_t dbuslaunch_home_t)))
+
+(macro dbuslaunch_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 dbuslaunch_home_t dbuslaunch_home_t)))
+
+(macro dbuslaunch_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 dbuslaunch_home_t read_file_perms)
+    (allow ARG1 dbuslaunch_home_t list_dir_perms)
+    (allow ARG1 dbuslaunch_home_t read_lnk_file_perms))
+
+(macro dbuslaunch_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 dbuslaunch_home_t manage_file_perms)
+    (allow ARG1 dbuslaunch_home_t manage_dir_perms)
+    (allow ARG1 dbuslaunch_home_t manage_lnk_file_perms))
+
+(macro dbuslaunch_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 dbuslaunch_home_t relabel_file_perms)
+    (allow ARG1 dbuslaunch_home_t relabel_dir_perms)
+    (allow ARG1 dbuslaunch_home_t relabel_lnk_file_perms))
+
+(macro dbuslaunch_use_fd_all_client_subjects ((type ARG1))
+    (allow ARG1 dbuslaunch_client_subject_type (fd (use))))
+
+(macro dbuslaunch_write_inherited_fifo_files_all_client_subjects ((type ARG1))
+    (call dbuslaunch_use_fd_all_client_subjects (ARG1))
+    (allow ARG1 dbuslaunch_client_subject_type (fifo_file (write))))
+
+(macro dbuslaunch_home_dir_object_type_transition_dbuslaunch_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 dbuslaunch_home_t dir ".dbus")))

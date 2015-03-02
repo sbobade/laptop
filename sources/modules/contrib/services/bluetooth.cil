@@ -131,7 +131,13 @@
 
 (call devices_read_urandom (bluetooth_obexd_subject_type))
 
+(call bluetooth_dbus_chat_bluetoothd (bluetooth_obexd_subject_type))
+
+(call dbus_system_client_subject_type (bluetooth_obexd_subject_type))
+
 (call miscfiles_read_locale (bluetooth_obexd_subject_type))
+
+(call usersubject_search_cache_home (bluetooth_obexd_subject_type)) ; FIXME
 
 (optional obexd_optional_journal
     (call journal_client_subject_type (bluetooth_obexd_subject_type)))

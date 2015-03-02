@@ -184,6 +184,7 @@
 (filecon "/usr/bin/xinit" file xinit_exec)
 
 (allow xserver_xinit_subject_type self (process (setpgid)))
+(allow xserver_xinit_subject_type self rw_fifo_file_perms)
 
 (allow xserver_xinit_subject_type xserver_t (process (signal)))
 

@@ -29,8 +29,8 @@
 (call miscfiles_read_all_fonts (cowsay_t))
 (call miscfiles_read_locale (cowsay_t))
 
-(optional cowsay_optional_dbus
-    (call dbus_search_lib (cowsay_t)))
+(optional cowsay_optional_dbususer
+    (call dbususer_service_all_busses (cowsay_t)))
 
 (optional cowsay_optional_machine
     (call machine_read_config_files (cowsay_t)))

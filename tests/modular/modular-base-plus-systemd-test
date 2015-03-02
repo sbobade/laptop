@@ -13,6 +13,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/services/tcs.cil sources/modules/contrib/services/tor.cil sources/modules/contrib/services/torrent.cil \
         sources/modules/contrib/services/wpa.cil sources/modules/contrib/services/xserver.cil sources/modules/contrib/system/bootloader.cil \
         sources/modules/contrib/services/qemu.cil sources/modules/contrib/services/lirc.cil sources/modules/contrib/services/ppp.cil \
+        sources/modules/contrib/services/dbususer.cil \
         sources/modules/contrib/system/dm.cil sources/modules/contrib/system/dmesg.cil sources/modules/contrib/system/dmi.cil \
         sources/modules/contrib/system/dracut.cil sources/modules/contrib/system/fuse.cil sources/modules/contrib/system/hostname.cil \
         sources/modules/contrib/system/hwclock.cil sources/modules/contrib/system/ld.cil sources/modules/contrib/system/login.cil \
@@ -37,7 +38,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/applications/screen.cil sources/modules/contrib/applications/setbacklight.cil sources/modules/contrib/applications/temps.cil \
         sources/modules/contrib/applications/torrent.cil sources/modules/contrib/applications/xlock.cil sources/modules/contrib/applications/xpdf.cil \
         sources/modules/contrib/applications/xterm.cil sources/modules/contrib/applications/xutil.cil sources/modules/contrib/applications/cowsay.cil \
-        sources/modules/contrib/applications/festival.cil
+        sources/modules/contrib/applications/festival.cil sources/modules/contrib/applications/dbuslaunch.cil
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 

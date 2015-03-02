@@ -213,7 +213,7 @@
 (call filesystems_associate_tmpfs (unlabeled_t))
 
 (allow system_t self (system (syslog_console)))
-(allow system_t self (capability (sys_tty_config sys_admin sys_nice net_admin)))
+(allow system_t self (capability (sys_tty_config sys_admin sys_nice net_admin net_bind_service)))
 (allow system_t self (process (setsched)))
 (allow system_t self create_unix_stream_socket_perms)
 (allow system_t self (capability2 (block_suspend syslog)))

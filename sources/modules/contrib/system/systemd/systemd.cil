@@ -252,6 +252,9 @@
     (call systemduser_send_sigchld_all_subjects (systemd_t))
     (call systemduser_shell_exec_manual_subject_type_transition_all_subjects (systemd_t)))
 
+(optional systemd_dbus_optional_systemduser
+    (call systemduser_dbus_chat_all_subjects (systemd_t)))
+
 (optional systemd_optional_tmpfiles
     (call tmpfiles_read_runtime (systemd_t)))
 

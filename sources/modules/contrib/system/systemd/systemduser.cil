@@ -1,4 +1,5 @@
 (typeattribute systemduser_subject_type)
+(typeattribute systemduser_socket_activated_subject_type)
 
 (typeattribute systemduser_unit_object_type)
 
@@ -24,7 +25,10 @@
 (context systemduser_pam_config (system_u object_r systemduser_pam_config_t (systemlow systemlow)))
 (filecon "/etc/pam\.d/systemd-user" file systemduser_pam_config)
 
-(allow systemduser_subject_type self (process (getsched setfscreate)))
+(allow systemduser_subject_type systemduser_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
+(allow systemduser_subject_type systemduser_socket_activated_subject_type create_unix_stream_stream_socket_perms)
+
+(allow systemduser_subject_type self (process (getsched setfscreate setsockcreate)))
 (allow systemduser_subject_type self create_unix_stream_stream_socket_perms)
 (allow systemduser_subject_type self create_netlink_selinux_socket_perms)
 
@@ -36,11 +40,14 @@
 (call files_read_data (systemduser_subject_type))
 
 (call filesystems_getattr_sysfs_filesystems (systemduser_subject_type))
+(call filesystems_manage_tmpfs_dirs (systemduser_subject_type))
+(call filesystems_manage_tmpfs_lnk_files (systemduser_subject_type))
 (call filesystems_manage_cgroup_dirs (systemduser_subject_type))
 (call filesystems_read_sysfs (systemduser_subject_type))
 (call filesystems_rw_cgroup_files (systemduser_subject_type))
 
 (call selinux_compute_access_vector (systemduser_subject_type))
+(call selinux_compute_create_context (systemduser_subject_type))
 (call selinux_list_securityfs (systemduser_subject_type))
 
 (call subject_common_type (systemduser_subject_type))
@@ -87,6 +94,9 @@
 (call usersubject_create_config_home_dirs (systemduser_subject_type))
 (call usersubject_home_dir_object_type_transition_config_home_dirs (systemduser_subject_type))
 
+(optional systemduser_subject_type_optional_dbus
+    (call dbus_system_client_subject_type (systemduser_subject_type)))
+
 (macro systemduser_subject_type ((type ARG1))
     (typeattributeset systemduser_subject_type ARG1))
 
@@ -104,6 +114,9 @@
     (call systemd_read_state_lnk_files (ARG2))
     (call systemduser_control_config_home (ARG2))
     (call systemduser_control_units (ARG2)))
+
+(macro systemduser_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemduser_socket_activated_subject_type ARG1))
 
 (macro systemduser_rw_unix_stream_sockets_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (unix_stream_socket (read write))))
@@ -331,6 +344,10 @@
     (call systemduser_enable_all_units (ARG1))
     (call systemduser_reload_all_units (ARG1))
     (call systemduser_start_all_units (ARG1)))
+
+(macro systemduser_dbus_chat_all_subjects ((type ARG1))
+    (allow ARG1 systemduser_subject_type (dbus (send_msg)))
+    (allow systemduser_subject_type ARG1 (dbus (send_msg))))
 
 (macro systemduser_tmpfs_object_type_transition_tmpfs_dirs ((type ARG1))
     (call files_search_user_runtime (ARG1))

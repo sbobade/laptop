@@ -1,0 +1,139 @@
+(typeattribute dbususer_subject_type)
+(typeattribute dbususer_client_subject_type)
+
+(call applications_subject_common_type (dbususer_subject_type))
+
+(type dbususer_tmpfs_t)
+(call usersubject_tmpfs_object_type (dbususer_tmpfs_t))
+
+(allow dbususer_subject_type dbususer_tmpfs_t manage_dir_perms)
+(allow dbususer_subject_type dbususer_tmpfs_t manage_sock_file_perms)
+(call dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs (dbususer_subject_type))
+
+(call dbus_read_config (dbususer_subject_type))
+(call dbus_subject_type (dbususer_subject_type))
+
+(call dbususer_read_state_all_client_subjects (dbususer_subject_type))
+(call dbususer_send_signal_all_client_subjects (dbususer_subject_type))
+(call dbususer_send_signull_all_client_subjects (dbususer_subject_type))
+(call dbususer_send_sigkill_all_client_subjects (dbususer_subject_type))
+(call dbususer_send_sigstop_all_client_subjects (dbususer_subject_type))
+
+(call usersubject_use_inherited_terminals (dbususer_subject_type))
+
+(optional dbususer_optional_dbuslaunch
+    (call dbuslaunch_write_inherited_fifo_files_all_client_subjects (dbususer_subject_type)))
+
+(allow dbususer_client_subject_type self (dbus (send_msg)))
+(allow dbususer_client_subject_type dbususer_subject_type (dbus (send_msg)))
+
+(call dbus_read_lib_files (dbususer_client_subject_type))
+
+(call dbususer_rw_unix_stream_sockets (dbususer_client_subject_type))
+(call dbususer_send_signal (dbususer_client_subject_type))
+(call dbususer_stream_connect (dbususer_client_subject_type))
+(call dbususer_use_fd (dbususer_client_subject_type))
+
+(macro dbususer_subject_type ((type ARG1))
+    (typeattributeset dbususer_subject_type ARG1))
+
+(macro dbususer_client_subject_type ((type ARG1))
+    (typeattributeset dbususer_client_subject_type ARG1))
+
+(macro dbususer_acquire_service ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (dbus (acquire_svc))))
+
+(macro dbususer_acquire_service_all_busses ((type ARG1))
+    (allow ARG1 dbususer_subject_type (dbus (acquire_svc))))
+
+(macro dbususer_service ((type ARG1)(type ARG2))
+    (call dbususer_client_subject_type (ARG1))
+    (call dbususer_acquire_service (ARG1 ARG2)))
+
+(macro dbususer_service_all_busses ((type ARG1))
+    (call dbususer_client_subject_type (ARG1))
+    (call dbususer_acquire_service_all_busses (ARG1)))
+
+(macro dbususer_read_state_all_client_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 dbususer_client_subject_type read_file_perms)
+    (allow ARG1 dbususer_client_subject_type list_dir_perms)
+    (allow ARG1 dbususer_client_subject_type read_lnk_file_perms))
+
+(macro dbususer_send_signal_all_client_subjects ((type ARG1))
+    (allow ARG1 dbususer_client_subject_type (process (signal))))
+
+(macro dbususer_send_signull_all_client_subjects ((type ARG1))
+    (allow ARG1 dbususer_client_subject_type (process (signull))))
+
+(macro dbususer_send_sigkill_all_client_subjects ((type ARG1))
+    (allow ARG1 dbususer_client_subject_type (process (sigkill))))
+
+(macro dbususer_send_sigstop_all_client_subjects ((type ARG1))
+    (allow ARG1 dbususer_client_subject_type (process (sigstop))))
+
+(macro dbususer_send_signal ((type ARG1))
+    (allow ARG1 dbususer_subject_type (process (signal))))
+
+(macro dbususer_rw_unix_stream_sockets ((type ARG1))
+    (allow ARG1 dbususer_subject_type (unix_stream_socket (read write))))
+
+(macro dbususer_use_fd ((type ARG1))
+    (allow ARG1 dbususer_subject_type (fd (use))))
+
+(macro dbususer_stream_connect ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call stream_connect_pattern (ARG1 dbususer_tmpfs_t dbususer_tmpfs_t dbususer_subject_type)))
+
+(macro dbususer_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call dbususer_subject_type (ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 dbusd_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG2 ARG3 (process (signal signull sigkill sigstop)))
+    (call ps_subject_pattern (ARG2 ARG3))
+    (allow ARG3 ARG2 (process (signal)))
+    (allow ARG3 ARG2 rw_unix_stream_socket_perms))
+
+(macro dbusser_search_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 dbususer_tmpfs_t search_dir_perms))
+
+(macro dbusser_list_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 dbususer_tmpfs_t list_dir_perms))
+
+(macro dbususer_read_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_sock_files_pattern (ARG1 dbususer_tmpfs_t dbususer_tmpfs_t)))
+
+(macro dbususer_read_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 dbususer_tmpfs_t read_file_perms)
+    (allow ARG1 dbususer_tmpfs_t list_dir_perms)
+    (allow ARG1 dbususer_tmpfs_t read_lnk_file_perms)
+    (allow ARG1 dbususer_tmpfs_t read_sock_file_perms))
+
+(macro dbususer_manage_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 dbususer_tmpfs_t manage_file_perms)
+    (allow ARG1 dbususer_tmpfs_t manage_dir_perms)
+    (allow ARG1 dbususer_tmpfs_t manage_lnk_file_perms)
+    (allow ARG1 dbususer_tmpfs_t manage_sock_file_perms))
+
+(macro dbususer_relabel_tmpfs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 dbususer_tmpfs_t relabel_file_perms)
+    (allow ARG1 dbususer_tmpfs_t relabel_dir_perms)
+    (allow ARG1 dbususer_tmpfs_t relabel_lnk_file_perms)
+    (allow ARG1 dbususer_tmpfs_t relabel_sock_file_perms))
+
+(macro dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs ((type ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 dbususer_tmpfs_t dir "dbus")))

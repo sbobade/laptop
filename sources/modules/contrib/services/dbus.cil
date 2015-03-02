@@ -9,10 +9,10 @@
 (type dbusd_t)
 (type dbusd_exec_t)
 (call subject_common_type (dbusd_t))
-(call subject_entry (dbusd_t dbusd_exec_t))
+(call subject_entry (dbus_subject_type dbusd_exec_t))
 (roletype system_r dbusd_t)
 
-(typeattributeset dbus_subject_type dbusd_t)
+(call dbus_subject_type (dbusd_t))
 
 (context dbusd_exec (system_u object_r dbusd_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/dbus-daemon" file dbusd_exec)
@@ -151,6 +151,9 @@
 
 (macro dbus_entry_subject ((type ARG1))
     (call subject_entry (ARG1 dbusd_exec_t)))
+
+(macro dbus_subject_type ((type ARG1))
+    (typeattributeset dbus_subject_type ARG1))
 
 (macro dbus_config_object_type ((type ARG1))
     (call files_config_object_type (ARG1))
