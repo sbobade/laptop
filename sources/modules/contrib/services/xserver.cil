@@ -1,6 +1,7 @@
 (roleattribute xserver_role)
 (roleattribute xserver_wrap_role)
 (roleattribute xserver_xauth_role)
+(roleattribute xserver_backlighthelper_role)
 
 (typeattribute xserver_client_subject_type)
 
@@ -68,8 +69,8 @@
 (portcon "udp" 6000 xserver_port)
 
 (allow xserver_t self (capability (dac_override setgid setuid sys_admin
-    sys_rawio ipc_owner sys_ptrace)))
-(allow xserver_t self (process (getpgid setpgid)))
+    sys_rawio ipc_owner sys_ptrace net_admin)))
+(allow xserver_t self (process (getpgid setpgid setsched)))
 (allow xserver_t self create_tcp_stream_socket_perms)
 (allow xserver_t self (unix_stream_socket (accept listen)))
 (allow xserver_t self rw_fifo_file_perms)
@@ -92,6 +93,8 @@
 (allow xserver_t xserver_tmpfs_client_subject_type (fd (use)))
 (allow xserver_t xserver_tmpfs_client_object_type (file (read write)))
 
+(call system_link_keyring (xserver_t))
+(call system_read_kernel_sysctl (xserver_t))
 (call system_write_mtrr_proc (xserver_t))
 
 (call commands_exec (xserver_t))
@@ -122,6 +125,7 @@
 (call xserver_read_config (xserver_t))
 (call xserver_read_xauth_home_files (xserver_t))
 (call xserver_run_wrap (xserver_t xserver_role))
+(call xserver_run_backlighthelper (xserver_t xserver_role))
 (call xserver_tcp_bind_xserver_port (xserver_t))
 
 (call xserver_manage_data_home (xserver_t))
@@ -131,13 +135,27 @@
 (call usersubject_home_dir_object_type_transition_data_home_dirs (xserver_t))
 
 (call usersubject_rw_inherited_tmpfs_files (xserver_t))
+(call usersubject_link_keyring_all_common_login_subjects (xserver_t))
 (call usersubject_use_ttys (xserver_t))
+
+(optional xserver_optional_audit
+    (call audit_set_params (xserver_t)))
 
 (optional xserver_optional_dbus
     (call dbus_system_client_subject_type (xserver_t)))
 
+(optional xserver_optional_journal
+    (call journal_client_subject_type (xserver_t)))
+
 (optional xserver_optional_login_logind
     (call login_logind_client_subject_type (xserver_t)))
+
+(optional xserver_optional_pkexec
+    (call polkit_exec_pkexec (xserver_t))
+    (call polkit_read_pam_config_files (xserver_t))
+    (call polkit_dbus_chat_polkitd (xserver_t))
+    (call auth_read_pam_config (xserver_t))
+    (call auth_read_authconfig_pam_config (xserver_t)))
 
 (optional xserver_optional_unconfined
     (call unconfined_rw_shm_all_subjects (xserver_t))
@@ -164,7 +182,7 @@
 (context xserver_wrap_exec (system_u object_r xserver_wrap_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/Xorg\.wrap" file xserver_wrap_exec)
 
-(allow xserver_wrap_t self (capability (setuid setgid)))
+(allow xserver_wrap_t self (capability (setuid setgid sys_admin)))
 
 (call devices_rw_dri (xserver_wrap_t))
 
@@ -231,6 +249,20 @@
 (allow xauth_t xauth_home_t manage_file_perms)
 (call usersubject_home_dir_object_type_transition (xauth_t xauth_home_t file "*"))
 
+(type backlighthelper_t)
+(type backlighthelper_exec_t)
+(call applications_app (backlighthelper_t backlighthelper_exec_t))
+(roletype xserver_backlighthelper_role backlighthelper_t)
+
+(context backlighthelper_exec (system_u object_r backlighthelper_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/xf86-video-intel-backlight-helper" file backlighthelper_exec)
+
+(call filesystems_list_sysfs (backlighthelper_t))
+(call filesystems_rw_sysfs_files (backlighthelper_t))
+(call filesystems_read_sysfs_lnk_files (backlighthelper_t))
+
+(call xserver_rw_unix_stream_sockets (backlighthelper_t))
+
 (macro xserver_exec ((type ARG1))
     (call can_exec (ARG1 xserver_exec_t)))
 
@@ -245,6 +277,9 @@
 
 (macro xserver_exec_xauth ((type ARG1))
     (call can_exec (ARG1 xauth_exec_t)))
+
+(macro xserver_exec_backlighthelper ((type ARG1))
+    (call can_exec (ARG1 backlighthelper_exec_t)))
 
 (macro xserver_auto_subject_type_transition ((type ARG1))
     (call xserver_send_signal (ARG1))
@@ -298,6 +333,18 @@
 (macro xserver_run_xauth ((type ARG1)(role ARG2))
     (call xserver_auto_subject_type_transition_xauth (ARG1))
     (roleattributeset xserver_xauth_role ARG2))
+
+(macro xserver_auto_subject_type_transition_backlighthelper ((type ARG1))
+    (call xserver_send_signal_backlighthelper (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 backlighthelper_exec_t backlighthelper_t)))
+
+(macro xserver_send_signal_backlighthelper ((type ARG1))
+    (allow ARG1 backlighthelper_t (process (signal))))
+
+(macro xserver_run_backlighthelper ((type ARG1)(role ARG2))
+    (call xserver_auto_subject_type_transition_backlighthelper (ARG1))
+    (roleattributeset xserver_backlighthelper_role ARG2))
 
 (macro xserver_search_config ((type ARG1))
     (call files_search_config (ARG1))
@@ -481,6 +528,9 @@
 
 (macro xserver_data_home_object_type_transition_xserver_data_home_dirs ((type ARG1))
     (call usersubject_data_home_object_type_transition (ARG1 xserver_data_home_t dir "xorg")))
+
+(macro xserver_rw_unix_stream_sockets ((type ARG1))
+    (allow ARG1 xserver_t (unix_stream_socket (read write))))
 
 (macro xserver_tmpfs_client_template ((type ARG1)(type ARG2))
     (call xserver_client_subject_type (ARG1))

@@ -1251,15 +1251,15 @@
     (allow ARG1 usersubject_common_login_subject_type list_dir_perms)
     (allow ARG1 usersubject_common_login_subject_type read_lnk_file_perms))
 
+(macro usersubject_link_keyring_all_common_login_subjects ((type ARG1))
+    (allow ARG1 usersubject_common_login_subject_type (key (search link))))
+
 (macro usersubject_create_keyring_all_common_login_subjects ((type ARG1))
     (allow ARG1 self (process (setkeycreate)))
     (allow ARG1 usersubject_common_login_subject_type (key (create search link write))))
 
 (macro usersubject_use_fd_all_common_login_subjects ((type ARG1))
     (allow ARG1 usersubject_common_login_subject_type (fd (use))))
-
-(macro usersubject_link_keyring_all_common_login_subjects ((type ARG1))
-    (allow ARG1 usersubject_common_login_subject_type (key (search link))))
 
 (macro usersubject_send_signal_all_common_login_subjects ((type ARG1))
     (allow ARG1 usersubject_common_login_subject_type (process (signal))))
