@@ -31,15 +31,22 @@
 (call devices_read_urandom (rtorrent_t))
 
 (call network_tcp_bind_generic_node (rtorrent_t))
+(call network_udp_bind_generic_node (rtorrent_t))
+(call network_udp_bind_all_unreserved_ports (rtorrent_t))
 (call network_tcp_bind_all_unreserved_ports (rtorrent_t))
 (call network_tcp_connect_all_unreserved_ports (rtorrent_t))
 (call network_tcp_connect_all_ephemeral_ports (rtorrent_t))
+
+(call dns_resolve_client_subject_type (rtorrent_t))
+
+(call http_tcp_connect_http_port (rtorrent_t))
 
 (call torrent_read_rtorrent_config_home_files (rtorrent_t))
 (call torrent_tcp_bind_torrent_port (rtorrent_t))
 
 (call miscfiles_read_all_terminfo (rtorrent_t))
 (call miscfiles_read_locale_files (rtorrent_t))
+(call miscfiles_read_net_config_files (rtorrent_t))
 
 (call usersubject_manage_user_home_dirs (rtorrent_t))
 (call usersubject_manage_user_home_files (rtorrent_t))

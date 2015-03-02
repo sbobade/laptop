@@ -153,10 +153,10 @@
     (allow ARG1 network_unreserved_port_object_type (udp_socket (name_bind))))
 
 (macro network_tcp_connect_all_unreserved_ports ((type ARG1))
-    (allow ARG1 network_unreserved_port_object_type (tcp_socket (connect))))
+    (allow ARG1 network_unreserved_port_object_type (tcp_socket (name_connect))))
 
 (macro network_tcp_connect_all_ephemeral_ports ((type ARG1))
-    (allow ARG1 network_ephemeral_port_object_type (tcp_socket (connect))))
+    (allow ARG1 network_ephemeral_port_object_type (tcp_socket (name_connect))))
 
 (macro network_tcp_bind_generic_node ((type ARG1))
     (allow ARG1 node_t (tcp_socket (node_bind))))
