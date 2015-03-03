@@ -6,6 +6,7 @@
 
 (context dbuslaunch_exec (system_u object_r dbuslaunch_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/dbus-launch" file dbuslaunch_exec)
+(filecon "/usr/bin/dbus-run-session" file dbuslaunch_exec)
 (filecon "/usr/libexec/at-spi-bus-launcher" file dbuslaunch_exec)
 
 (type dbuslaunch_home_t)
