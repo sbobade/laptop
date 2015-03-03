@@ -1,0 +1,64 @@
+(roleattribute xbindkeys_role)
+
+(type xbindkeys_t)
+(type xbindkeys_exec_t)
+(call applications_app (xbindkeys_t xbindkeys_exec_t))
+(roletype xbindkeys_role xbindkeys_t)
+
+(context xbindkeys_exec (system_u object_r xbindkeys_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xbindkeys" file xbindkeys_exec)
+(filecon "/usr/bin/xbindkeys_show" file xbindkeys_exec)
+
+(type xbindkeys_home_t)
+(call usersubject_home_object_type (xbindkeys_home_t))
+
+(allow xbindkeys_t xbindkeys_home_t manage_file_perms)
+(call xbindkeys_home_dir_object_type_transition_home_files (xbindkeys_t))
+
+(allow xbindkeys_t self (process (getsched)))
+
+(call commands_exec_shell (xbindkeys_t))
+
+(call devices_read_urandom (xbindkeys_t))
+
+(call files_read_data_files (xbindkeys_t))
+
+(call miscfiles_read_locale (xbindkeys_t))
+
+(call xserver_client_subject_type (xbindkeys_t))
+
+(optional xbindkeys_optional_pa
+    (call pa_run_pactl (xbindkeys_t xbindkeys_role)))
+
+(optional xbindkeys_optional_xutil
+    (call xutil_run (xbindkeys_t xbindkeys_role)))
+
+(macro xbindkeys_exec ((type ARG1))
+    (call can_exec (ARG1 xbindkeys_exec_t)))
+
+(macro xbindkeys_auto_subject_type_transition ((type ARG1))
+    (call xbindkeys_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xbindkeys_exec_t xbindkeys_t)))
+
+(macro xbindkeys_send_signal ((type ARG1))
+    (allow ARG1 xbindkeys_t (process (signal))))
+
+(macro xbindkeys_run ((type ARG1)(role ARG2))
+    (call xbindkeys_auto_subject_type_transition (ARG1))
+    (roleattributeset xbindkeys_role ARG2))
+
+(macro xbindkeys_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xbindkeys_home_t read_file_perms))
+
+(macro xbindkeys_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 xbindkeys_home_t manage_file_perms))
+
+(macro xbindkeys_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 xbindkeys_home_t relabel_file_perms))
+
+(macro xbindkeys_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 xbindkeys_home_t file ".xbindkeysrc")))

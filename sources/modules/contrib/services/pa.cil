@@ -99,6 +99,9 @@
 (call pa_read_state (pactl_t))
 (call pa_stream_connect (pactl_t))
 
+(optional pactl_optional_xserver
+    (call xserver_client_subject_type (pactl_t)))
+
 (allow pa_client_subject_type self (process (getsched)))
 (allow pa_client_subject_type self rw_fifo_file_perms)
 
