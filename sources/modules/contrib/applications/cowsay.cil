@@ -26,11 +26,10 @@
 
 (call filesystems_getattr_filesystems (cowsay_t))
 
+(call dbususer_service_all_busses (cowsay_t))
+
 (call miscfiles_read_all_fonts (cowsay_t))
 (call miscfiles_read_locale (cowsay_t))
-
-(optional cowsay_optional_dbususer
-    (call dbususer_service_all_busses (cowsay_t)))
 
 (optional cowsay_optional_machine
     (call machine_read_config_files (cowsay_t)))
@@ -67,3 +66,7 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 cowsay_tmpfs_t relabel_file_perms))
+
+(macro cowsay_dbus_chat ((type ARG1))
+    (allow ARG1 cowsay_t (dbus (send_msg)))
+    (allow cowsay_t ARG1 (dbus (send_msg))))
