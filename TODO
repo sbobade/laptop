@@ -22,4 +22,4 @@
     you can override that with auto object type transitions (like i do now for dbususer sockets in there) but thats unmaintainable
     (well actually its unmaintainable either way)
 
-* pkexec dbuscli
+* dbuscli
