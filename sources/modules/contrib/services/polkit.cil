@@ -7,6 +7,7 @@
 (typeattribute polkit_subject_type)
 
 (typeattribute polkit_pkexec_subject_type)
+(typeattribute polkit_pkexec_client_subject_type)
 
 (typeattribute polkit_object_type)
 
@@ -159,13 +160,45 @@
 
 (type pkexec_exec_t)
 (call applications_app (polkit_pkexec_subject_type pkexec_exec_t))
-(roletype polkit_pkexec_role pkexec_exec_t)
+
+(allow polkit_pkexec_client_subject_type self (capability (dac_override setgid setuid net_admin)))
+(allow polkit_pkexec_client_subject_type self (process (setsched)))
+(allow polkit_pkexec_client_subject_type self rw_fifo_file_perms)
+
+(call system_link_keyring (polkit_pkexec_client_subject_type))
+(call system_read_kernel_sysctl (polkit_pkexec_client_subject_type))
+
+(call dbus_system_client_subject_type (polkit_pkexec_client_subject_type))
+
+(call miscfiles_read_locale (polkit_pkexec_client_subject_type))
+
+(call files_read_config_files (polkit_pkexec_client_subject_type))
+
+(call auth_read_pam_config (polkit_pkexec_client_subject_type))
+(call auth_read_authconfig_pam_config (polkit_pkexec_client_subject_type))
+
+(call ns_client_subject_type (polkit_pkexec_client_subject_type))
+
+(call polkit_dbus_chat_polkitd (polkit_pkexec_client_subject_type))
+(call polkit_read_pam_config_files (polkit_pkexec_client_subject_type))
+
+(call utmp_read_utmp_runtime_files (polkit_pkexec_client_subject_type))
+
+(optional polkit_pkexec_client_subject_type_optional_audit
+    (call audit_set_params (polkit_pkexec_client_subject_type)))
+
+(optional polkit_pkexec_client_subject_type_optional_journal
+    (call journal_client_subject_type (polkit_pkexec_client_subject_type)))
+
+(optional polkit_pkexec_subject_type_optional_login_logind
+    (call login_logind_client_subject_type (polkit_pkexec_client_subject_type)))
+
+(call polkit_pkexec_client_subject_type (polkit_pkexec_subject_type))
 
 (context pkexec_exec (system_u object_r pkexec_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pkaction" file pkexec_exec)
 (filecon "/usr/bin/pkcheck" file pkexec_exec)
 (filecon "/usr/bin/pkexec" file pkexec_exec)
-(filecon "/usr/bin/pkttyagent" file pkexec_exec)
 
 (allow polkit_admin_subject_type polkit_subject_type (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (polkit_admin_subject_type polkit_subject_type))
@@ -186,17 +219,24 @@
     (call can_exec (ARG1 pkagent_exec_t)))
 
 (macro polkit_exec_pkexec ((type ARG1))
+    (call polkit_pkexec_client_subject_type (ARG1))
     (call can_exec (ARG1 pkexec_exec_t)))
 
 (macro polkit_pkexec_subject_type ((type ARG1))
     (typeattributeset polkit_pkexec_subject_type ARG1))
 
+(macro polkit_pkexec_client_subject_type ((type ARG1))
+    (typeattributeset polkit_pkexec_client_subject_type ARG1))
+
 (macro polkit_role_template_pkexec ((role ARG1)(type ARG2)(type ARG3))
+    (call polkit_pkexec_subject_type (ARG3))
     (call auto_subject_type_transition_pattern
         (ARG2 pkexec_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call polkit_pkexec_subject_type (ARG3)))
+    (call ps_subject_pattern (ARG3 ARG2))
+    (allow ARG3 ARG2 (key (search link)))
+    (call polkit_run_pkagent (ARG3 ARG1)))
 
 (macro polkit_auto_subject_type_transition_pattern_polkitd ((type ARG1))
     (call polkit_send_signal_polkitd (ARG1))

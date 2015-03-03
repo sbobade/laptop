@@ -110,6 +110,9 @@
 (optional sysadm_optional_alsa
     (call alsa_admin (sysadm_t)))
 
+(optional sysadm_optional_atspi2
+    (call atspi2_manage_config (sysadm_t)))
+
 (optional sysadm_optional_b43fwcutter
     (call b43fwcutter_run (sysadm_t sysadm_r))
     (call b43fwcutter_manage_tmp (sysadm_t)))

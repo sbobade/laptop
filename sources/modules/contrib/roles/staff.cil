@@ -95,6 +95,12 @@
     (call dbususer_relabel_tmpfs (staff_t))
     (call dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs (staff_t)))
 
+(optional staff_dbususer_optional_atspi2
+    (call atspi2_run_atspi2regd (staff_dbususer_t staff_r)))
+
+(optional staff_dbususer_optional_dbuslaunch
+    (call dbuslaunch_role_template (staff_r staff_dbususer_t staff_dbuslaunch_t)))
+
 (optional staff_systemduser_optional_staff_dbususer
     (call dbususer_role_template (staff_r staff_systemduser_t staff_dbususer_t))
 
@@ -479,6 +485,15 @@
 
     (call pinentry_manage_tmpfs_files (staff_t))
     (call pinentry_relabel_tmpfs_files (staff_t)))
+
+(optional staff_optional_polkit
+    (type staff_pkexec_t)
+    (call polkit_role_template_pkexec (staff_r staff_t staff_pkexec_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_pkexec_t staff_t))
+    (call commands_shell_exec_auto_subject_type_transition (staff_pkexec_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_pkexec_t staff_t)))
 
 (optional staff_optional_power
     (call power_exec (staff_t))

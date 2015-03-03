@@ -69,8 +69,8 @@
 (portcon "udp" 6000 xserver_port)
 
 (allow xserver_t self (capability (dac_override setgid setuid sys_admin
-    sys_rawio ipc_owner sys_ptrace net_admin)))
-(allow xserver_t self (process (getpgid setpgid setsched)))
+    sys_rawio ipc_owner sys_ptrace)))
+(allow xserver_t self (process (getpgid setpgid)))
 (allow xserver_t self create_tcp_stream_socket_perms)
 (allow xserver_t self (unix_stream_socket (accept listen)))
 (allow xserver_t self rw_fifo_file_perms)
@@ -93,8 +93,6 @@
 (allow xserver_t xserver_tmpfs_client_subject_type (fd (use)))
 (allow xserver_t xserver_tmpfs_client_object_type (file (read write)))
 
-(call system_link_keyring (xserver_t))
-(call system_read_kernel_sysctl (xserver_t))
 (call system_write_mtrr_proc (xserver_t))
 
 (call commands_exec (xserver_t))
@@ -138,24 +136,14 @@
 (call usersubject_link_keyring_all_common_login_subjects (xserver_t))
 (call usersubject_use_ttys (xserver_t))
 
-(optional xserver_optional_audit
-    (call audit_set_params (xserver_t)))
-
 (optional xserver_optional_dbus
     (call dbus_system_client_subject_type (xserver_t)))
-
-(optional xserver_optional_journal
-    (call journal_client_subject_type (xserver_t)))
 
 (optional xserver_optional_login_logind
     (call login_logind_client_subject_type (xserver_t)))
 
 (optional xserver_optional_pkexec
-    (call polkit_exec_pkexec (xserver_t))
-    (call polkit_read_pam_config_files (xserver_t))
-    (call polkit_dbus_chat_polkitd (xserver_t))
-    (call auth_read_pam_config (xserver_t))
-    (call auth_read_authconfig_pam_config (xserver_t)))
+    (call polkit_exec_pkexec (xserver_t)))
 
 (optional xserver_optional_unconfined
     (call unconfined_rw_shm_all_subjects (xserver_t))

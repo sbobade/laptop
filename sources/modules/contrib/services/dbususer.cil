@@ -21,7 +21,10 @@
 
 (call usersubject_use_inherited_terminals (dbususer_subject_type))
 
-(optional dbususer_optional_dbuslaunch
+(optional dbususer_subject_type_optional_atspi2
+    (call atspi2_read_config_files (dbususer_subject_type)))
+
+(optional dbususer_subject_type_optional_dbuslaunch
     (call dbuslaunch_write_inherited_fifo_files_all_client_subjects (dbususer_subject_type)))
 
 (allow dbususer_client_subject_type self (dbus (send_msg)))
@@ -33,6 +36,9 @@
 (call dbususer_send_signal (dbususer_client_subject_type))
 (call dbususer_stream_connect (dbususer_client_subject_type))
 (call dbususer_use_fd (dbususer_client_subject_type))
+
+(optional dbususer_client_subject_type_optional_dbuslaunch
+    (call dbuslaunch_use_fd_all_subjects (dbususer_client_subject_type)))
 
 (macro dbususer_subject_type ((type ARG1))
     (typeattributeset dbususer_subject_type ARG1))
@@ -76,7 +82,7 @@
     (allow ARG1 dbususer_subject_type (process (signal))))
 
 (macro dbususer_rw_unix_stream_sockets ((type ARG1))
-    (allow ARG1 dbususer_subject_type (unix_stream_socket (read write))))
+    (allow ARG1 dbususer_subject_type rw_unix_stream_socket_perms))
 
 (macro dbususer_use_fd ((type ARG1))
     (allow ARG1 dbususer_subject_type (fd (use))))

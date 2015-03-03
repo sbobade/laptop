@@ -1,0 +1,60 @@
+(roleattribute atspi2_atspi2regd_role)
+
+(type atspi2regd_t)
+(type atspi2regd_exec_t)
+(call applications_app (atspi2regd_t atspi2regd_exec_t))
+(roletype atspi2_atspi2regd_role atspi2regd_t)
+
+(context atspi2regd_exec (system_u object_r atspi2regd_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/at-spi2-registryd" file atspi2regd_exec)
+
+(type atspi2_config_t)
+(call files_config_object_type (atspi2_config_t))
+
+(context atspi2_config (system_u object_r atspi2_config_t (systemlow systemlow)))
+(filecon "/etc/at-spi2(/.*)?" any atspi2_config)
+
+(call dbususer_client_subject_type (atspi2regd_t))
+
+(macro atspi2_exec_atspiregd ((type ARG1))
+    (call can_exec (ARG1 atspi2regd_exec_t)))
+
+(macro atspi2_auto_subject_type_transition_atspi2regd ((type ARG1))
+    (call atspi2_send_signal_atspi2regd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 atspi2regd_exec_t atspi2regd_t)))
+
+(macro atspi2_send_signal_atspi2regd ((type ARG1))
+    (allow ARG1 atspi2regd_t (process (signal))))
+
+(macro atspi2_run_atspi2regd ((type ARG1)(role ARG2))
+    (call atspi2_auto_subject_type_transition_atspi2regd (ARG1))
+    (roleattributeset atspi2_atspi2regd_role ARG2))
+
+(macro atspi2_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 atspi2_config_t search_dir_perms))
+
+(macro atspi2_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 atspi2_config_t list_dir_perms))
+
+(macro atspi2_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 atspi2_config_t atspi2_config_t)))
+
+(macro atspi2_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 atspi2_config_t atspi2_config_t)))
+
+(macro atspi2_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 atspi2_config_t read_file_perms)
+    (allow ARG1 atspi2_config_t list_dir_perms)
+    (allow ARG1 atspi2_config_t read_lnk_file_perms))
+
+(macro atspi2_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 atspi2_config_t manage_file_perms)
+    (allow ARG1 atspi2_config_t manage_dir_perms)
+    (allow ARG1 atspi2_config_t manage_lnk_file_perms))

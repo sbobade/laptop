@@ -6,6 +6,7 @@
 
 (context dbuslaunch_exec (system_u object_r dbuslaunch_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/dbus-launch" file dbuslaunch_exec)
+(filecon "/usr/libexec/at-spi-bus-launcher" file dbuslaunch_exec)
 
 (type dbuslaunch_home_t)
 (call usersubject_home_object_type (dbuslaunch_home_t))
@@ -16,7 +17,9 @@
 
 (allow dbuslaunch_subject_type self rw_fifo_file_perms)
 
-(call dbus_read_lib_files (dbuslaunch_subject_type))
+(call files_read_data (dbuslaunch_subject_type))
+
+(call dbususer_client_subject_type (dbuslaunch_subject_type))
 
 (call ns_client_subject_type (dbuslaunch_subject_type))
 
@@ -73,6 +76,9 @@
     (allow ARG1 dbuslaunch_home_t relabel_file_perms)
     (allow ARG1 dbuslaunch_home_t relabel_dir_perms)
     (allow ARG1 dbuslaunch_home_t relabel_lnk_file_perms))
+
+(macro dbuslaunch_use_fd_all_subjects ((type ARG1))
+    (allow ARG1 dbuslaunch_subject_type (fd (use))))
 
 (macro dbuslaunch_use_fd_all_client_subjects ((type ARG1))
     (allow ARG1 dbuslaunch_client_subject_type (fd (use))))
