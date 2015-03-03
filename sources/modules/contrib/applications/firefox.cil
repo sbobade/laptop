@@ -85,6 +85,10 @@
 
 (call udev_client_subject_type (firefox_t))
 
+(call usersubject_manage_data_home_files (firefox_t))
+(call usersubject_create_data_home_dirs (firefox_t))
+(call usersubject_home_dir_object_type_transition_data_home_dirs (firefox_t))
+
 (call usersubject_manage_user_home_files (firefox_t))
 (call usersubject_manage_user_home_dirs (firefox_t))
 (call usersubject_home_dir_object_type_transition_user_home (firefox_t dir "Desktop"))
