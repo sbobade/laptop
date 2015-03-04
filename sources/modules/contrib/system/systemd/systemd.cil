@@ -1,6 +1,7 @@
 (roleattribute systemd_systemctl_role)
 
 (typeattribute systemd_admin_subject_type)
+(typeattribute systemd_subject_type)
 (typeattribute systemd_daemon_subject_type)
 (typeattribute systemd_socket_activated_subject_type)
 (typeattribute systemd_system_service_admin_subject_type)
@@ -24,6 +25,8 @@
 (call subject_common_type (systemd_t))
 (call subject_entry (systemd_t systemd_exec_t))
 (roletype system_r systemd_t)
+
+(call systemd_subject_type (systemd_t))
 
 (context systemd_exec (system_u object_r systemd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd" file systemd_exec)
@@ -67,21 +70,52 @@
 (context systemd_lib (system_u object_r systemd_lib_t (systemlow systemlow)))
 (filecon "/var/lib/systemd(/.*)?" any systemd_lib)
 
+(allow systemd_subject_type self (process (getsched setsched setrlimit setfscreate setsockcreate)))
+(allow systemd_subject_type self (unix_stream_socket (listen accept)))
+(allow systemd_subject_type self create_netlink_selinux_socket_perms)
+
+(call system_read_kernel_sysctl (systemd_subject_type))
+
+(call devices_read_urandom (systemd_subject_type))
+
+(call files_manage_tmp_dirs (systemd_subject_type))
+(call files_manage_tmp_lnk_files (systemd_subject_type))
+
+(call filesystems_manage_tmpfs_dirs (systemd_subject_type))
+(call filesystems_manage_tmpfs_lnk_files (systemd_subject_type))
+(call filesystems_manage_cgroup_dirs (systemd_subject_type))
+(call filesystems_read_sysfs (systemd_subject_type))
+(call filesystems_rw_cgroup_files (systemd_subject_type))
+
+(call selinux_compute_access_vector (systemd_subject_type))
+(call selinux_compute_create_context (systemd_subject_type))
+(call selinux_list_securityfs (systemd_subject_type))
+
+(call audit_client_subject_type (systemd_subject_type))
+
+(call journal_client_subject_type (systemd_subject_type))
+(call journal_stream_connect_journald (systemd_subject_type))
+
+(call miscfiles_read_locale (systemd_subject_type))
+
+(call mount_read_runtime (systemd_subject_type))
+
+(call ns_client_subject_type (systemd_subject_type))
+
+(call udev_client_subject_type (systemd_subject_type))
+
 (allow systemd_t systemd_lib_t manage_file_perms)
 (allow systemd_t systemd_lib_t manage_dir_perms)
 (allow systemd_t systemd_lib_t manage_sock_file_perms)
 (call files_lib_object_type_transition (systemd_t systemd_lib_t dir "systemd"))
 
-(allow systemd_t self (process (getcap setfscreate setsockcreate
-    setrlimit setsched setcap getsched)))
+(allow systemd_t self (process (getcap setcap)))
 (allow systemd_t self (capability (dac_override net_admin sys_time
     kill sys_tty_config sys_boot chown setgid setuid setpcap sys_resource
     sys_admin fsetid fowner)))
 (allow systemd_t self (capability2 (block_suspend)))
 (allow systemd_t self (unix_dgram_socket (lock)))
-(allow systemd_t self (unix_stream_socket (listen accept)))
 (allow systemd_t self (netlink_route_socket (nlmsg_write)))
-(allow systemd_t self create_netlink_selinux_socket_perms)
 (allow systemd_t self rw_fifo_file_perms)
 (allow systemd_t self (key (search link write)))
 
@@ -105,7 +139,6 @@
 
 (call system_link_keyring (systemd_t))
 (call system_mounton_mountpoint_dirs (systemd_t))
-(call system_read_kernel_sysctl (systemd_t))
 (call system_read_net_proc (systemd_t))
 (call system_read_net_sysctl (systemd_t))
 (call system_read_state_invalid (systemd_t))
@@ -122,7 +155,6 @@
 (call devices_create_zero (systemd_t))
 (call devices_read_autofs (systemd_t))
 (call devices_read_memory (systemd_t))
-(call devices_read_urandom (systemd_t))
 (call devices_relabel_all (systemd_t))
 (call devices_write_kmsg (systemd_t))
 
@@ -130,24 +162,18 @@
 (call files_read_all_config (systemd_t))
 (call files_relabel_all_runtime (systemd_t))
 (call files_relabelto_lock_dirs (systemd_t))
-(call files_manage_tmp_dirs (systemd_t))
-(call files_manage_tmp_lnk_files (systemd_t))
 
 (call filesystems_getattr_all_filesystems (systemd_t))
 (call filesystems_list_autofs (systemd_t))
 (call filesystems_list_binfmt_misc (systemd_t))
 (call filesystems_list_efivarfs (systemd_t))
 (call filesystems_list_pstore (systemd_t))
-(call filesystems_manage_cgroup_dirs (systemd_t))
 (call filesystems_manage_devtmpfs_dirs (systemd_t))
 (call filesystems_manage_devtmpfs_lnk_files (systemd_t))
 (call filesystems_manage_devtmpfs_chr_files (systemd_t))
-(call filesystems_manage_tmpfs_dirs (systemd_t))
-(call filesystems_manage_tmpfs_lnk_files (systemd_t))
 (call filesystems_mount_autofs (systemd_t))
 (call filesystems_mount_tmpfs (systemd_t))
 (call filesystems_read_tmpfs_files (systemd_t))
-(call filesystems_read_sysfs (systemd_t))
 (call filesystems_relabelfrom_devtmpfs_chr_files (systemd_t))
 (call filesystems_relabelfrom_devtmpfs_blk_files (systemd_t))
 (call filesystems_relabelfrom_tmpfs (systemd_t))
@@ -156,22 +182,16 @@
 (call filesystems_remount_filesystems (systemd_t))
 (call filesystems_remount_hugetlbfs (systemd_t))
 (call filesystems_remount_tmpfs (systemd_t))
-(call filesystems_rw_cgroup_files (systemd_t))
 (call filesystems_setattr_cgroup_files (systemd_t))
 (call filesystems_unmount_all (systemd_t))
 (call filesystems_write_inherited_devpts_chr_files (systemd_t))
-
-(call selinux_compute_access_vector (systemd_t))
-(call selinux_compute_create_context (systemd_t))
-(call selinux_list_securityfs (systemd_t))
-
-(call subject_identity_change_exemption (systemd_t))
-(call subject_role_change_exemption (systemd_t))
 
 (call storage_read_fixed_disk (systemd_t))
 (call storage_read_removable (systemd_t))
 (call storage_read_scsi_generic (systemd_t))
 
+(call subject_identity_change_exemption (systemd_t))
+(call subject_role_change_exemption (systemd_t))
 (call subject_getattr_all_common_subjects (systemd_t))
 (call subject_read_all_common_subjects_state (systemd_t))
 (call subject_send_sigkill_all_common_subjects (systemd_t))
@@ -180,24 +200,16 @@
 
 (call terminals_use_unallocated_ttys (systemd_t))
 
-(call audit_client_subject_type (systemd_t))
-
 (call journal_list_log (systemd_t))
-(call journal_client_subject_type (systemd_t))
 (call journal_test_for_systemd (systemd_t))
 (call journal_read_journald_systemd_runtime (systemd_t))
 (call journal_relabelto_log_dirs (systemd_t))
 (call journal_relabelto_log_files (systemd_t))
-(call journal_stream_connect_journald (systemd_t))
 (call journal_use_fd_journald (systemd_t))
 
-(call miscfiles_read_locale (systemd_t))
 (call miscfiles_read_modules (systemd_t))
 
 (call mount_manage_runtime_dirs (systemd_t))
-(call mount_read_runtime (systemd_t))
-
-(call ns_client_subject_type (systemd_t))
 
 (call seutil_read_default_context_files (systemd_t))
 (call seutil_read_file_context_files (systemd_t))
@@ -209,7 +221,6 @@
 (call systemd_manage_all_unit_files (systemd_t))
 (call systemd_relabelto_all_unit_dirs (systemd_t))
 
-(call udev_client_subject_type (systemd_t))
 (call udev_create_udevd_netlink_kobject_uevent_socket (systemd_t))
 
 (call utmp_rw_utmp_runtime_files (systemd_t))
@@ -419,9 +430,15 @@
 (allow systemd_unconfined_subject_type systemd_t (system (halt reboot
     status start stop undefined enable disable reload)))
 
-(call systemd_control_transient_units (systemd_unconfined_subject_type))
-(call systemd_control_transient_systemd_units (systemd_unconfined_subject_type))
+(allow systemd_unconfined_subject_type self (system (all)))
+(allow systemd_unconfined_subject_type systemd_subject_type (system (all)))
+
 (call systemd_control_all_units (systemd_unconfined_subject_type))
+
+(optional systemd_unconfined_subject_type_optional_systemduser
+    (call systemduser_control_all_units (systemd_unconfined_subject_type))
+    (call systemduser_control_transient_units (systemd_unconfined_subject_type))
+    (call systemduser_control_config_home (systemd_unconfined_subject_type)))
 
 (call systemd_exec_systemctl (systemd_system_service_admin_subject_type))
 (call systemd_reload_system (systemd_system_service_admin_subject_type))
@@ -436,6 +453,9 @@
 (macro systemd_exec_systemctl ((type ARG1))
     (call can_exec (ARG1 systemctl_exec_t))
     (call systemd_systemctl_client_subject_type (ARG1)))
+
+(macro systemd_subject_type ((type ARG1))
+    (typeattributeset systemd_subject_type ARG1))
 
 (macro systemd_systemctl_subject_type ((type ARG1))
     (typeattributeset systemd_systemctl_subject_type ARG1))
@@ -884,23 +904,11 @@
 (macro systemd_stop_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (stop))))
 
-(macro systemd_stop_transient_units ((type ARG1))
-    (allow ARG1 self (service (stop))))
-
-(macro systemd_stop_transient_systemd_units ((type ARG1))
-    (allow ARG1 systemd_t (service (stop))))
-
 (macro systemd_stop_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (stop))))
 
 (macro systemd_status_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (status))))
-
-(macro systemd_status_transient_units ((type ARG1))
-    (allow ARG1 self (service (status))))
-
-(macro systemd_status_transient_systemd_units ((type ARG1))
-    (allow ARG1 systemd_t (service (status))))
 
 (macro systemd_status_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (status))))
@@ -908,35 +916,17 @@
 (macro systemd_disable_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (disable))))
 
-(macro systemd_disable_transient_units ((type ARG1))
-    (allow ARG1 self (service (disable))))
-
-(macro systemd_disable_transient_systemd_units ((type ARG1))
-    (allow ARG1 systemd_t (service (disable))))
-
 (macro systemd_disable_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (disable))))
 
 (macro systemd_enable_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (enable))))
 
-(macro systemd_enable_transient_units ((type ARG1))
-    (allow ARG1 self (service (enable))))
-
-(macro systemd_enable_transient_systemd_units ((type ARG1))
-    (allow ARG1 systemd_t (service (enable))))
-
 (macro systemd_enable_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (enable))))
 
 (macro systemd_reload_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (reload))))
-
-(macro systemd_reload_transient_units ((type ARG1))
-    (allow ARG1 self (service (reload))))
-
-(macro systemd_reload_transient_systemd_units ((type ARG1))
-    (allow ARG1 systemd_t (service (reload))))
 
 (macro systemd_reload_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (reload))))
@@ -946,12 +936,6 @@
 
 (macro systemd_start_power_units ((type ARG1))
     (allow ARG1 systemd_power_unit_t (service (start))))
-
-(macro systemd_start_transient_units ((type ARG1))
-    (allow ARG1 self (service (start))))
-
-(macro systemd_start_transient_systemd_units ((type ARG1))
-    (allow ARG1 systemd_t (service (start))))
 
 (macro systemd_start_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (start))))
@@ -971,22 +955,6 @@
     (call systemd_enable_system_units (ARG1))
     (call systemd_reload_system_units (ARG1))
     (call systemd_start_system_units (ARG1)))
-
-(macro systemd_control_transient_units ((type ARG1))
-    (call systemd_stop_transient_units (ARG1))
-    (call systemd_status_transient_units (ARG1))
-    (call systemd_disable_transient_units (ARG1))
-    (call systemd_enable_transient_units (ARG1))
-    (call systemd_reload_transient_units (ARG1))
-    (call systemd_start_transient_units (ARG1)))
-
-(macro systemd_control_transient_systemd_units ((type ARG1))
-    (call systemd_stop_transient_systemd_units (ARG1))
-    (call systemd_status_transient_systemd_units (ARG1))
-    (call systemd_disable_transient_systemd_units (ARG1))
-    (call systemd_enable_transient_systemd_units (ARG1))
-    (call systemd_reload_transient_systemd_units (ARG1))
-    (call systemd_start_transient_systemd_units (ARG1)))
 
 (macro systemd_control_all_units ((type ARG1))
     (call systemd_stop_all_units (ARG1))

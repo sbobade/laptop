@@ -155,7 +155,6 @@
 (call systemd_start_power_units (logind_t))
 (call systemd_start_system_units (logind_t))
 (call systemd_start_system (logind_t))
-(call systemd_start_transient_systemd_units (logind_t))
 
 (call systemd_stop_system_units (logind_t))
 (call systemd_stop_system (logind_t))

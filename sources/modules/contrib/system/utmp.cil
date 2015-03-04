@@ -39,7 +39,6 @@
 
     (call systemd_status_system_units (utmp_t))
     (call systemd_status_system (utmp_t))
-    (call systemd_status_transient_systemd_units (utmp_t))
     (call systemd_stream_connect (utmp_t)))
 
 (macro utmp_exec ((type ARG1))
