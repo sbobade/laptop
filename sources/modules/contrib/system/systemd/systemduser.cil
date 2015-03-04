@@ -38,6 +38,8 @@
 (call devices_read_urandom (systemduser_subject_type))
 
 (call files_read_data (systemduser_subject_type))
+(call files_manage_tmp_dirs (systemduser_subject_type))
+(call files_manage_tmp_lnk_files (systemduser_subject_type))
 
 (call filesystems_getattr_sysfs_filesystems (systemduser_subject_type))
 (call filesystems_manage_tmpfs_dirs (systemduser_subject_type))
