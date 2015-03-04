@@ -513,6 +513,9 @@
 (optional sysadm_optional_notify
     (call notify_run (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_shutdown
+    (call shutdown_admin (sysadm_t)))
+
 (optional sysadm_optional_sysusers
     (call sysusers_admin (sysadm_t))
     (call sysusers_run (sysadm_t sysadm_r)))

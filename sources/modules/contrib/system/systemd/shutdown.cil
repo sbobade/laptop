@@ -1,3 +1,7 @@
+(typeattribute shutdown_object_type)
+
+(typeattribute shutdown_admin_subject_type)
+
 (type shutdown_t)
 (type shutdown_exec_t)
 (call systemd_daemon (shutdown_t shutdown_exec_t))
@@ -93,8 +97,18 @@
 (context shutdownd_exec (system_u object_r shutdownd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-shutdownd" file shutdownd_exec)
 
+(type shutdownd_unit_t)
+(call systemd_unit_object_type (shutdownd_unit_t))
+
+(typeattributeset shutdown_object_type shutdownd_unit_t)
+
+(context shutdownd_unit (system_u object_r shutdownd_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-shutdownd.*" file shutdownd_unit)
+
 (type shutdownd_systemd_runtime_t)
 (call systemd_runtime_object_type (shutdownd_systemd_runtime_t))
+
+(typeattributeset shutdown_object_type shutdownd_systemd_runtime_t)
 
 (context shutdownd_systemd_runtime (system_u object_r shutdownd_systemd_runtime_t (systemlow systemlow)))
 (filecon "/var/run/systemd/shutdown(/.*)?" any shutdownd_systemd_runtime)
@@ -123,6 +137,14 @@
 
 (optional shutdownd_optional_usersubject
     (call usersubject_use_terminals (shutdownd_t)))
+
+(allow shutdown_admin_subject_type shutdownd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (shutdown_admin_subject_type shutdownd_t))
+
+(allow shutdown_admin_subject_type shutdownd_unit_t (service (all)))
+
+(allow shutdown_admin_subject_type shutdown_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
 
 (macro shutdown_exec ((type ARG1))
     (call can_exec (ARG1 shutdown_exec_t)))
@@ -185,3 +207,8 @@
 (macro shutdown_dgram_send_shutdownd ((type ARG1))
     (call systemd_search_runtime (ARG1))
     (call dgram_send_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t shutdownd_t)))
+
+(macro shutdown_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset shutdown_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))
