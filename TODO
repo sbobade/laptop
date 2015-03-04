@@ -19,3 +19,10 @@
 
     you can override that with auto object type transitions (like i do now for dbususer sockets in there) but thats unmaintainable
     (well actually its unmaintainable either way)
+
+* maybe create a new type for systemd transient units (they are stored in /run/systemd/system. currently they are treated as normal generic units)
+    that means that any process that needs to control transitient units can also control normal generic units. thus that is less than optimal.
+    not that many system processes control transient units though. logind is one. systemd_admin also need to be able to do it but he should be already
+    able to manage atleast all generic system units anyway (via systemctl domain)
+
+
