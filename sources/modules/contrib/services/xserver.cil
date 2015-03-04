@@ -239,8 +239,7 @@
 
 (type backlighthelper_t)
 (type backlighthelper_exec_t)
-(call subject_common_type (backlighthelper_t))
-(call subject_entry (backlighthelper_t backlighthelper_exec_t))
+(call applications_app (backlighthelper_t backlighthelper_exec_t))
 (roletype xserver_backlighthelper_role backlighthelper_t)
 
 (roleattributeset xserver_backlighthelper_role system_r)
