@@ -427,11 +427,10 @@
 (allow systemd_admin_subject_type systemd_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
-(allow systemd_unconfined_subject_type systemd_t (system (halt reboot
+(allow systemd_unconfined_subject_type self (system (halt reboot
     status start stop undefined enable disable reload)))
-
-(allow systemd_unconfined_subject_type self (system (all)))
-(allow systemd_unconfined_subject_type systemd_subject_type (system (all)))
+(allow systemd_unconfined_subject_type systemd_subject_type (system (halt reboot
+    status start stop undefined enable disable reload)))
 
 (call systemd_control_all_units (systemd_unconfined_subject_type))
 
