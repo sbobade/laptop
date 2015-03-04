@@ -421,6 +421,9 @@
 (optional systemd_systemctl_client_subject_type_optional_polkit
     (call polkit_dbus_chat_polkitd (systemd_systemctl_client_subject_type)))
 
+(call systemd_control_system (systemd_admin_subject_type))
+(call systemd_control_system_units (systemd_admin_subject_type))
+
 (allow systemd_admin_subject_type systemd_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (systemd_admin_subject_type systemd_t))
 
