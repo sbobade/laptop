@@ -299,9 +299,6 @@
 
 (allow auth_unconfined_subject_type self (passwd (all)))
 
-(call auth_manage_shadow (auth_unconfined_subject_type))
-(call auth_relabel_shadow (auth_unconfined_subject_type))
-
 (macro auth_pam_config_object_type ((type ARG1))
     (call files_config_object_type (ARG1))
     (typeattributeset auth_pam_config_object_type ARG1))

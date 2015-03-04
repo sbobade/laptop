@@ -19,36 +19,11 @@
 (call subject_unconfined_subject_type (unconfined_subject_type))
 (call system_unconfined_subject_type (unconfined_subject_type))
 
-(optional unconfined_subject_type_optional_audit
-    (call audit_manage_auditd_config (unconfined_subject_type))
-    (call audit_relabel_auditd_config (unconfined_subject_type))
-    (call audit_config_object_type_transition_auditd_config_dirs (unconfined_subject_type))
-
-    (call audit_manage_auditd_log (unconfined_subject_type))
-    (call audit_relabel_auditd_log (unconfined_subject_type))
-    (call audit_log_object_type_transition_auditd_log_dirs (unconfined_subject_type))
-
-    (call audit_manage_audispd_config (unconfined_subject_type))
-    (call audit_relabel_audispd_config (unconfined_subject_type))
-    (call audit_config_object_type_transition_audispd_config_dirs (unconfined_subject_type)))
-
 (optional unconfined_subject_type_optional_auth
     (call auth_unconfined_subject_type (unconfined_subject_type)))
 
 (optional unconfined_subject_type_optional_dbus
     (call dbus_unconfined_subject_type (unconfined_subject_type)))
-
-(optional unconfined_subject_type_optional_seutil
-    (call seutil_manage_policy_config_files (unconfined_subject_type))
-    (call seutil_manage_policy_config_dirs (unconfined_subject_type))
-    (call seutil_relabelto_policy_config_files (unconfined_subject_type))
-    (call seutil_config_object_type_transition_policy_config_dirs (unconfined_subject_type))
-
-    (call seutil_config_object_type_transition_default_context_dirs (unconfined_subject_type))
-    (call seutil_config_object_type_transition_policy_src_dirs (unconfined_subject_type))
-    (call seutil_config_object_type_transition_selinux_config_dirs (unconfined_subject_type))
-
-    (call seutil_default_context_object_type_transition_file_context_dirs (unconfined_subject_type)))
 
 (optional unconfined_subject_type_optional_storage
     (call storage_unconfined_subject_type (unconfined_subject_type)))
