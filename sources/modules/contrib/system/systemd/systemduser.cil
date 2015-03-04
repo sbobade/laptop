@@ -108,14 +108,15 @@
     (roletype ARG1 ARG3)
     (allow ARG2 ARG3 (process (signal signull sigkill sigstop)))
     (allow ARG2 ARG3 (unix_stream_socket (read write connectto)))
-    (allow ARG2 ARG3 (system (reload disable)))
     (call ps_subject_pattern (ARG2 ARG3))
     (allow ARG3 ARG2 (process (signal signull sigkill sigstop)))
     (allow ARG3 ARG2 (unix_stream_socket (read write)))
     (call ps_subject_pattern (ARG3 ARG2))
     (call systemd_exec_systemctl (ARG2))
     (call systemd_read_state_lnk_files (ARG2))
+    (call systemduser_control_system (ARG2 ARG3))
     (call systemduser_control_config_home (ARG2))
+    (call systemduser_control_transient_units (ARG2))
     (call systemduser_control_units (ARG2)))
 
 (macro systemduser_socket_activated_subject_type ((type ARG1))
@@ -270,11 +271,50 @@
     (allow ARG1 systemduser_tmpfs_t relabel_file_perms)
     (allow ARG1 systemduser_tmpfs_t relabel_sock_file_perms))
 
+(macro systemduser_halt_system ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (system (halt))))
+
+(macro systemduser_reboot_system ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (system (reboot))))
+
+(macro systemduser_reload_system ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (system (reload))))
+
+(macro systemduser_status_system ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (system (status))))
+
+(macro systemduser_start_system ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (system (start))))
+
+(macro systemduser_stop_system ((type ARG1)(type ARG2))
+    (allow ARG1 ARG2 (system (stop))))
+
+(macro systemduser_halt_all_system ((type ARG1))
+    (allow ARG1 systemduser_subject_type (system (halt))))
+
+(macro systemduser_reboot_all_system ((type ARG1))
+    (allow ARG1 systemduser_subject_type (system (reboot))))
+
+(macro systemduser_reload_all_system ((type ARG1))
+    (allow ARG1 systemduser_subject_type (system (reload))))
+
+(macro systemduser_status_all_system ((type ARG1))
+    (allow ARG1 systemduser_subject_type (system (status))))
+
+(macro systemduser_start_all_system ((type ARG1))
+    (allow ARG1 systemduser_subject_type (system (start))))
+
+(macro systemduser_stop_all_system ((type ARG1))
+    (allow ARG1 systemduser_subject_type (system (stop))))
+
 (macro systemduser_stop_config_home ((type ARG1))
     (allow ARG1 systemduser_config_home_t (service (stop))))
 
 (macro systemduser_stop_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (stop))))
+
+(macro systemduser_stop_transient_units ((type ARG1))
+    (allow ARG1 systemduser_tmpfs_t (service (stop))))
 
 (macro systemduser_stop_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (stop))))
@@ -285,6 +325,9 @@
 (macro systemduser_status_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (status))))
 
+(macro systemduser_status_transient_units ((type ARG1))
+    (allow ARG1 systemduser_tmpfs_t (service (status))))
+
 (macro systemduser_status_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (status))))
 
@@ -293,6 +336,9 @@
 
 (macro systemduser_disable_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (disable))))
+
+(macro systemduser_disable_transient_units ((type ARG1))
+    (allow ARG1 systemduser_tmpfs_t (service (disable))))
 
 (macro systemduser_disable_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (disable))))
@@ -303,6 +349,9 @@
 (macro systemduser_enable_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (enable))))
 
+(macro systemduser_enable_transient_units ((type ARG1))
+    (allow ARG1 systemduser_tmpfs_t (service (enable))))
+
 (macro systemduser_enable_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (enable))))
 
@@ -311,6 +360,9 @@
 
 (macro systemduser_reload_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (reload))))
+
+(macro systemduser_reload_transient_units ((type ARG1))
+    (allow ARG1 systemduser_tmpfs_t (service (reload))))
 
 (macro systemduser_reload_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (reload))))
@@ -321,8 +373,27 @@
 (macro systemduser_start_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (start))))
 
+(macro systemduser_start_transient_units ((type ARG1))
+    (allow ARG1 systemduser_tmpfs_t (service (start))))
+
 (macro systemduser_start_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (start))))
+
+(macro systemduser_control_system ((type ARG1)(type ARG2))
+    (call systemduser_halt_system (ARG1 ARG2))
+    (call systemduser_reboot_system (ARG1 ARG2))
+    (call systemduser_reload_system (ARG1 ARG2))
+    (call systemduser_status_system (ARG1 ARG2))
+    (call systemduser_start_system (ARG1 ARG2))
+    (call systemduser_stop_system (ARG1 ARG2)))
+
+(macro systemduser_control_all_system ((type ARG1))
+    (call systemduser_halt_all_system (ARG1))
+    (call systemduser_reboot_all_system (ARG1))
+    (call systemduser_reload_all_system (ARG1))
+    (call systemduser_status_all_system (ARG1))
+    (call systemduser_start_all_system (ARG1))
+    (call systemduser_stop_all_system (ARG1)))
 
 (macro systemduser_control_config_home ((type ARG1))
     (call systemduser_stop_config_home (ARG1))
@@ -339,6 +410,14 @@
     (call systemduser_enable_units (ARG1))
     (call systemduser_reload_units (ARG1))
     (call systemduser_start_units (ARG1)))
+
+(macro systemduser_control_transient_units ((type ARG1))
+    (call systemduser_stop_transient_units (ARG1))
+    (call systemduser_status_transient_units (ARG1))
+    (call systemduser_disable_transient_units (ARG1))
+    (call systemduser_enable_transient_units (ARG1))
+    (call systemduser_reload_transient_units (ARG1))
+    (call systemduser_start_transient_units (ARG1)))
 
 (macro systemduser_control_all_units ((type ARG1))
     (call systemduser_stop_all_units (ARG1))
