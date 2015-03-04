@@ -336,7 +336,7 @@
 
 (macro files_tmp_object_type_transition ((type ARG1)(type ARG2)
     (class ARG3)(name ARG4))
-    (call files_search_var (ARG1))
+    (call files_read_tmp_lnk_files (ARG1))
     (call object_type_transition_pattern (ARG1 var_tmp_t ARG2 ARG3 ARG4)))
 
 (macro files_var_object_type_transition ((type ARG1)(type ARG2)

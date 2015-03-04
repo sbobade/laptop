@@ -160,6 +160,12 @@
 (optional sysadm_optional_fop
     (call fop_manage_config_files (sysadm_t)))
 
+(optional sysadm_optional_fpaste
+    (call fpaste_run (sysadm_t sysadm_r))
+
+    (call fpaste_manage_tmp (sysadm_t))
+    (call fpaste_relabel_tmp (sysadm_t)))
+
 (optional sysadm_optional_fstools
     (call fstools_run (sysadm_t sysadm_r)))
 

@@ -172,6 +172,12 @@
     (call ffmpeg_manage_tmpfs_files (staff_t))
     (call ffmpeg_relabel_tmpfs_files (staff_t)))
 
+(optional staff_optional_fpaste
+    (call fpaste_run (staff_t staff_r))
+
+    (call fpaste_manage_tmp (staff_t))
+    (call fpaste_relabel_tmp (staff_t)))
+
 (optional staff_optional_git
     (type staff_git_t)
     (call git_role_template (staff_r staff_t staff_git_t))

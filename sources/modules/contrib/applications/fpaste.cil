@@ -1,0 +1,128 @@
+(roleattribute fpaste_role)
+
+(type fpaste_t)
+(type fpaste_exec_t)
+(call applications_app (fpaste_t fpaste_exec_t))
+(roletype fpaste_role fpaste_t)
+
+(roleattributeset fpaste_role system_r)
+
+(context fpaste_exec (system_u object_r fpaste_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/fpaste" file fpaste_exec)
+
+(type fpaste_tmp_t)
+(call files_tmp_object_type (fpaste_tmp_t))
+
+(allow fpaste_t fpaste_tmp_t manage_dir_perms)
+(allow fpaste_t fpaste_tmp_t manage_file_perms)
+(call files_tmp_object_type_transition (fpaste_t fpaste_tmp_t file "*"))
+(call files_tmp_object_type_transition (fpaste_t fpaste_tmp_t dir "*"))
+
+(allow fpaste_t self (process (getsched)))
+(allow fpaste_t self rw_fifo_file_perms)
+
+(call system_read_kernel_sysctl (fpaste_t))
+(call system_list_mountpoints (fpaste_t))
+(call system_read_ring_buffer (fpaste_t))
+
+(call commands_exec (fpaste_t))
+(call commands_exec_shell (fpaste_t))
+
+(call devices_read_kmsg (fpaste_t))
+(call devices_read_urandom (fpaste_t))
+
+(call files_dontaudit_catchall_subject_type (fpaste_t))
+(call files_read_config_files (fpaste_t))
+(call files_read_data_files (fpaste_t))
+
+(call filesystems_list_all (fpaste_t))
+(call filesystems_getattr_all_filesystems (fpaste_t))
+(call filesystems_read_sysfs_files (fpaste_t))
+(call filesystems_read_sysfs_lnk_files (fpaste_t))
+
+(call selinux_get_enforce_mode (fpaste_t))
+
+(call storage_getattr_fixed_disk (fpaste_t))
+(call storage_getattr_removable (fpaste_t))
+(call storage_getattr_scsi_generic (fpaste_t))
+
+(call subject_read_all_common_subjects_state (fpaste_t))
+
+(call dmesg_exec (fpaste_t))
+
+(call fstools_exec (fpaste_t))
+
+(call http_tcp_connect_http_port (fpaste_t))
+
+(call miscfiles_read_locale (fpaste_t))
+(call miscfiles_read_net_config_files (fpaste_t))
+(call miscfiles_read_hwdata (fpaste_t))
+
+(call ns_client_subject_type (fpaste_t))
+
+(call pcitools_exec (fpaste_t))
+
+(call rpm_exec (fpaste_t))
+(call rpm_read_config_files (fpaste_t))
+(call rpm_read_cache_files (fpaste_t))
+(call rpm_read_lib_files (fpaste_t))
+
+(call seutil_read_selinux_config_files (fpaste_t))
+
+(call udev_client_subject_type (fpaste_t))
+
+(call usbutils_exec (fpaste_t))
+
+(call utmp_read_wtmp_log_files (fpaste_t))
+(call utmp_read_utmp_runtime_files (fpaste_t))
+
+(optional fpaste_optional_journal
+    (call journal_client_subject_type (fpaste_t)))
+
+(optional fpaste_optional_xserver
+    (call xserver_read_log_files (fpaste_t)))
+
+(macro fpaste_exec ((type ARG1))
+    (call can_exec (ARG1 fpaste_exec_t)))
+
+(macro fpaste_auto_subject_type_transition ((type ARG1))
+    (call fpaste_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 fpaste_exec_t fpaste_t)))
+
+(macro fpaste_send_signal ((type ARG1))
+    (allow ARG1 fpaste_t (process (signal))))
+
+(macro fpaste_run ((type ARG1)(role ARG2))
+    (call fpaste_auto_subject_type_transition (ARG1))
+    (roleattributeset fpaste_role ARG2))
+
+(macro fpaste_search_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 fpaste_tmp_t search_dir_perms))
+
+(macro fpaste_list_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 fpaste_tmp_t list_dir_perms))
+
+(macro fpaste_read_tmp_files ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (call read_files_pattern (ARG1 fpaste_tmp_t fpaste_tmp_t)))
+
+(macro fpaste_read_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 fpaste_tmp_t read_file_perms)
+    (allow ARG1 fpaste_tmp_t list_dir_perms)
+    (allow ARG1 fpaste_tmp_t read_lnk_file_perms))
+
+(macro fpaste_manage_tmp ((type ARG1))
+    (call files_rw_tmp_dirs (ARG1))
+    (allow ARG1 fpaste_tmp_t manage_file_perms)
+    (allow ARG1 fpaste_tmp_t manage_dir_perms)
+    (allow ARG1 fpaste_tmp_t manage_lnk_file_perms))
+
+(macro fpaste_relabel_tmp ((type ARG1))
+    (call files_search_tmp (ARG1))
+    (allow ARG1 fpaste_tmp_t relabel_file_perms)
+    (allow ARG1 fpaste_tmp_t relabel_dir_perms)
+    (allow ARG1 fpaste_tmp_t relabel_lnk_file_perms))

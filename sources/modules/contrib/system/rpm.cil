@@ -234,11 +234,11 @@
 
 (macro rpm_read_lib_files ((type ARG1))
     (call files_search_lib (ARG1))
-    (call read_files_pattern (ARG1 rpm_lib_t lib_t)))
+    (call read_files_pattern (ARG1 rpm_lib_t rpm_lib_t)))
 
 (macro rpm_manage_lib_files ((type ARG1))
     (call files_search_lib (ARG1))
-    (call manage_files_pattern (ARG1 rpm_lib_t lib_t)))
+    (call manage_files_pattern (ARG1 rpm_lib_t rpm_lib_t)))
 
 (macro rpm_read_lib_lnk_files ((type ARG1))
     (call files_search_lib (ARG1))
@@ -255,6 +255,38 @@
     (allow ARG1 rpm_lib_t manage_file_perms)
     (allow ARG1 rpm_lib_t manage_dir_perms)
     (allow ARG1 rpm_lib_t manage_lnk_file_perms))
+
+(macro rpm_search_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 rpm_cache_t search_dir_perms))
+
+(macro rpm_list_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 rpm_cache_t list_dir_perms))
+
+(macro rpm_read_cache_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_files_pattern (ARG1 rpm_cache_t rpm_cache_t)))
+
+(macro rpm_manage_cache_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call manage_files_pattern (ARG1 rpm_cache_t rpm_cache_t)))
+
+(macro rpm_read_cache_lnk_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_lnk_files_pattern (ARG1 rpm_cache_t rpm_cache_t)))
+
+(macro rpm_read_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 rpm_cache_t read_file_perms)
+    (allow ARG1 rpm_cache_t list_dir_perms)
+    (allow ARG1 rpm_cache_t read_lnk_file_perms))
+
+(macro rpm_manage_cache ((type ARG1))
+    (call files_rw_cache_dirs (ARG1))
+    (allow ARG1 rpm_cache_t manage_file_perms)
+    (allow ARG1 rpm_cache_t manage_dir_perms)
+    (allow ARG1 rpm_cache_t manage_lnk_file_perms))
 
 (macro rpm_read_log_files ((type ARG1))
     (call files_search_log (ARG1))
