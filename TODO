@@ -10,16 +10,12 @@
 
 * there might be some redundant net_admins' in there because journal_client_subject_type also has it.
 
-* i allowed mplayer_t execmem but that is probably due to an xserver bug.. remove it once xserver becomes a bit more stable
+* review pretty much all net_admins everywhere. in a lot of instances it is not really needed.
 
 * implement system_map_t for /boot/System.map.* files?
-
-* make /etc/ls.so.config ld_config_t? maybe even mode ld.so.cache to ld.cil?
 
 * Really need file contexts specs for $XDG_RUNTIME_DIR: example systemd socket activated session daemons. these sockets usually located there or /tmp. these
     sockets get created with setsockcreate and setfscreate. If there is no fc spec then they end up wrong
 
     you can override that with auto object type transitions (like i do now for dbususer sockets in there) but thats unmaintainable
     (well actually its unmaintainable either way)
-
-* dbuscli
