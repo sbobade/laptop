@@ -9,6 +9,9 @@
 (type systemduser_config_home_t)
 (call usersubject_config_home_object_type (systemduser_config_home_t))
 
+(type systemduser_transient_unit_t)
+(call usersubject_tmpfs_object_type (systemduser_transient_unit_t))
+
 (type systemduser_unit_t)
 (call systemduser_unit_object_type (systemduser_unit_t))
 
@@ -68,6 +71,8 @@
 (call systemduser_manage_tmpfs (systemduser_subject_type))
 (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (systemduser_subject_type))
 (call systemduser_tmpfs_object_type_transition_tmpfs_files (systemduser_subject_type))
+(call systemduser_manage_transient_unit (systemduser_subject_type))
+(call systemduser_tmpfs_object_type_transition_systemduser_transient_unit_dirs (systemduser_subject_type))
 (call systemduser_read_config_home_files (systemduser_subject_type))
 
 (call usersubject_read_exec_home_lnk_files (systemduser_subject_type))
@@ -295,7 +300,7 @@
     (allow ARG1 systemduser_user_unit_t (service (stop))))
 
 (macro systemduser_stop_transient_units ((type ARG1))
-    (allow ARG1 systemduser_tmpfs_t (service (stop))))
+    (allow ARG1 systemduser_transient_unit_t (service (stop))))
 
 (macro systemduser_stop_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (stop))))
@@ -310,7 +315,7 @@
     (allow ARG1 systemduser_user_unit_t (service (status))))
 
 (macro systemduser_status_transient_units ((type ARG1))
-    (allow ARG1 systemduser_tmpfs_t (service (status))))
+    (allow ARG1 systemduser_transient_unit_t (service (status))))
 
 (macro systemduser_status_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (status))))
@@ -325,7 +330,7 @@
     (allow ARG1 systemduser_user_unit_t (service (disable))))
 
 (macro systemduser_disable_transient_units ((type ARG1))
-    (allow ARG1 systemduser_tmpfs_t (service (disable))))
+    (allow ARG1 systemduser_transient_unit_t (service (disable))))
 
 (macro systemduser_disable_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (disable))))
@@ -340,7 +345,7 @@
     (allow ARG1 systemduser_user_unit_t (service (enable))))
 
 (macro systemduser_enable_transient_units ((type ARG1))
-    (allow ARG1 systemduser_tmpfs_t (service (enable))))
+    (allow ARG1 systemduser_transient_unit_t (service (enable))))
 
 (macro systemduser_enable_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (enable))))
@@ -355,7 +360,7 @@
     (allow ARG1 systemduser_user_unit_t (service (reload))))
 
 (macro systemduser_reload_transient_units ((type ARG1))
-    (allow ARG1 systemduser_tmpfs_t (service (reload))))
+    (allow ARG1 systemduser_transient_unit_t (service (reload))))
 
 (macro systemduser_reload_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (reload))))
@@ -370,7 +375,7 @@
     (allow ARG1 systemduser_user_unit_t (service (start))))
 
 (macro systemduser_start_transient_units ((type ARG1))
-    (allow ARG1 systemduser_tmpfs_t (service (start))))
+    (allow ARG1 systemduser_transient_unit_t (service (start))))
 
 (macro systemduser_start_all_units ((type ARG1))
     (allow ARG1 systemduser_unit_object_type (service (start))))
@@ -446,6 +451,48 @@
 (macro systemduser_shell_exec_manual_subject_type_transition_all_subjects ((type ARG1))
     (call commands_shell_exec_manual_subject_type_transition
         (ARG1 systemduser_subject_type)))
+
+(macro systemduser_search_transient_unit ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_transient_unit_t search_dir_perms))
+
+(macro systemduser_list_transient_unit ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_transient_unit_t list_dir_perms))
+
+(macro systemduser_read_transient_unit_files ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 systemd_transient_unit_t systemd_transient_unit_t)))
+
+(macro systemduser_read_transient_unit_lnk_files ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemd_transient_unit_t systemd_transient_unit_t)))
+
+(macro systemduser_read_transient_unit ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_transient_unit_t read_file_perms)
+    (allow ARG1 systemduser_transient_unit_t list_dir_perms)
+    (allow ARG1 systemduser_transient_unit_t read_lnk_file_perms))
+
+(macro systemduser_manage_transient_unit ((type ARG1))
+    (call systemduser_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 systemduser_transient_unit_t manage_file_perms)
+    (allow ARG1 systemduser_transient_unit_t manage_dir_perms)
+    (allow ARG1 systemduser_transient_unit_t manage_lnk_file_perms))
+
+(macro systemduser_relabel_transient_unit ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_transient_unit_t relabel_file_perms)
+    (allow ARG1 systemduser_transient_unit_t relabel_dir_perms)
+    (allow ARG1 systemduser_transient_unit_t relabel_lnk_file_perms))
+
+(macro systemduser_tmpfs_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call object_type_transition_pattern (ARG1 systemduser_tmpfs_t ARG2 ARG3 ARG4)))
+
+(macro systemduser_tmpfs_object_type_transition_systemduser_transient_unit_dirs ((type ARG1))
+    (call systemduser_tmpfs_object_type_transition (ARG1 systemduser_transient_unit_t dir "user")))
 
 (macro systemduser_noatsecure_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (process (noatsecure))))
