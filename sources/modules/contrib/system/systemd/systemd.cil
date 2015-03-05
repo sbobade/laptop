@@ -328,6 +328,7 @@
     (call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role)))
 
 (optional systemd_systemctl_subject_type_optional_systemduser
+    (call systemduser_control_config_home (systemd_systemctl_subject_type))
     (call systemduser_read_config_home (systemd_systemctl_subject_type)))
 
 (optional systemd_systemdctl_subject_type_optional_usersubject
