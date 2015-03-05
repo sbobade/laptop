@@ -22,11 +22,9 @@
 
 (type systemd_t)
 (type systemd_exec_t)
-(call subject_common_type (systemd_t))
+(call systemd_subject_type (systemd_t))
 (call subject_entry (systemd_t systemd_exec_t))
 (roletype system_r systemd_t)
-
-(call systemd_subject_type (systemd_t))
 
 (context systemd_exec (system_u object_r systemd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd" file systemd_exec)
@@ -457,6 +455,7 @@
     (call systemd_systemctl_client_subject_type (ARG1)))
 
 (macro systemd_subject_type ((type ARG1))
+    (call subject_common_type (ARG1))
     (typeattributeset systemd_subject_type ARG1))
 
 (macro systemd_systemctl_subject_type ((type ARG1))

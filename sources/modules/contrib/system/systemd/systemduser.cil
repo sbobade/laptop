@@ -34,7 +34,6 @@
 
 (call filesystems_getattr_sysfs_filesystems (systemduser_subject_type))
 
-(call subject_common_type (systemduser_subject_type))
 (call subject_interactive_fd_subject_type (systemduser_subject_type))
 (call subject_user_exemption_target (systemduser_subject_type))
 
