@@ -17,6 +17,14 @@
 (context systemduser_unit (system_u object_r systemduser_unit_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/user(/.*)?" any systemduser_unit)
 
+(type systemduser_user_unit_t)
+(call systemd_unit_object_type (systemduser_user_unit_t))
+
+(call systemd_object_type (systemduser_user_unit_t))
+
+(context systemduser_user_unit (system_u object_r systemduser_user_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*user@.*" file systemduser_user_unit)
+
 (type systemduser_pam_config_t)
 (call auth_pam_config_object_type (systemduser_pam_config_t))
 
@@ -32,6 +40,7 @@
 
 (call files_read_data (systemduser_subject_type))
 
+(call filesystems_dontaudit_audit_access_sysfs_dirs (systemduser_subject_type))
 (call filesystems_getattr_sysfs_filesystems (systemduser_subject_type))
 
 (call subject_interactive_fd_subject_type (systemduser_subject_type))
@@ -282,6 +291,9 @@
 (macro systemduser_stop_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (stop))))
 
+(macro systemduser_stop_user_units ((type ARG1))
+    (allow ARG1 systemduser_user_unit_t (service (stop))))
+
 (macro systemduser_stop_transient_units ((type ARG1))
     (allow ARG1 systemduser_tmpfs_t (service (stop))))
 
@@ -293,6 +305,9 @@
 
 (macro systemduser_status_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (status))))
+
+(macro systemduser_status_user_units ((type ARG1))
+    (allow ARG1 systemduser_user_unit_t (service (status))))
 
 (macro systemduser_status_transient_units ((type ARG1))
     (allow ARG1 systemduser_tmpfs_t (service (status))))
@@ -306,6 +321,9 @@
 (macro systemduser_disable_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (disable))))
 
+(macro systemduser_disable_user_units ((type ARG1))
+    (allow ARG1 systemduser_user_unit_t (service (disable))))
+
 (macro systemduser_disable_transient_units ((type ARG1))
     (allow ARG1 systemduser_tmpfs_t (service (disable))))
 
@@ -317,6 +335,9 @@
 
 (macro systemduser_enable_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (enable))))
+
+(macro systemduser_enable_user_units ((type ARG1))
+    (allow ARG1 systemduser_user_unit_t (service (enable))))
 
 (macro systemduser_enable_transient_units ((type ARG1))
     (allow ARG1 systemduser_tmpfs_t (service (enable))))
@@ -330,6 +351,9 @@
 (macro systemduser_reload_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (reload))))
 
+(macro systemduser_reload_user_units ((type ARG1))
+    (allow ARG1 systemduser_user_unit_t (service (reload))))
+
 (macro systemduser_reload_transient_units ((type ARG1))
     (allow ARG1 systemduser_tmpfs_t (service (reload))))
 
@@ -341,6 +365,9 @@
 
 (macro systemduser_start_units ((type ARG1))
     (allow ARG1 systemduser_unit_t (service (start))))
+
+(macro systemduser_start_user_units ((type ARG1))
+    (allow ARG1 systemduser_user_unit_t (service (start))))
 
 (macro systemduser_start_transient_units ((type ARG1))
     (allow ARG1 systemduser_tmpfs_t (service (start))))
@@ -379,6 +406,14 @@
     (call systemduser_enable_units (ARG1))
     (call systemduser_reload_units (ARG1))
     (call systemduser_start_units (ARG1)))
+
+(macro systemduser_control_user_units ((type ARG1))
+    (call systemduser_stop_user_units (ARG1))
+    (call systemduser_status_user_units (ARG1))
+    (call systemduser_disable_user_units (ARG1))
+    (call systemduser_enable_user_units (ARG1))
+    (call systemduser_reload_user_units (ARG1))
+    (call systemduser_start_user_units (ARG1)))
 
 (macro systemduser_control_transient_units ((type ARG1))
     (call systemduser_stop_transient_units (ARG1))

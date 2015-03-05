@@ -113,7 +113,7 @@
     (call login_read_logind_systemd_runtime (dbus_subject_type)))
 
 (optional dbus_subject_type_optional_systemd
-    (call systemd_getattr_unit_dirs (dbus_subject_type)))
+    (call systemd_getattr_transient_unit_dirs (dbus_subject_type)))
 
 (allow dbus_system_client_subject_type self (dbus (send_msg)))
 (allow dbus_system_client_subject_type dbusd_t (dbus (send_msg)))

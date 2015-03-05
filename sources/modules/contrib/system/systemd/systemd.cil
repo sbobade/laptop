@@ -118,13 +118,18 @@
 (allow systemd_t self (key (search link write)))
 
 (allow systemd_t systemd_unit_t manage_dir_perms)
-(allow systemd_t systemd_unit_t manage_file_perms)
+(allow systemd_t systemd_unit_object_type manage_file_perms)
 (allow systemd_t systemd_unit_t manage_lnk_file_perms)
 
 (call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "generator"))
 (call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "generator.early"))
 (call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "generator.late"))
-(call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "system"))
+
+(allow systemd_t systemd_transient_unit_t manage_dir_perms)
+(allow systemd_t systemd_transient_unit_t manage_file_perms)
+(allow systemd_t systemd_transient_unit_t manage_lnk_file_perms)
+
+(call systemd_runtime_object_type_transition (systemd_t systemd_transient_unit_t dir "system"))
 
 (allow systemd_t systemd_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
 (allow systemd_t systemd_socket_activated_subject_type create_unix_stream_stream_socket_perms)
@@ -216,8 +221,7 @@
 
 (call systemd_exec (systemd_t))
 (call systemd_exec_systemdhelper (systemd_t))
-(call systemd_manage_all_unit_files (systemd_t))
-(call systemd_relabelto_all_unit_dirs (systemd_t))
+(call systemd_relabelto_transient_unit_dirs (systemd_t))
 
 (call udev_create_udevd_netlink_kobject_uevent_socket (systemd_t))
 
@@ -363,6 +367,14 @@
 
 (call filesystems_associate_tmpfs (systemd_unit_object_type))
 
+(type systemd_transient_unit_t)
+(call systemd_unit_object_type (systemd_transient_unit_t))
+
+(typeattributeset systemd_object_type systemd_transient_unit_t)
+
+(context systemd_transient_unit (system_u object_r systemd_transient_unit_t (systemlow systemlow)))
+(filecon "/var/run/systemd/system(/.*)?" any systemd_transient_unit)
+
 (type systemd_kexec_unit_t)
 (call systemd_unit_object_type (systemd_kexec_unit_t))
 
@@ -405,7 +417,7 @@
 
 (call systemd_dgram_send (systemd_systemctl_client_subject_type))
 (call systemd_read_state_lnk_files (systemd_systemctl_client_subject_type))
-(call systemd_search_unit (systemd_systemctl_client_subject_type))
+(call systemd_search_transient_unit (systemd_systemctl_client_subject_type))
 (call systemd_stream_connect (systemd_systemctl_client_subject_type))
 (call systemd_use_fd (systemd_systemctl_client_subject_type))
 
@@ -420,7 +432,7 @@
     (call polkit_dbus_chat_polkitd (systemd_systemctl_client_subject_type)))
 
 (call systemd_control_system (systemd_admin_subject_type))
-(call systemd_control_system_units (systemd_admin_subject_type))
+(call systemd_control_transient_units (systemd_admin_subject_type))
 
 (allow systemd_admin_subject_type systemd_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (systemd_admin_subject_type systemd_t))
@@ -756,6 +768,10 @@
     (call libraries_search (ARG1))
     (allow ARG1 systemd_unit_t search_dir_perms))
 
+(macro systemd_search_transient_unit ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 systemd_transient_unit_t search_dir_perms))
+
 (macro systemd_list_unit ((type ARG1))
     (call libraries_search (ARG1))
     (allow ARG1 systemd_unit_t list_dir_perms))
@@ -772,9 +788,17 @@
     (call libraries_search (ARG1))
     (allow ARG1 systemd_unit_t (dir (getattr))))
 
+(macro systemd_getattr_transient_unit_dirs ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 systemd_transient_unit_t (dir (getattr))))
+
 (macro systemd_relabelto_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
     (allow ARG1 systemd_unit_t relabelto_dir_perms))
+
+(macro systemd_relabelto_transient_unit_dirs ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 systemd_transient_unit_t relabelto_dir_perms))
 
 (macro systemd_rw_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
@@ -827,10 +851,6 @@
     (allow ARG1 systemd_unit_object_type read_file_perms)
     (allow ARG1 systemd_unit_object_type list_dir_perms)
     (allow ARG1 systemd_unit_object_type read_lnk_file_perms))
-
-(macro systemd_relabelto_all_unit_dirs ((type ARG1))
-    (call libraries_search (ARG1))
-    (allow ARG1 systemd_unit_object_type relabelto_dir_perms))
 
 (macro systemd_system_service_admin_subject_type ((type ARG1))
     (typeattributeset systemd_system_service_admin_subject_type ARG1))
@@ -905,11 +925,17 @@
 (macro systemd_stop_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (stop))))
 
+(macro systemd_stop_transient_units ((type ARG1))
+    (allow ARG1 systemd_transient_unit_t (service (stop))))
+
 (macro systemd_stop_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (stop))))
 
 (macro systemd_status_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (status))))
+
+(macro systemd_status_transient_units ((type ARG1))
+    (allow ARG1 systemd_transient_unit_t (service (status))))
 
 (macro systemd_status_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (status))))
@@ -917,11 +943,17 @@
 (macro systemd_disable_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (disable))))
 
+(macro systemd_disable_transient_units ((type ARG1))
+    (allow ARG1 systemd_transient_unit_t (service (disable))))
+
 (macro systemd_disable_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (disable))))
 
 (macro systemd_enable_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (enable))))
+
+(macro systemd_enable_transient_units ((type ARG1))
+    (allow ARG1 systemd_transient_unit_t (service (enable))))
 
 (macro systemd_enable_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (enable))))
@@ -929,11 +961,17 @@
 (macro systemd_reload_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (reload))))
 
+(macro systemd_reload_transient_units ((type ARG1))
+    (allow ARG1 systemd_transient_unit_t (service (reload))))
+
 (macro systemd_reload_all_units ((type ARG1))
     (allow ARG1 systemd_unit_object_type (service (reload))))
 
 (macro systemd_start_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (start))))
+
+(macro systemd_start_transient_units ((type ARG1))
+    (allow ARG1 systemd_transient_unit_t (service (start))))
 
 (macro systemd_start_power_units ((type ARG1))
     (allow ARG1 systemd_power_unit_t (service (start))))
@@ -956,6 +994,14 @@
     (call systemd_enable_system_units (ARG1))
     (call systemd_reload_system_units (ARG1))
     (call systemd_start_system_units (ARG1)))
+
+(macro systemd_control_transient_units ((type ARG1))
+    (call systemd_stop_transient_units (ARG1))
+    (call systemd_status_transient_units (ARG1))
+    (call systemd_disable_transient_units (ARG1))
+    (call systemd_enable_transient_units (ARG1))
+    (call systemd_reload_transient_units (ARG1))
+    (call systemd_start_transient_units (ARG1)))
 
 (macro systemd_control_all_units ((type ARG1))
     (call systemd_stop_all_units (ARG1))

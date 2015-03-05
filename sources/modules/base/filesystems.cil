@@ -483,6 +483,9 @@
 (macro filesystems_mprot_write_rootfs_dirs ((type ARG1))
     (allow ARG1 rootfs_fs_t (dir (write))))
 
+(macro filesystems_dontaudit_audit_access_sysfs_dirs ((type ARG1))
+    (dontaudit ARG1 sysfs_fs_t (dir (audit_access))))
+
 (macro filesystems_search_sysfs ((type ARG1))
     (allow ARG1 sysfs_fs_t search_dir_perms))
 

@@ -148,18 +148,18 @@
 (call seutil_read_file_context_files (logind_t))
 
 (call systemd_dbus_chat (logind_t))
-
-(call systemd_status_system_units (logind_t))
 (call systemd_status_system (logind_t))
-
 (call systemd_start_power_units (logind_t))
-(call systemd_start_system_units (logind_t))
+(call systemd_status_transient_units (logind_t))
+(call systemd_start_transient_units (logind_t))
+(call systemd_stop_transient_units (logind_t))
 (call systemd_start_system (logind_t))
-
-(call systemd_stop_system_units (logind_t))
 (call systemd_stop_system (logind_t))
-
 (call systemd_stream_connect (logind_t))
+
+(call systemduser_status_user_units (logind_t))
+(call systemduser_start_user_units (logind_t))
+(call systemduser_stop_user_units (logind_t))
 
 (call usersubject_delete_all_tmpfs (logind_t))
 (call usersubject_setattr_terminals (logind_t))
