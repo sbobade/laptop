@@ -111,6 +111,12 @@
     (call storage_setattr_removable (ARG1))
     (call storage_setattr_scsi_generic (ARG1)))
 
+(macro storage_write_all ((type ARG1))
+    (call storage_write_fixed_disk (ARG1))
+    (call storage_write_fuse (ARG1))
+    (call storage_write_removable (ARG1))
+    (call storage_write_scsi_generic (ARG1)))
+
 (macro storage_manage_fixed_disk ((type ARG1))
     (allow ARG1 self (capability (mknod)))
     (call filesystems_rw_devtmpfs_dirs (ARG1))

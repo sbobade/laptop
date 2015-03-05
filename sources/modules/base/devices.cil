@@ -302,6 +302,13 @@
     (optional devices_rw_all_optional_storage
         (call storage_rw_all (ARG1))))
 
+(macro devices_write_all ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devices_except_storage write_chr_file_perms)
+    (typeattributeset devices_can_write_memory ARG1)
+    (optional devices_write_all_optional_storage
+        (call storage_write_all (ARG1))))
+
 (macro devices_setattr_all ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 devices_except_storage (chr_file (setattr)))
