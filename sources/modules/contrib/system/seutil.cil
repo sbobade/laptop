@@ -110,6 +110,8 @@
 (call selinux_list_securityfs (getsebool_t))
 (call selinux_get_all_booleans (getsebool_t))
 
+(call seutil_read_selinux_config_files (getsebool_t))
+
 (type setsebool_t)
 (type setsebool_exec_t)
 (call applications_app (setsebool_t setsebool_exec_t))
