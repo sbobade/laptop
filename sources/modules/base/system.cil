@@ -223,8 +223,7 @@
 
 (call system_request_load_module (system_t))
 
-(call devices_write_all (system_t))
-(call devices_setattr_all (system_t))
+(call devices_manage_all (system_t))
 
 (call files_read_data_files (system_t))
 
