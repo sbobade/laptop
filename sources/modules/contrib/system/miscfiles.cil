@@ -261,6 +261,9 @@
 (macro miscfiles_fonts_cache_object_type ((type ARG1))
     (typeattributeset miscfiles_fonts_cache_object_type ARG1))
 
+(macro miscfiles_dontaudit_setattr_fonts_cache_dirs ((type ARG1))
+    (dontaudit ARG1 fonts_cache_t (dir (setattr))))
+
 (macro miscfiles_search_fonts_cache ((type ARG1))
     (call files_search_cache (ARG1))
     (allow ARG1 fonts_cache_t search_dir_perms))

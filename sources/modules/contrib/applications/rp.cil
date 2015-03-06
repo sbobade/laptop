@@ -22,8 +22,16 @@
 
 (call filesystems_getattr_filesystems (rp_subject_type))
 
+(call miscfiles_dontaudit_setattr_fonts_cache_dirs (rp_subject_type))
 (call miscfiles_read_all_fonts (rp_subject_type))
 (call miscfiles_read_locale (rp_subject_type))
+
+(call usersubject_create_cache_home_dirs (rp_subject_type))
+(call usersubject_home_dir_object_type_transition_cache_home_dirs (rp_subject_type))
+
+(call usersubject_manage_fonts_home (rp_subject_type))
+(call usersubject_home_dir_object_type_transition_fonts_home_dirs (rp_subject_type))
+(call usersubject_cache_home_object_type_transition_fonts_home_dirs (rp_subject_type))
 
 (call xserver_client_subject_type (rp_subject_type))
 
