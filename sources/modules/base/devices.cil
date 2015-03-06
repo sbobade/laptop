@@ -78,6 +78,12 @@
 (filecon "/dev/btrfs-control" char lvm_control_dev)
 (filecon "/dev/mapper/control" char lvm_control_dev)
 
+(type mei_misc_dev_t)
+(call devices_object_type (mei_misc_dev_t))
+
+(context mei_misc_dev (system_u object_r mei_misc_dev_t (systemlow systemlow)))
+(filecon "/dev/mei[0-9]+" char mei_misc_dev)
+
 (type memory_dev_t)
 (call devices_object_type (memory_dev_t))
 
@@ -91,15 +97,6 @@
 (context mouse_dev (system_u object_r mouse_dev_t (systemlow systemlow)))
 (filecon "/dev/input/mice" char mouse_dev)
 (filecon "/dev/input/mouse[0-9]+" char mouse_dev)
-
-(type pm_qos_misc_dev_t)
-(call devices_object_type (pm_qos_misc_dev_t))
-
-(context pm_qos_misc_dev (system_u object_r pm_qos_misc_dev_t (systemlow systemlow)))
-(filecon "/dev/cpu_dma_latency" char pm_qos_misc_dev)
-(filecon "/dev/memory_bandwidth" char pm_qos_misc_dev)
-(filecon "/dev/network_latency" char pm_qos_misc_dev)
-(filecon "/dev/network_throughput" char pm_qos_misc_dev)
 
 (type null_dev_t)
 (call devices_object_type (null_dev_t))
@@ -116,6 +113,15 @@
 
 (context nvram_dev (system_u object_r nvram_dev_t (mls_systemhigh mls_systemhigh)))
 (filecon "/dev/nvram" char nvram_dev)
+
+(type pm_qos_misc_dev_t)
+(call devices_object_type (pm_qos_misc_dev_t))
+
+(context pm_qos_misc_dev (system_u object_r pm_qos_misc_dev_t (systemlow systemlow)))
+(filecon "/dev/cpu_dma_latency" char pm_qos_misc_dev)
+(filecon "/dev/memory_bandwidth" char pm_qos_misc_dev)
+(filecon "/dev/network_latency" char pm_qos_misc_dev)
+(filecon "/dev/network_throughput" char pm_qos_misc_dev)
 
 (type ppp_dev_t)
 (call devices_object_type (ppp_dev_t))
@@ -202,6 +208,12 @@
 
 (context vhost_dev (system_u object_r vhost_dev_t (systemlow systemlow)))
 (filecon "/dev/vhost-net" char vhost_dev)
+
+(type watchdog_dev_t)
+(call devices_object_type (watchdog_dev_t))
+
+(context watchdog_dev (system_u object_r watchdog_dev_t (systemlow systemlow)))
+(filecon "/dev/watchdog[0-9]+" char watchdog_dev)
 
 (type wireless_dev_t)
 (call devices_object_type (wireless_dev_t))
