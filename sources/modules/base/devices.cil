@@ -23,7 +23,7 @@
 
 (context clock_dev (system_u object_r clock_dev_t (systemlow systemlow)))
 (filecon "/dev/hpet" char clock_dev)
-(filecon "/dev/rtc[0-9]+" char clock_dev)
+(filecon "/dev/rtc([0-9]+)?" char clock_dev)
 
 (type cpu_dev_t)
 (call devices_object_type (cpu_dev_t))
@@ -49,14 +49,14 @@
 
 (context event_dev (system_u object_r event_dev_t (systemlow systemlow)))
 
-(filecon "/dev/input/event[0-9]+" char event_dev)
+(filecon "/dev/input/event([0-9]+)?" char event_dev)
 (filecon "/dev/uinput" char event_dev)
 
 (type framebuf_dev_t)
 (call devices_object_type (framebuf_dev_t))
 
 (context framebuf_dev (system_u object_r framebuf_dev_t (systemlow systemlow)))
-(filecon "/dev/fb[0-9]+" char framebuf_dev)
+(filecon "/dev/fb([0-9]+)?" char framebuf_dev)
 
 (type kmsg_dev_t)
 (call devices_object_type (kmsg_dev_t))
@@ -82,7 +82,7 @@
 (call devices_object_type (mei_misc_dev_t))
 
 (context mei_misc_dev (system_u object_r mei_misc_dev_t (systemlow systemlow)))
-(filecon "/dev/mei[0-9]+" char mei_misc_dev)
+(filecon "/dev/mei([0-9]+)?" char mei_misc_dev)
 
 (type memory_dev_t)
 (call devices_object_type (memory_dev_t))
@@ -96,7 +96,7 @@
 
 (context mouse_dev (system_u object_r mouse_dev_t (systemlow systemlow)))
 (filecon "/dev/input/mice" char mouse_dev)
-(filecon "/dev/input/mouse[0-9]+" char mouse_dev)
+(filecon "/dev/input/mouse([0-9]+)?" char mouse_dev)
 
 (type null_dev_t)
 (call devices_object_type (null_dev_t))
@@ -152,7 +152,7 @@
 (call devices_object_type (tpm_dev_t))
 
 (context tpm_dev (system_u object_r tpm_dev_t (systemlow systemlow)))
-(filecon "/dev/tpm[0-9]+" char tpm_dev)
+(filecon "/dev/tpm([0-9]+)?" char tpm_dev)
 
 (type tun_tap_dev_t)
 (call devices_object_type (tun_tap_dev_t))
@@ -188,8 +188,8 @@
 (call devices_object_type (v4l_dev_t))
 
 (context v4l_dev (system_u object_r v4l_dev_t (systemlow systemlow)))
-(filecon "/dev/media[0-9]+" char v4l_dev)
-(filecon "/dev/video[0-9]+" char v4l_dev)
+(filecon "/dev/media([0-9]+)?" char v4l_dev)
+(filecon "/dev/video([0-9]+)?" char v4l_dev)
 
 (type vfio_dev_t)
 (call devices_object_type (vfio_dev_t))
@@ -213,7 +213,7 @@
 (call devices_object_type (watchdog_dev_t))
 
 (context watchdog_dev (system_u object_r watchdog_dev_t (systemlow systemlow)))
-(filecon "/dev/watchdog[0-9]+" char watchdog_dev)
+(filecon "/dev/watchdog([0-9]+)?" char watchdog_dev)
 
 (type wireless_dev_t)
 (call devices_object_type (wireless_dev_t))
