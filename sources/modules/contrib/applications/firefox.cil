@@ -14,8 +14,12 @@
 (type firefox_home_t)
 (call usersubject_home_object_type (firefox_home_t))
 
+(filecon "HOME_DIR/\.mozilla(/.*)?" any (system_u object_r firefox_home_t (systemlow systemlow)))
+
 (type firefox_cache_home_t)
 (call usersubject_cache_home_object_type (firefox_cache_home_t))
+
+(filecon "HOME_DIR/\.cache/mozilla(/.*)?" any (system_u object_r firefox_cache_home_t (systemlow systemlow)))
 
 (type firefox_tmpfs_t)
 (call usersubject_tmpfs_object_type (firefox_tmpfs_t))

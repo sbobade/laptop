@@ -11,6 +11,9 @@
 (type bti_home_t)
 (call usersubject_home_object_type (bti_home_t))
 
+(filecon "HOME_DIR/\.bti" file (system_u object_r bti_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.bti\.log.*" file (system_u object_r bti_home_t (systemlow systemlow)))
+
 (allow bti_t bti_home_t manage_file_perms)
 (call bti_home_dir_object_type_transition_home_files (bti_t))
 

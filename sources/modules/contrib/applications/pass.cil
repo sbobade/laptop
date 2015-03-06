@@ -1,6 +1,8 @@
 (type pass_home_t)
 (call usersubject_home_object_type (pass_home_t))
 
+(filecon "HOME_DIR/\.password-store(/.*)?" any (system_u object_r pass_home_t (systemlow systemlow)))
+
 (macro pass_search_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 pass_home_t search_dir_perms))

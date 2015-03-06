@@ -12,6 +12,9 @@
 (type rp_home_t)
 (call usersubject_home_object_type (rp_home_t))
 
+(filecon "HOME_DIR/\.ratpoisonrc" file (system_u object_r rp_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.ratpoison_history" file (system_u object_r rp_home_t (systemlow systemlow)))
+
 (allow rp_subject_type rp_client_subject_type (process (getsession)))
 (allow rp_client_subject_type rp_subject_type (process (sigchld)))
 

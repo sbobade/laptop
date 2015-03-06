@@ -37,8 +37,12 @@
 (type pa_home_t)
 (call usersubject_home_object_type (pa_home_t))
 
+(filecon "HOME_DIR/\.esd_auth" file (system_u object_r pa_home_t (systemlow systemlow)))
+
 (type pa_config_home_t)
 (call usersubject_config_home_object_type (pa_config_home_t))
+
+(filecon "HOME_DIR/\.config/pulse(/.*)?" any (system_u object_r pa_config_home_t (systemlow systemlow)))
 
 (type pa_tmpfs_t)
 (call usersubject_tmpfs_object_type (pa_tmpfs_t))

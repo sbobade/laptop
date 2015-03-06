@@ -9,6 +9,8 @@
 (type systemduser_config_home_t)
 (call usersubject_config_home_object_type (systemduser_config_home_t))
 
+(filecon "HOME_DIR/\.config/systemd(/.*)?" any (system_u object_r systemduser_config_home_t (systemlow systemlow)))
+
 (type systemduser_transient_unit_t)
 (call usersubject_tmpfs_object_type (systemduser_transient_unit_t))
 

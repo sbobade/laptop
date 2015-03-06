@@ -29,6 +29,8 @@
 (type screen_home_t)
 (call usersubject_home_object_type (screen_home_t))
 
+(filecon "HOME_DIR/\.screenrc" file (system_u object_r screen_home_t (systemlow systemlow)))
+
 (type screen_tmpfs_t)
 (call usersubject_tmpfs_object_type (screen_home_t))
 

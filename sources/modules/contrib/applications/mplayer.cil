@@ -17,6 +17,8 @@
 (type mplayer_home_t)
 (call usersubject_home_object_type (mplayer_home_t))
 
+(filecon "HOME_DIR/\.mplayer(/.*)?" any (system_u object_r mplayer_home_t (systemlow systemlow)))
+
 (type mplayer_tmpfs_t)
 (call usersubject_tmpfs_object_type (mplayer_tmpfs_t))
 

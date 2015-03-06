@@ -17,6 +17,8 @@
 (type lynx_home_t)
 (call usersubject_home_object_type (lynx_home_t))
 
+(filecon "HOME_DIR/\.lynxrc" file (system_u object_r lynx_home_t (systemlow systemlow)))
+
 (type lynx_tmpfs_t)
 (call usersubject_tmpfs_object_type (lynx_tmpfs_t))
 

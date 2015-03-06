@@ -31,6 +31,8 @@
 (type xserver_data_home_t)
 (call usersubject_data_home_object_type (xserver_data_home_t))
 
+(filecon "HOME_DIR/\.local/share/xorg(/.*)?" any (system_u object_r xserver_data_home_t (systemlow systemlow)))
+
 (type xserver_log_t)
 (call files_log_object_type (xserver_log_t))
 
@@ -42,6 +44,8 @@
 
 (type xserver_home_t)
 (call usersubject_home_object_type (xserver_home_t))
+
+(filecon "HOME_DIR/\.xserverrc" file (system_u object_r xserver_home_t (systemlow systemlow)))
 
 (type xserver_lib_t)
 (call files_lib_object_type (xserver_lib_t))
@@ -233,6 +237,9 @@
 
 (type xauth_home_t)
 (call usersubject_home_object_type (xauth_home_t))
+
+(filecon "HOME_DIR/\.Xauthority.*" file (system_u object_r xauth_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.serverauth.*" file (system_u object_r xauth_home_t (systemlow systemlow)))
 
 (allow xauth_t xauth_home_t manage_file_perms)
 (call usersubject_home_dir_object_type_transition (xauth_t xauth_home_t file "*"))

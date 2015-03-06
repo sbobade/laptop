@@ -3,6 +3,8 @@
 (type gstreamer_cache_home_t)
 (call usersubject_cache_home_object_type (gstreamer_cache_home_t))
 
+(filecon "HOME_DIR/\.cache/gstreamer-1\.0(/.*)?" any (system_u object_r gstreamer_cache_home_t (systemlow systemlow)))
+
 (call gstreamer_manage_cache_home (gstreamer_client_subject_type))
 (call gstreamer_cache_home_object_type_transition_cache_home_dirs (gstreamer_client_subject_type))
 

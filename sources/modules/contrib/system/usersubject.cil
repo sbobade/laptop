@@ -26,33 +26,54 @@
 (type home_dir_t)
 (call files_object_type (home_dir_t))
 
+(filecon "HOME_DIR" dir (system_u object_r home_dir_t (systemlow mls_systemhigh)))
+
 (type user_home_t)
 (call usersubject_home_object_type (user_home_t))
+
+(filecon "HOME_DIR/.*" any (system_u object_r user_home_t (systemlow systemlow)))
 
 (type cache_home_t)
 (call usersubject_cache_home_object_type (cache_home_t))
 
+(filecon "HOME_DIR/\.cache(/.*)?" any (system_u object_r cache_home_t (systemlow systemlow)))
+
 (type config_home_t)
 (call usersubject_config_home_object_type (config_home_t))
 
+(filecon "HOME_DIR/\.config(/.*)?" any (system_u object_r config_home_t (systemlow systemlow)))
+
 (type data_home_t)
 (call usersubject_data_home_object_type (data_home_t))
+
+(filecon "HOME_DIR/\.local(/.*)?" any (system_u object_r data_home_t (systemlow systemlow)))
 
 (type exec_home_t)
 (call usersubject_home_object_type (exec_home_t))
 (call commands_exec_object_type (exec_home_t))
 
+(filecon "HOME_DIR/bin(/.*)?" any (system_u object_r exec_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.local/bin(/.*)?" any (system_u object_r exec_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.xinitrc" file (system_u object_r exec_home_t (systemlow systemlow)))
+
 (type cert_home_t)
 (call usersubject_home_object_type (cert_home_t))
 (call miscfiles_cert_object_type (cert_home_t))
+
+(filecon "HOME_DIR/\.pki(/.*)?" any (system_u object_r cert_home_t (systemlow systemlow)))
 
 (type fonts_home_t)
 (call usersubject_cache_home_object_type (fonts_home_t))
 (call miscfiles_fonts_cache_object_type (fonts_home_t))
 
+(filecon "HOME_DIR/\.fontconfig(/.*)?" any (system_u object_r fonts_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.cache/fontconfig(/.*)?" any (system_u object_r fonts_home_t (systemlow systemlow)))
+
 (type terminfo_home_t)
 (call usersubject_home_object_type (terminfo_home_t))
 (call miscfiles_terminfo_config_object_type (terminfo_home_t))
+
+(filecon "HOME_DIR/\.terminfo" file (system_u object_r terminfo_home_t (systemlow systemlow)))
 
 (type user_tmp_t)
 (call usersubject_tmp_object_type (user_tmp_t))
@@ -68,6 +89,8 @@
 
 (type user_mail_spool_t)
 (call usersubject_mail_spool_object_type (user_mail_spool_t))
+
+(filecon "USER_MAIL_SPOOL" file (system_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
 
 (allow usersubject_common_type self (process (setpgid getattr getsched setsched)))
 (allow usersubject_common_type self create_unix_stream_socket_perms)

@@ -25,6 +25,8 @@
 (type xlock_home_t)
 (call usersubject_home_object_type (xlock_home_t))
 
+(filecon "HOME_DIR/\.xlockrc" file (system_u object_r xlock_home_t (systemlow systemlow)))
+
 (allow xlock_t self (process (setsched)))
 (allow xlock_t self rw_fifo_file_perms)
 

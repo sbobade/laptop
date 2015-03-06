@@ -15,12 +15,25 @@ declare VERBOSE="0"
 declare EXCL="EXCLUDE"
 declare EXCL_LOCAL="EXCLUDE.local"
 
+declare HOME="/home"
+declare SHELL="/bin/bash"
+
+declare SEUSERS="seusers"
+declare SEUSERS_LOCAL="seusers.local"
+
 unset MODULES
 declare -a MODULES+=$(/bin/find . -type f \( -iname "*.cil" \) | /bin/cut -d/ -f2-)
 
 if [ -r "${PWD}/${CONFIG}" -a -s "${PWD}/${CONFIG}" ] ; then
     source "${PWD}/${CONFIG}" 2>/dev/null
 fi
+
+do_compile_context () {
+    # Why is this in sbin?
+    if [ -x /sbin/sefcontext_compile ] ; then
+        /sbin/sefcontext_compile "${PWD}/contexts/files/file_contexts" && /sbin/sefcontext_compile "${PWD}/contexts/files/file_contexts.homedirs" || return 192
+    fi
+}
 
 do_default () {
     get_secilc || exit $(echo $?)
@@ -32,12 +45,109 @@ do_default () {
         return 192
     fi
 
-    ${SECILC} ${MODULES[@]} -o policy/policy.${POLICYVERS} -f contexts/files/file_contexts
+    ${SECILC} ${MODULES[@]} -o policy/policy.${POLICYVERS} -f contexts/files/file_contexts || return 192
+
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 }
 
 do_tests () {
     source tests/modular/functions
     modular_run_tests
+}
+
+gen_contexts () {
+    get_real_users || exit $(echo $?)
+    gen_contexts_template || exit $(echo $?)
+
+    if [ -e "${PWD}/${SEUSERS_LOCAL}" -a -s "${PWD}/${SEUSERS_LOCAL}" ] ; then
+        myseusers="${PWD}/${SEUSERS_LOCAL}"
+    else
+        myseusers="${PWD}/${SEUSERS}"
+    fi
+
+    echo > "${PWD}/contexts/files/file_contexts.homedirs"
+
+    local DEFSEUSER=$(/bin/grep ^__default__ "${myseusers}" | /bin/awk -F ":" '{ print $2 }')
+
+    for realuser in ${REALUSERS[*]} ; do
+        if [ $(/bin/grep "^${realuser}:" "${myseusers}") ] ; then
+            local IFS=$'\n'
+
+            unset REALSEUSER
+            local REALSEUSER=$(/bin/grep "^${realuser}:" "${myseusers}" | /bin/awk -F ":" '{ print $2 }')
+
+            for homedir_context in ${HOMEDIR_TEMPLATE[*]} ; do
+                unset stepone
+                local stepone=$(echo "${homedir_context//HOME_DIR/$HOME/$realuser}")
+                echo "${stepone//system_u/$REALSEUSER}" >> "${PWD}/contexts/files/file_contexts.homedirs"
+            done
+
+            for usermailspool_context in ${USERMAILSPOOL_TEMPLATE[*]} ; do
+                unset stepone
+                local stepone=$(echo "${usermailspool_context//USER_MAIL_SPOOL//var/spool/mail/$realuser}")
+                echo "${stepone//system_u/$REALSEUSER}" >> "${PWD}/contexts/files/file_contexts.homedirs"
+            done
+
+        else
+            local IFS=$'\n'
+
+            for homedir_context in ${HOMEDIR_TEMPLATE[*]} ; do
+                unset stepone
+                local stepone=$(echo "${homedir_context//HOME_DIR/$HOME/$realuser}")
+                echo "${stepone//system_u/$DEFSEUSER}" >> "${PWD}/contexts/files/file_contexts.homedirs"
+            done
+
+            for usermailspool_context in ${USERMAILSPOOL_TEMPLATE[*]} ; do
+                unset stepone
+                local stepone=$(echo "${usermailspool_context//USER_MAIL_SPOOL//var/spool/mail/$realuser}")
+                echo "${stepone//system_u/$DEFSEUSER}" >> "${PWD}/contexts/files/file_contexts.homedirs"
+            done
+        fi
+    done
+}
+
+gen_contexts_template () {
+    if [ -r ${PWD}/contexts/files/file_contexts ] ; then
+        local IFS=$'\n'
+
+        unset HOMEDIR_TEMPLATE
+        HOMEDIR_TEMPLATE+=($(/bin/grep HOME_DIR contexts/files/file_contexts))
+
+        unset USERMAILSPOOL_TEMPLATE
+        USERMAILSPOOL_TEMPLATE+=($(/bin/grep USER_MAIL_SPOOL contexts/files/file_contexts))
+    else
+        return 192
+    fi
+
+    if [[ -z ${HOMEDIR_TEMPLATE[*]} ]] ; then
+        echo "No home directory template to process!"
+        return 192
+    else
+        /bin/sed -i.bak '/HOME_DIR/d' contexts/files/file_contexts 2>/dev/null || return 192
+    fi
+
+    if [[ -z ${USERMAILSPOOL_TEMPLATE[*]} ]] ; then
+        echo "No user mail spool template to process!"
+        return 192
+    else
+        /bin/sed -i.bak '/USER_MAIL_SPOOL/d' contexts/files/file_contexts 2>/dev/null || return 192
+    fi
+}
+
+gen_listing () {
+    get_ignore
+
+    for i in ${IGNORE[*]} ; do
+        MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
+    done
+
+    if [ -z "${MODULES}" ] ; then
+        echo "No modules to list!"
+        return 192
+    else
+        printf "%s\n" "${MODULES[*]}" | /bin/sort > LISTING
+    fi
 }
 
 get_help () {
@@ -69,6 +179,9 @@ get_help () {
         sources/modules/contrib/applications/b43fwcutter.cil
         sources/modules/contrib/services/bluetooth.cil
 
+    Local seusers:
+        If you wish to use your own "seusers" configuration for the creation of home directory contexts then you can do so in an "seusers.local" file.
+
     Options:
         -d | --disable-dontaudit    Build policy without "dontaudit" av rules inserted.
         -h | --help                 Show this help. (exclusive option)
@@ -94,6 +207,41 @@ get_modules () {
     fi
 }
 
+get_real_users () {
+    test -r /etc/login.defs || return 192
+    test -x /bin/getent || return 192
+
+    local UIDMIN=$(/bin/grep ^UID_MIN /etc/login.defs | /bin/awk -F " " '{ print $2 }')
+    local UIDMAX=$(/bin/grep ^UID_MAX /etc/login.defs | /bin/awk -F " " '{ print $2 }')
+
+    if [[ -z ${UIDMIN} ]] || ! [[ "${UIDMIN}" =~ ^[0-9]+$ ]] && [[ -z ${UIDMAX} ]] || ! [[ "${UIDMAX}" =~ ^[0-9]+$ ]] ; then
+        return 192
+    fi
+
+    local -a ENT=$(/bin/getent passwd)
+
+    local IFS=$'\n'
+
+    for myuser in ${ENT[@]} ; do
+        local myuserid=$(echo "${myuser}" | /bin/awk -F ":" '{ print $3 }')
+
+        if ! [[ "${myuserid}" -lt "${UIDMIN}" ]] && ! [[ "${myuserid}" -gt "${UIDMAX}" ]] ; then
+            local myusername=$(echo "${myuser}" | /bin/awk -F ":" '{ print $1 }')
+            local myuserhome=$(echo "${myuser}" | /bin/awk -F ":" '{ print $6 }')
+            local myusershell=$(echo "${myuser}" | /bin/awk -F ":" '{ print $7 }')
+
+            if [[ "${myuserhome}" == "${HOME}/${myusername}" ]] && [[ "${myusershell}" == "${SHELL}" ]] ; then
+                REALUSERS+=$(echo "${myusername}")
+            fi
+        fi
+    done
+
+    if [[ -z ${REALUSERS[*]} ]] ; then
+        echo "No users to process!"
+        return 192
+    fi
+}
+
 get_secilc () {
     if [ ! -x "${SECILC}" ] ; then
         SECILC="/usr/bin/secilc"
@@ -114,21 +262,6 @@ get_version () {
     if [[ -z ${VERSION} ]] || ! [[ "${VERSION}" =~ ^[0-9]+$ ]] || [[ "${VERSION}" -gt ${POLICYVERS} ]] ; then
         echo "Specified policy version (${VERSION}) is greater than MAX_POLICYDB_VERSION (${POLICYVERS}). Defaulting to ${POLICYVERS}!"
         VERSION="$(/bin/cat /sys/fs/selinux/policyvers)"
-    fi
-}
-
-gen_listing () {
-    get_ignore
-
-    for i in ${IGNORE[*]} ; do
-        MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
-    done
-
-    if [ -z "${MODULES}" ] ; then
-        echo "No modules to list!"
-        return 192
-    else
-        printf "%s\n" "${MODULES[*]}" | /bin/sort > LISTING
     fi
 }
 
@@ -189,9 +322,10 @@ if [ "{$DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" --handle-unknown=deny ${MODULES[@]}\
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0 ] ; then
@@ -201,9 +335,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=deny ${MODULES[@]} \
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0 ] ; then
@@ -213,9 +348,10 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" --handle-unknow=allow ${MODULES[@]}\
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1 ] ; then
@@ -225,9 +361,10 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=deny ${MODULES[@]} \
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0 ] ; then
@@ -237,9 +374,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" -D --handle-unknow=allow ${MODULES[@]} \
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1 ] ; then
@@ -249,9 +387,10 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" -v --handle-unknow=allow ${MODULES[@]} \
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1 ] ; then
@@ -261,9 +400,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=deny ${MODULES[@]} \
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1 ] ; then
@@ -273,9 +413,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
     get_modules || exit $(echo $?)
 
     ${SECILC} --policyvers="${VERSION}" -v -D --handle-unknown=allow ${MODULES[@]} \
-        -o policy/policy.${VERSION} -f contexts/files/file_contexts
+        -o policy/policy.${VERSION} -f contexts/files/file_contexts || exit $(echo $?)
 
-    exit $(echo $?)
+    gen_contexts || exit $(echo $?)
+    do_compile_context || exit $(echo $?)
 fi
 
 exit $(echo $?)

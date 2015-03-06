@@ -10,6 +10,11 @@
 (type mutt_home_t)
 (call usersubject_home_object_type (mutt_home_t))
 
+(filecon "HOME_DIR/\.muttrc" file (system_u object_r mutt_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.mutt_cache" file (system_u object_r mutt_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.mutt_certificates" file (system_u object_r mutt_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.mutt_passwords\.gpg" file (system_u object_r mutt_home_t (systemlow systemlow)))
+
 (type mutt_tmpfs_t)
 (call usersubject_tmpfs_object_type (mutt_tmpfs_t))
 

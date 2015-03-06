@@ -17,6 +17,8 @@
 (type fop_home_t)
 (call usersubject_home_object_type (fop_home_t))
 
+(filecon "HOME_DIR/\.fop(/.*)?" any (system_u object_r fop_home_t (systemlow systemlow)))
+
 (allow fop_t self rw_fifo_file_perms)
 
 (allow fop_t fop_home_t manage_dir_perms)

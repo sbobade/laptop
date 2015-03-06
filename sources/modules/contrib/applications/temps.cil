@@ -5,6 +5,8 @@
 (call applications_app (temps_t temps_exec_t))
 (roletype temps_role temps_t)
 
+(filecon "HOME_DIR/\.local/bin/temps" file (system_u object_r temps_exec_t (systemlow systemlow)))
+
 (allow temps_t self rw_fifo_file_perms)
 
 (call commands_exec (temps_t))

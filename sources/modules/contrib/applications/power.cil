@@ -5,6 +5,8 @@
 (call applications_app (power_t power_exec_t))
 (roletype power_role power_t)
 
+(filecon "HOME_DIR/\.local/bin/power" file (system_u object_r power_exec_t (systemlow systemlow)))
+
 (allow power_t self (capability (dac_override)))
 (allow power_t self rw_fifo_file_perms)
 

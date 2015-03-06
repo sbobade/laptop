@@ -12,6 +12,8 @@
 (type xbindkeys_home_t)
 (call usersubject_home_object_type (xbindkeys_home_t))
 
+(filecon "HOME_DIR/\.xbindkeysrc" file (system_u object_r xbindkeys_home_t (systemlow systemlow)))
+
 (allow xbindkeys_t xbindkeys_home_t manage_file_perms)
 (call xbindkeys_home_dir_object_type_transition_home_files (xbindkeys_t))
 

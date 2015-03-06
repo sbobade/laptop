@@ -113,6 +113,8 @@
 (type ssh_home_t)
 (call usersubject_home_object_type (ssh_home_t))
 
+(filecon "HOME_DIR/\.ssh(/.*)?" any (system_u object_r ssh_home_t (systemlow systemlow)))
+
 (macro ssh_exec ((type ARG1))
     (call can_exec (ARG1 ssh_exec_t)))
 

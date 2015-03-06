@@ -21,6 +21,8 @@
 (type gpg_home_t)
 (call usersubject_home_object_type (gpg_home_t))
 
+(filecon "HOME_DIR/\.gnupg(/.*)?" any (system_u object_r gpg_home_t (systemlow systemlow)))
+
 (allow gpg_subject_type self rw_fifo_file_perms)
 
 (allow gpg_subject_type gpg_home_t manage_dir_perms)
@@ -102,6 +104,13 @@
 (type gpgagent_home_t)
 (call usersubject_home_object_type (gpgagent_home_t))
 
+(filecon "HOME_DIR/\.gnupg/gpg-agent\.conf" file (system_u object_r gpgagent_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/gpg-agent\.log" file (system_u object_r gpgagent_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/S\.gpg-agent" socket (system_u object_r gpgagent_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/S\.gpg-agent\.ssh" socket (system_u object_r gpgagent_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/sshcontrol" file (system_u object_r gpgagent_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/private-keys-v1\.d(/.*)?" any (system_u object_r gpgagent_home_t (systemlow systemlow)))
+
 (allow gpg_gpgagent_subject_type gpg_home_t manage_dir_perms)
 (call gpg_home_dir_object_type_transition_gpg_home_dirs (gpg_gpgagent_subject_type))
 
@@ -156,6 +165,9 @@
 (type scd_home_t)
 (call usersubject_home_object_type (scd_home_t))
 
+(filecon "HOME_DIR/\.gnupg/reader.*.status" file (system_u object_r scd_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/S\.scdaemon" socket (system_u object_r scd_home_t (systemlow systemlow)))
+
 (type scd_tmpfs_t)
 (call usersubject_tmpfs_object_type (scd_tmpfs_t))
 
@@ -198,6 +210,9 @@
 
 (type dirmngr_home_t)
 (call usersubject_home_object_type (dirmngr_home_t))
+
+(filecon "HOME_DIR/\.gnupg/crls\.d(/.*)?" any (system_u object_r dirmngr_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/S\.dirmngr" socket (system_u object_r dirmngr_home_t (systemlow systemlow)))
 
 (allow dirmngr_t dirmngr_home_t manage_sock_file_perms)
 (call gpg_home_object_type_transition_dirmngr_home (dirmngr_t sock_file "S.dirmngr"))

@@ -15,6 +15,8 @@
 (type irssi_home_t)
 (call usersubject_home_object_type (irssi_home_t))
 
+(filecon "HOME_DIR/\.irssi(/.*)?" any (system_u object_r irssi_home_t (systemlow systemlow)))
+
 (allow irc_irssi_subject_type irssi_home_t manage_dir_perms)
 (allow irc_irssi_subject_type irssi_home_t manage_file_perms)
 (call irc_home_dir_object_type_transition_irssi_home (irc_irssi_subject_type dir ".irssi"))

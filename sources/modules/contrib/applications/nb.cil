@@ -10,6 +10,8 @@
 (type nb_home_t)
 (call usersubject_home_object_type (nb_home_t))
 
+(filecon "HOME_DIR/\.newsbeuter(/.*)?" any (system_u object_r nb_home_t (systemlow systemlow)))
+
 (allow nb_subject_type nb_home_t manage_dir_perms)
 (allow nb_subject_type nb_home_t manage_file_perms)
 (call nb_home_dir_object_type_transition_nb_home_dirs (nb_subject_type))

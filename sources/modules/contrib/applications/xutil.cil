@@ -18,6 +18,8 @@
 (type xutil_home_t)
 (call usersubject_home_object_type (xutil_home_t))
 
+(filecon "HOME_DIR/\.Xresources" file (system_u object_r xutil_home_t (systemlow systemlow)))
+
 (allow xutil_t self rw_fifo_file_perms)
 
 (call commands_exec (xutil_t))

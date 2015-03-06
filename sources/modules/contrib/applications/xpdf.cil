@@ -19,6 +19,8 @@
 (type xpdf_home_t)
 (call usersubject_home_object_type (xpdf_home_t))
 
+(filecon "HOME_DIR/\.xpdfrc" file (system_u object_r xpdf_home_t (systemlow systemlow)))
+
 (type xpdf_tmpfs_t)
 (call usersubject_tmpfs_object_type (xpdf_tmpfs_t))
 

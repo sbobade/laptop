@@ -11,8 +11,13 @@
 (type rtorrent_home_t)
 (call usersubject_home_object_type (rtorrent_home_t))
 
+(filecon "HOME_DIR/\.rtorrent(/.*)?" any (system_u object_r rtorrent_home_t (systemlow systemlow)))
+
 (type rtorrent_config_home_t)
 (call usersubject_config_home_object_type (rtorrent_config_home_t))
+
+(filecon "HOME_DIR/\.config/rtorrent\.rc" file (system_u object_r rtorrent_config_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.rtorrent\.rc" file (system_u object_r rtorrent_config_home_t (systemlow systemlow)))
 
 (allow rtorrent_t self create_unix_stream_socket_perms)
 (allow rtorrent_t self create_tcp_stream_socket_perms)

@@ -57,6 +57,10 @@
 (type emacs_home_t)
 (call usersubject_home_object_type (emacs_home_t))
 
+(filecon "HOME_DIR/\.emacs" file (system_u object_r emacs_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.emacs\.el" file (system_u object_r emacs_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.emacs\.d(/.*)?" any (system_u object_r emacs_home_t (systemlow systemlow)))
+
 (type emacs_tmpfs_t)
 (call usersubject_tmpfs_object_type (emacs_tmpfs_t))
 

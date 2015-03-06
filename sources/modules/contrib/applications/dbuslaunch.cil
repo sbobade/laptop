@@ -12,6 +12,8 @@
 (type dbuslaunch_home_t)
 (call usersubject_home_object_type (dbuslaunch_home_t))
 
+(filecon "HOME_DIR/\.dbus(/.*)?" any (system_u object_r dbuslaunch_home_t (systemlow systemlow)))
+
 (allow dbuslaunch_subject_type dbuslaunch_home_t manage_dir_perms)
 (allow dbuslaunch_subject_type dbuslaunch_home_t manage_file_perms)
 (call dbuslaunch_home_dir_object_type_transition_dbuslaunch_home_dirs (dbuslaunch_subject_type))
