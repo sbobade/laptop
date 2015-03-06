@@ -14,8 +14,6 @@
 
 * implement system_map_t for /boot/System.map.* files?
 
-* Really need file contexts specs for $XDG_RUNTIME_DIR: example systemd socket activated session daemons. these sockets usually located there or /tmp. these
-    sockets get created with setsockcreate and setfscreate. If there is no fc spec then they end up wrong
+* implement something somwhat equivalent to genhomedircon
 
-    you can override that with auto object type transitions (like i do now for dbususer sockets in there) but thats unmaintainable
-    (well actually its unmaintainable either way)
+* sshd for guests
