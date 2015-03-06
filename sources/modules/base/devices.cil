@@ -92,13 +92,14 @@
 (filecon "/dev/input/mice" char mouse_dev)
 (filecon "/dev/input/mouse[0-9]+" char mouse_dev)
 
-(type net_control_dev_t)
-(call devices_object_type (net_control_dev_t))
+(type pm_qos_misc_dev_t)
+(call devices_object_type (pm_qos_misc_dev_t))
 
-(context net_control_dev (system_u object_r net_control_dev_t (systemlow systemlow)))
-(filecon "/dev/cpu_dma_latency" char net_control_dev)
-(filecon "/dev/network_latency" char net_control_dev)
-(filecon "/dev/network_throughput" char net_control_dev)
+(context pm_qos_misc_dev (system_u object_r pm_qos_misc_dev_t (systemlow systemlow)))
+(filecon "/dev/cpu_dma_latency" char pm_qos_misc_dev)
+(filecon "/dev/memory_bandwidth" char pm_qos_misc_dev)
+(filecon "/dev/network_latency" char pm_qos_misc_dev)
+(filecon "/dev/network_throughput" char pm_qos_misc_dev)
 
 (type null_dev_t)
 (call devices_object_type (null_dev_t))
