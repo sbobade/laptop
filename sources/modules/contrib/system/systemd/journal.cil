@@ -19,7 +19,7 @@
 (context journalctl_exec (system_u object_r journalctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/journalctl" file journalctl_exec)
 
-(allow journal_journalctl_subject_type self (capability (dac_override net_admin)))
+(allow journal_journalctl_subject_type self (capability (dac_override net_admin sys_resource)))
 
 (call devices_read_random (journal_journalctl_subject_type))
 
@@ -146,7 +146,7 @@
 (optional journald_optional_plymouth
     (call plymouth_use_fd_plymouthd (journald_t)))
 
-(allow journal_journalctl_client_subject_type self (capability (sys_resource ipc_lock)))
+(allow journal_journalctl_client_subject_type self (capability (ipc_lock)))
 (allow journal_journalctl_client_subject_type self (process (setrlimit)))
 (allow journal_journalctl_client_subject_type self rw_fifo_file_perms)
 
