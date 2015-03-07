@@ -16,7 +16,8 @@
 
 * firewalld i suppose..., work on qemuga for guests
 
-* edit contexts/openssh_contexts to reflect the sshd_net_t privset preauth type
+* edit contexts/openssh_contexts to reflect the sshd_net_t privset preauth type 
+    also fix contexts/users/{staff_u,sysadm_u}
 
 * think about support for systemd network socket activated subjects (sshd -> tcp_socket -> 22)
     would probably want to be specific about that but not sure how to implement that:

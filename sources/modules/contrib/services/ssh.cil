@@ -221,6 +221,9 @@
         (call usersubject_dynamic_subject_type_transition_all_unpriv_login_subjects (sshd_t))
         (call usersubject_shell_exec_manual_subject_type_transition_all_unpriv_login_subjects (sshd_t))))
 
+(optional sshd_optional_dbus
+    (call dbus_system_client_subject_type (sshd_t)))
+
 (optional sshd_optional_systemd
     (call systemd_daemon (sshd_t sshd_exec_t))
 
@@ -240,12 +243,16 @@
 
 (typeattributeset ssh_sshd_subject_type sshd_net_t)
 
-(allow sshd_t self (capability (sys_chroot setuid setgid)))
-(allow sshd_t self (process (setrlimit)))
+(allow sshd_net_t self (capability (sys_chroot setuid setgid)))
+(allow sshd_net_t self (process (setrlimit)))
 
-(call files_search_var (sshd_t))
+(call files_search_var (sshd_net_t))
 
-(call miscfiles_read_locale (sshd_t))
+(call miscfiles_read_locale (sshd_net_t))
+
+(call ssh_rw_inherited_sshd_tcp_sockets (sshd_net_t))
+(call ssh_rw_inherited_sshd_unix_stream_sockets (sshd_net_t))
+(call ssh_rw_inherited_sshd_unix_dgram_sockets (sshd_net_t))
 
 (type sshd_keygen_t)
 (type sshd_keygen_exec_t)
@@ -512,14 +519,20 @@
     (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 ssh_port_t (udp_socket (name_bind))))
 
-(macro ssh_rw_sshd_tcp_sockets ((type ARG1))
-    (allow ARG1 sshd_t rw_tcp_socket_perms))
+(macro ssh_use_fd_sshd ((type ARG1))
+    (allow ARG1 sshd_t (fd (use))))
 
-(macro ssh_rw_sshd_unix_stream_sockets ((type ARG1))
-    (allow ARG1 sshd_t rw_unix_stream_socket_perms))
+(macro ssh_rw_inherited_sshd_tcp_sockets ((type ARG1))
+    (call ssh_use_fd_sshd (ARG1))
+    (allow ARG1 sshd_t (tcp_socket (read write))))
 
-(macro ssh_rw_sshd_unix_dgram_sockets ((type ARG1))
-    (allow ARG1 sshd_t rw_unix_dgram_socket_perms))
+(macro ssh_rw_inherited_sshd_unix_stream_sockets ((type ARG1))
+    (call ssh_use_fd_sshd (ARG1))
+    (allow ARG1 sshd_t (unix_stream_socket (read write))))
+
+(macro ssh_rw_inherited_sshd_unix_dgram_sockets ((type ARG1))
+    (call ssh_use_fd_sshd (ARG1))
+    (allow ARG1 sshd_t (unix_dgram_socket (read write))))
 
 (macro ssh_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

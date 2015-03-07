@@ -165,9 +165,9 @@
 (call seutil_read_file_context_files (usersubject_common_login_subject_type))
 
 (optional usersubject_common_login_subject_type_optional_ssh
-    (call ssh_rw_sshd_tcp_sockets (usersubject_common_login_subject_type))
-    (call ssh_rw_sshd_unix_stream_sockets (usersubject_common_login_subject_type))
-    (call ssh_rw_sshd_unix_dgram_sockets (usersubject_common_login_subject_type)))
+    (call ssh_rw_inherited_sshd_tcp_sockets (usersubject_common_login_subject_type))
+    (call ssh_rw_inherited_sshd_unix_stream_sockets (usersubject_common_login_subject_type))
+    (call ssh_rw_inherited_sshd_unix_dgram_sockets (usersubject_common_login_subject_type)))
 
 (optional usersubject_optional_tmpfiles
     (call tmpfiles_object_exception_type (usersubject_home_object_type)))
