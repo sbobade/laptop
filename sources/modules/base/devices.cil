@@ -65,6 +65,12 @@
 (filecon "/dev/kmsg" char kmsg_dev)
 (filecon "/dev/mcelog" char kmsg_dev)
 
+(type kvm_dev_t)
+(call devices_object_type (kvm_dev_t))
+
+(context kvm_dev (system_u object_r kvm_dev_t (systemlow systemlow)))
+(filecon "/dev/kvm" char kvm_dev)
+
 (type loop_control_dev_t)
 (call devices_object_type (loop_control_dev_t))
 
@@ -179,6 +185,7 @@
 
 (context usb_dev (system_u object_r usb_dev_t (systemlow systemlow)))
 (filecon "/dev/bus/usb/.+" char usb_dev)
+(filecon "/dev/hidraw[0-9]+" char usb_dev)
 
 (type usbmon_dev_t)
 (call devices_object_type (usbmon_dev_t))
