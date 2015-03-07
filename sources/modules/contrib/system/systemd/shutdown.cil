@@ -50,6 +50,8 @@
 
 (call selinux_get_enforce_mode (shutdown_t))
 
+(call storage_setattr_fixed_disk (shutdown_t))
+
 (call subject_getpgid_all_common_subjects (shutdown_t))
 (call subject_read_all_common_subjects_state (shutdown_t))
 (call subject_send_sigkill_all_common_subjects (shutdown_t))
