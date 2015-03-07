@@ -524,7 +524,7 @@
 
 (macro ssh_rw_inherited_sshd_tcp_sockets ((type ARG1))
     (call ssh_use_fd_sshd (ARG1))
-    (allow ARG1 sshd_t (tcp_socket (read write))))
+    (allow ARG1 sshd_t (tcp_socket (read write getopt setopt getattr))))
 
 (macro ssh_rw_inherited_sshd_unix_stream_sockets ((type ARG1))
     (call ssh_use_fd_sshd (ARG1))
