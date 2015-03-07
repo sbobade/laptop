@@ -178,6 +178,7 @@
 (allow sshd_t self (capability (sys_resource kill)))
 (allow sshd_t self rw_fifo_file_perms)
 (allow sshd_t self (key (search link write)))
+(allow sshd_t self (tcp_socket (listen accept)))
 
 (allow sshd_t sshd_net_t (process (sigkill)))
 (call dynamic_subject_type_transition_pattern (sshd_t sshd_net_t))
@@ -200,6 +201,7 @@
 (call miscfiles_read_cert (sshd_t))
 
 (call ssh_exec_sshd (sshd_t))
+(call ssh_read_sshd_config_files (sshd_t))
 (call ssh_read_sshd_key_files (sshd_t))
 (call ssh_tcp_bind_ssh_port (sshd_t))
 

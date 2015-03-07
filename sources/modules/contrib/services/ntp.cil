@@ -121,6 +121,14 @@
 (allow ntpd_t ntpd_log_t manage_dir_perms)
 (call files_log_object_type_transition (ntpd_t ntpd_log_t dir "*"))
 
+(type ntpd_tmpfs_t)
+(call files_tmpfs_object_type (ntpd_tmpfs_t))
+
+(typeattributeset ntp_object_type ntpd_tmpfs_t)
+
+(allow ntpd_t ntpd_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (ntpd_t ntpd_tmpfs_t file "*"))
+
 (allow ntpd_t self (capability (sys_time setuid setgid fsetid)))
 (allow ntpd_t self (process (setcap)))
 (allow ntpd_t self rw_fifo_file_perms)
@@ -313,6 +321,14 @@
 (macro ntp_manage_ntpd_runtime_files ((type ARG1))
     (call files_rw_runtime_dirs (ARG1))
     (allow ARG1 ntpd_runtime_t manage_file_perms))
+
+(macro ntp_read_ntpd_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 ntpd_tmpfs_t read_file_perms))
+
+(macro ntp_manage_ntpd_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 ntpd_tmpfs_t manage_file_perms))
 
 (macro ntp_udp_bind_ntp_port ((type ARG1))
     (allow ARG1 self (capability (net_bind_service)))

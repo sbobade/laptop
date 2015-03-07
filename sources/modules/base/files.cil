@@ -327,6 +327,7 @@
 
 (macro files_runtime_object_type_transition ((type ARG1)(type ARG2)
     (class ARG3)(name ARG4))
+    (call files_read_runtime_lnk_files (ARG1))
     (call object_type_transition_pattern (ARG1 runtime_t ARG2 ARG3 ARG4)))
 
 (macro files_user_runtime_object_type_transition ((type ARG1)(type ARG2)

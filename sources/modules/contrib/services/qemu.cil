@@ -39,6 +39,13 @@
 (context qemuga_runtime (system_u object_r qemuga_runtime_t (systemlow systemlow)))
 (filecon "/var/run/qga\.state" file qemuga_runtime)
 
+(call filesystems_getattr_tmpfs_filesystems (qemuga_t))
+(call filesystems_read_devtmpfs_lnk_files (qemuga_t))
+
+(call terminals_use_virtio (qemuga_t))
+
+(call miscfiles_read_locale (qemuga_t))
+
 (optional qemu_optional_systemd
     (call systemd_daemon (qemuga_t qemuga_exec_t))
 

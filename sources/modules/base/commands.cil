@@ -5,6 +5,7 @@
 
 (context exec (system_u object_r exec_t (systemlow systemlow)))
 (filecon "/etc/dhcp/dhclient\.d/chrony\.sh" file exec)
+(filecon "/etc/dhcp/dhclient\.d/ntp\.sh" file exec)
 (filecon "/etc/grub\.d(/.*)?" file exec)
 (filecon "/etc/profile\.d(/.*)?" file exec)
 (filecon "/etc/kernel/postinst\.d(/.*)?" file exec)
