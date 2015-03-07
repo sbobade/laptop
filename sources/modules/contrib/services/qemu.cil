@@ -25,7 +25,7 @@
 (call subject_entry (qemuga_t qemuga_exec_t))
 (roletype system_r qemuga_t)
 
-(context qemuga_exec (system_u object_r qemu_exec_t (systemlow systemlow)))
+(context qemuga_exec (system_u object_r qemuga_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/qemu-ga" file qemuga_exec)
 
 (type qemuga_runtime_t)
