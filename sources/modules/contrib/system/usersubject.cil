@@ -173,6 +173,11 @@
     (call tmpfiles_object_exception_type (usersubject_home_object_type)))
 
 (optional usersubject_priv_login_subject_type_optional_ssh
+    (call subject_dynamic_subject_type_transition_subject_type (usersubject_priv_login_subject_type))
+
+    (optional usersubject_priv_login_subject_type_optional_journal
+        (call journal_client_subject_type (usersubject_priv_login_subject_type)))
+
     (booleanif ssh_priv_user_login
         (true
             (allow usersubject_priv_login_subject_type self (capability (setuid setgid sys_tty_config)))
