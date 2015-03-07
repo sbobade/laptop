@@ -4,3 +4,4 @@ EXCLUDE.local
 laptop.conf
 LISTING
 policy/policy.*
+seusers.local
