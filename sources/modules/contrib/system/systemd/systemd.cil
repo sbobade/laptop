@@ -490,7 +490,6 @@
     (allow ARG1 systemd_t (process (signal))))
 
 (macro systemd_dynamic_subject_type_transition ((type ARG1))
-    (call subject_dynamic_subject_type_transition_subject (ARG1))
     (call dynamic_subject_type_transition_pattern
         (ARG1 systemd_t))
     (typetransition ARG1 systemd_exec_t process "*" systemd_t))

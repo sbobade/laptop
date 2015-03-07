@@ -1,7 +1,14 @@
+(boolean ssh_priv_user_login false)
+
 (roleattribute ssh_sshkeygen_role)
 
+(typeattribute ssh_admin_subject_type)
 (typeattribute ssh_subject_type)
 (typeattribute ssh_sshagent_subject_type)
+(typeattribute ssh_sshd_subject_type)
+
+(typeattribute ssh_object_type)
+(typeattribute ssh_unit_object_type)
 
 (type ssh_config_t)
 (call files_config_object_type (ssh_config_t))
@@ -77,7 +84,7 @@
 
 (call devices_read_urandom (ssh_sshagent_subject_type))
 
-(call miscfiles_read_all_certs (ssh_sshagent_subject_type))
+(call miscfiles_read_cert (ssh_sshagent_subject_type))
 
 (call ns_client_subject_type (ssh_sshagent_subject_type))
 
@@ -115,6 +122,171 @@
 
 (filecon "HOME_DIR/\.ssh(/.*)?" any (system_u object_r ssh_home_t (systemlow systemlow)))
 
+(type sshd_t)
+(type sshd_exec_t)
+(call subject_common_type (sshd_t))
+(call subject_entry (sshd_t sshd_exec_t))
+(roletype system_r sshd_t)
+
+(typeattributeset ssh_sshd_subject_type sshd_t)
+
+(context sshd_exec (system_u object_r sshd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/sshd" file sshd_exec)
+
+(type sshd_config_t)
+(call files_config_object_type (sshd_config_t))
+
+(typeattributeset ssh_object_type sshd_config_t)
+
+(context sshd_config (system_u object_r sshd_config_t (systemlow systemlow)))
+(filecon "/etc/ssh/sshd_config" file sshd_config)
+(filecon "/etc/sysconfig/sshd" file sshd_config)
+
+(type sshd_pam_config_t)
+(call auth_pam_config_object_type (sshd_pam_config_t))
+
+(typeattributeset ssh_object_type sshd_pam_config_t)
+
+(context sshd_pam_config (system_u object_r sshd_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/sshd" file sshd_pam_config)
+
+(type sshd_runtime_t)
+(call files_runtime_object_type (sshd_runtime_t))
+
+(typeattributeset ssh_object_type sshd_runtime_t)
+
+(context sshd_runtime (system_u object_r sshd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/sshd\.pid" file sshd_runtime)
+
+(allow sshd_t sshd_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (sshd_t sshd_runtime_t file "*"))
+
+(type sshd_pty_dev_t)
+(call terminals_login_pty_object_type (sshd_pty_dev_t))
+
+(allow sshd_t sshd_pty_dev_t rw_term_perms)
+(allow sshd_t sshd_pty_dev_t (chr_file (setattr)))
+(allow sshd_t sshd_pty_dev_t relabelfrom_chr_file_perms)
+(call terminals_create_pty (sshd_t sshd_pty_dev_t))
+
+(type ssh_priv_user_login_t)
+(call selinux_bool_object_type (ssh_priv_user_login_t))
+
+(context ssh_priv_user_login (system_u object_r ssh_priv_user_login_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/ssh_priv_user_login" ssh_priv_user_login)
+
+(allow sshd_t self (capability (sys_resource kill)))
+(allow sshd_t self rw_fifo_file_perms)
+(allow sshd_t self (key (search link write)))
+
+(allow sshd_t sshd_net_t (process (sigkill)))
+(call dynamic_subject_type_transition_pattern (sshd_t sshd_net_t))
+
+(call system_read_kernel_sysctl (sshd_t))
+
+(call commands_getattr_shell_exec_files (sshd_t))
+
+(call devices_read_urandom (sshd_t))
+
+(call files_read_config (sshd_t))
+
+(call network_tcp_bind_generic_node (sshd_t))
+
+(call subject_dynamic_subject_type_transition_subject_type (sshd_t))
+
+(call auth_login_program_subject_type (sshd_t))
+
+(call miscfiles_read_net_config_files (sshd_t))
+(call miscfiles_read_cert (sshd_t))
+
+(call ssh_exec_sshd (sshd_t))
+(call ssh_read_sshd_key_files (sshd_t))
+(call ssh_tcp_bind_ssh_port (sshd_t))
+
+(call usersubject_dontaudit_create_keyring_all_common_subjects (sshd_t))
+(call usersubject_dontaudit_dynamic_subject_type_transition_all_common_subjects (sshd_t))
+(call usersubject_dontaudit_manual_subject_type_transition_all_common_subjects (sshd_t))
+
+(call usersubject_relabel_ptys (sshd_t))
+(call usersubject_setattr_ptys (sshd_t))
+(call usersubject_use_ptys (sshd_t))
+
+(booleanif ssh_priv_user_login
+    (true
+        (call usersubject_dynamic_subject_type_transition_all_common_login_subjects (sshd_t))
+        (call usersubject_shell_exec_manual_subject_type_transition_all_common_login_subjects (sshd_t)))
+    (false
+        (call usersubject_dynamic_subject_type_transition_all_unpriv_login_subjects (sshd_t))
+        (call usersubject_shell_exec_manual_subject_type_transition_all_unpriv_login_subjects (sshd_t))))
+
+(optional sshd_optional_systemd
+    (call systemd_daemon (sshd_t sshd_exec_t))
+
+    (type sshd_unit_t)
+    (call systemd_unit_object_type (sshd_unit_t))
+
+    (typeattributeset ssh_object_type sshd_unit_t)
+
+    (context sshd_unit (system_u object_r sshd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*sshd.*" file sshd_unit)
+
+    (allow ssh_admin_subject_type sshd_unit_t (service (all))))
+
+(type sshd_net_t)
+(call subject_common_type (sshd_net_t))
+(roletype system_r sshd_net_t)
+
+(typeattributeset ssh_sshd_subject_type sshd_net_t)
+
+(allow sshd_t self (capability (sys_chroot setuid setgid)))
+(allow sshd_t self (process (setrlimit)))
+
+(call files_search_var (sshd_t))
+
+(call miscfiles_read_locale (sshd_t))
+
+(type sshd_keygen_t)
+(type sshd_keygen_exec_t)
+(call subject_common_type (sshd_keygen_t))
+(call subject_entry (sshd_keygen_t sshd_keygen_exec_t))
+(roletype system_r sshd_keygen_t)
+
+(typeattributeset ssh_sshd_subject_type sshd_keygen_t)
+
+(context sshd_keygen_exec (system_u object_r sshd_keygen_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/sshd-keygen" file sshd_keygen_exec)
+
+(type sshd_key_t)
+(call files_object_type (sshd_key_t))
+
+(typeattributeset ssh_object_type sshd_key_t)
+
+(context sshd_key (system_u object_r sshd_key_t (systemlow systemlow)))
+(filecon "/etc/ssh/moduli.*" file sshd_key)
+(filecon "/etc/ssh/ssh_host.*" file sshd_key)
+
+(allow sshd_keygen_t sshd_key_t manage_file_perms)
+(call ssh_config_object_type_transition (sshd_keygen_t sshd_key_t file "*"))
+
+(optional sshd_keygen_optional_systemd
+    (call systemd_daemon (sshd_keygen_t sshd_keygen_exec_t))
+
+    (type sshd_keygen_unit_t)
+    (call systemd_unit_object_type (sshd_keygen_unit_t))
+
+    (typeattributeset ssh_object_type sshd_keygen_unit_t)
+
+    (context sshd_keygen_unit (system_u object_r sshd_keygen_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*sshd-keygen.*" file sshd_keygen_unit)
+
+    (allow ssh_admin_subject_type sshd_keygen_unit_t (service (all))))
+
+(allow ssh_admin_subject_type ssh_sshd_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (ssh_admin_subject_type ssh_sshd_subject_type))
+
+(allow ssh_admin_subject_type ssh_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
 (macro ssh_exec ((type ARG1))
     (call can_exec (ARG1 ssh_exec_t)))
 
@@ -126,6 +298,28 @@
 
 (macro ssh_exec_sshhelper ((type ARG1))
     (call can_exec (ARG1 sshhelper_exec_t)))
+
+(macro ssh_exec_sshd ((type ARG1))
+    (call can_exec (ARG1 sshd_exec_t)))
+
+(macro ssh_exec_sshd_keygen ((type ARG1))
+    (call can_exec (ARG1 sshd_keygen_exec_t)))
+
+(macro ssh_auto_subject_type_transition_sshd ((type ARG1))
+    (call ssh_send_signal_sshd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sshd_exec_t sshd_t)))
+
+(macro ssh_send_signal_sshd ((type ARG1))
+    (allow ARG1 sshd_t (process (signal))))
+
+(macro ssh_auto_subject_type_transition_sshd_keygen ((type ARG1))
+    (call ssh_send_signal_sshd_keygen (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sshd_keygen_exec_t sshd_keygen_t)))
+
+(macro ssh_send_signal_sshd_keygen ((type ARG1))
+    (allow ARG1 sshd_keygen_t (process (signal))))
 
 (macro ssh_subject_type ((type ARG1))
     (typeattributeset ssh_subject_type ARG1))
@@ -168,6 +362,10 @@
     (call files_search_config (ARG1))
     (allow ARG1 ssh_config_t list_dir_perms))
 
+(macro ssh_rw_config_dirs ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ssh_config_t rw_dir_perms))
+
 (macro ssh_read_config_files ((type ARG1))
     (call files_search_config (ARG1))
     (call read_files_pattern (ARG1 ssh_config_t ssh_config_t)))
@@ -187,6 +385,10 @@
     (allow ARG1 ssh_config_t manage_file_perms)
     (allow ARG1 ssh_config_t manage_dir_perms)
     (allow ARG1 ssh_config_t manage_lnk_file_perms))
+
+(macro ssh_config_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_config (ARG1))
+    (call object_type_transition_pattern (ARG1 ssh_config_t ARG2 ARG3 ARG4)))
 
 (macro ssh_search_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
@@ -265,6 +467,38 @@
 (macro ssh_home_dir_object_type_transition_ssh_home_dirs ((type ARG1)(name ARG2))
     (call usersubject_home_dir_object_type_transition (ARG1 ssh_home_t dir ARG2)))
 
+(macro ssh_read_sshd_config_files ((type ARG1))
+    (call ssh_search_config (ARG1))
+    (allow ARG1 sshd_config_t read_file_perms))
+
+(macro ssh_manage_sshd_config_files ((type ARG1))
+    (call ssh_rw_config_dirs (ARG1))
+    (allow ARG1 sshd_config_t manage_file_perms))
+
+(macro ssh_read_sshd_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 sshd_pam_config_t read_file_perms))
+
+(macro ssh_manage_sshd_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 sshd_pam_config_t manage_file_perms))
+
+(macro ssh_read_sshd_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 sshd_runtime_t read_file_perms))
+
+(macro ssh_manage_sshd_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 sshd_runtime_t manage_file_perms))
+
+(macro ssh_read_sshd_key_files ((type ARG1))
+    (call ssh_search_config (ARG1))
+    (allow ARG1 sshd_key_t read_file_perms))
+
+(macro ssh_manage_sshd_key_files ((type ARG1))
+    (call ssh_rw_config_dirs (ARG1))
+    (allow ARG1 sshd_key_t manage_file_perms))
+
 (macro ssh_tcp_connect_ssh_port ((type ARG1))
     (allow ARG1 ssh_port_t (tcp_socket (name_connect))))
 
@@ -275,3 +509,18 @@
 (macro ssh_udp_bind_ssh_port ((type ARG1))
     (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 ssh_port_t (udp_socket (name_bind))))
+
+(macro ssh_rw_sshd_tcp_sockets ((type ARG1))
+    (allow ARG1 sshd_t rw_tcp_socket_perms))
+
+(macro ssh_rw_sshd_unix_stream_sockets ((type ARG1))
+    (allow ARG1 sshd_t rw_unix_stream_socket_perms))
+
+(macro ssh_rw_sshd_unix_dgram_sockets ((type ARG1))
+    (allow ARG1 sshd_t rw_unix_dgram_socket_perms))
+
+(macro ssh_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset ssh_admin_subject_type ARG1)
+    (optional ssh_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

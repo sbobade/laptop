@@ -265,6 +265,7 @@
     (call storage_devtmpfs_object_type_transition_removable (system_t)))
 
 (optional system_optional_systemd
+    (call subject_dynamic_subject_type_transition_subject_type (system_t))
     (call systemd_dynamic_subject_type_transition (system_t))
     (call systemd_getattr_exec_files (system_t))
     (call systemd_send_signal (system_t)))

@@ -388,6 +388,9 @@
     (call setbacklight_run (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_ssh
+    (call ssh_admin (sysadm_t))
+    (call ssh_manage_config (sysadm_t))
+
     (call ssh_run_sshkeygen (sysadm_t sysadm_r))
 
     (call ssh_manage_home (sysadm_t))

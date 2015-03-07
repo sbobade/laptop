@@ -14,4 +14,6 @@
 
 * implement system_map_t for /boot/System.map.* files?
 
-* sshd for guests, ntp(d)? for quests, work on qemuga for guests
+* ntp(d)? for quests, work on qemuga for guests
+
+* edit contexts/openssh_contexts to reflect the sshd_net_t privset preauth type

@@ -1,3 +1,1 @@
-# OpenSSHd is currently not supported, expects a domain type.
-
-# privsep_preauth=
+privsep_preauth=sshd_net_t

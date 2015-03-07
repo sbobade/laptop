@@ -168,7 +168,7 @@
 (allow subject_unconfined_subject_type subject_type create_dccp_stream_socket_perms)
 (allow subject_unconfined_subject_type subject_type (tun_socket (all)))
 
-(call subject_dynamic_subject_type_transition_subject (subject_unconfined_subject_type))
+(call subject_dynamic_subject_type_transition_subject_type (subject_unconfined_subject_type))
 
 (call subject_execheap (subject_unconfined_subject_type))
 (call subject_execmem (subject_unconfined_subject_type))
@@ -231,7 +231,7 @@
 (macro subject_user_exemption_target ((type ARG1))
     (typeattributeset subject_user_target ARG1))
 
-(macro subject_dynamic_subject_type_transition_subject ((type ARG1))
+(macro subject_dynamic_subject_type_transition_subject_type ((type ARG1))
     (typeattributeset subject_can_set_current_context ARG1))
 
 (macro subject_entry ((type ARG1)(type ARG2))
