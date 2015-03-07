@@ -92,7 +92,7 @@
 
 (filecon "USER_MAIL_SPOOL" file (system_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
 
-(allow usersubject_common_type self (process (setpgid getattr getsched setsched)))
+(allow usersubject_common_type self (process (setpgid getattr getsched setsched setfscreate)))
 (allow usersubject_common_type self create_unix_stream_socket_perms)
 (allow usersubject_common_type self rw_fifo_file_perms)
 

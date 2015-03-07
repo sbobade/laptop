@@ -89,6 +89,8 @@
 (call sudo_read_config (sudo_subject_type))
 (call sudo_read_pam_config_files (sudo_subject_type))
 
+(call usersubject_read_exec_home_lnk_files (sudo_subject_type))
+
 (call usersubject_relabel_terminals (sudo_subject_type))
 (call usersubject_setattr_terminals (sudo_subject_type))
 (call usersubject_use_terminals (sudo_subject_type))

@@ -14,6 +14,4 @@
 
 * implement system_map_t for /boot/System.map.* files?
 
-* implement something somwhat equivalent to genhomedircon
-
-* sshd for guests
+* sshd for guests, ntp(d)? for quests, work on qemuga for guests

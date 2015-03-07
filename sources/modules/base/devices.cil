@@ -141,6 +141,7 @@
 
 (context random_dev (system_u object_r random_dev_t (systemlow systemlow)))
 (filecon "/dev/random" char random_dev)
+(filecon "/dev/hwrng" char random_dev)
 
 (type sound_dev_t)
 (call devices_object_type (sound_dev_t))
