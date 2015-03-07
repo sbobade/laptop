@@ -13,6 +13,12 @@
 
 (context ntp_exec (system_u object_r ntp_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/chronyc" file ntp_exec)
+(filecon "/usr/bin/ntpstat" file ntp_exec)
+(filecon "/usr/sbin/ntp-keygen" file ntp_exec)
+(filecon "/usr/sbin/ntpdc" file ntp_exec)
+(filecon "/usr/sbin/ntpq" file ntp_exec)
+(filecon "/usr/sbin/ntptime" file ntp_exec)
+(filecon "/usr/sbin/tickadj" file ntp_exec)
 
 (call system_read_crypto_sysctl (ntp_t))
 
@@ -38,7 +44,10 @@
 (context ntp_config (system_u object_r ntp_config_t (systemlow systemlow)))
 (filecon "/etc/chrony\.conf" file ntp_config)
 (filecon "/etc/chrony\.keys" file ntp_config)
+(filecon "/etc/ntp\.conf" file ntp_config)
+(filecon "/etc/ntp(/.*)?" any ntp_config)
 (filecon "/etc/sysconfig/chronyd" file ntp_config)
+(filecon "/etc/sysconfig/ntpd" file ntp_config)
 
 (type ntp_port_t)
 (call network_reserved_port_object_type (ntp_port_t))
@@ -68,6 +77,7 @@
 
 (context ntpd_exec (system_u object_r ntpd_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/chronyd" file ntpd_exec)
+(filecon "/usr/sbin/ntpd" file ntpd_exec)
 
 (type ntpd_runtime_t)
 (call files_runtime_object_type (ntpd_runtime_t))
@@ -87,6 +97,7 @@
 
 (context ntpd_lib (system_u object_r ntpd_lib_t (systemlow systemlow)))
 (filecon "/var/lib/chrony(/.*)?" any ntpd_lib)
+(filecon "/var/lib/ntp(/.*)?" any ntpd_lib)
 
 (allow ntpd_t ntpd_lib_t manage_dir_perms)
 (allow ntpd_t ntpd_lib_t manage_file_perms)
@@ -99,6 +110,7 @@
 
 (context ntpd_log (system_u object_r ntpd_log_t (systemlow systemlow)))
 (filecon "/var/log/chrony(/.*)?" any ntpd_log)
+(filecon "/var/log/ntpstats(/.*)?" any ntpd_log)
 
 (allow ntpd_t ntpd_log_t (file (setattr)))
 (allow ntpd_t ntpd_log_t append_file_perms)
@@ -107,7 +119,7 @@
 (allow ntpd_t ntpd_log_t read_file_perms)
 
 (allow ntpd_t ntpd_log_t manage_dir_perms)
-(call files_log_object_type_transition (ntpd_t ntpd_log_t file "*"))
+(call files_log_object_type_transition (ntpd_t ntpd_log_t dir "*"))
 
 (allow ntpd_t self (capability (sys_time setuid setgid fsetid)))
 (allow ntpd_t self (process (setcap)))
@@ -156,6 +168,7 @@
     (context ntpd_unit (system_u object_r ntpd_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*chrony-wait.*" file ntpd_unit)
     (filecon "/usr/lib/systemd/system/[^/]*chronyd.*" file ntpd_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*ntpd.*" file ntpd_unit)
 
     (allow ntp_admin_subject_type ntpd_unit_t (service (all)))
 
