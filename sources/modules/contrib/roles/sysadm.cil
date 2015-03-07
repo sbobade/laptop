@@ -413,7 +413,9 @@
     (call usersubject_exec_home_auto_subject_type_transition (sysadm_sshagent_t sysadm_t))
 
     (call ssh_manage_sshagent_tmpfs (sysadm_t))
-    (call ssh_relabel_sshagent_tmpfs (sysadm_t)))
+    (call ssh_relabel_sshagent_tmpfs (sysadm_t))
+
+    (call subject_dynamic_subject_type_transition_subject_type (sysadm_t)))
 
 (optional sysadm_ssh_optional_sysadm_gpg
     (call stream_connect_pattern (sysadm_ssh_t gpgagent_home_t gpgagent_home_t sysadm_gpgagent_t)))
@@ -496,6 +498,7 @@
     (call initctl_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_journal
+    (call journal_client_subject_type (sysadm_t))
     (call journal_admin (sysadm_t))
 
     (type sysadm_journalctl_t)

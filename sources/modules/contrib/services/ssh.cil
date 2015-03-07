@@ -183,6 +183,7 @@
 (allow sshd_t sshd_net_t (process (sigkill)))
 (call dynamic_subject_type_transition_pattern (sshd_t sshd_net_t))
 
+(call system_link_keyring (sshd_t))
 (call system_read_kernel_sysctl (sshd_t))
 
 (call commands_getattr_shell_exec_files (sshd_t))
@@ -204,6 +205,8 @@
 (call ssh_read_sshd_config_files (sshd_t))
 (call ssh_read_sshd_key_files (sshd_t))
 (call ssh_tcp_bind_ssh_port (sshd_t))
+
+(call usersubject_search_home_dir (sshd_t))
 
 (call usersubject_dontaudit_create_keyring_all_common_subjects (sshd_t))
 (call usersubject_dontaudit_dynamic_subject_type_transition_all_common_subjects (sshd_t))

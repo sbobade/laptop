@@ -378,6 +378,10 @@
     (call filesystems_search_devtmpfs (ARG1))
     (call getattr_chr_files_pattern (ARG1 devpts_fs_t devpts_fs_t)))
 
+(macro filesystems_relabel_devpts_chr_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devpts_fs_t relabel_chr_file_perms))
+
 (macro filesystems_rw_devpts_chr_files ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (call rw_chr_files_pattern (ARG1 devpts_fs_t devpts_fs_t)))
