@@ -32,6 +32,13 @@
 (allow bootloader_t self (process (getsched)))
 (allow bootloader_t self rw_fifo_file_perms)
 
+(allow bootloader_t bootloader_log_t (file (setattr)))
+(allow bootloader_t bootloader_log_t append_file_perms)
+(allow bootloader_t bootloader_log_t create_file_perms)
+(allow bootloader_t bootloader_log_t read_file_perms)
+(allow bootloader_t bootloader_log_t delete_file_perms)
+(call files_log_object_type_transition (bootloader_t bootloader_log_t file "*"))
+
 (allow bootloader_t bootloader_tmpfs_t manage_dir_perms)
 (allow bootloader_t bootloader_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (bootloader_t bootloader_tmpfs_t dir "*"))

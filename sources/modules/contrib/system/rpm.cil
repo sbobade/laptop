@@ -350,11 +350,11 @@
 
 (macro rpm_write_tmp_fifo_files ((type ARG1))
     (call files_search_tmp (ARG1))
-    (call read_fifo_files_pattern (ARG1 rpm_tmp_t rpm_tmp_t)))
+    (call write_fifo_files_pattern (ARG1 rpm_tmp_t rpm_tmp_t)))
 
 (macro rpm_rw_inherited_tmp_fifo_files ((type ARG1))
     (call rpm_use_fd (ARG1))
-    (allow ARG1 rpm_t rw_inherited_fifo_file_perms))
+    (allow ARG1 rpm_tmp_t rw_inherited_fifo_file_perms))
 
 (macro rpm_read_tmp ((type ARG1))
     (call files_search_tmp (ARG1))
