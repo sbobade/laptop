@@ -24,7 +24,7 @@
 (type firefox_tmpfs_t)
 (call usersubject_tmpfs_object_type (firefox_tmpfs_t))
 
-(allow firefox_t self (process (setsched getsched)))
+(allow firefox_t self (process (setsched getsched ptrace)))
 (allow firefox_t self create_unix_dgram_socket_perms)
 (allow firefox_t self rw_fifo_file_perms)
 
