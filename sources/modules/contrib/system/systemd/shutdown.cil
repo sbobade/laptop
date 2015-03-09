@@ -66,8 +66,6 @@
 (call mount_exec (shutdown_t))
 (call mount_manage_runtime_files (shutdown_t))
 
-(call seutil_read_file_context_files (shutdown_t))
-
 (call systemd_getattr_unit_dirs (shutdown_t))
 
 (call udev_client_subject_type (shutdown_t))
