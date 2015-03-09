@@ -16,6 +16,7 @@
 
 (call system_list_mountpoints (fstrim_t))
 
+(call filesystems_read_devtmpfs_lnk_files (fstrim_t))
 (call filesystems_read_sysfs (fstrim_t))
 
 (call storage_getattr_fixed_disk (fstrim_t))
