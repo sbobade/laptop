@@ -76,6 +76,8 @@
 
 (call audit_client_subject_type (sudo_subject_type))
 
+(call applications_send_signal_all_subjects (sudo_subject_type))
+
 (call auth_read_authconfig_pam_config (sudo_subject_type))
 (call auth_read_pam_config (sudo_subject_type))
 
