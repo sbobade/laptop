@@ -266,7 +266,7 @@
     (allow ARG1 home_dir_t search_dir_perms))
 
 (macro usersubject_mounton_home_dir ((type ARG1))
-    (call files_search_home (ARG1))
+    (call usersubject_search_home_dir (ARG1))
     (allow ARG1 home_dir_t (dir (mounton))))
 
 (macro usersubject_list_home_dir ((type ARG1))
