@@ -106,3 +106,5 @@ EOF
 sudo systemctl enable logrotate.timer
 
 You may or may not want to append; "exclude=selinux-policy*" to /etc/yum.conf
+
+Watch my demo on youtube: http://youtu.be/l8OxBplR_wI
