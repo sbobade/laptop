@@ -1,0 +1,103 @@
+How to test:
+------------
+
+Install an *minimal* Fedora (=> 21) *server* product.
+Install git, iptables-services
+
+Disable crond (crond is not supported, use systemd instead)
+Disable firewalld and enable iptables-services (firewalld currently not *yet* supported)
+
+As unprivileged user;
+
+cd ~
+git clone https;//github.com/doverride/laptop
+cd laptop && ./laptop -v -i
+
+As privileged user:
+
+Edit /etc/selinux/config; change "SELINUXTYPE" to "laptop"
+
+setenforce 0
+load_policy
+restorecon -R -v -F /
+
+Edit /etc/pam.d/systemd-user to:
+
+account  include system-auth
+# pam_selinux.so close should be the first session rule
+session    required     pam_selinux.so close
+# pam_selinux.so open should only be followed by sessions to be executed in the user context
+session    required     pam_selinux.so nottys open
+session  include system-auth
+
+shutdown -r now
+
+NOTES:
+
+sudo requires that you specify the role to change to when you run sudo. Eg. "sudo -r sysadm_r -s"
+
+To be able to directly execute a file in your home directory, the file should be associated with the "exec_home_t" type.
+
+For example;
+chcon -t exec_home_t ~/laptop/laptop
+
+Note that Git currently may not be able to replace this file if it is associated with exec_home_t type when you are trying to pull in a change to this file.
+This currently requires that you change it's type back to "user_home_t" before you pull in any changes to this file.
+
+See "~/laptop/laptop --help" for information about options to customize your "laptop" policy model installation.
+
+Emergency mode does not work due to a recent change to the emergency.service unit. To make this functionality work, create /etc/systemd/system/emergency.service:
+
+[Unit]
+Description=Emergency Shell
+Documentation=man:sulogin(8)
+DefaultDependencies=no
+Conflicts=shutdown.target
+Conflicts=rescue.service
+Before=shutdown.target
+
+[Service]
+Environment=HOME=/root
+WorkingDirectory=/root
+ExecStartPre=-/bin/plymouth quit
+ExecStartPre=-/bin/echo -e 'Welcome to emergency mode! After logging in, type "journalctl -xb" to view\\nsystem logs, "systemctl reboot" to reboot, "systemctl default"$
+ExecStart=-/sbin/sulogin
+ExecStopPost=-/bin/systemctl --fail --no-block default
+Type=idle
+StandardInput=tty-force
+StandardOutput=inherit
+StandardError=inherit
+KillMode=process
+IgnoreSIGPIPE=no
+SendSIGHUP=yes
+
+Enable /etc/systemd/system/emergency.service: sudo systemctl daemon-reload && sudo systemctl enable emergency.service
+
+The Cron daemon is not supported. To instruct the system manager to run jobs on specified intervals use "timers". Example; To rotate logs daily with logrotate;
+
+cat >> /etc/systemd/system/logrotate,service <<EOF
+[Unit]
+Description=Daily rotation of log files
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/logrotate /etc/logrotate.conf
+Nice=19
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+EOF
+
+cat >> /etc/systemd/system/logrotate,timer <<EOF
+[Unit]
+Description=Daily rotation of log files
+
+[Timer]
+OnCalendar=daily
+AccuracySec=12h
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl enable logrotate.timer
