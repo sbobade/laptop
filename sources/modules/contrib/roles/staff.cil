@@ -1,54 +1,52 @@
+(typeattribute staff_subject_type)
+
 (user staff_u)
 (role staff_r)
 (type staff_t)
 (call usersubject_common_login_subject_template (staff_u staff_r staff_t))
 
+(call staff_subject_type (staff_t))
+
 (call seutil_exec_setfiles (staff_t))
 
 (type staff_chfn_t)
-(call usermanage_role_template_chfn (staff_r staff_t staff_chfn_t))
+(call usermanage_role_template_chfn (staff_r staff_subject_type staff_chfn_t))
 
 (type staff_passwd_t)
-(call usermanage_role_template_passwd (staff_r staff_t staff_passwd_t))
+(call usermanage_role_template_passwd (staff_r staff_subject_type staff_passwd_t))
 
 (optional staff_optional_alsa
-    (call alsa_run_alsautil (staff_t staff_r))
+    (call alsa_run_alsautil (staff_subject_type staff_r))
     (call alsa_manage_alsautil_tmpfs_files (staff_t))
     (call alsa_relabel_alsautil_tmpfs_files (staff_t)))
 
 (optional staff_optional_askpwd
-    (call askpwd_run_askpwdagent (staff_t staff_r)))
+    (call askpwd_run_askpwdagent (staff_subject_type staff_r)))
 
 (optional staff_optional_bluetooth
-    (call bluetooth_run_bluetoothctl (staff_t staff_r))
+    (call bluetooth_run_bluetoothctl (staff_subject_type staff_r))
 
     (type staff_obexd_t)
-    (call bluetooth_role_template_obexd (staff_r staff_t staff_obexd_t))
+    (call bluetooth_role_template_obexd (staff_r staff_subject_type staff_obexd_t))
 
     (call dbususer_service (staff_obexd_t staff_dbususer_t)))
 
-(optional staff_systemduser_optional_staff_obexd
-    (call bluetooth_role_template_obexd (staff_r staff_systemduser_t staff_obexd_t)))
-
 (optional staff_optional_bti
-    (call bti_run (staff_t staff_r))
+    (call bti_run (staff_subject_type staff_r))
 
     (call bti_manage_home_files (staff_t))
     (call bti_relabel_home_files (staff_t))
     (call bti_home_dir_object_type_transition_home_files (staff_t)))
 
 (optional staff_optional_cowsay
-    (call cowsay_run (staff_t staff_r))
+    (call cowsay_run (staff_subject_type staff_r))
 
     (call cowsay_manage_tmpfs_files (staff_t))
     (call cowsay_relabel_tmpfs_files (staff_t)))
 
-(optional staff_systemduser_optional_cowsay
-    (call cowsay_run (staff_systemduser_t staff_r)))
-
 (optional staff_optional_staff_dbususer
     (type staff_dbususer_t)
-    (call dbususer_role_template (staff_r staff_t staff_dbususer_t))
+    (call dbususer_role_template (staff_r staff_subject_type staff_dbususer_t))
 
     (call commands_exec_auto_subject_type_transition (staff_dbususer_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_dbususer_t staff_t))
@@ -66,8 +64,6 @@
     (call dbuslaunch_role_template (staff_r staff_dbususer_t staff_dbuslaunch_t)))
 
 (optional staff_systemduser_optional_staff_dbususer
-    (call dbususer_role_template (staff_r staff_systemduser_t staff_dbususer_t))
-
     (call systemduser_socket_activated_subject_type (staff_dbususer_t))
 
     (call dbususer_manage_tmpfs (staff_systemduser_t))
@@ -78,7 +74,7 @@
 
 (optional staff_optional_dbuslaunch
     (type staff_dbuslaunch_t)
-    (call dbuslaunch_role_template (staff_r staff_t staff_dbuslaunch_t))
+    (call dbuslaunch_role_template (staff_r staff_subject_type staff_dbuslaunch_t))
 
     (call dbuslaunch_manage_home (staff_t))
     (call dbuslaunch_relabel_home (staff_t))
@@ -88,7 +84,7 @@
 
 (optional staff_optional_emacs
     (type staff_emacs_t)
-    (call emacs_role_template (staff_r staff_t staff_emacs_t))
+    (call emacs_role_template (staff_r staff_subject_type staff_emacs_t))
 
     (call commands_exec_auto_subject_type_transition (staff_emacs_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_emacs_t staff_t))
@@ -103,40 +99,33 @@
     (call emacs_relabel_emacs_tmpfs (staff_t))
 
     (type staff_emacsclient_t)
-    (call emacs_role_template_emacsclient (staff_r staff_t staff_emacsclient_t))
+    (call emacs_role_template_emacsclient (staff_r staff_subject_type staff_emacsclient_t))
 
     (allow staff_emacsclient_t staff_emacs_t (process (signal)))
 
     (call stream_connect_pattern (staff_emacsclient_t emacs_tmpfs_t emacs_tmpfs_t staff_emacs_t)))
 
-(optional staff_systemduser_optional_staff_emacs
-    (call emacs_role_template (staff_r staff_systemduser_t staff_emacs_t))
-    (call emacs_role_template_emacsclient (staff_r staff_systemduser_t staff_emacsclient_t)))
-
 (optional staff_optional_festival
-    (call festival_run (staff_t staff_r))
+    (call festival_run (staff_subject_type staff_r))
 
     (call festival_manage_tmpfs_files (staff_t))
     (call festival_relabel_tmpfs_files (staff_t)))
 
-(optional staff_systemduser_optional_festival
-    (call festival_run (staff_systemduser_t staff_r)))
-
 (optional staff_optional_ffmpeg
-    (call ffmpeg_run (staff_t staff_r))
+    (call ffmpeg_run (staff_subject_type staff_r))
 
     (call ffmpeg_manage_tmpfs_files (staff_t))
     (call ffmpeg_relabel_tmpfs_files (staff_t)))
 
 (optional staff_optional_fpaste
-    (call fpaste_run (staff_t staff_r))
+    (call fpaste_run (staff_subject_type staff_r))
 
     (call fpaste_manage_tmp (staff_t))
     (call fpaste_relabel_tmp (staff_t)))
 
 (optional staff_optional_git
     (type staff_git_t)
-    (call git_role_template (staff_r staff_t staff_git_t))
+    (call git_role_template (staff_r staff_subject_type staff_git_t))
 
     (call commands_exec_auto_subject_type_transition (staff_git_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_git_t staff_t))
@@ -163,7 +152,7 @@
     (call git_role_template_gitemail (staff_r staff_git_t staff_gitemail_t))
 
     (type staff_gitemail_t)
-    (call git_role_template_gitemail (staff_r staff_t staff_gitemail_t))
+    (call git_role_template_gitemail (staff_r staff_subject_type staff_gitemail_t))
 
     (call commands_exec_auto_subject_type_transition (staff_gitemail_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_gitemail_t staff_t))
@@ -179,10 +168,10 @@
     (call git_role_template (staff_r staff_emacs_t staff_git_t)))
 
 (optional staff_optional_gpg
-    (call gpg_run_dirmngr (staff_t staff_r))
-    (call gpg_run_gpg2keys (staff_t staff_r))
-    (call gpg_run_gpgpcsc (staff_t staff_r))
-    (call gpg_run_scd (staff_t staff_r))
+    (call gpg_run_dirmngr (staff_subject_type staff_r))
+    (call gpg_run_gpg2keys (staff_subject_type staff_r))
+    (call gpg_run_gpgpcsc (staff_subject_type staff_r))
+    (call gpg_run_scd (staff_subject_type staff_r))
 
     (call gpg_home_dir_object_type_transition_gpg_home_dirs (staff_t))
 
@@ -190,10 +179,10 @@
     (call gpg_relabel_home (staff_t))
 
     (type staff_gpg_t)
-    (call gpg_role_template (staff_r staff_t staff_gpg_t))
+    (call gpg_role_template (staff_r staff_subject_type staff_gpg_t))
 
     (type staff_gpgagent_t)
-    (call gpg_role_template_gpgagent (staff_r staff_t staff_gpgagent_t))
+    (call gpg_role_template_gpgagent (staff_r staff_subject_type staff_gpgagent_t))
 
     (call commands_exec_auto_subject_type_transition (staff_gpgagent_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_gpgagent_t staff_t))
@@ -242,7 +231,7 @@
 
 (optional staff_optional_http
     (type staff_lynx_t)
-    (call http_role_template_lynx (staff_r staff_t staff_lynx_t))
+    (call http_role_template_lynx (staff_r staff_subject_type staff_lynx_t))
 
     (call commands_exec_auto_subject_type_transition (staff_lynx_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_lynx_t staff_t))
@@ -261,7 +250,7 @@
 
 (optional staff_optional_irc
     (type staff_irssi_t)
-    (call irc_role_template_irssi (staff_r staff_t staff_irssi_t))
+    (call irc_role_template_irssi (staff_r staff_subject_type staff_irssi_t))
 
     (call commands_shell_exec_auto_subject_type_transition (staff_irssi_t staff_t))
 
@@ -281,7 +270,7 @@
     (call java_relabel_tmpfs (staff_t)))
 
 (optional staff_fop_optional_staff_java
-    (call fop_run (staff_t staff_r))
+    (call fop_run (staff_subject_type staff_r))
 
     (call fop_manage_home (staff_t))
     (call fop_relabel_home (staff_t))
@@ -292,7 +281,7 @@
 
 (optional staff_optional_mail
     (type staff_mutt_t)
-    (call mail_role_template_mutt (staff_r staff_t staff_mutt_t))
+    (call mail_role_template_mutt (staff_r staff_subject_type staff_mutt_t))
 
     (call commands_exec_auto_subject_type_transition (staff_mutt_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_mutt_t staff_t))
@@ -300,7 +289,7 @@
     (call usersubject_exec_home_auto_subject_type_transition (staff_mutt_t staff_t))
 
     (type staff_muttpgp_t)
-    (call mail_role_template_muttpgp (staff_r staff_t staff_muttpgp_t))
+    (call mail_role_template_muttpgp (staff_r staff_subject_type staff_muttpgp_t))
 
     (call mail_manage_mutt_home_files (staff_t))
     (call mail_relabel_mutt_home_files (staff_t))
@@ -324,7 +313,7 @@
 
 (optional staff_optional_nb
     (type staff_nb_t)
-    (call nb_role_template (staff_r staff_t staff_nb_t))
+    (call nb_role_template (staff_r staff_subject_type staff_nb_t))
 
     (call nb_manage_home (staff_t))
     (call nb_relabel_home (staff_t))
@@ -335,11 +324,11 @@
     (call usersubject_exec_home_auto_subject_type_transition (staff_nb_t staff_t)))
 
 (optional staff_optional_nm
-    (call nm_run_nmcli (staff_t staff_r)))
+    (call nm_run_nmcli (staff_subject_type staff_r)))
 
 (optional staff_optional_pa
-    (call pa_run (staff_t staff_r))
-    (call pa_run_pactl (staff_t staff_r))
+    (call pa_run (staff_subject_type staff_r))
+    (call pa_run_pactl (staff_subject_type staff_r))
 
     (call pa_manage_tmpfs (staff_t))
     (call pa_relabel_tmpfs (staff_t))
@@ -354,7 +343,7 @@
     (call pa_home_dir_object_type_transition_home_files (staff_t)))
 
 (optional mplayer_optional_pa
-    (call mplayer_run (staff_t staff_r))
+    (call mplayer_run (staff_subject_type staff_r))
 
     (call mplayer_manage_home (staff_t))
     (call mplayer_relabel_home (staff_t))
@@ -372,14 +361,14 @@
     (call pass_home_object_type_transition (staff_t git_config_home_t file ".gitattributes")))
 
 (optional staff_optional_pinentry
-    (call pinentry_run (staff_t staff_r))
+    (call pinentry_run (staff_subject_type staff_r))
 
     (call pinentry_manage_tmpfs_files (staff_t))
     (call pinentry_relabel_tmpfs_files (staff_t)))
 
 (optional staff_optional_polkit
     (type staff_pkexec_t)
-    (call polkit_role_template_pkexec (staff_r staff_t staff_pkexec_t))
+    (call polkit_role_template_pkexec (staff_r staff_subject_type staff_pkexec_t))
 
     (call commands_exec_auto_subject_type_transition (staff_pkexec_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_pkexec_t staff_t))
@@ -393,7 +382,7 @@
 
 (optional staff_optional_screen
     (type staff_screen_t)
-    (call screen_role_template (staff_r staff_t staff_screen_t))
+    (call screen_role_template (staff_r staff_subject_type staff_screen_t))
 
     (call commands_exec_auto_subject_type_transition (staff_screen_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_screen_t staff_t))
@@ -420,7 +409,7 @@
     (call seutil_exec_setools (staff_t)))
 
 (optional staff_optional_ssh
-    (call ssh_run_sshkeygen (staff_t staff_r))
+    (call ssh_run_sshkeygen (staff_subject_type staff_r))
 
     (call ssh_manage_home (staff_t))
     (call ssh_relabel_home (staff_t))
@@ -428,10 +417,10 @@
     (call ssh_home_dir_object_type_transition_ssh_home_dirs (staff_t ".ssh"))
 
     (type staff_ssh_t)
-    (call ssh_role_template (staff_r staff_t staff_ssh_t))
+    (call ssh_role_template (staff_r staff_subject_type staff_ssh_t))
 
     (type staff_sshagent_t)
-    (call ssh_role_template_sshagent (staff_r staff_t staff_sshagent_t))
+    (call ssh_role_template_sshagent (staff_r staff_subject_type staff_sshagent_t))
 
     (call commands_exec_auto_subject_type_transition (staff_sshagent_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_sshagent_t staff_t))
@@ -452,7 +441,7 @@
 
 (optional staff_optional_sudo
     (type staff_sudo_t)
-    (call sudo_role_template (staff_r staff_t staff_sudo_t))
+    (call sudo_role_template (staff_r staff_subject_type staff_sudo_t))
 
     (call commands_exec_auto_subject_type_transition (staff_sudo_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_sudo_t staff_t))
@@ -465,11 +454,13 @@
     (call sysadm_shell_exec_manual_subject_type_transition (staff_sudo_t))
     (call sysadm_userrole (staff_u))
     (call sysadm_roleallow (staff_r))
-    (call sysadm_send_signal (staff_t)))
+    (call sysadm_send_signal (staff_subject_type)))
 
 (optional staff_optional_systemduser
     (type staff_systemduser_t)
     (call systemduser_role_template (staff_r staff_t staff_systemduser_t))
+
+    (call staff_subject_type (staff_systemduser_t))
 
     (call commands_exec_auto_subject_type_transition (staff_systemduser_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_systemduser_t staff_t))
@@ -495,7 +486,7 @@
     (call temps_relabel_exec_files (staff_t)))
 
 (optional staff_optional_torrent
-    (call torrent_run_rtorrent (staff_t staff_r))
+    (call torrent_run_rtorrent (staff_subject_type staff_r))
 
     (call torrent_manage_rtorrent_config_home_files (staff_t))
     (call torrent_relabel_rtorrent_config_home_files (staff_t))
@@ -508,13 +499,13 @@
 
 (optional staff_optional_xserver
     (type staff_xinit_t)
-    (call xserver_role_template_xinit (staff_r staff_t staff_xinit_t))
+    (call xserver_role_template_xinit (staff_r staff_subject_type staff_xinit_t))
 
     (call commands_exec_auto_subject_type_transition (staff_xinit_t staff_t))
 
     (call usersubject_exec_home_auto_subject_type_transition (staff_xinit_t staff_t))
 
-    (call xserver_run_xauth (staff_t staff_r))
+    (call xserver_run_xauth (staff_subject_type staff_r))
 
     (call xserver_manage_xauth_home_files (staff_t))
     (call xserver_relabel_xauth_home_files (staff_t))
@@ -535,8 +526,8 @@
     (call xserver_data_home_object_type_transition_xserver_data_home_dirs (staff_t)))
 
 (optional staff_xserver_firefox
-    (call firefox_run (staff_t staff_r))
-    (call firefox_run_xremotec (staff_t staff_r))
+    (call firefox_run (staff_subject_type staff_r))
+    (call firefox_run_xremotec (staff_subject_type staff_r))
 
     (call firefox_manage_home (staff_t))
     (call firefox_relabel_home (staff_t))
@@ -553,14 +544,14 @@
     (call firefox_relabel_plugs_tmpfs_files (staff_t)))
 
 (optional staff_xserver_optional_qiv
-    (call qiv_run (staff_t staff_r))
+    (call qiv_run (staff_subject_type staff_r))
 
     (call qiv_manage_tmpfs_files (staff_t))
     (call qiv_relabel_tmpfs_files (staff_t)))
 
 (optional staff_xserver_optional_rp
     (type staff_rp_t)
-    (call rp_role_template (staff_r staff_t staff_rp_t))
+    (call rp_role_template (staff_r staff_subject_type staff_rp_t))
 
     (call commands_exec_auto_subject_type_transition (staff_rp_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_rp_t staff_t))
@@ -573,13 +564,13 @@
 
     (call rp_role_template (staff_r staff_xinit_t staff_rp_t))
 
-    (call rp_run_rpws (staff_t staff_r))
+    (call rp_run_rpws (staff_subject_type staff_r))
 
     (call rp_manage_rpws_tmpfs_files (staff_t))
     (call rp_relabel_rpws_tmpfs_files (staff_t)))
 
 (optional staff_xserver_optional_xbindkeys
-    (call xbindkeys_run (staff_t staff_r))
+    (call xbindkeys_run (staff_subject_type staff_r))
 
     (call xbindkeys_manage_home_files (staff_t))
     (call xbindkeys_relabel_home_files (staff_t))
@@ -589,7 +580,7 @@
     (call xbindkeys_run (staff_xinit_t staff_r)))
 
 (optional staff_xserver_optional_xlock
-    (call xlock_run (staff_t staff_r))
+    (call xlock_run (staff_subject_type staff_r))
 
     (call xlock_manage_home_files (staff_t))
     (call xlock_relabel_home_files (staff_t))
@@ -597,7 +588,7 @@
     (call xlock_home_dir_object_type_transition_home_files (staff_t)))
 
 (optional staff_xserver_optional_xpdf
-    (call xpdf_run (staff_t staff_r))
+    (call xpdf_run (staff_subject_type staff_r))
 
     (call xpdf_manage_home_files (staff_t))
     (call xpdf_relabel_home_files (staff_t))
@@ -608,7 +599,7 @@
 
 (optional staff_xserver_optional_xterm
     (type staff_xterm_t)
-    (call xterm_role_template (staff_r staff_t staff_xterm_t))
+    (call xterm_role_template (staff_r staff_subject_type staff_xterm_t))
 
     (call commands_exec_auto_subject_type_transition (staff_xterm_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_xterm_t staff_t))
@@ -620,12 +611,15 @@
     (call screen_role_template (staff_r staff_xterm_t staff_screen_t)))
 
 (optional staff_xserver_optional_xutil
-    (call xutil_run (staff_t staff_r))
+    (call xutil_run (staff_subject_type staff_r))
 
     (call xutil_manage_home_files (staff_t))
     (call xutil_relabel_home_files (staff_t))
 
     (call xutil_home_dir_object_type_transition_home_files (staff_t)))
+
+(macro staff_subject_type ((type ARG1))
+    (typeattributeset staff_subject_type ARG1))
 
 (macro staff_rw_inherited_fifo_files ((type ARG1))
     (allow ARG1 staff_t rw_inherited_fifo_file_perms))
