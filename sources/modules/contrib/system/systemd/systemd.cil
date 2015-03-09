@@ -276,6 +276,7 @@
 
 (optional systemd_optional_usersubject
     (call usersubject_link_keyring_all_common_login_subjects (systemd_t))
+    (call usersubject_read_home_dir (systemd_t))
     (call usersubject_mounton_home_dir (systemd_t))
     (call usersubject_use_terminals (systemd_t)))
 

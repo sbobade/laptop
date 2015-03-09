@@ -13,7 +13,7 @@ Disable firewalld and enable ip(6)?tables (firewalld is currently not *yet* supp
 As unprivileged user;
 
 cd ~
-git clone https;//github.com/doverride/laptop
+git clone https://github.com/doverride/laptop
 cd laptop && ./laptop -v -i
 
 As privileged user:
@@ -74,11 +74,11 @@ KillMode=process
 IgnoreSIGPIPE=no
 SendSIGHUP=yes
 
-Enable /etc/systemd/system/emergency.service: sudo systemctl daemon-reload && sudo systemctl enable emergency.service
+Enable /etc/systemd/system/emergency.service: sudo systemctl daemon-reload
 
 The Cron daemon is not supported. To instruct the system manager to run jobs on specified intervals use "timers". Example; To rotate logs daily with logrotate;
 
-cat >> /etc/systemd/system/logrotate,service <<EOF
+cat >> /etc/systemd/system/logrotate.service <<EOF
 [Unit]
 Description=Daily rotation of log files
 
@@ -90,7 +90,7 @@ IOSchedulingClass=best-effort
 IOSchedulingPriority=7
 EOF
 
-cat >> /etc/systemd/system/logrotate,timer <<EOF
+cat >> /etc/systemd/system/logrotate.timer <<EOF
 [Unit]
 Description=Daily rotation of log files
 
