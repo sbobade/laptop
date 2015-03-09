@@ -624,5 +624,17 @@
 (macro staff_rw_inherited_fifo_files ((type ARG1))
     (allow ARG1 staff_t rw_inherited_fifo_file_perms))
 
+(macro staff_rw_inherited_fifo_files_all_subjects ((type ARG1))
+    (allow ARG1 staff_subject_type rw_inherited_fifo_file_perms))
+
+(macro staff_rw_inherited_unix_stream_sockets ((type ARG1))
+    (allow ARG1 staff_t (unix_stream_socket (read write ioctl getattr))))
+
+(macro staff_rw_inherited_unix_stream_sockets_all_subjects ((type ARG1))
+    (allow ARG1 staff_subject_type (unix_stream_socket (read write ioctl getattr))))
+
 (macro staff_use_fd ((type ARG1))
     (allow ARG1 staff_t (fd (use))))
+
+(macro staff_use_fd_all_subjects ((type ARG1))
+    (allow ARG1 staff_subject_type (fd (use))))

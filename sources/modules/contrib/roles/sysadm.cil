@@ -436,8 +436,9 @@
     (call usersubject_exec_home_auto_subject_type_transition (sysadm_visudo_t sysadm_t)))
 
 (optional sysadm_optional_staff
-    (call staff_rw_inherited_fifo_files (sysadm_t))
-    (call staff_use_fd (sysadm_t)))
+    (call staff_rw_inherited_fifo_files_all_subjects (sysadm_t))
+    (call staff_rw_inherited_unix_stream_sockets_all_subjects (sysadm_t))
+    (call staff_use_fd_all_subjects (sysadm_t)))
 
 (optional sysadm_optional_sysctl
     (call sysctl_run (sysadm_subject_type sysadm_r))
