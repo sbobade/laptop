@@ -4,6 +4,9 @@ How to test:
 Install an *minimal* Fedora (=> 21) *server* product.
 Install git, iptables-services
 
+Compile and install the SELinux CIL compiler: https://github.com/SELinuxProject/cil/blob/master/README
+By default, the CIL compilers' location is expected to be: /usr/bin/secilc
+
 Disable crond (crond is not supported, use systemd instead)
 Disable firewalld and enable iptables-services (firewalld currently not *yet* supported)
 
