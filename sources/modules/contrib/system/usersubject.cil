@@ -184,11 +184,6 @@
             (allow usersubject_priv_login_subject_type self (process (setexec dyntransition setcurrent)))
             (allow usersubject_priv_login_subject_type self (key (search link setattr write)))
 
-            (call devices_rw_ptmx (usersubject_priv_login_subject_type))
-
-           ;(call filesystems_relabel_devpts_chr_files (usersubject_priv_login_subject_type))
-           ;(call filesystems_rw_devpts_chr_files (usersubject_priv_login_subject_type))
-
             (call selinux_compute_relabel_context (usersubject_priv_login_subject_type))
             (call selinux_compute_user_contexts (usersubject_priv_login_subject_type))
             (call selinux_validate_context (usersubject_priv_login_subject_type))
