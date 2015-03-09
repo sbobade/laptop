@@ -53,6 +53,8 @@
 (call usersubject_setattr_ttys (login_t))
 (call usersubject_use_ttys (login_t))
 
+(call usersubject_dontaudit_manual_subject_type_transition_all_common_subjects (login_t))
+
 (booleanif login_priv_user
     (true
         (call usersubject_shell_exec_manual_subject_type_transition_all_common_login_subjects (login_t)))
