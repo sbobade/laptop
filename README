@@ -8,7 +8,7 @@ Compile and install the SELinux CIL compiler: https://github.com/SELinuxProject/
 By default, the CIL compilers' location is expected to be: /usr/bin/secilc
 
 Disable crond (crond is not supported, use systemd instead)
-Disable firewalld and enable iptables-services (firewalld currently not *yet* supported)
+Disable firewalld and enable ip(6)?tables (firewalld is currently not *yet* supported)
 
 As unprivileged user;
 
@@ -104,3 +104,5 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl enable logrotate.timer
+
+You may or may not want to append; "exclude=selinux-policy*" to /etc/yum.conf
