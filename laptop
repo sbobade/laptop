@@ -58,9 +58,9 @@ do_default () {
 }
 
 do_install () {
-    if  ! [[ -d /etc/selinux ]] && ! [[ -d /etc/selinux/laptop ]] ; then
+    if  ! [[ -d /etc/selinux ]] || ! [[ -d /etc/selinux/laptop ]] ; then
         /bin/sudo /bin/mkdir -p /etc/selinux/laptop && \
-        /bin/sudo /bin//mkdir 0700 /etc/selinux/laptop/policy && \
+        /bin/sudo /bin/mkdir -m 0700 /etc/selinux/laptop/policy && \
         /bin/sudo /bin/cp -r ${PWD}/contexts /etc/selinux/laptop/ && \
         /bin/sudo /bin/cp -r ${PWD}/contexts/files /etc/selinux/laptop/contexts/ && \
         /bin/sudo /bin/cp -r ${PWD}/contexts/users /etc/selinux/laptop/contexts/ && \

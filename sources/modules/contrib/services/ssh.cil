@@ -248,6 +248,9 @@
 
 (allow sshd_net_t self (capability (sys_chroot setuid setgid)))
 (allow sshd_net_t self (process (setrlimit)))
+(allow sshd_net_t self create_unix_dgram_socket_perms)
+
+(allow sshd_net_t sshd_t rw_inherited_fifo_file_perms)
 
 (call files_search_var (sshd_net_t))
 
