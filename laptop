@@ -12,6 +12,8 @@ declare DISABLE_DONTAUDIT="0"
 declare ALLOW_UNKNOWN="0"
 declare VERBOSE="0"
 
+declare INSTALL="0"
+
 declare EXCL="EXCLUDE"
 declare EXCL_LOCAL="EXCLUDE.local"
 
@@ -49,6 +51,72 @@ do_default () {
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
+}
+
+do_install () {
+    if  ! [[ -d /etc/selinux ]] && ! [[ -d /etc/selinux/laptop ]] ; then
+        /bin/sudo /bin/mkdir -p /etc/selinux/laptop && \
+        /bin/sudo /bin//mkdir 0700 /etc/selinux/laptop/policy && \
+        /bin/sudo /bin/cp -r ${PWD}/contexts /etc/selinux/laptop/ && \
+        /bin/sudo /bin/cp -r ${PWD}/contexts/files /etc/selinux/laptop/contexts/ && \
+        /bin/sudo /bin/cp -r ${PWD}/contexts/users /etc/selinux/laptop/contexts/ && \
+        /bin/sudo /bin/cp -r ${PWD}/policy/policy* /etc/selinux/laptop/policy/ || exit 192
+
+        if [ -e "${PWD}/seusers.local" -a -s "${PWD}/seusers.local" ] ; then
+            /bin/sudo /bin/cp ${PWD}/seusers.local /etc/selinux/laptop/seusers || exit 192
+        else
+            /bin/sudo /bin/cp ${PWD}/seusers /etc/selinux/laptop/ || exit 192
+        fi
+
+        echo "New install: Change "SELINUXTYPE" in /etc/selinux/config to new "laptop" policy model first!"
+        echo "New install: Be sure to load_policy and restorecon -R -v -F / in *PERMISSIVE MODE*!"
+
+        echo "Example:"
+        echo "/bin/sudo /sbin/setenforce 0"
+        echo "/bin/sudo /sbin/load_policy"
+        echo "/bin/sudo /sbin/restorecon -R -v -F /"
+        echo "reboot"
+
+    elif [ -d /etc/selinux/laptop ] ; then
+        /bin/sudo \cp -rf ${PWD}/contexts /etc/selinux/laptop/ && \
+        /bin/sudo \cp -rf ${PWD}/contexts/files /etc/selinux/laptop/contexts/ && \
+        /bin/sudo \cp -rf ${PWD}/contexts/users /etc/selinux/laptop/contexts/ && \
+        /bin/sudo \cp -rf ${PWD}/policy/ /etc/selinux/laptop/ || exit 192
+
+        /bin/sudo /bin/chmod 0700 /etc/selinux/laptop/policy || exit 192
+
+        if [ -e "${PWD}/seusers.local" -a -s "${PWD}/seusers.local" ] ; then
+            if [ -f /etc/selinux/laptop/seusers ] ; then
+                /bin/sudo /bin/rm -f /etc/selinux/laptop/seusers || exit 192
+            fi
+
+            /bin/sudo \cp -f ${PWD}/seusers.local /etc/selinux/laptop/seusers || exit 192
+        else
+            if [ -f /etc/selinux/laptop/seusers.local ] ; then
+                /bin/sudo /bin/rm -f /etc/selinux/laptop/seusers.local || exit 192
+            fi
+
+            /bin/sudo \cp -f ${PWD}/seusers /etc/selinux/laptop/ || exit 192
+        fi
+
+        if [[ "$(/bin/grep ^SELINUXTYPE /etc/selinux/config | /bin/awk -F "=" '{ print $2 }')" == "laptop" ]] ; then
+            echo "Update: Run /sbin/load_policy to apply changes!"
+            echo "Update: File contexts changes may require that you relabel and/or restart affected files and/or processes respectively!"
+        else
+            echo "Policy change: Change "SELINUXTYPE" in /etc/selinux/config to new "laptop" policy model first!"
+            echo "Policy change: Be sure to load_policy and restorecon -R -v -F / in *PERMISSIVE MODE*!"
+
+            echo "Example:"
+            echo "/bin/sudo /sbin/setenforce 0"
+            echo "/bin/sudo /sbin/load_policy"
+            echo "/bin/sudo /sbin/restorecon -R -v -F /"
+            echo "reboot"
+        fi
+    fi
 }
 
 do_tests () {
@@ -185,6 +253,7 @@ get_help () {
     Options:
         -d | --disable-dontaudit    Build policy without "dontaudit" av rules inserted.
         -h | --help                 Show this help. (exclusive option)
+        -i | --install              Install the compiled policy and configuration.
         -l | --listing              Generate a LISTING file with the modules configured to compile. (exclusive option)
         -t | --test                 Run all available tests. (exclusive option)
         -u | --allow-unknown        Build policy that will allow unknown access vectors.
@@ -289,6 +358,9 @@ while (($# > 0)) ; do
         -d|--disable-dontaudit)
             DISABLE_DONTAUDIT=1
             ;;
+        -i|--install)
+            INSTALL=1
+            ;;
         -l|--listing)
             gen_listing
             exit $(echo $?)
@@ -326,6 +398,10 @@ if [ "{$DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0 ] ; then
@@ -339,6 +415,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 0
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0 ] ; then
@@ -352,6 +432,10 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1 ] ; then
@@ -365,6 +449,10 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0 ] ; then
@@ -378,6 +466,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 0
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1 ] ; then
@@ -391,6 +483,10 @@ if [ "${DISABLE_DONTAUDIT}" == 0 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1 ] ; then
@@ -404,6 +500,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 0 -a "${VERBOSE}" == 1
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1 ] ; then
@@ -417,6 +517,10 @@ if [ "${DISABLE_DONTAUDIT}" == 1 -a "${ALLOW_UNKNOWN}" == 1 -a "${VERBOSE}" == 1
 
     gen_contexts || exit $(echo $?)
     do_compile_context || exit $(echo $?)
+
+    if [ "${INSTALL}" == 1 ] ; then
+        do_install || exit $(echo $?)
+    fi
 fi
 
 exit $(echo $?)
