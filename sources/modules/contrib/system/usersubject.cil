@@ -178,6 +178,9 @@
     (optional usersubject_priv_login_subject_type_optional_journal
         (call journal_client_subject_type (usersubject_priv_login_subject_type)))
 
+    (optional usersubject_priv_login_subject_optional_login_logind
+        (call login_logind_client_subject_type (usersubject_priv_login_subject_type)))
+
     (booleanif ssh_priv_user_login
         (true
             (allow usersubject_priv_login_subject_type self (capability (setuid setgid sys_tty_config)))

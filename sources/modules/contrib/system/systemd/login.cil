@@ -178,6 +178,8 @@
 (allow login_logind_admin_subject_type login_logind_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
+(call dbus_system_client_subject_type (login_logind_client_subject_type))
+
 (call login_dbus_chat_logind (login_logind_client_subject_type))
 (call login_use_fd_logind (login_logind_client_subject_type))
 (call login_write_inherited_logind_systemd_runtime_fifo_files (login_logind_client_subject_type))
