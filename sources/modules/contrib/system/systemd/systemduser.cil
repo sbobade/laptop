@@ -108,7 +108,7 @@
     (typeattributeset systemduser_socket_activated_subject_type ARG1))
 
 (macro systemduser_rw_unix_stream_sockets_all_subjects ((type ARG1))
-    (allow ARG1 systemduser_subject_type (unix_stream_socket (read write))))
+    (allow ARG1 systemduser_subject_type (unix_stream_socket (read write ioctl getattr))))
 
 (macro systemduser_unit_object_type ((type ARG1))
     (call systemd_unit_object_type (ARG1))
