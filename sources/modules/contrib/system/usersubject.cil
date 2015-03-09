@@ -186,12 +186,15 @@
 
             (call devices_rw_ptmx (usersubject_priv_login_subject_type))
 
-            (call filesystems_relabel_devpts_chr_files (usersubject_priv_login_subject_type))
-            (call filesystems_rw_devpts_chr_files (usersubject_priv_login_subject_type))
+           ;(call filesystems_relabel_devpts_chr_files (usersubject_priv_login_subject_type))
+           ;(call filesystems_rw_devpts_chr_files (usersubject_priv_login_subject_type))
 
             (call selinux_compute_relabel_context (usersubject_priv_login_subject_type))
             (call selinux_compute_user_contexts (usersubject_priv_login_subject_type))
             (call selinux_validate_context (usersubject_priv_login_subject_type))
+
+            (call usersubject_dontaudit_relabelfrom_ptys (usersubject_priv_login_subject_type))
+            (call usersubject_create_ptys (usersubject_priv_login_subject_type))
 
             (call audit_set_params (usersubject_priv_login_subject_type))
 
@@ -1093,6 +1096,9 @@
 (macro usersubject_relabelto_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 user_pty_dev_t relabelto_chr_file_perms))
+
+(macro usersubject_dontaudit_relabelfrom_ptys ((type ARG1))
+    (dontaudit ARG1 user_pty_dev_t relabelfrom_chr_file_perms))
 
 (macro usersubject_relabelfrom_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
