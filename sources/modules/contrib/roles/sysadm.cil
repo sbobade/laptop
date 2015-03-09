@@ -67,12 +67,12 @@
 
 (call terminals_use_inherited_unallocated_ttys (sysadm_t))
 
-(call audit_admin (sysadm_subject_type))
+(call audit_admin (sysadm_t))
 (call audit_run_auditctl (sysadm_subject_type sysadm_r))
 (call audit_run_augenrules (sysadm_subject_type sysadm_r))
 (call audit_run_ausearch (sysadm_subject_type sysadm_r))
 
-(call auth_admin (sysadm_subject_type))
+(call auth_admin (sysadm_t))
 (call auth_run_authconfig (sysadm_subject_type sysadm_r))
 (call auth_run_chkpwd (sysadm_subject_type sysadm_r))
 (call auth_run_utempter (sysadm_subject_type sysadm_r))
