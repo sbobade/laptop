@@ -85,6 +85,7 @@
 
 (optional shutdown_optional_plymouth
     (call plymouth_exec (shutdown_t))
+    (call plymouth_auto_subject_type_transition_plymouthd (shutdown_t))
     (call plymouth_use_fd_plymouthd (shutdown_t)))
 
 (optional shutdown_optional_usersubject

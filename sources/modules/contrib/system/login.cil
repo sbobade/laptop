@@ -91,7 +91,7 @@
 (filecon "/usr/sbin/sushell" file sulogin_exec)
 
 (allow sulogin_t self (capability (sys_admin sys_tty_config dac_override)))
-(allow sulogin_t self (process (setexec setsched)))
+(allow sulogin_t self (process (setexec setsched getpgid)))
 (allow sulogin_t self rw_fifo_file_perms)
 
 (call system_read_crypto_sysctl (sulogin_t))
