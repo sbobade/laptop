@@ -48,6 +48,8 @@
 (call auth_login_program_subject_type (login_t))
 (call auth_manage_pam_console_runtime_files (login_t))
 
+(call login_read_pam_config_files (login_t))
+
 (call usersubject_search_home_dir (login_t))
 (call usersubject_relabel_ttys (login_t))
 (call usersubject_setattr_ttys (login_t))

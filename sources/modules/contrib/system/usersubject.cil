@@ -157,6 +157,7 @@
 (call login_send_signull (usersubject_common_login_subject_type))
 
 (call miscfiles_read_man (usersubject_common_login_subject_type))
+(call miscfiles_read_net_config_files (usersubject_common_login_subject_type))
 
 (call ns_client_subject_type (usersubject_common_login_subject_type))
 

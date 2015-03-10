@@ -268,7 +268,8 @@
 
 (call auth_exec_pam (auth_pam_client_subject_type))
 
-(call auth_read_all_pam_config (auth_pam_client_subject_type)) ; FIXME
+(call auth_read_authconfig_pam_config (auth_pam_client_subject_type))
+(call auth_read_pam_config (auth_pam_client_subject_type))
 (call auth_create_faillog_log_files (auth_pam_client_subject_type))
 (call auth_rw_faillog_log_files (auth_pam_client_subject_type))
 (call auth_log_object_type_transition_faillog_log_files (auth_pam_client_subject_type))

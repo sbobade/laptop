@@ -28,7 +28,3 @@
     (allow systemd_t systemd_tcp_socket_activated_object_type (tcp_socket (name_bind)))
 
     or maybe unspecific, and allow systemd to bind tcp/udp sockets to all ports conditionally...
-
-* login program subject types can currently read all pam config ; this is too coarse, be more specific. (login/sshd)
-
-* not sure if wall works properly on shutdown (i suspect not), need to comment out some dontaudit rules from common login user subject types and see....
