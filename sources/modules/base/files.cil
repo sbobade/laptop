@@ -1255,6 +1255,9 @@
 (macro files_getattr_all_lnk_files ((type ARG1))
     (call getattr_lnk_files_pattern (ARG1 files_object_type files_object_type)))
 
+(macro files_read_all_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 files_object_type files_object_type)))
+
 (macro files_getattr_all_fifo_files ((type ARG1))
     (call getattr_fifo_files_pattern (ARG1 files_object_type files_object_type)))
 
@@ -1266,6 +1269,9 @@
 
 (macro files_read_all_files_except ((type ARG1))
     (allow ARG1 files_except read_file_perms))
+
+(macro files_read_all_lnk_files_except ((type ARG1))
+    (allow ARG1 files_except read_lnk_file_perms))
 
 (macro files_relabel_all_except ((type ARG1))
     (allow ARG1 files_except (all_file_objects (relabel))))

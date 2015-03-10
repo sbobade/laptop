@@ -599,6 +599,9 @@
 (macro filesystems_getattr_all_lnk_files ((type ARG1))
     (call getattr_lnk_files_pattern (ARG1 filesystems_object_type filesystems_object_type)))
 
+(macro filesystems_read_all_lnk_files ((type ARG1))
+    (call read_lnk_files_pattern (ARG1 filesystems_object_type filesystems_object_type)))
+
 (macro filesystems_list_all ((type ARG1))
     (allow ARG1 filesystems_object_type list_dir_perms))
 

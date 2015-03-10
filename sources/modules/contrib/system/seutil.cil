@@ -66,10 +66,12 @@
 (call devices_relabel_all (setfiles_t))
 
 (call files_list_all (setfiles_t))
+(call files_read_all_lnk_files (setfiles_t))
 (call files_relabel_all_except (setfiles_t))
 
 (call filesystems_getattr_all_filesystems (setfiles_t))
 (call filesystems_list_all (setfiles_t))
+(call filesystems_read_all_lnk_files (setfiles_t))
 (call filesystems_read_cgroup_files (setfiles_t))
 (call filesystems_relabel_all (setfiles_t))
 
@@ -170,20 +172,18 @@
 (context matchpathcon_exec (system_u object_r matchpathcon_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/matchpathcon" file matchpathcon_exec)
 
-(call system_getattr_all_proc_files (matchpathcon_t))
-(call system_getattr_all_proc_lnk_files (matchpathcon_t))
 (call system_getattr_all_sysctl_files (matchpathcon_t))
 (call system_getattr_all_sysctl_lnk_files (matchpathcon_t))
 
 (call devices_getattr_all (matchpathcon_t))
 
 (call files_getattr_all_files (matchpathcon_t))
-(call files_getattr_all_lnk_files (matchpathcon_t))
+(call files_read_all_lnk_files (matchpathcon_t))
 (call files_getattr_all_fifo_files (matchpathcon_t))
 (call files_getattr_all_sock_files (matchpathcon_t))
 
 (call filesystems_getattr_all_files (matchpathcon_t))
-(call filesystems_getattr_all_lnk_files (matchpathcon_t))
+(call filesystems_read_all_lnk_files (matchpathcon_t))
 
 (call selinux_validate_context (matchpathcon_t))
 
