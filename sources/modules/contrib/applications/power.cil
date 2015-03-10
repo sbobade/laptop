@@ -5,7 +5,7 @@
 (call applications_app (power_t power_exec_t))
 (roletype power_role power_t)
 
-(filecon "HOME_DIR/\.local/bin/power" file (system_u object_r power_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/power" file (system_u object_r power_exec_t (systemlow systemlow)))
 
 (allow power_t self (capability (dac_override)))
 (allow power_t self rw_fifo_file_perms)
@@ -39,11 +39,3 @@
 (macro power_run ((type ARG1)(role ARG2))
     (call power_auto_subject_type_transition (ARG1))
     (roleattributeset power_role ARG2))
-
-(macro power_manage_exec_files ((type ARG1))
-    (call usersubject_rw_exec_home_dirs (ARG1))
-    (allow ARG1 power_exec_t manage_file_perms))
-
-(macro power_relabel_exec_files ((type ARG1))
-    (call usersubject_search_exec_home (ARG1))
-    (allow ARG1 power_exec_t relabel_file_perms))

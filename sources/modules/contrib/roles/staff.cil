@@ -376,9 +376,7 @@
     (call usersubject_exec_home_auto_subject_type_transition (staff_pkexec_t staff_t)))
 
 (optional staff_optional_power
-    (call power_exec (staff_t))
-    (call power_manage_exec_files (staff_t))
-    (call power_relabel_exec_files (staff_t)))
+    (call power_exec (staff_t)))
 
 (optional staff_optional_screen
     (type staff_screen_t)
@@ -480,10 +478,6 @@
     (call systemduser_config_home_object_type_transition_config_home_dirs (staff_t))
 
     (call systemduser_control_all_units (staff_t)))
-
-(optional staff_optional_temps
-    (call temps_manage_exec_files (staff_t))
-    (call temps_relabel_exec_files (staff_t)))
 
 (optional staff_optional_torrent
     (call torrent_run_rtorrent (staff_subject_type staff_r))

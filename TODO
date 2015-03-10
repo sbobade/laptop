@@ -18,9 +18,6 @@
 
 * firewalld i suppose..., work on qemuga for guests
 
-* edit contexts/openssh_contexts to reflect the sshd_net_t privset preauth type 
-    also fix contexts/users/{staff_u,sysadm_u}
-
 * think about support for systemd network socket activated subjects (sshd -> tcp_socket -> 22)
     would probably want to be specific about that but not sure how to implement that:
 
@@ -31,3 +28,5 @@
     (allow systemd_t systemd_tcp_socket_activated_object_type (tcp_socket (name_bind)))
 
     or maybe unspecific, and allow systemd to bind tcp/udp sockets to all ports conditionally...
+
+* move confined exec_home files out of ~/.local/bin (setbacklight/feedcow)
