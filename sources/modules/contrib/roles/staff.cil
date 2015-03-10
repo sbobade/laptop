@@ -398,9 +398,7 @@
     (call screen_relabel_tmpfs_files (staff_t)))
 
 (optional staff_optional_setbacklight
-    (call setbacklight_exec (staff_t))
-    (call setbacklight_manage_exec_files (staff_t))
-    (call setbacklight_relabel_exec_files (staff_t)))
+    (call setbacklight_exec (staff_t)))
 
 (optional staff_optional_seutil
     (call seutil_exec_secilc (staff_t))

@@ -5,7 +5,7 @@
 (call applications_app (setbacklight_t setbacklight_exec_t))
 (roletype setbacklight_role setbacklight_t)
 
-(filecon "HOME_DIR/\.local/bin/setbacklight" file (system_u object_r setbacklight_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/setbacklight" file (system_u object_r setbacklight_exec_t (systemlow systemlow)))
 
 (allow setbacklight_t self (capability (dac_override)))
 (allow setbacklight_t self rw_fifo_file_perms)
@@ -36,11 +36,3 @@
 (macro setbacklight_run ((type ARG1)(role ARG2))
     (call setbacklight_auto_subject_type_transition (ARG1))
     (roleattributeset setbacklight_role ARG2))
-
-(macro setbacklight_manage_exec_files ((type ARG1))
-    (call usersubject_rw_exec_home_dirs (ARG1))
-    (allow ARG1 setbacklight_exec_t manage_file_perms))
-
-(macro setbacklight_relabel_exec_files ((type ARG1))
-    (call usersubject_search_exec_home (ARG1))
-    (allow ARG1 setbacklight_exec_t relabel_file_perms))

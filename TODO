@@ -16,7 +16,7 @@
 
 * implement system_map_t for /boot/System.map.* files?
 
-* firewalld i suppose..., work on qemuga for guests
+* firewalld i suppose
 
 * think about support for systemd network socket activated subjects (sshd -> tcp_socket -> 22)
     would probably want to be specific about that but not sure how to implement that:
@@ -30,3 +30,5 @@
     or maybe unspecific, and allow systemd to bind tcp/udp sockets to all ports conditionally...
 
 * move confined exec_home files out of ~/.local/bin (setbacklight/feedcow)
+
+* login program subject types can currently read all pam config ; this is too coarse, be more specific. (login/sshd)
