@@ -29,6 +29,6 @@
 
     or maybe unspecific, and allow systemd to bind tcp/udp sockets to all ports conditionally...
 
-* move confined exec_home files out of ~/.local/bin (setbacklight/feedcow)
-
 * login program subject types can currently read all pam config ; this is too coarse, be more specific. (login/sshd)
+
+* not sure if wall works properly on shutdown (i suspect not), need to comment out some dontaudit rules from common login user subject types and see....
