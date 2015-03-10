@@ -25,9 +25,10 @@
 
 (call devices_read_urandom (bti_t))
 
-(call filesystems_list_tmpfs (bti_t))
-
 (call files_dontaudit_catchall_subject_type (bti_t))
+
+(call filesystems_list_tmpfs (bti_t))
+(call filesystems_dontaudit_catchall_subject_type (bti_t))
 
 (call http_tcp_connect_http_port (bti_t))
 

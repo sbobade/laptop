@@ -16,7 +16,7 @@
 
 * implement system_map_t for /boot/System.map.* files?
 
-* firewalld i suppose
+* firewalld i suppose, vlock
 
 * think about support for systemd network socket activated subjects (sshd -> tcp_socket -> 22)
     would probably want to be specific about that but not sure how to implement that:
