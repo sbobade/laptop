@@ -65,6 +65,8 @@
 
 (call ns_client_subject_type (ping_t))
 
+(call miscfiles_read_net_config_files (ping_t))
+
 (type traceroute_t)
 (type traceroute_exec_t)
 (call applications_app (traceroute_t traceroute_exec_t))
