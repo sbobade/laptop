@@ -28,6 +28,12 @@
 (filecon "/etc/X11(/.*)?" any xserver_config)
 (filecon "/etc/X.*\.hosts" file xserver_config)
 
+(type xserver_pam_config_t)
+(call auth_pam_config_object_type (xserver_pam_config_t))
+
+(context xserver_pam_config (system_u object_r xserver_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/xserver" file xserver_pam_config)
+
 (type xserver_data_home_t)
 (call usersubject_data_home_object_type (xserver_data_home_t))
 
@@ -370,6 +376,14 @@
     (allow ARG1 xserver_config_t manage_file_perms)
     (allow ARG1 xserver_config_t manage_dir_perms)
     (allow ARG1 xserver_config_t manage_lnk_file_perms))
+
+(macro xserver_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 xserver_pam_config_t read_file_perms))
+
+(macro xserver_manage_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 xserver_pam_config_t manage_file_perms))
 
 (macro xserver_search_lib ((type ARG1))
     (call files_search_lib (ARG1))

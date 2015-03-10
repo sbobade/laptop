@@ -586,6 +586,7 @@
 
 (optional sysadm_optional_xserver
     (call xserver_manage_config (sysadm_t))
+    (call xserver_manage_pam_config_files (sysadm_t))
     (call xserver_manage_lib (sysadm_t))
     (call xserver_manage_log_files (sysadm_t)))
 
