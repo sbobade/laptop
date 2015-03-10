@@ -68,7 +68,7 @@
 
 (allow fstools_t fstools_runtime_t manage_dir_perms)
 (allow fstools_t fstools_runtime_t manage_file_perms)
-(call files_runtime_object_type_transition (fstools_t fstools_runtime_t dir "*"))
+(call fstools_runtime_object_type_transition_runtime_dirs (fstools_t))
 
 (call system_get_sysvipc_info (fstools_t))
 
