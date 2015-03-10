@@ -507,5 +507,9 @@
     (allow ARG1 memory_dev_t write_chr_file_perms)
     (typeattributeset devices_can_write_memory ARG1))
 
+(macro devices_write_watchdog ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 watchdog_dev_t write_chr_file_perms))
+
 (macro devices_unconfined_subject_type ((type ARG1))
     (typeattributeset devices_unconfined_subject_type ARG1))

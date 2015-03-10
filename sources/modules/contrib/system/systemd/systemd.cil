@@ -160,6 +160,7 @@
 (call devices_read_memory (systemd_t))
 (call devices_relabel_all (systemd_t))
 (call devices_write_kmsg (systemd_t))
+(call devices_write_watchdog (systemd_t))
 
 (call files_read_all_lock_files (systemd_t))
 (call files_read_all_config (systemd_t))
