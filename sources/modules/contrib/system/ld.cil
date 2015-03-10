@@ -38,6 +38,7 @@
 (optional ldconfig_optional_rpm
     (call rpm_manage_tmp_files (ldconfig_t))
     (call rpm_read_tmp_lnk_files (ldconfig_t))
+    (call rpm_rw_inherited_fifo_files (ldconfig_t))
     (call rpm_rw_inherited_tmp_fifo_files (ldconfig_t))
     (call rpm_rw_inherited_tmpfs_files (ldconfig_t)))
 

@@ -142,6 +142,9 @@
     (call files_search_runtime (ARG1))
     (call read_lnk_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
 
+(macro fstools_runtime_object_type_transition_runtime_dirs ((type ARG1))
+    (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "blkid")))
+
 (macro fstools_read_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
     (allow ARG1 fstools_runtime_t read_file_perms)

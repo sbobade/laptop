@@ -78,7 +78,9 @@
 (call bootloader_exec (bootloader_t))
 
 (call fstools_run (bootloader_t bootloader_role))
-(call fstools_read_runtime_files (bootloader_t))
+
+(call fstools_manage_runtime_files (bootloader_t))
+(call fstools_runtime_object_type_transition_runtime_dirs (bootloader_t))
 
 (call kmod_run (bootloader_t bootloader_role))
 
