@@ -511,5 +511,21 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 watchdog_dev_t write_chr_file_perms))
 
+(macro devices_devtmpfs_object_type_transition_usb_dev ((type ARG1))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "001"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "002"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "003"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "004"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "005"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "006"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "007"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "008"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "009")))
+
+(macro devices_devtmpfs_object_type_transition_watchdog_dev ((type ARG1))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 watchdog_dev_t chr_file "watchdog"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 watchdog_dev_t chr_file "watchdog0"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 watchdog_dev_t chr_file "watchdog1")))
+
 (macro devices_unconfined_subject_type ((type ARG1))
     (typeattributeset devices_unconfined_subject_type ARG1))
