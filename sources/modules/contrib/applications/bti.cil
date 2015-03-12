@@ -22,6 +22,7 @@
 (call system_dontaudit_catchall_subject_type (bti_t))
 
 (call commands_exec (bti_t))
+(call commands_mmap_shell (bti_t))
 
 (call devices_read_urandom (bti_t))
 
