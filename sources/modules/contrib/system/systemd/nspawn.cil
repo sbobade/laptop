@@ -32,6 +32,64 @@
 (type mycontainer_object_t)
 (call filesystems_object_type (nspawn_common_container_object_type))
 
+(allow nspawn_common_container_subject_type self
+    all_process_perms_except_transition_ptrace_setsched_dyntransition_setcurrent_execmem_execstack_and_execheap)
+(allow nspawn_common_container_subject_type self rw_file_perms)
+(allow nspawn_common_container_subject_type self list_dir_perms)
+(allow nspawn_common_container_subject_type self read_lnk_file_perms)
+(allow nspawn_common_container_subject_type self (fd (all)))
+(allow nspawn_common_container_subject_type self (socket (all)))
+(allow nspawn_common_container_subject_type self create_tcp_stream_socket_perms)
+(allow nspawn_common_container_subject_type self create_udp_socket_perms)
+(allow nspawn_common_container_subject_type self create_rawip_socket_perms)
+(allow nspawn_common_container_subject_type self (netlink_socket (all)))
+(allow nspawn_common_container_subject_type self (packet_socket (all)))
+(allow nspawn_common_container_subject_type self (unix_stream_socket (all)))
+(allow nspawn_common_container_subject_type self (unix_dgram_socket (all)))
+(allow nspawn_common_container_subject_type self (sem (all)))
+(allow nspawn_common_container_subject_type self (msg (all)))
+(allow nspawn_common_container_subject_type self (msgq (all)))
+(allow nspawn_common_container_subject_type self (shm (all)))
+(allow nspawn_common_container_subject_type self (ipc (all)))
+(allow nspawn_common_container_subject_type self (netlink_route_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_firewall_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_tcpdiag_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_nflog_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_xfrm_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_selinux_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_audit_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_ip6fw_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_dnrt_socket (all)))
+(allow nspawn_common_container_subject_type self (netlink_kobject_uevent_socket (all)))
+(allow nspawn_common_container_subject_type self (appletalk_socket (all)))
+(allow nspawn_common_container_subject_type self (key (all)))
+(allow nspawn_common_container_subject_type self create_dccp_stream_socket_perms)
+(allow nspawn_common_container_subject_type self (tun_socket (all)))
+
+(call files_unconfined_subject_type (nspawn_common_container_subject_type))
+
+(call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
+
+(call subject_execheap (nspawn_common_container_subject_type))
+(call subject_execmem (nspawn_common_container_subject_type))
+(call subject_execstack (nspawn_common_container_subject_type))
+(call subject_mmap_low (nspawn_common_container_subject_type))
+
+(call subject_object_identity_change_exemption (nspawn_common_container_subject_type))
+
+(call commands_mprot_read_shell_exec_files (nspawn_common_container_subject_type))
+(call commands_shell_exec_object_entry_subject (nspawn_common_container_subject_type))
+
+(call nspawn_use_terminals (nspawn_common_container_subject_type))
+
+(call rpm_run (nspawn_common_container_subject_type nspawn_role))
+
+(call usersubject_common_login_user_home_template (nspawn_common_container_subject_type))
+(call usersubject_common_login_user_tmp_template (nspawn_common_container_subject_type))
+(call usersubject_common_login_user_tmpfs_template (nspawn_common_container_subject_type))
+
+(allow nspawn_t nspawn_common_container_subject_type (process (sigkill)))
+
 (allow nspawn_t nspawn_common_container_object_type (dir (mounton relabelfrom relabelto
     create open getattr setattr read write link unlink rename search add_name remove_name reparent
     rmdir lock ioctl)))
@@ -112,14 +170,13 @@
 
 (call nspawn_setattr_terminals (nspawn_t))
 (call nspawn_use_terminals (nspawn_t))
+(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t))
 
 (call systemd_search_transient_unit (nspawn_t))
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))
 
 (call usersubject_search_home_dir (nspawn_t))
-
-(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t)) ; TEST
 
 (macro nspawn_exec ((type ARG1))
     (call can_exec (ARG1 nspawn_exec_t)))
@@ -194,3 +251,15 @@
 
 (macro nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects ((type ARG1))
     (call commands_shell_exec_manual_subject_type_transition (ARG1 nspawn_common_container_subject_type)))
+
+(macro nspawn_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 nspawn_t read_file_perms)
+    (allow ARG1 nspawn_t list_dir_perms)
+    (allow ARG1 nspawn_t read_lnk_file_perms))
+
+(macro nspawn_read_state_all_common_container_subjects ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 nspawn_common_container_subject_type read_file_perms)
+    (allow ARG1 nspawn_common_container_subject_type list_dir_perms)
+    (allow ARG1 nspawn_common_container_subject_type read_lnk_file_perms))

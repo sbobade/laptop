@@ -47,7 +47,8 @@
 (call files_lib_object_type (machine_lib_t))
 
 (context machine_lib (system_u object_r machine_lib_t (systemlow systemlow)))
-(filecon "/var/lib/machines(/.*)?" any machine_lib)
+(filecon "/var/lib/machines" dir machine_lib)
+(filecon "/var/lib/machines(/.*)?" any ())
 
 (allow machined_t self (capability (sys_ptrace)))
 (allow machined_t self (process (setfscreate)))
@@ -58,10 +59,16 @@
 
 (call journal_client_subject_type (machined_t))
 
+(call nspawn_read_state (machined_t))
+(call nspawn_read_state_all_common_container_subjects (machined_t))
+
 (call systemd_dbus_chat (machined_t))
 (call systemd_start_system (machined_t))
+(call systemd_stop_system (machined_t))
 (call systemd_status_system (machined_t))
+(call systemd_status_transient_units (machined_t))
 (call systemd_start_transient_units (machined_t))
+(call systemd_stop_transient_units (machined_t))
 (call systemd_stream_connect (machined_t))
 
 (allow machine_machinectl_subject_type self (capability (dac_override net_admin)))
