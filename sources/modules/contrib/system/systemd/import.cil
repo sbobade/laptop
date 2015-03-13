@@ -2,6 +2,8 @@
 (type importd_exec_t)
 (call systemd_daemon (importd_t importd_exec_t))
 
+(typebounds systemd_t importd_t)
+
 (context importd_exec (system_u object_r importd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-importd" file importd_exec)
 
