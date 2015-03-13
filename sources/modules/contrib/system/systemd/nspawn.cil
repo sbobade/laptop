@@ -125,7 +125,7 @@
 
 (allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod net_admin
     fsetid)))
-(allow nspawn_t self (capability (sys_admin audit_control))) ; FIXME
+(allow nspawn_t self (capability (audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
 (allow nspawn_t self (unix_dgram_socket (create ioctl read getattr write setattr append
     bind connect getopt setopt shutdown listen accept sendto)))
