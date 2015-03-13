@@ -1,0 +1,19 @@
+(type pull_t)
+(type pull_exec_t)
+(call systemd_daemon (pull_t pull_exec_t))
+
+(context pull_exec (system_u object_r pull_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-pull" file pull_exec)
+
+(call machine_manage_lib_files (pull_t))
+
+(macro pull_exec ((type ARG1))
+    (call can_exec (ARG1 pull_exec_t)))
+
+(macro pull_auto_subject_type_transition ((type ARG1))
+    (call pull_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pull_exec_t pull_t)))
+
+(macro pull_send_signal ((type ARG1))
+    (allow ARG1 pull_t (process (signal))))
