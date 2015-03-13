@@ -1,0 +1,45 @@
+(roleattribute nspawn_role)
+
+(typeattribute nspawn_common_container_subject_type)
+(typeattribute nspawn_common_container_object_type)
+
+(type nspawn_t)
+(type nspawn_exec_t)
+(call applications_app (nspawn_t nspawn_exec_t))
+(roletype nspawn_role nspawn_t)
+
+(context nspawn_exec (system_u object_r nspawn_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-nspawn" file nspawn_exec)
+
+(type mycontainer_subject_t)
+(call subject_common_type (nspawn_common_container_subject_type))
+
+(type mycontainer_object_t)
+(call files_object_type (nspawn_common_container_object_type))
+
+(call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
+
+(macro nspawn_exec ((type ARG1))
+    (call can_exec (ARG1 nspawn_exec_t)))
+
+(macro nspawn_auto_subject_type_transition ((type ARG1))
+    (call nspawn_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nspawn_exec_t nspawn_t)))
+
+(macro nspawn_send_signal ((type ARG1))
+    (allow ARG1 nspawn_t (process (signal))))
+
+(macro nspawn_run ((type ARG1)(role ARG2))
+    (call nspawn_auto_subject_type_transition (ARG1))
+    (roleattributeset nspawn_role ARG2))
+
+(macro nspawn_common_container_subject_type ((type ARG1))
+    (typeattributeset nspawn_common_container_subject_type ARG1))
+
+(macro nspawn_common_container_object_type ((type ARG1))
+    (typeattributeset nspawn_common_container_object_type ARG1))
+
+(macro nspawn_common_container_template ((type ARG1)(type ARG2))
+    (call nspawn_common_container_subject_type (ARG1))
+    (call nspawn_common_container_object_type (ARG2)))

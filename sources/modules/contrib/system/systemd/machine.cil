@@ -40,6 +40,7 @@
 
 (allow machined_t machined_systemd_runtime_t manage_dir_perms)
 (allow machined_t machined_systemd_runtime_t manage_file_perms)
+(allow machined_t machined_systemd_runtime_t manage_lnk_file_perms)
 (call systemd_runtime_object_type_transition (machined_t machined_systemd_runtime_t dir "*"))
 
 (allow machined_t self (capability (sys_ptrace)))
@@ -55,6 +56,18 @@
 (call systemd_start_system (machined_t))
 (call systemd_status_system (machined_t))
 (call systemd_start_transient_units (machined_t))
+
+(allow machine_machinectl_subject_type self (capability (dac_override net_admin)))
+(allow machine_machinectl_subject_type self rw_fifo_file_perms)
+
+(call commands_exec (machine_machinectl_subject_type))
+
+(call dbus_system_client_subject_type (machine_machinectl_subject_type))
+
+(call machine_dbus_chat_machined (machine_machinectl_subject_type))
+
+(call miscfiles_read_all_terminfo (machine_machinectl_subject_type))
+(call miscfiles_read_locale (machine_machinectl_subject_type))
 
 (macro machine_exec_machinectl ((type ARG1))
     (call can_exec (ARG1 machinectl_exec_t)))
@@ -139,3 +152,7 @@
 (macro machine_config_object_type_transition_machine_config_files ((type ARG1))
     (call files_config_object_type_transition (ARG1 machine_config_t file "machine-id"))
     (call files_config_object_type_transition (ARG1 machine_config_t file "machine-info")))
+
+(macro machine_dbus_chat_machined ((type ARG1))
+    (allow ARG1 machined_t (dbus (send_msg)))
+    (allow machined_t ARG1 (dbus (send_msg))))
