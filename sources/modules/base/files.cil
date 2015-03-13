@@ -361,6 +361,9 @@
 (macro files_rw_boot_files ((type ARG1))
     (call rw_files_pattern (ARG1 boot_t boot_t)))
 
+(macro files_manage_boot_files ((type ARG1))
+    (call manage_files_pattern (ARG1 boot_t boot_t)))
+
 (macro files_read_boot_lnk_files ((type ARG1))
     (call read_lnk_files_pattern (ARG1 boot_t boot_t)))
 
