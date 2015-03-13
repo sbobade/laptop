@@ -43,6 +43,7 @@
 (allow sysusers_t sysusers_runtime_t manage_file_perms)
 (call files_runtime_object_type_transition (sysusers_t sysusers_runtime_t dir "*"))
 
+(call devices_read_urandom (sysusers_t))
 (call devices_write_kmsg (sysusers_t))
 
 (call selinux_list_securityfs (sysusers_t))
