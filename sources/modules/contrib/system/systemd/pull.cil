@@ -1,9 +1,13 @@
 (type pull_t)
 (type pull_exec_t)
-(call systemd_daemon (pull_t pull_exec_t))
+(call subject_common_type (pull_t))
+(call subject_entry (pull_t pull_exec_t))
+(roletype system_r pull_t)
 
 (context pull_exec (system_u object_r pull_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-pull" file pull_exec)
+
+(call http_tcp_connect_http_port (pull_t))
 
 (call machine_manage_lib_files (pull_t))
 
