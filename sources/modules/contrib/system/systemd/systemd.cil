@@ -207,8 +207,6 @@
 
 (call import_dynamic_subject_type_transition (systemd_t))
 
-(call pull_dynamic_subject_type_transition (systemd_t))
-
 (call journal_list_log (systemd_t))
 (call journal_test_for_systemd (systemd_t))
 (call journal_read_journald_systemd_runtime (systemd_t))

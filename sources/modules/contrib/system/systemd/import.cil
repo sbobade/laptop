@@ -9,7 +9,7 @@
 (context importd_exec (system_u object_r importd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-importd" file importd_exec)
 
-(call pull_auto_subject_type_transition (importd_t))
+; (call pull_dynamic_subject_type_transition (importd_t))
 
 (macro import_exec_importd ((type ARG1))
     (call can_exec (ARG1 importd_exec_t)))
