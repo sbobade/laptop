@@ -151,6 +151,7 @@
 (type sysfs_fs_t)
 (call filesystems_object_type (sysfs_fs_t))
 (call system_mountpoint_object_type (sysfs_fs_t))
+(call filesystems_associate_fs (sysfs_fs_t))
 
 (context sysfs_fs (system_u object_r sysfs_fs_t (systemlow systemlow)))
 (genfscon "sysfs" "/" sysfs_fs)
