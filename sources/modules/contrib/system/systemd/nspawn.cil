@@ -75,9 +75,14 @@
 (allow nspawn_common_container_subject_type self
     all_fifo_file_perms_except_mounton_and_execmod)
 
-(call files_rootfs_object_type_transition_file (nspawn_common_container_subject_type))
+(call system_unconfined_subject_type (nspawn_common_container_subject_type))
 
+(call files_rootfs_object_type_transition_file (nspawn_common_container_subject_type))
 (call files_unconfined_subject_type (nspawn_common_container_subject_type))
+
+(call filesystems_list_sysfs (nspawn_common_container_subject_type))
+(call filesystems_rw_sysfs_files (nspawn_common_container_subject_type))
+(call filesystems_read_sysfs_lnk_files (nspawn_common_container_subject_type))
 
 (call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
@@ -117,7 +122,7 @@
 
 (allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod net_admin
     fsetid)))
-(allow nspawn_t self (capability (audit_control))) ; FIXME
+(allow nspawn_t self (capability (sys_admin audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
 (allow nspawn_t self (unix_dgram_socket (create ioctl read getattr write setattr append
     bind connect getopt setopt shutdown listen accept sendto)))

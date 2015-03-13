@@ -215,6 +215,7 @@
 
 (allow files_unconfined_subject_type files_except (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
+(call files_rootfs_object_type_transition_file (files_unconfined_subject_type))
 
 (call files_execmod_all_except (files_unconfined_subject_type))
 
