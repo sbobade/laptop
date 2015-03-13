@@ -27,6 +27,7 @@
 
 (type mycontainer_subject_t)
 (call subject_common_type (nspawn_common_container_subject_type))
+(roletype nspawn_role mycontainer_subject_t)
 
 (type mycontainer_object_t)
 (call filesystems_object_type (nspawn_common_container_object_type))
@@ -64,21 +65,30 @@
 
 (call files_manage_config_lnk_files (nspawn_t))
 (call files_mounton_runtime_dirs (nspawn_t))
+(call files_read_config_files (nspawn_t)) ; FIXME: /etc/machine-id
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
+
+(call filesystems_mounton_proc_dirs (nspawn_t))
 (call filesystems_mount_proc (nspawn_t))
 (call filesystems_remount_proc (nspawn_t))
+
 (call filesystems_manage_cgroup_dirs (nspawn_t))
+
 (call filesystems_mounton_tmpfs_dirs (nspawn_t))
 (call filesystems_manage_tmpfs_dirs (nspawn_t))
 (call filesystems_manage_tmpfs_lnk_files (nspawn_t))
+
 (call filesystems_mounton_cgroup_dirs (nspawn_t))
 (call filesystems_mount_cgroup (nspawn_t))
 (call filesystems_remount_cgroup (nspawn_t))
+
 (call filesystems_mounton_rootfs_dirs (nspawn_t))
 (call filesystems_mount_tmpfs (nspawn_t))
 (call filesystems_remount_tmpfs (nspawn_t))
+
 (call filesystems_mount_sysfs (nspawn_t))
+(call filesystems_remount_sysfs (nspawn_t))
 (call filesystems_mounton_sysfs_dirs (nspawn_t))
 
 (call selinux_remount_securityfs (nspawn_t))
@@ -98,16 +108,18 @@
 (call machine_manage_lib_files (nspawn_t))
 (call machine_manage_config_files (nspawn_t))
 (call machine_config_object_type_transition_machine_config_files (nspawn_t))
+(call machine_dbus_chat_machined (nspawn_t))
 
 (call nspawn_setattr_terminals (nspawn_t))
 (call nspawn_use_terminals (nspawn_t))
 
 (call systemd_search_transient_unit (nspawn_t))
+(call systemd_stop_system (nspawn_t))
+(call systemd_status_transient_units (nspawn_t))
 
 (call usersubject_search_home_dir (nspawn_t))
 
-(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t)) ; TESTS
-(call manual_subject_type_transition_pattern (nspawn_t exec_t nspawn_common_container_subject_type))
+(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t)) ; TEST
 
 (macro nspawn_exec ((type ARG1))
     (call can_exec (ARG1 nspawn_exec_t)))

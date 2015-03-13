@@ -68,6 +68,7 @@
 (context devtmpfs_fs (system_u object_r devtmpfs_fs_t (systemlow systemlow)))
 (fsuse trans "devtmpfs" devtmpfs_fs)
 
+(filecon "/dev" dir devtmpfs_fs)
 (filecon "/dev(/.*)?" any ())
 
 (type dosfs_fs_t)
@@ -152,6 +153,7 @@
 (context sysfs_fs (system_u object_r sysfs_fs_t (systemlow systemlow)))
 (genfscon "sysfs" "/" sysfs_fs)
 
+(filecon "/sys" dir sysfs_fs)
 (filecon "/sys(/.*)?" any ())
 
 (type tmpfs_fs_t)
@@ -162,6 +164,7 @@
 (fsuse trans "mqueue" tmpfs_fs)
 (fsuse trans "tmpfs" tmpfs_fs)
 
+(filecon "/tmp" dir tmpfs_fs)
 (filecon "/tmp(/.*)?" any ())
 
 (filecon "/var/run/user(/.*)?" any ())
@@ -471,6 +474,10 @@
     (call filesystems_search_proc (ARG1))
     (allow ARG1 proc_fs_t (filesystem (remount))))
 
+(macro filesystems_setattr_proc_dirs ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 proc_fs_t (dir (setattr))))
+
 (macro filesystems_read_proc_files ((type ARG1))
     (call read_files_pattern (ARG1 proc_fs_t proc_fs_t)))
 
@@ -481,6 +488,11 @@
     (allow ARG1 proc_fs_t read_file_perms)
     (allow ARG1 proc_fs_t list_dir_perms)
     (allow ARG1 proc_fs_t read_lnk_file_perms))
+
+(macro filesystems_mounton_proc_dirs ((type ARG1))
+    (call filesystems_list_proc (ARG1))
+    (call filesystems_setattr_proc_dirs (ARG1))
+    (allow ARG1 proc_fs_t (dir (mounton))))
 
 (macro filesystems_list_pstore ((type ARG1))
     (call filesystems_search_sysfs (ARG1))
@@ -538,6 +550,11 @@
     (allow ARG1 sysfs_fs_t read_file_perms)
     (allow ARG1 sysfs_fs_t list_dir_perms)
     (allow ARG1 sysfs_fs_t read_lnk_file_perms))
+
+(macro filesystems_mounton_sys_dirs ((type ARG1))
+    (call filesystems_list_sysfs (ARG1))
+    (call filesystems_setattr_sysfs_dirs (ARG1))
+    (allow ARG1 sysfs_fs_t (dir (mounton))))
 
 (macro filesystems_search_tmpfs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
@@ -674,6 +691,9 @@
 
 (macro filesystems_remount_hugetlbfs ((type ARG1))
     (allow ARG1 hugetlbfs_fs_t (filesystem (remount))))
+
+(macro filesystems_remount_sysfs ((type ARG1))
+    (allow ARG1 sysfs_fs_t (filesystem (remount))))
 
 (macro filesystems_remount_tmpfs ((type ARG1))
     (allow ARG1 tmpfs_fs_t (filesystem (remount))))
