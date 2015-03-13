@@ -41,19 +41,24 @@
 (allow nspawn_t nspawn_common_container_object_type (chr_file (mounton)))
 (allow nspawn_t nspawn_common_container_object_type create_chr_file_perms)
 
-(allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount)))
+(allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount relabelto relabelfrom)))
 
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
 
-(allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod)))
+(allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod net_admin
+    fsetid)))
 (allow nspawn_t self (capability (audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
+(allow nspawn_t self create_unix_dgram_stream_socket_perms)
 
 (call system_read_kernel_sysctl (nspawn_t))
+(call system_mounton_sysctl_dirs (nspawn_t))
 
 (call files_manage_config_lnk_files (nspawn_t))
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
+(call filesystems_mount_proc (nspawn_t))
+(call filesystems_remount_proc (nspawn_t))
 (call filesystems_manage_cgroup_dirs (nspawn_t))
 (call filesystems_mounton_tmpfs_dirs (nspawn_t))
 (call filesystems_manage_tmpfs_dirs (nspawn_t))
@@ -63,8 +68,11 @@
 (call filesystems_remount_cgroup (nspawn_t))
 (call filesystems_mounton_rootfs_dirs (nspawn_t))
 (call filesystems_mount_tmpfs (nspawn_t))
+(call filesystems_mount_sysfs (nspawn_t))
+(call filesystems_mounton_sysfs_dirs (nspawn_t))
 
 (call selinux_get_enforce_mode (nspawn_t))
+(call selinux_remount_securityfs (nspawn_t))
 
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
@@ -75,9 +83,15 @@
 
 (call machine_manage_lib_files (nspawn_t))
 
-(call nspawn_setattr_terminals (nspawn_t)) 
+(call nspawn_setattr_terminals (nspawn_t))
 (call nspawn_use_terminals (nspawn_t))
-(call nspawn_shell_exec_manual_subject_type_transitio_all_common_container_subjects (nspawn_t))
+(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t))
+
+(call systemd_search_transient_unit (nspawn_t))
+
+(call usersubject_search_home_dir (nspawn_t))
+
+(call manual_subject_type_transition_pattern (nspawn_t nspawn_exec_t nspawn_common_container_subject_type)) ; TEST
 
 (macro nspawn_exec ((type ARG1))
     (call can_exec (ARG1 nspawn_exec_t)))
@@ -150,5 +164,5 @@
     (call nspawn_common_container_subject_type (ARG1))
     (call nspawn_common_container_object_type (ARG2)))
 
-(macro nspawn_shell_exec_manual_subject_type_transitio_all_common_container_subjects ((type ARG1))
+(macro nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects ((type ARG1))
     (call commands_shell_exec_manual_subject_type_transition (ARG1 nspawn_common_container_subject_type)))

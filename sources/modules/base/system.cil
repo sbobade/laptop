@@ -331,9 +331,10 @@
 (call system_load_kernel_module (system_unconfined_subject_type))
 
 (call system_dontaudit_manage_all_proc (system_dontaudit_catchall_subject_type))
-(call system_dontaudit_getattr_proc_filesystems (system_dontaudit_catchall_subject_type))
 (call system_dontaudit_manage_all_sysctl (system_dontaudit_catchall_subject_type))
 (call system_dontaudit_getattr_sysctl_filesystems (system_dontaudit_catchall_subject_type))
+
+(call filesystems_dontaudit_getattr_proc_filesystems (system_dontaudit_catchall_subject_type))
 
 (macro system_object_type ((type ARG1))
     (typeattributeset system_object_type ARG1))
@@ -480,9 +481,6 @@
 (macro system_dontaudit_manage_all_proc ((type ARG1))
     (dontaudit ARG1 system_proc_object_type (all_file_objects (manage))))
 
-(macro system_dontaudit_getattr_proc_filesystems ((type ARG1))
-    (dontaudit ARG1 proc_fs_t (filesystem (getattr))))
-
 (macro system_read_all_sysctls ((type ARG1))
     (call system_read_crypto_sysctl (ARG1))
     (call system_read_dev_sysctl (ARG1))
@@ -550,6 +548,23 @@
 (macro system_write_fs_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (call write_files_pattern (ARG1 fs_sysctl_t fs_sysctl_t)))
+
+(macro system_dontaudit_audit_access_sysctl_dirs ((type ARG1))
+    (dontaudit ARG1 sysctl_t (dir (audit_access))))
+
+(macro system_list_sysctl ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 sysctl_t list_dir_perms))
+
+(macro system_setattr_sysctl_dirs ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 sysctl_t (dir (setattr))))
+
+(macro system_mounton_sysctl_dirs ((type ARG1))
+    (call system_dontaudit_audit_access_sysctl_dirs (ARG1))
+    (call system_list_sysctl (ARG1))
+    (call system_setattr_sysctl_dirs (ARG1))
+    (allow ARG1 sysctl_t (dir (mounton))))
 
 (macro system_search_sysctl ((type ARG1))
     (call filesystems_search_proc (ARG1))

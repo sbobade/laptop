@@ -459,6 +459,17 @@
 (macro filesystems_getattr_proc_filesystems ((type ARG1))
     (allow ARG1 proc_fs_t (filesystem (getattr))))
 
+(macro filesystems_dontaudit_getattr_proc_filesystems ((type ARG1))
+    (dontaudit ARG1 proc_fs_t (filesystem (getattr))))
+
+(macro filesystems_mount_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 proc_fs_t (filesystem (mount))))
+
+(macro filesystems_remount_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 proc_fs_t (filesystem (remount))))
+
 (macro filesystems_read_proc_files ((type ARG1))
     (call read_files_pattern (ARG1 proc_fs_t proc_fs_t)))
 
@@ -500,6 +511,10 @@
 (macro filesystems_dontaudit_audit_access_sysfs_dirs ((type ARG1))
     (dontaudit ARG1 sysfs_fs_t (dir (audit_access))))
 
+(macro filesystems_setattr_sysfs_dirs ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 sysfs_fs_t (dir (setattr))))
+
 (macro filesystems_search_sysfs ((type ARG1))
     (allow ARG1 sysfs_fs_t search_dir_perms))
 
@@ -526,6 +541,11 @@
 (macro filesystems_search_tmpfs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 tmpfs_fs_t search_dir_perms))
+
+(macro filesystems_mounton_sysfs_dirs ((type ARG1))
+    (call filesystems_list_sysfs (ARG1))
+    (call filesystems_setattr_sysfs_dirs (ARG1))
+    (allow ARG1 sysfs_fs_t (dir (mounton))))
 
 (macro filesystems_list_tmpfs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
@@ -629,6 +649,9 @@
 
 (macro filesystems_mount_cgroup ((type ARG1))
     (allow ARG1 cgroup_fs_t (filesystem (mount))))
+
+(macro filesystems_mount_sysfs ((type ARG1))
+    (allow ARG1 sysfs_fs_t (filesystem (mount))))
 
 (macro filesystems_mount_tmpfs ((type ARG1))
     (allow ARG1 tmpfs_fs_t (filesystem (mount))))

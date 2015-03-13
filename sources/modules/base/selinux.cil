@@ -154,5 +154,9 @@
     (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
     (allow ARG1 securityfs_fs_t (security (check_context))))
 
+(macro selinux_remount_securityfs ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 securityfs_fs_t (filesystem (remount))))
+
 (macro selinux_unconfined_subject_type ((type ARG1))
     (typeattributeset selinux_unconfined_subject_type ARG1))
