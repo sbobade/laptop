@@ -142,10 +142,12 @@
     fsetid sys_admin)))
 (allow nspawn_t self (capability (audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
+(allow nspawn_t self create_netlink_route_socket_perms)
 (allow nspawn_t self create_unix_dgram_socket_perms)
 
 (call system_read_kernel_message (nspawn_t))
 (call system_read_kernel_sysctl (nspawn_t))
+(call system_read_net_proc (nspawn_t))
 (call system_mounton_sysctl_dirs (nspawn_t))
 (call system_mounton_kernel_sysctl_files (nspawn_t))
 (call system_mounton_kmsg_proc_files (nspawn_t))
@@ -157,6 +159,8 @@
 (call files_manage_config_lnk_files (nspawn_t))
 (call files_mounton_runtime_dirs (nspawn_t))
 (call files_read_config_files (nspawn_t)) ; FIXME: /etc/machine-id
+
+(call files_rootfs_object_type_transition_file (nspawn_t))
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 
@@ -205,6 +209,7 @@
 (call journal_client_subject_type (nspawn_t))
 
 (call machine_manage_lib_files (nspawn_t))
+(call machine_read_config_files (nspawn_t))
 (call machine_dbus_chat_machined (nspawn_t))
 
 (call miscfiles_read_locale (nspawn_t))
