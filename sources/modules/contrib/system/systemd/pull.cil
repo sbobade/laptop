@@ -2,7 +2,7 @@
 (type pull_exec_t)
 (call systemd_daemon (pull_t pull_exec_t))
 
-(typebounds importd_t pull_t)
+(typebounds pull_t importd_t)
 
 (context pull_exec (system_u object_r pull_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-pull" file pull_exec)
