@@ -412,6 +412,9 @@
 (macro filesystems_write_inherited_devpts_chr_files ((type ARG1))
     (allow ARG1 devpts_fs_t write_inherited_chr_file_perms))
 
+(macro filesystems_relabelfrom_devpts_filesystems ((type ARG1))
+    (allow ARG1 devpts_fs_t (filesystem (relabelfrom))))
+
 (macro filesystems_search_dosfs ((type ARG1))
     (allow ARG1 dosfs_fs_t search_dir_perms))
 
@@ -609,6 +612,9 @@
     (allow ARG1 tmpfs_fs_t read_file_perms)
     (allow ARG1 tmpfs_fs_t list_dir_perms)
     (allow ARG1 tmpfs_fs_t read_lnk_file_perms))
+
+(macro filesystems_relabelfrom_tmpfs_filesystems ((type ARG1))
+    (allow ARG1 tmpfs_fs_t (filesystem (relabelfrom))))
 
 (macro filesystems_relabelfrom_tmpfs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
