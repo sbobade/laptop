@@ -216,6 +216,7 @@
 (call systemd_search_transient_unit (nspawn_t))
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))
+(call systemd_stream_connect (nspawn_t))
 
 (call usersubject_search_home_dir (nspawn_t))
 
