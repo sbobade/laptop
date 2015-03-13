@@ -525,7 +525,9 @@
     (type sysadm_machinectl_t)
     (call machine_role_template_machinectl (sysadm_r sysadm_subject_type sysadm_machinectl_t))
 
-    (call machine_manage_config_files (sysadm_t)))
+    (call machine_manage_config_files (sysadm_t))
+    (call machine_manage_lib (sysadm_t))
+    (call machine_manage_machined_systemd_runtime (sysadm_t)))
 
 (optional sysadm_optional_nspawn
     (call nspawn_run (sysadm_subject_type sysadm_r)))

@@ -43,6 +43,12 @@
 (allow machined_t machined_systemd_runtime_t manage_lnk_file_perms)
 (call systemd_runtime_object_type_transition (machined_t machined_systemd_runtime_t dir "*"))
 
+(type machine_lib_t)
+(call files_lib_object_type (machine_lib_t))
+
+(context machine_lib (system_u object_r machine_lib_t (systemlow systemlow)))
+(filecon "/var/lib/machines(/.*)?" any machine_lib)
+
 (allow machined_t self (capability (sys_ptrace)))
 (allow machined_t self (process (setfscreate)))
 
@@ -152,6 +158,29 @@
 (macro machine_config_object_type_transition_machine_config_files ((type ARG1))
     (call files_config_object_type_transition (ARG1 machine_config_t file "machine-id"))
     (call files_config_object_type_transition (ARG1 machine_config_t file "machine-info")))
+
+(macro machine_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 machine_lib_t search_dir_perms))
+
+(macro machine_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 machine_lib_t list_dir_perms))
+
+(macro machine_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 machine_lib_t machine_lib_t)))
+
+(macro machine_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 machine_lib_t (all_file_objects (read))))
+
+(macro machine_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 machine_lib_t (all_file_objects (read))))
+
+(macro machine_lib_object_type_transition_machine_lib_dirs ((type ARG1))
+    (call files_lib_object_type_transition (ARG1 machine_lib_t dir "machines")))
 
 (macro machine_dbus_chat_machined ((type ARG1))
     (allow ARG1 machined_t (dbus (send_msg)))
