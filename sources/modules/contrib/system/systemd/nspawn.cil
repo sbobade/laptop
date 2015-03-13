@@ -13,6 +13,8 @@
 (call applications_app (nspawn_t nspawn_exec_t))
 (roletype nspawn_role nspawn_t)
 
+(roleattributeset nspawn_role system_r)
+
 (context nspawn_exec (system_u object_r nspawn_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-nspawn" file nspawn_exec)
 
