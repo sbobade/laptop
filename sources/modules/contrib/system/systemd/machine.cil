@@ -120,6 +120,10 @@
     (call files_rw_config_dirs (ARG1))
     (allow ARG1 machine_config_t manage_file_perms))
 
+(macro machine_config_object_type_transition_machine_config_files ((type ARG1))
+    (call files_config_object_type_transition (ARG1 machine_config_t file "machine-id"))
+    (call files_config_object_type_transition (ARG1 machine_config_t file "machine-info")))
+
 (macro machine_read_machined_dbus_config_files ((type ARG1))
     (call dbus_search_config (ARG1))
     (allow ARG1 machined_dbus_config_t read_file_perms))
@@ -155,10 +159,6 @@
     (allow ARG1 machined_systemd_runtime_t manage_file_perms)
     (allow ARG1 machined_systemd_runtime_t manage_dir_perms)
     (allow ARG1 machined_systemd_runtime_t manage_lnk_file_perms))
-
-(macro machine_config_object_type_transition_machine_config_files ((type ARG1))
-    (call files_config_object_type_transition (ARG1 machine_config_t file "machine-id"))
-    (call files_config_object_type_transition (ARG1 machine_config_t file "machine-info")))
 
 (macro machine_search_lib ((type ARG1))
     (call files_search_lib (ARG1))

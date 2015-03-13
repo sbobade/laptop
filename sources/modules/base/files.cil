@@ -920,6 +920,10 @@
 (macro files_rw_runtime_dirs ((type ARG1))
     (allow ARG1 runtime_t rw_dir_perms))
 
+(macro files_mounton_runtime_dirs ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 runtime_t (dir (mounton))))
+
 (macro files_search_all_runtime ((type ARG1))
     (allow ARG1 files_runtime_object_type search_dir_perms))
 

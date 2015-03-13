@@ -49,12 +49,21 @@
     fsetid)))
 (allow nspawn_t self (capability (audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
-(allow nspawn_t self create_unix_dgram_stream_socket_perms)
+(allow nspawn_t self (unix_dgram_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown listen accept sendto)))
 
+(call system_read_kernel_message (nspawn_t))
 (call system_read_kernel_sysctl (nspawn_t))
 (call system_mounton_sysctl_dirs (nspawn_t))
+(call system_mounton_kernel_sysctl_files (nspawn_t))
+(call system_mounton_kmsg_proc_files (nspawn_t))
+
+(call devices_getattr_random (nspawn_t))
+(call devices_getattr_tun_tap (nspawn_t))
+(call devices_getattr_urandom (nspawn_t))
 
 (call files_manage_config_lnk_files (nspawn_t))
+(call files_mounton_runtime_dirs (nspawn_t))
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 (call filesystems_mount_proc (nspawn_t))
@@ -68,11 +77,16 @@
 (call filesystems_remount_cgroup (nspawn_t))
 (call filesystems_mounton_rootfs_dirs (nspawn_t))
 (call filesystems_mount_tmpfs (nspawn_t))
+(call filesystems_remount_tmpfs (nspawn_t))
 (call filesystems_mount_sysfs (nspawn_t))
 (call filesystems_mounton_sysfs_dirs (nspawn_t))
 
-(call selinux_get_enforce_mode (nspawn_t))
 (call selinux_remount_securityfs (nspawn_t))
+(call selinux_validate_context (nspawn_t))
+
+(call subject_identity_change_exemption (nspawn_t))
+(call subject_object_identity_change_exemption (nspawn_t))
+(call subject_role_change_exemption (nspawn_t))
 
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
@@ -82,16 +96,18 @@
 (call dns_manage_resolve_config_files (nspawn_t))
 
 (call machine_manage_lib_files (nspawn_t))
+(call machine_manage_config_files (nspawn_t))
+(call machine_config_object_type_transition_machine_config_files (nspawn_t))
 
 (call nspawn_setattr_terminals (nspawn_t))
 (call nspawn_use_terminals (nspawn_t))
-(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t))
 
 (call systemd_search_transient_unit (nspawn_t))
 
 (call usersubject_search_home_dir (nspawn_t))
 
-(call manual_subject_type_transition_pattern (nspawn_t nspawn_exec_t nspawn_common_container_subject_type)) ; TEST
+(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t)) ; TESTS
+(call manual_subject_type_transition_pattern (nspawn_t exec_t nspawn_common_container_subject_type))
 
 (macro nspawn_exec ((type ARG1))
     (call can_exec (ARG1 nspawn_exec_t)))

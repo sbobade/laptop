@@ -123,6 +123,7 @@
 (genfscon "proc" "/" proc_fs)
 (genfscon "proc" "/sysvipc" proc_fs) ; BUG
 
+(filecon "/proc" dir proc_fs)
 (filecon "/proc(/.*)?" any ())
 
 (type pstore_fs_t)

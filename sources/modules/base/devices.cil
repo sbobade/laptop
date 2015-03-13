@@ -334,13 +334,25 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 dri_dev_t (chr_file (getattr))))
 
+(macro devices_getattr_random ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 random_dev_t (chr_file (getattr))))
+
 (macro devices_getattr_sound ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 sound_dev_t (chr_file (getattr))))
 
+(macro devices_getattr_tun_tap ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tun_tap_dev_t (chr_file (getattr))))
+
 (macro devices_getattr_wireless ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 wireless_dev_t (chr_file (getattr))))
+
+(macro devices_getattr_urandom ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 urandom_dev_t (chr_file (getattr))))
 
 (macro devices_getattr_v4l ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))

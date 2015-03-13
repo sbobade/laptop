@@ -438,6 +438,9 @@
     (allow ARG1 kmsg_proc_t read_file_perms)
     (typeattributeset system_can_read_kernel_message ARG1))
 
+(macro system_mounton_kmsg_proc_files ((type ARG1))
+    (allow ARG1 kmsg_proc_t (file (mounton))))
+
 (macro system_read_mdstat_proc ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 mdstat_proc_t read_file_perms))
@@ -597,6 +600,9 @@
 (macro system_write_kernel_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (call write_files_pattern (ARG1 kernel_sysctl_t kernel_sysctl_t)))
+
+(macro system_mounton_kernel_sysctl_files ((type ARG1))
+    (allow ARG1 kernel_sysctl_t (file (mounton))))
 
 (macro system_search_net_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
