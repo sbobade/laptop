@@ -298,7 +298,7 @@
 (macro filesystems_mounton_cgroup_dirs ((type ARG1))
     (call filesystems_list_cgroup (ARG1))
     (call filesystems_setattr_cgroup_dirs (ARG1))
-    (allow ARG1 cgroup_fs_t (dir_file (mounton))))
+    (allow ARG1 cgroup_fs_t (dir (mounton))))
 
 (macro filesystems_search_debugfs ((type ARG1))
     (allow ARG1 debugfs_fs_t search_dir_perms))
@@ -578,9 +578,18 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 tmpfs_fs_t rw_dir_perms))
 
+(macro filesystems_setattr_tmpfs_dirs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call setattr_dirs_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
 (macro filesystems_manage_tmpfs_dirs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (call manage_dirs_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
+
+(macro filesystems_mounton_tmpfs_dirs ((type ARG1))
+    (call filesystems_list_tmpfs (ARG1))
+    (call filesystems_setattr_tmpfs_dirs (ARG1))
+    (allow ARG1 tmpfs_fs_t (dir (mounton))))
 
 (macro filesystems_dontaudit_getattr_all_filesystems ((type ARG1))
     (dontaudit ARG1 filesystems_object_type (filesystem (getattr))))

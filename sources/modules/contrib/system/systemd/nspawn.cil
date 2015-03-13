@@ -31,12 +31,33 @@
 (type mycontainer_object_t)
 (call filesystems_object_type (nspawn_common_container_object_type))
 
+(allow nspawn_t nspawn_common_container_object_type (dir (mounton relabelfrom relabelto
+    create open getattr setattr read write link unlink rename search add_name remove_name reparent
+    rmdir lock ioctl)))
+(allow nspawn_t nspawn_common_container_object_type manage_file_perms)
+(allow nspawn_t nspawn_common_container_object_type manage_lnk_file_perms)
+(allow nspawn_t nspawn_common_container_object_type manage_fifo_file_perms)
+
+(allow nspawn_t nspawn_common_container_object_type (chr_file (mounton)))
+(allow nspawn_t nspawn_common_container_object_type create_chr_file_perms)
+
+(allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount)))
+
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
 
-(allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid)))
-(allow nspawn_t self (process (setcap setexec)))
+(allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod)))
+(allow nspawn_t self (capability (audit_control))) ; FIXME
+(allow nspawn_t self (process (getcap setcap setexec)))
 
+(call system_read_kernel_sysctl (nspawn_t))
+
+(call files_manage_config_lnk_files (nspawn_t))
+
+(call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 (call filesystems_manage_cgroup_dirs (nspawn_t))
+(call filesystems_mounton_tmpfs_dirs (nspawn_t))
+(call filesystems_manage_tmpfs_dirs (nspawn_t))
+(call filesystems_manage_tmpfs_lnk_files (nspawn_t))
 (call filesystems_mounton_cgroup_dirs (nspawn_t))
 (call filesystems_mount_cgroup (nspawn_t))
 (call filesystems_remount_cgroup (nspawn_t))
@@ -47,8 +68,15 @@
 
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
+(call dbus_system_client_subject_type (nspawn_t))
+
+(call dns_config_object_type_transition_resolve_config_files (nspawn_t))
+(call dns_manage_resolve_config_files (nspawn_t))
+
 (call machine_manage_lib_files (nspawn_t))
 
+(call nspawn_setattr_terminals (nspawn_t)) 
+(call nspawn_use_terminals (nspawn_t))
 (call nspawn_shell_exec_manual_subject_type_transitio_all_common_container_subjects (nspawn_t))
 
 (macro nspawn_exec ((type ARG1))
