@@ -42,6 +42,20 @@
 (allow machined_t machined_systemd_runtime_t manage_file_perms)
 (call systemd_runtime_object_type_transition (machined_t machined_systemd_runtime_t dir "*"))
 
+(allow machined_t self (capability (sys_ptrace)))
+(allow machined_t self (process (setfscreate)))
+
+(call system_read_kernel_sysctl (machined_t))
+
+(call dbus_system_service (machined_t))
+
+(call journal_client_subject_type (machined_t))
+
+(call systemd_dbus_chat (machined_t))
+(call systemd_start_system (machined_t))
+(call systemd_status_system (machined_t))
+(call systemd_start_transient_units (machined_t))
+
 (macro machine_exec_machinectl ((type ARG1))
     (call can_exec (ARG1 machinectl_exec_t)))
 
