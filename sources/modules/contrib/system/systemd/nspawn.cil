@@ -143,7 +143,7 @@
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 
-(call filesystems_relabelform_devpts_filesystems (nspawn_t))
+(call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
 
 (call filesystems_add_entry_devtmpfs (nspawn_t)) ; FIXME: write
 (call filesystems_mounton_devtmpfs_dirs (nspawn_t))
