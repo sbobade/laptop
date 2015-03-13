@@ -83,6 +83,11 @@
 (call miscfiles_read_all_terminfo (machine_machinectl_subject_type))
 (call miscfiles_read_locale (machine_machinectl_subject_type))
 
+(call systemd_dbus_chat (machine_machinectl_subject_type))
+
+(optional machine_machinectl_subject_type_optional_polkit
+    (call polkit_dbus_chat_polkitd (machine_machinectl_subject_type)))
+
 (macro machine_exec_machinectl ((type ARG1))
     (call can_exec (ARG1 machinectl_exec_t)))
 

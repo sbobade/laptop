@@ -204,8 +204,6 @@
 (call dns_manage_resolve_config_files (nspawn_t))
 
 (call machine_manage_lib_files (nspawn_t))
-(call machine_manage_config_files (nspawn_t))
-(call machine_config_object_type_transition_machine_config_files (nspawn_t))
 (call machine_dbus_chat_machined (nspawn_t))
 
 (call miscfiles_read_locale (nspawn_t))
@@ -217,6 +215,7 @@
 (call systemd_search_transient_unit (nspawn_t))
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))
+(call systemd_dgram_send (nspawn_t))
 
 (call usersubject_search_home_dir (nspawn_t))
 
@@ -314,6 +313,10 @@
     (allow ARG1 nspawn_common_container_subject_type read_file_perms)
     (allow ARG1 nspawn_common_container_subject_type list_dir_perms)
     (allow ARG1 nspawn_common_container_subject_type read_lnk_file_perms))
+
+(macro nspawn_start_unit ((type ARG1))
+    (call systemd_search_unit (ARG1))
+    (allow ARG1 nspawn_unit_t (service (start))))
 
 (macro nspawn_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))
