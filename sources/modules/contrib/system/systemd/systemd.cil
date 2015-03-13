@@ -194,6 +194,7 @@
 (call storage_read_removable (systemd_t))
 (call storage_read_scsi_generic (systemd_t))
 
+(call subject_dynamic_subject_type_transition_subject_type (systemd_t))
 (call subject_identity_change_exemption (systemd_t))
 (call subject_role_change_exemption (systemd_t))
 (call subject_getattr_all_common_subjects (systemd_t))
@@ -203,6 +204,10 @@
 (call subject_send_signull_all_common_subjects (systemd_t))
 
 (call terminals_use_unallocated_ttys (systemd_t))
+
+(call import_dynamic_subject_type_transition (systemd_t))
+
+(call pull_dynamic_subject_type_transition (systemd_t))
 
 (call journal_list_log (systemd_t))
 (call journal_test_for_systemd (systemd_t))

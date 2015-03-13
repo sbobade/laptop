@@ -1,6 +1,8 @@
 (type importd_t)
 (type importd_exec_t)
-(call systemd_daemon (importd_t importd_exec_t))
+(call subject_common_type (importd_t))
+(call subject_entry (importd_t importd_exec_t))
+(roletype system_r importd_t)
 
 (typebounds systemd_t importd_t)
 
@@ -16,6 +18,11 @@
     (call import_send_signal_importd (ARG1))
     (call auto_subject_type_transition_pattern
         (ARG1 importd_exec_t importd_t)))
+
+(macro import_dynamic_subject_type_transition ((type ARG1))
+    (call dynamic_subject_type_transition_pattern
+        (ARG1 importd_t))
+    (typetransition ARG1 importd_exec_t process "*" importd_t))
 
 (macro import_send_signal_importd ((type ARG1))
     (allow ARG1 importd_t (process (signal))))
