@@ -162,6 +162,7 @@
 (type tmpfs_fs_t)
 (call filesystems_object_type (tmpfs_fs_t))
 (call system_mountpoint_object_type (tmpfs_fs_t))
+(call filesystems_associate_fs (tmpfs_fs_t))
 
 (context tmpfs_fs (system_u object_r tmpfs_fs_t (systemlow systemlow)))
 (fsuse trans "mqueue" tmpfs_fs)
