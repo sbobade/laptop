@@ -1,15 +1,13 @@
 (type importd_t)
 (type importd_exec_t)
-(call subject_common_type (importd_t))
-(call subject_entry (importd_t importd_exec_t))
-(roletype system_r importd_t)
+(call systemd_daemon (importd_t importd_exec_t))
 
 (typebounds systemd_t importd_t)
 
 (context importd_exec (system_u object_r importd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-importd" file importd_exec)
 
-; (call pull_dynamic_subject_type_transition (importd_t))
+(call dbus_system_service (importd_t))
 
 (macro import_exec_importd ((type ARG1))
     (call can_exec (ARG1 importd_exec_t)))
@@ -26,3 +24,7 @@
 
 (macro import_send_signal_importd ((type ARG1))
     (allow ARG1 importd_t (process (signal))))
+
+(macro import_dbus_chat_importd ((type ARG1))
+    (allow ARG1 importd_t (dbus (send_msg)))
+    (allow importd_t ARG1 (dbus (send_msg))))
