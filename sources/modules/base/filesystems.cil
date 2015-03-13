@@ -342,6 +342,10 @@
 (macro filesystems_rw_devtmpfs_dirs ((type ARG1))
     (allow ARG1 devtmpfs_fs_t rw_dir_perms))
 
+(macro filesystems_setattr_devtmpfs_dirs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 devtmpfs_fs_t (dir (setattr))))
+
 (macro filesystems_manage_devtmpfs_files ((type ARG1))
     (call manage_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
 
@@ -376,6 +380,11 @@
 
 (macro filesystems_manage_devtmpfs_lnk_files ((type ARG1))
     (call manage_lnk_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
+(macro filesystems_mounton_devtmpfs_dirs ((type ARG1))
+    (call filesystems_list_devtmpfs (ARG1))
+    (call filesystems_setattr_devtmpfs_dirs (ARG1))
+    (allow ARG1 devtmpfs_fs_t (dir (mounton))))
 
 (macro filesystems_search_devpts ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
