@@ -124,7 +124,7 @@
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
 
 (allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod net_admin
-    fsetid)))
+    fsetid sys_admin)))
 (allow nspawn_t self (capability (audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
 (allow nspawn_t self (unix_dgram_socket (create ioctl read getattr write setattr append
