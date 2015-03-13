@@ -120,6 +120,7 @@
 
 (type proc_fs_t)
 (call filesystems_object_type (proc_fs_t))
+(call filesystems_associate_fs (proc_fs_t))
 
 (context proc_fs (system_u object_r proc_fs_t (systemlow systemlow)))
 (genfscon "proc" "/" proc_fs)
