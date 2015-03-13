@@ -2,7 +2,7 @@
 (type importd_exec_t)
 (call systemd_daemon (importd_t importd_exec_t))
 
-; (typebounds systemd_t importd_t)
+(typebounds systemd_t importd_t)
 
 (context importd_exec (system_u object_r importd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-importd" file importd_exec)
@@ -16,11 +16,6 @@
     (call import_send_signal_importd (ARG1))
     (call auto_subject_type_transition_pattern
         (ARG1 importd_exec_t importd_t)))
-
-(macro import_dynamic_subject_type_transition ((type ARG1))
-    (call dynamic_subject_type_transition_pattern
-        (ARG1 importd_t))
-    (typetransition ARG1 importd_exec_t process "*" importd_t))
 
 (macro import_send_signal_importd ((type ARG1))
     (allow ARG1 importd_t (process (signal))))
