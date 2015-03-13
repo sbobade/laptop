@@ -193,6 +193,8 @@
 (call machine_config_object_type_transition_machine_config_files (nspawn_t))
 (call machine_dbus_chat_machined (nspawn_t))
 
+(call miscfiles_read_locale (nspawn_t))
+
 (call nspawn_setattr_terminals (nspawn_t))
 (call nspawn_use_terminals (nspawn_t))
 (call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t))
