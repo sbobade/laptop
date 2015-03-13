@@ -64,6 +64,7 @@
 (type devtmpfs_fs_t)
 (call filesystems_object_type (devtmpfs_fs_t))
 (call system_mountpoint_object_type (devtmpfs_fs_t))
+(call filesystems_associate_fs (devtmpfs_fs_t))
 
 (context devtmpfs_fs (system_u object_r devtmpfs_fs_t (systemlow systemlow)))
 (fsuse trans "devtmpfs" devtmpfs_fs)
