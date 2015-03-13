@@ -84,6 +84,9 @@
 (call filesystems_rw_sysfs_files (nspawn_common_container_subject_type))
 (call filesystems_read_sysfs_lnk_files (nspawn_common_container_subject_type))
 
+(call filesystems_getattr_filesystems (nspawn_common_container_subject_type))
+(call filesystems_list_proc (nspawn_common_container_subject_type))
+
 (call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
 (call subject_execheap (nspawn_common_container_subject_type))
@@ -145,7 +148,7 @@
 
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
 
-(call filesystems_add_entry_devtmpfs (nspawn_t)) ; FIXME: write
+(call filesystems_add_entry_devtmpfs (nspawn_t))
 (call filesystems_mounton_devtmpfs_dirs (nspawn_t))
 
 (call filesystems_mounton_proc_dirs (nspawn_t))
