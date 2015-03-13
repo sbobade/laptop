@@ -61,6 +61,9 @@
 
 (call nspawn_read_state (machined_t))
 (call nspawn_read_state_all_common_container_subjects (machined_t))
+(call nspawn_start_unit (machined_t))
+(call nspawn_stop_unit (machined_t))
+(call nspawn_status_unit (machined_t))
 
 (call systemd_dbus_chat (machined_t))
 (call systemd_start_system (machined_t))

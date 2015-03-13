@@ -138,12 +138,11 @@
 
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
 
-(allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod net_admin
+(allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod
     fsetid sys_admin)))
 (allow nspawn_t self (capability (audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
-(allow nspawn_t self (unix_dgram_socket (create ioctl read getattr write setattr append
-    bind connect getopt setopt shutdown listen accept sendto)))
+(allow nspawn_t self create_unix_dgram_socket_perms)
 
 (call system_read_kernel_message (nspawn_t))
 (call system_read_kernel_sysctl (nspawn_t))
@@ -203,6 +202,8 @@
 (call dns_config_object_type_transition_resolve_config_files (nspawn_t))
 (call dns_manage_resolve_config_files (nspawn_t))
 
+(call journal_client_subject_type (nspawn_t))
+
 (call machine_manage_lib_files (nspawn_t))
 (call machine_dbus_chat_machined (nspawn_t))
 
@@ -215,7 +216,6 @@
 (call systemd_search_transient_unit (nspawn_t))
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))
-(call systemd_dgram_send (nspawn_t))
 
 (call usersubject_search_home_dir (nspawn_t))
 
@@ -317,6 +317,14 @@
 (macro nspawn_start_unit ((type ARG1))
     (call systemd_search_unit (ARG1))
     (allow ARG1 nspawn_unit_t (service (start))))
+
+(macro nspawn_status_unit ((type ARG1))
+    (call systemd_search_unit (ARG1))
+    (allow ARG1 nspawn_unit_t (service (status))))
+
+(macro nspawn_stop_unit ((type ARG1))
+    (call systemd_search_unit (ARG1))
+    (allow ARG1 nspawn_unit_t (service (stop))))
 
 (macro nspawn_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))
