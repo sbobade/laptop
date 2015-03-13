@@ -530,7 +530,8 @@
     (call machine_manage_machined_systemd_runtime (sysadm_t)))
 
 (optional sysadm_optional_nspawn
-    (call nspawn_run (sysadm_subject_type sysadm_r)))
+    (call nspawn_run (sysadm_subject_type sysadm_r))
+    (call nspawn_manage_systemd_runtime (sysadm_t)))
 
 (optional sysadm_machinectl_optional_ssh
     (call ssh_role_template (sysadm_r sysadm_machinectl_t sysadm_ssh_t)))

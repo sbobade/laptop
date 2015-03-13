@@ -11,13 +11,45 @@
 (context nspawn_exec (system_u object_r nspawn_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-nspawn" file nspawn_exec)
 
+(type nspawn_systemd_runtime_t)
+(call systemd_runtime_object_type (nspawn_systemd_runtime_t))
+
+(context nspawn_systemd_runtime (system_u object_r nspawn_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/nspawn(/.*)?" any nspawn_systemd_runtime)
+
+(allow nspawn_t nspawn_systemd_runtime_t manage_dir_perms)
+(allow nspawn_t nspawn_systemd_runtime_t manage_file_perms)
+(allow nspawn_t nspawn_systemd_runtime_t manage_lnk_file_perms)
+(call nspawn_systemd_runtime_object_type_transition_runtime_dirs (nspawn_t))
+
+(type nspawn_pty_dev_t)
+(call terminals_pty_object_type (nspawn_pty_dev_t))
+
 (type mycontainer_subject_t)
 (call subject_common_type (nspawn_common_container_subject_type))
 
 (type mycontainer_object_t)
-(call files_object_type (nspawn_common_container_object_type))
+(call filesystems_object_type (nspawn_common_container_object_type))
 
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
+
+(allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid)))
+(allow nspawn_t self (process (setcap setexec)))
+
+(call filesystems_manage_cgroup_dirs (nspawn_t))
+(call filesystems_mounton_cgroup_dirs (nspawn_t))
+(call filesystems_mount_cgroup (nspawn_t))
+(call filesystems_remount_cgroup (nspawn_t))
+(call filesystems_mounton_rootfs_dirs (nspawn_t))
+(call filesystems_mount_tmpfs (nspawn_t))
+
+(call selinux_get_enforce_mode (nspawn_t))
+
+(call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
+
+(call machine_manage_lib_files (nspawn_t))
+
+(call nspawn_shell_exec_manual_subject_type_transitio_all_common_container_subjects (nspawn_t))
 
 (macro nspawn_exec ((type ARG1))
     (call can_exec (ARG1 nspawn_exec_t)))
@@ -34,6 +66,52 @@
     (call nspawn_auto_subject_type_transition (ARG1))
     (roleattributeset nspawn_role ARG2))
 
+(macro nspawn_search_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 nspawn_systemd_runtime_t search_dir_perms))
+
+(macro nspawn_list_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 nspawn_systemd_runtime_t list_dir_perms))
+
+(macro nspawn_read_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 nspawn_systemd_runtime_t nspawn_systemd_runtime_t)))
+
+(macro nspawn_read_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 nspawn_systemd_runtime_t nspawn_systemd_runtime_t)))
+
+(macro nspawn_read_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 nspawn_systemd_runtime_t read_file_perms)
+    (allow ARG1 nspawn_systemd_runtime_t list_dir_perms)
+    (allow ARG1 nspawn_systemd_runtime_t read_lnk_file_perms))
+
+(macro nspawn_manage_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 nspawn_systemd_runtime_t manage_file_perms)
+    (allow ARG1 nspawn_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 nspawn_systemd_runtime_t manage_lnk_file_perms))
+
+(macro nspawn_systemd_runtime_object_type_transition_runtime_dirs ((type ARG1))
+    (call systemd_runtime_object_type_transition (ARG1 nspawn_systemd_runtime_t dir "nspawn")))
+
+(macro nspawn_relabel_terminals ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 nspawn_pty_dev_t relabel_chr_file_perms))
+
+(macro nspawn_setattr_terminals ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 nspawn_pty_dev_t (chr_file (setattr))))
+
+(macro nspawn_use_terminals ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 nspawn_pty_dev_t rw_term_perms))
+
+(macro nspawn_use_inherited_terminals ((type ARG1))
+    (allow ARG1 nspawn_pty_dev_t rw_inherited_term_perms))
+
 (macro nspawn_common_container_subject_type ((type ARG1))
     (typeattributeset nspawn_common_container_subject_type ARG1))
 
@@ -43,3 +121,6 @@
 (macro nspawn_common_container_template ((type ARG1)(type ARG2))
     (call nspawn_common_container_subject_type (ARG1))
     (call nspawn_common_container_object_type (ARG2)))
+
+(macro nspawn_shell_exec_manual_subject_type_transitio_all_common_container_subjects ((type ARG1))
+    (call commands_shell_exec_manual_subject_type_transition (ARG1 nspawn_common_container_subject_type)))

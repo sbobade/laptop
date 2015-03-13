@@ -258,6 +258,11 @@
     (call filesystems_read_tmpfs_lnk_files (ARG1))
     (call read_files_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
 
+(macro filesystems_setattr_cgroup_dirs ((type ARG1))
+    (call filesystems_search_sysfs (ARG1))
+    (call filesystems_read_tmpfs_lnk_files (ARG1))
+    (call setattr_dirs_pattern (ARG1 cgroup_fs_t cgroup_fs_t)))
+
 (macro filesystems_setattr_cgroup_files ((type ARG1))
     (call filesystems_search_sysfs (ARG1))
     (call filesystems_read_tmpfs_lnk_files (ARG1))
@@ -289,6 +294,11 @@
     (allow ARG1 cgroup_fs_t read_file_perms)
     (allow ARG1 cgroup_fs_t list_dir_perms)
     (allow ARG1 cgroup_fs_t read_lnk_file_perms))
+
+(macro filesystems_mounton_cgroup_dirs ((type ARG1))
+    (call filesystems_list_cgroup (ARG1))
+    (call filesystems_setattr_cgroup_dirs (ARG1))
+    (allow ARG1 cgroup_fs_t (dir_file (mounton))))
 
 (macro filesystems_search_debugfs ((type ARG1))
     (allow ARG1 debugfs_fs_t search_dir_perms))
@@ -608,6 +618,9 @@
 (macro filesystems_mount_autofs ((type ARG1))
     (allow ARG1 autofs_fs_t (filesystem (mount))))
 
+(macro filesystems_mount_cgroup ((type ARG1))
+    (allow ARG1 cgroup_fs_t (filesystem (mount))))
+
 (macro filesystems_mount_tmpfs ((type ARG1))
     (allow ARG1 tmpfs_fs_t (filesystem (mount))))
 
@@ -622,6 +635,9 @@
 
 (macro filesystems_remount_filesystems ((type ARG1))
     (allow ARG1 fs_t (filesystem (remount))))
+
+(macro filesystems_remount_cgroup ((type ARG1))
+    (allow ARG1 cgroup_fs_t (filesystem (remount))))
 
 (macro filesystems_remount_hugetlbfs ((type ARG1))
     (allow ARG1 hugetlbfs_fs_t (filesystem (remount))))

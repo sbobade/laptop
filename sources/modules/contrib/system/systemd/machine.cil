@@ -171,6 +171,10 @@
     (call files_search_lib (ARG1))
     (call read_files_pattern (ARG1 machine_lib_t machine_lib_t)))
 
+(macro machine_manage_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call manage_files_pattern (ARG1 machine_lib_t machine_lib_t)))
+
 (macro machine_read_lib ((type ARG1))
     (call files_search_lib (ARG1))
     (allow ARG1 machine_lib_t (all_file_objects (read))))
