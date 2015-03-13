@@ -160,8 +160,6 @@
 (call files_mounton_runtime_dirs (nspawn_t))
 (call files_read_config_files (nspawn_t)) ; FIXME: /etc/machine-id
 
-(call files_rootfs_object_type_transition_file (nspawn_t))
-
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
