@@ -239,7 +239,7 @@
 
 (call dns_read_resolve_config_files (nspawn_t))
 
-(call journal_search_log (nspawn_t))
+(call jounal_manage_log_lnk_files (nspawn_t))
 (call journal_client_subject_type (nspawn_t))
 
 (call machine_manage_lib_files (nspawn_t))
