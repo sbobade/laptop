@@ -101,6 +101,10 @@
     all_fifo_file_perms_except_mounton_and_execmod)
 
 (call system_link_keyring (nspawn_common_container_subject_type))
+(call system_read_kernel_sysctl (nspawn_common_container_subject_type))
+
+(call filesystems_list_proc (nspawn_common_container_subject_type))
+(call filesystems_read_sysfs (nspawn_common_container_subject_type))
 
 (call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
