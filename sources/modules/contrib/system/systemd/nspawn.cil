@@ -166,8 +166,8 @@
 (call files_read_config_files (nspawn_t)) ; FIXME: /etc/machine-id
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
-
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
+(call filesystems_list_debugfs (nspawn_t))
 
 (call filesystems_mount (nspawn_t))
 
