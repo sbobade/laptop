@@ -475,6 +475,9 @@
 (macro systemd_getattr_exec_files ((type ARG1))
     (allow ARG1 systemd_exec_t (file (getattr))))
 
+(macro systemd_mmap_exec_files ((type ARG1))
+    (allow ARG1 systemd_exec_t mmap_file_perms))
+
 (macro systemd_exec_systemctl ((type ARG1))
     (call can_exec (ARG1 systemctl_exec_t))
     (call systemd_systemctl_client_subject_type (ARG1)))

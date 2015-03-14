@@ -93,6 +93,7 @@
 (allow nspawn_common_container_subject_type self
     all_fifo_file_perms_except_mounton_and_execmod)
 
+(call system_link_keyring (nspawn_common_container_subject_type))
 (call system_unconfined_subject_type (nspawn_common_container_subject_type))
 
 (call files_rootfs_object_type_transition_file (nspawn_common_container_subject_type))
@@ -114,6 +115,7 @@
 (call commands_mprot_read_shell_exec_files (nspawn_common_container_subject_type))
 (call commands_shell_exec_object_entry_subject (nspawn_common_container_subject_type))
 
+(call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
 
 (call rpm_read_state (nspawn_common_container_subject_type))
@@ -121,6 +123,8 @@
 (call rpm_run (nspawn_common_container_subject_type nspawn_role))
 
 (call systemd_exec_object_entry_subject (nspawn_common_container_subject_type))
+
+(call usersubject_link_keyring_all_common_login_subjects (nspawn_common_container_subject_type))
 
 (call usersubject_common_login_user_home_template (nspawn_common_container_subject_type))
 (call usersubject_common_login_user_tmp_template (nspawn_common_container_subject_type))
@@ -233,6 +237,7 @@
 (call nspawn_use_terminals (nspawn_t))
 (call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t))
 
+(call systemd_mmap_exec_files (nspawn_t))
 (call systemd_search_transient_unit (nspawn_t))
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))
@@ -320,6 +325,7 @@
 (macro nspawn_common_container_template ((type ARG1)(type ARG2))
     (call nspawn_common_container_subject_type (ARG1))
     (call nspawn_common_container_object_type (ARG2))
+    (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 (all_file_objects (manage))))
 
 (macro nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects ((type ARG1))
