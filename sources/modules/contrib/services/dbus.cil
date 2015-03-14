@@ -71,6 +71,12 @@
     (call login_use_fd_logind (dbusd_t))
     (call login_write_inherited_logind_systemd_runtime_fifo_files (dbusd_t)))
 
+(optional dbusd_optional_machine
+    (call machine_use_machined_fd (dbusd_t))
+
+    (optional dbusd_optional_nspawn
+        (call nspawn_rw_all_inherited_common_container_object_chr_files (dbusd_t))))
+
 (optional dbusd_optional_systemd
     (call systemd_daemon (dbusd_t dbusd_exec_t))
 

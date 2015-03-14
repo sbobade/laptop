@@ -50,7 +50,7 @@
 (filecon "/var/lib/machines" dir machine_lib)
 (filecon "/var/lib/machines(/.*)?" any ())
 
-(allow machined_t self (capability (sys_ptrace)))
+(allow machined_t self (capability (sys_ptrace sys_chroot setgid)))
 (allow machined_t self (process (setfscreate)))
 
 (call system_read_kernel_sysctl (machined_t))
@@ -60,7 +60,12 @@
 (call journal_client_subject_type (machined_t))
 
 (call nspawn_read_state (machined_t))
+(call nspawn_list_all_common_container_objects (machined_t))
+(call nspawn_read_all_common_container_object_lnk_files (machined_t))
 (call nspawn_read_state_all_common_container_subjects (machined_t))
+(call nspawn_stream_connect_all_common_containers (machined_t))
+(call nspawn_getattr_all_common_container_filesystems (machined_t))
+(call nspawn_rw_all_common_container_object_chr_files (machined_t))
 (call nspawn_start_unit (machined_t))
 (call nspawn_stop_unit (machined_t))
 (call nspawn_status_unit (machined_t))
@@ -84,6 +89,9 @@
 (call import_dbus_chat_importd (machine_machinectl_subject_type))
 
 (call machine_dbus_chat_machined (machine_machinectl_subject_type))
+(call machine_use_machined_fd (machine_machinectl_subject_type))
+
+(call nspawn_rw_all_inherited_common_container_object_chr_files (machine_machinectl_subject_type))
 
 (call miscfiles_read_all_terminfo (machine_machinectl_subject_type))
 (call miscfiles_read_locale (machine_machinectl_subject_type))
@@ -211,6 +219,9 @@
 (macro machine_manage_lib ((type ARG1))
     (call files_rw_lib_dirs (ARG1))
     (allow ARG1 machine_lib_t (all_file_objects (manage))))
+
+(macro machine_use_machined_fd ((type ARG1))
+    (allow ARG1 machined_t (fd (use))))
 
 (macro machine_lib_object_type_transition_machine_lib_dirs ((type ARG1))
     (call files_lib_object_type_transition (ARG1 machine_lib_t dir "machines")))

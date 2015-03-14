@@ -339,19 +339,36 @@
 
 (macro nspawn_search_all_common_container_objects ((type ARG1))
     (call machine_search_lib (ARG1))
-    (allow ARG1 spawn_common_container_object_type search_dir_perms))
+    (allow ARG1 nspawn_common_container_object_type search_dir_perms))
 
 (macro nspawn_list_all_common_container_objects ((type ARG1))
     (call machine_search_lib (ARG1))
-    (allow ARG1 spawn_common_container_object_type list_dir_perms))
+    (allow ARG1 nspawn_common_container_object_type list_dir_perms))
+
+(macro nspawn_rw_all_common_container_object_chr_files ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (call rw_chr_files_pattern (ARG1 nspawn_common_container_object_type
+        nspawn_common_container_object_type)))
+
+(macro nspawn_rw_all_inherited_common_container_object_chr_files ((type ARG1))
+    (allow ARG1 nspawn_common_container_object_type rw_inherited_chr_file_perms))
+
+(macro nspawn_read_all_common_container_object_lnk_files ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 nspawn_common_container_object_type
+        nspawn_common_container_object_type)))
 
 (macro nspawn_read_all_common_container_objects ((type ARG1))
     (call machine_search_lib (ARG1))
-    (allow ARG1 spawn_common_container_object_type (all_file_objects (read))))
+    (allow ARG1 nspawn_common_container_object_type (all_file_objects (read))))
 
 (macro nspawn_manage_all_common_container_objects ((type ARG1))
     (call machine_rw_lib_dirs (ARG1))
-    (allow ARG1 spawn_common_container_object_type (all_file_objects (manage))))
+    (allow ARG1 nspawn_common_container_object_type (all_file_objects (manage))))
+
+(macro nspawn_stream_connect_all_common_containers ((type ARG1))
+    (call stream_connect_pattern (ARG1 nspawn_common_container_object_type nspawn_common_container_object_type
+        nspawn_common_container_subject_type)))
 
 (macro nspawn_common_container_template ((type ARG1)(type ARG2))
     (call nspawn_common_container_subject_type (ARG1))
@@ -376,6 +393,9 @@
     (allow ARG1 nspawn_common_container_subject_type read_file_perms)
     (allow ARG1 nspawn_common_container_subject_type list_dir_perms)
     (allow ARG1 nspawn_common_container_subject_type read_lnk_file_perms))
+
+(macro nspawn_getattr_all_common_container_filesystems ((type ARG1))
+    (allow ARG1 nspawn_common_container_object_type (filesystem (getattr))))
 
 (macro nspawn_use_fd ((type ARG1))
     (allow ARG1 nspawn_t (fd (use))))
