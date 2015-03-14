@@ -49,6 +49,9 @@
 (type mycontainer_object_t)
 (call filesystems_object_type (nspawn_common_container_object_type))
 
+(context mycontainer (system_u object_r mycontainer_object_t (systemlow systemlow)))
+(filecon "/var/lib/machines/mycontainer(/.*)?" any mycontainer)
+
 (allow nspawn_common_container_subject_type self
     all_process_perms_except_transition_ptrace_setsched_dyntransition_setcurrent_execmem_execstack_and_execheap)
 (allow nspawn_common_container_subject_type self rw_file_perms)
