@@ -204,6 +204,8 @@
 (call selinux_remount_securityfs (nspawn_t))
 (call selinux_validate_context (nspawn_t))
 
+(call storage_rw_fixed_disk (nspawn_t))
+
 (call subject_system_identity_change_exemption (nspawn_t))
 (call subject_system_role_change_exemption (nspawn_t))
 (call subject_change_exemption (nspawn_t))
@@ -216,6 +218,7 @@
 (call dns_config_object_type_transition_resolve_config_files (nspawn_t))
 (call dns_manage_resolve_config_files (nspawn_t))
 
+(call journal_search_log (nspawn_t))
 (call journal_client_subject_type (nspawn_t))
 
 (call machine_manage_lib_files (nspawn_t))
