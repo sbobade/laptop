@@ -49,6 +49,8 @@
 (type mycontainer_object_t)
 (call files_object_type (nspawn_common_container_object_type))
 
+(call subject_entry_object_type (nspawn_common_container_object_type))
+
 (typeattributeset nspawn_object_type nspawn_common_container_object_type)
 
 (context mycontainer (system_u object_r mycontainer_object_t (systemlow systemlow)))
@@ -116,9 +118,6 @@
 (call subject_mmap_low (nspawn_common_container_subject_type))
 
 (call subject_object_identity_change_exemption (nspawn_common_container_subject_type))
-
-(call commands_mprot_read_shell_exec_files (nspawn_common_container_subject_type))
-(call commands_shell_exec_object_entry_subject (nspawn_common_container_subject_type))
 
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
@@ -241,7 +240,6 @@
 
 (call nspawn_setattr_terminals (nspawn_t))
 (call nspawn_use_terminals (nspawn_t))
-(call nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects (nspawn_t))
 
 (call systemd_mmap_exec_files (nspawn_t))
 (call systemd_search_transient_unit (nspawn_t))
@@ -347,11 +345,11 @@
 (macro nspawn_common_container_template ((type ARG1)(type ARG2))
     (call nspawn_common_container_subject_type (ARG1))
     (call nspawn_common_container_object_type (ARG2))
+    (allow ARG1 ARG2 (file (entrypoint)))
+    (call manual_subject_type_transition_pattern (nspawn_t ARG2 ARG1))
+    (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 (all_file_objects (manage))))
-
-(macro nspawn_shell_exec_manual_subject_type_transition_all_common_container_subjects ((type ARG1))
-    (call commands_shell_exec_manual_subject_type_transition (ARG1 nspawn_common_container_subject_type)))
 
 (macro nspawn_read_state ((type ARG1))
     (call filesystems_search_proc (ARG1))
