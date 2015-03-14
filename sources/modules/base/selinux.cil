@@ -75,6 +75,9 @@
     (call filesystems_search_sysfs (ARG1))
     (allow ARG1 securityfs_fs_t list_dir_perms))
 
+(macro selinux_dontaudit_list_securityfs ((type ARG1))
+    (dontaudit ARG1 securityfs_fs_t list_dir_perms))
+
 (macro selinux_getattr_filesystems ((type ARG1))
     (allow ARG1 securityfs_fs_t (filesystem (getattr))))
 

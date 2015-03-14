@@ -138,6 +138,8 @@
 
 (call network_udp_bind_generic_node (nspawn_common_container_subject_type))
 
+(call selinux_dontaudit_list_securityfs (nspawn_common_container_subject_type))
+
 (call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
 (call subject_execheap (nspawn_common_container_subject_type))
