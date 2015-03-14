@@ -489,6 +489,9 @@
     (call filesystems_search_hugetlbfs (ARG1))
     (allow ARG1 hugetlbfs_fs_t (dir (setattr))))
 
+(macro filesystems_read_nsfs_files ((type ARG1))
+    (allow ARG1 nsfs_fs_t read_file_perms))
+
 (macro filesystems_search_proc ((type ARG1))
     (allow ARG1 proc_fs_t search_dir_perms))
 
