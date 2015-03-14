@@ -150,6 +150,7 @@
 (call system_read_kernel_message (nspawn_t))
 (call system_read_kernel_sysctl (nspawn_t))
 (call system_read_net_proc (nspawn_t))
+(call system_request_load_module (nspawn_t))
 (call system_mounton_sysctl_dirs (nspawn_t))
 (call system_mounton_kernel_sysctl_files (nspawn_t))
 (call system_mounton_kmsg_proc_files (nspawn_t))
@@ -157,6 +158,7 @@
 (call devices_getattr_random (nspawn_t))
 (call devices_getattr_tun_tap (nspawn_t))
 (call devices_getattr_urandom (nspawn_t))
+(call devices_rw_loop_control (nspawn_t))
 
 (call files_manage_config_lnk_files (nspawn_t))
 (call files_mounton_runtime_dirs (nspawn_t))
@@ -194,6 +196,8 @@
 (call filesystems_remount_sysfs (nspawn_t))
 (call filesystems_mounton_sysfs_dirs (nspawn_t))
 
+(call filesystems_read_sysfs (nspawn_t))
+
 (call selinux_remount_securityfs (nspawn_t))
 (call selinux_validate_context (nspawn_t))
 
@@ -224,6 +228,8 @@
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))
 (call systemd_write_systemd_runtime_sock_files (nspawn_t))
+
+(call udev_read_config_files (nspawn_t))
 
 (call usersubject_search_home_dir (nspawn_t))
 
