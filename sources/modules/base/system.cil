@@ -259,6 +259,10 @@
 (optional system_optional_kmod
     (call kmod_auto_subject_type_transition (system_t)))
 
+(optional system_optional_machine
+    (call machine_read_inherited_lib_files (system_t))
+    (call nspawn_use_fd (system_t)))
+
 (optional system_optional_plymouth
     (call plymouth_manage_plymouthd_runtime_files (system_t))
     (call plymouth_manage_plymouthd_lib_files (system_t)))

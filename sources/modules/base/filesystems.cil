@@ -456,6 +456,9 @@
 (macro filesystems_getattr_filesystems ((type ARG1))
     (allow ARG1 fs_t (filesystem (getattr))))
 
+(macro filesystems_mount ((type ARG1))
+    (allow ARG1 fs_t (filesystem (mount))))
+
 (macro filesystems_mount_fuse ((type ARG1))
     (allow ARG1 fuse_fs_t (filesystem (mount))))
 

@@ -151,6 +151,7 @@
 (call system_read_kernel_sysctl (nspawn_t))
 (call system_read_net_proc (nspawn_t))
 (call system_request_load_module (nspawn_t))
+(call system_setsched (nspawn_t))
 (call system_mounton_sysctl_dirs (nspawn_t))
 (call system_mounton_kernel_sysctl_files (nspawn_t))
 (call system_mounton_kmsg_proc_files (nspawn_t))
@@ -167,6 +168,8 @@
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
+
+(call filesystems_mount (nspawn_t))
 
 (call filesystems_mprot_write_devtmpfs_dirs (nspawn_t))
 (call filesystems_mounton_devtmpfs_dirs (nspawn_t))
@@ -328,6 +331,9 @@
     (allow ARG1 nspawn_common_container_subject_type read_file_perms)
     (allow ARG1 nspawn_common_container_subject_type list_dir_perms)
     (allow ARG1 nspawn_common_container_subject_type read_lnk_file_perms))
+
+(macro nspawn_use_fd ((type ARG1))
+    (allow ARG1 nspawn_t (fd (use))))
 
 (macro nspawn_start_unit ((type ARG1))
     (call systemd_search_unit (ARG1))
