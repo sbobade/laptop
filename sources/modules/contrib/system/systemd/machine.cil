@@ -210,7 +210,7 @@
 
 (macro machine_manage_lib ((type ARG1))
     (call files_rw_lib_dirs (ARG1))
-    (allow ARG1 machine_lib_t (all_file_objects (read))))
+    (allow ARG1 machine_lib_t (all_file_objects (manage))))
 
 (macro machine_lib_object_type_transition_machine_lib_dirs ((type ARG1))
     (call files_lib_object_type_transition (ARG1 machine_lib_t dir "machines")))
