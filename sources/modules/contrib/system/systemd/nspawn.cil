@@ -170,7 +170,7 @@
 (allow nspawn_t nspawn_common_container_object_type (chr_file (mounton)))
 (allow nspawn_t nspawn_common_container_object_type create_chr_file_perms)
 
-(allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount unmount relabelto relabelfrom)))
+(allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount relabelto relabelfrom)))
 
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
 
@@ -358,7 +358,7 @@
     (call nspawn_common_container_object_type (ARG2))
     (allow ARG1 ARG2 (file (entrypoint)))
     (call manual_subject_type_transition_pattern (nspawn_t ARG2 ARG1))
-    (allow ARG1 ARG2 (filesystem (getattr)))
+    (allow ARG1 ARG2 (filesystem (getattr unmount)))
     (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 exec_file_perms)
