@@ -465,7 +465,7 @@
 (macro filesystems_unmount_fuse ((type ARG1))
     (allow ARG1 fuse_fs_t (filesystem (unmount))))
 
-(macro filesystesm_search_hugetlbfs ((type ARG1))
+(macro filesystems_search_hugetlbfs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 hugetlbfs_fs_t search_dir_perms))
 
@@ -475,6 +475,9 @@
 
 (macro filesystems_getattr_hugetlbfs_filesystems ((type ARG1))
     (allow ARG1 hugetlbfs_fs_t (filesystem (getattr))))
+
+(macro filesystems_dontaudit_audit_access_hugetlbfs_dirs ((type ARG1))
+    (dontaudit ARG1 hugetlbfs_fs_t (dir (audit_access))))
 
 (macro filesystems_search_proc ((type ARG1))
     (allow ARG1 proc_fs_t search_dir_perms))

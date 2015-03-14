@@ -49,6 +49,8 @@
 (type mycontainer_object_t)
 (call files_object_type (nspawn_common_container_object_type))
 
+(call filesystems_associate_tmpfs (nspawn_common_container_object_type))
+
 (call subject_entry_object_type (nspawn_common_container_object_type))
 
 (typeattributeset nspawn_object_type nspawn_common_container_object_type)
@@ -101,7 +103,16 @@
     all_fifo_file_perms_except_mounton_and_execmod)
 
 (call system_link_keyring (nspawn_common_container_subject_type))
+
+(call system_read_all_proc (nspawn_common_container_subject_type))
+
+(call system_read_crypto_sysctl (nspawn_common_container_subject_type))
+(call system_read_dev_sysctl (nspawn_common_container_subject_type))
+(call system_read_fs_sysctl (nspawn_common_container_subject_type))
+(call system_read_sysctl (nspawn_common_container_subject_type))
 (call system_read_kernel_sysctl (nspawn_common_container_subject_type))
+(call system_read_net_sysctl (nspawn_common_container_subject_type))
+(call system_read_vm_sysctl (nspawn_common_container_subject_type))
 
 (call filesystems_getattr_filesystems (nspawn_common_container_subject_type))
 (call filesystems_getattr_hugetlbfs_filesystems (nspawn_common_container_subject_type))
@@ -115,6 +126,7 @@
 (call filesystems_remount_tmpfs (nspawn_common_container_subject_type))
 (call filesystems_unmount_tmpfs (nspawn_common_container_subject_type))
 
+(call filesystems_dontaudit_audit_access_hugetlbfs_dirs (nspawn_common_container_subject_type))
 (call filesystems_list_hugetlbfs (nspawn_common_container_subject_type))
 (call filesystems_list_proc (nspawn_common_container_subject_type))
 (call filesystems_read_sysfs (nspawn_common_container_subject_type))
@@ -180,7 +192,7 @@
 (call devices_rw_loop_control (nspawn_t))
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
-(call filesystems_relabelfrom_devpts_filesystems (nspawn_t)) 
+(call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
 (call filesystems_list_debugfs (nspawn_t))
 
 (call filesystems_mounton_cgroup_dirs (nspawn_t))
