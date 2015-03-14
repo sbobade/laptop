@@ -111,6 +111,9 @@
 (optional fstools_optional_fsck
     (call fsck_manage_runtime_files (fstools_t)))
 
+(optional fstools_optional_machine
+    (call machine_rw_lib_files (fstools_t)))
+
 (optional fstools_optional_systemd
     (call systemd_daemon (fstools_t fstools_exec_t)))
 

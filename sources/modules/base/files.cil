@@ -1276,10 +1276,10 @@
     (allow ARG1 files_except (all_file_objects (getattr))))
 
 (macro files_read_all_files_except ((type ARG1))
-    (allow ARG1 files_except read_file_perms))
+    (call read_files_pattern (ARG1 files_except files_except)))
 
 (macro files_rw_all_files_except ((type ARG1))
-    (allow ARG1 files_except rw_file_perms))
+    (call rw_files_pattern (ARG1 files_except files_except)))
 
 (macro files_mprot_read_all_files_except ((type ARG1))
     (allow ARG1 files_except (file (read))))

@@ -60,6 +60,9 @@
         (call files_rw_all_files_except (mount_t))
         (call files_mounton_all_except (mount_t))))
 
+(optional mount_optional_machine
+    (call machine_rw_lib_files (mount_t)))
+
 (optional mount_optional_systemd
     (call systemd_daemon (mount_t mount_exec_t)))
 
