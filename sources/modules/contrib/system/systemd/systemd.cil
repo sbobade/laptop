@@ -177,7 +177,6 @@
 (call filesystems_manage_devtmpfs_chr_files (systemd_t))
 (call filesystems_mount_autofs (systemd_t))
 (call filesystems_mount_tmpfs (systemd_t))
-(call filesystems_read_nsfs_files (systemd_t))
 (call filesystems_read_tmpfs_files (systemd_t))
 (call filesystems_relabelfrom_devtmpfs_chr_files (systemd_t))
 (call filesystems_relabelfrom_devtmpfs_blk_files (systemd_t))

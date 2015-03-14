@@ -55,8 +55,6 @@
 
 (call system_read_kernel_sysctl (machined_t))
 
-(call filesystems_read_nsfs_files (machined_t))
-
 (call dbus_system_service (machined_t))
 
 (call journal_client_subject_type (machined_t))

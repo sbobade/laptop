@@ -97,6 +97,7 @@
 (context fs (system_u object_r fs_t (systemlow systemlow)))
 (sidcontext fs fs)
 
+(fsuse task "nsfs" fs)
 (fsuse task "pipefs" fs)
 (fsuse task "sockfs" fs)
 
@@ -117,13 +118,6 @@
 
 (context hugetlbfs_fs (system_u object_r hugetlbfs_fs_t (systemlow systemlow)))
 (fsuse trans "hugetlbfs" hugetlbfs_fs)
-
-(type nsfs_fs_t)
-(call filesystems_object_type (nsfs_fs_t))
-
-;(context nsfs_fs (system_u object_r nsfs_fs_t (systemlow systemlow)))
-;(genfscon "nsfs" "/" nsfs_fs)
-(fsuse task "nsfs" fs)
 
 (type proc_fs_t)
 (call filesystems_object_type (proc_fs_t))
@@ -489,9 +483,6 @@
 (macro filesystems_setattr_hugetlbfs_dirs ((type ARG1))
     (call filesystems_search_hugetlbfs (ARG1))
     (allow ARG1 hugetlbfs_fs_t (dir (setattr))))
-
-(macro filesystems_read_nsfs_files ((type ARG1))
-    (allow ARG1 nsfs_fs_t read_file_perms))
 
 (macro filesystems_search_proc ((type ARG1))
     (allow ARG1 proc_fs_t search_dir_perms))

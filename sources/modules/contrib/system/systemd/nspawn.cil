@@ -192,7 +192,7 @@
 
 (call devices_getattr_random (nspawn_t))
 (call devices_getattr_tun_tap (nspawn_t))
-(call devices_getattr_urandom (nspawn_t))
+(call devices_read_urandom (nspawn_t))
 (call devices_rw_loop_control (nspawn_t))
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
