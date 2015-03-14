@@ -75,7 +75,9 @@
 (call devices_read_urandom (fstools_t))
 (call devices_read_random (fstools_t))
 (call devices_rw_lvm_control (fstools_t))
+(call devices_rw_loop_control (fstools_t))
 
+(call filesystems_list_debugfs (fstools_t))
 (call filesystems_list_devtmpfs (fstools_t))
 (call filesystems_read_devtmpfs_lnk_files (fstools_t))
 (call filesystems_read_sysfs (fstools_t))
@@ -100,6 +102,11 @@
 (call seutil_read_file_context_files (fstools_t))
 
 (call udev_client_subject_type (fstools_t))
+
+(optional fstools_optional_mount
+    (booleanif (mount_any_file)
+        (true
+            (call files_rw_all_files_except (fstools_t)))))
 
 (optional fstools_optional_fsck
     (call fsck_manage_runtime_files (fstools_t)))
@@ -144,6 +151,9 @@
 
 (macro fstools_runtime_object_type_transition_runtime_dirs ((type ARG1))
     (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "blkid")))
+
+(macro fstools_use_fd ((type ARG1))
+    (allow ARG1 fstools_t (fd (use))))
 
 (macro fstools_read_runtime ((type ARG1))
     (call files_search_runtime (ARG1))

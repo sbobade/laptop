@@ -1278,6 +1278,12 @@
 (macro files_read_all_files_except ((type ARG1))
     (allow ARG1 files_except read_file_perms))
 
+(macro files_rw_all_files_except ((type ARG1))
+    (allow ARG1 files_except rw_file_perms))
+
+(macro files_mprot_read_all_files_except ((type ARG1))
+    (allow ARG1 files_except (file (read))))
+
 (macro files_read_all_lnk_files_except ((type ARG1))
     (allow ARG1 files_except read_lnk_file_perms))
 

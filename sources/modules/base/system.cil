@@ -247,6 +247,13 @@
         (allow system_can_load_kernel_module self (capability (sys_nice sys_module)))
         (allow system_can_load_kernel_module system_t (process (setsched)))))
 
+(optional system_optional_mount
+    (call mount_use_fd (system_t))
+
+    (booleanif (mount_any_file)
+        (true
+            (call files_mprot_read_all_files_except (system_t)))))
+
 (optional system_optional_bootchart
     (call bootchart_auto_subject_type_transition (system_t)))
 
@@ -256,11 +263,16 @@
 (optional system_optional_coredump
     (call coredump_auto_subject_type_transition (system_t)))
 
+(optional system_optional_fstools
+    (call fstools_use_fd (system_t)))
+
 (optional system_optional_kmod
     (call kmod_auto_subject_type_transition (system_t)))
 
 (optional system_optional_machine
-    (call machine_read_inherited_lib_files (system_t))
+    (call machine_mprot_read_lib_files (system_t)))
+
+(optional system_optional_nspawn
     (call nspawn_use_fd (system_t)))
 
 (optional system_optional_plymouth

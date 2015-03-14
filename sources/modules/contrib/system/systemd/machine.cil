@@ -189,8 +189,8 @@
     (call files_search_lib (ARG1))
     (call read_files_pattern (ARG1 machine_lib_t machine_lib_t)))
 
-(macro machine_read_inherited_lib_files ((type ARG1))
-    (allow ARG1 machine_lib_t read_inherited_file_perms))
+(macro machine_mprot_read_lib_files ((type ARG1))
+    (allow ARG1 machine_lib_t (file (read))))
 
 (macro machine_manage_lib_files ((type ARG1))
     (call files_search_lib (ARG1))
