@@ -717,6 +717,9 @@
 (macro filesystems_remount_cgroup ((type ARG1))
     (allow ARG1 cgroup_fs_t (filesystem (remount))))
 
+(macro filesystems_mount_hugetlbfs ((type ARG1))
+    (allow ARG1 hugetlbfs_fs_t (filesystem (mount))))
+
 (macro filesystems_remount_hugetlbfs ((type ARG1))
     (allow ARG1 hugetlbfs_fs_t (filesystem (remount))))
 

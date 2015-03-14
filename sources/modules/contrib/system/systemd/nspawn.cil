@@ -103,8 +103,26 @@
 (call system_link_keyring (nspawn_common_container_subject_type))
 (call system_read_kernel_sysctl (nspawn_common_container_subject_type))
 
+(call filesystems_getattr_filesystems (nspawn_common_container_subject_type))
+(call filesystems_getattr_hugetlbfs_filesystems (nspawn_common_container_subject_type))
+(call filesystems_getattr_proc_filesystems (nspawn_common_container_subject_type))
+(call filesystems_getattr_sysfs_filesystems (nspawn_common_container_subject_type))
+(call filesystems_getattr_tmpfs_filesystems (nspawn_common_container_subject_type))
+
+(call filesystems_mount_hugetlbfs (nspawn_common_container_subject_type))
+
+(call filesystems_mount_tmpfs (nspawn_common_container_subject_type))
+(call filesystems_remount_tmpfs (nspawn_common_container_subject_type))
+(call filesystems_unmount_tmpfs (nspawn_common_container_subject_type))
+
+(call filesystems_list_hugetlbfs (nspawn_common_container_subject_type))
 (call filesystems_list_proc (nspawn_common_container_subject_type))
 (call filesystems_read_sysfs (nspawn_common_container_subject_type))
+(call filesystems_manage_cgroup_dirs (nspawn_common_container_subject_type))
+(call filesystems_rw_cgroup_files (nspawn_common_container_subject_type))
+(call filesystems_setattr_cgroup_files (nspawn_common_container_subject_type))
+
+(call network_udp_bind_generic_node (nspawn_common_container_subject_type))
 
 (call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
@@ -162,7 +180,7 @@
 (call devices_rw_loop_control (nspawn_t))
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
-(call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
+(call filesystems_relabelfrom_devpts_filesystems (nspawn_t)) 
 (call filesystems_list_debugfs (nspawn_t))
 
 (call filesystems_mounton_cgroup_dirs (nspawn_t))
@@ -328,7 +346,8 @@
     (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 exec_file_perms)
-    (allow ARG1 ARG2 (all_file_objects (manage))))
+    (allow ARG1 ARG2 (all_file_objects (manage)))
+    (call filesystems_tmpfs_object_type_transition (ARG1 ARG2 all_file_objects "*")))
 
 (macro nspawn_read_state ((type ARG1))
     (call filesystems_search_proc (ARG1))
