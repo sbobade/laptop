@@ -346,6 +346,9 @@
 (macro filesystems_rw_devtmpfs_dirs ((type ARG1))
     (allow ARG1 devtmpfs_fs_t rw_dir_perms))
 
+(macro filesystems_mprot_write_devtmpfs_dirs ((type ARG1))
+    (allow ARG1 devtmpfs_fs_t (dir (write))))
+
 (macro filesystems_setattr_devtmpfs_dirs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 devtmpfs_fs_t (dir (setattr))))

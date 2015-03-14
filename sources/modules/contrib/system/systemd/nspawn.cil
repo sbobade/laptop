@@ -166,12 +166,14 @@
 
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
 
-(call filesystems_add_entry_devtmpfs (nspawn_t))
+(call filesystems_mprot_write_devtmpfs_dirs (nspawn_t))
 (call filesystems_mounton_devtmpfs_dirs (nspawn_t))
 
 (call filesystems_mounton_proc_dirs (nspawn_t))
 (call filesystems_mount_proc (nspawn_t))
 (call filesystems_remount_proc (nspawn_t))
+
+(call filesystems_mprot_write_rootfs_dirs (nspawn_t))
 
 (call filesystems_manage_cgroup_dirs (nspawn_t))
 
