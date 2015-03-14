@@ -1134,6 +1134,10 @@
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 usersubject_pty_object_type relabelfrom_chr_file_perms))
 
+(macro usersubject_getattr_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 user_tty_dev_t (chr_file (getattr))))
+
 (macro usersubject_use_ttys ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 user_tty_dev_t rw_term_perms))
@@ -1191,6 +1195,10 @@
 (macro usersubject_setattr_terminals ((type ARG1))
     (call usersubject_setattr_ptys (ARG1))
     (call usersubject_setattr_ttys (ARG1)))
+
+(macro usersubject_getattr_terminals ((type ARG1))
+    (call usersubject_getattr_ptys (ARG1))
+    (call usersubject_getattr_ttys (ARG1)))
 
 (macro usersubject_use_terminals ((type ARG1))
     (call usersubject_use_ptys (ARG1))
