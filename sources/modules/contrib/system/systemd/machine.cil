@@ -100,9 +100,12 @@
 
 (call machine_dbus_chat_machined (machine_machinectl_client_subject_type))
 (call machine_use_machined_fd (machine_machinectl_client_subject_type))
+(call nspawn_rw_all_inherited_common_container_object_chr_files (machine_machinectl_client_subject_type))
 
 (call miscfiles_read_all_terminfo (machine_machinectl_client_subject_type))
 (call miscfiles_read_locale (machine_machinectl_client_subject_type))
+
+(call systemd_dbus_chat (machine_machinectl_client_subject_type))
 
 (optional machine_machinectl_client_subject_type_optional_polkit
     (call polkit_dbus_chat_polkitd (machine_machinectl_client_subject_type)))
@@ -110,10 +113,6 @@
 (call import_dbus_chat_importd (machine_machinectl_subject_type))
 
 (call machine_machinectl_client_subject_type (machine_machinectl_subject_type))
-
-(call nspawn_rw_all_inherited_common_container_object_chr_files (machine_machinectl_subject_type))
-
-(call systemd_dbus_chat (machine_machinectl_subject_type))
 
 (macro machine_machinectl_client_subject_type ((type ARG1))
     (typeattributeset machine_machinectl_client_subject_type ARG1))
