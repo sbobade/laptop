@@ -221,6 +221,7 @@
 (call shutdown_share_state (systemd_t))
 
 (call systemd_exec (systemd_t))
+(call systemd_auto_subject_type_transition (systemd_t))
 (call systemd_exec_systemdhelper (systemd_t))
 (call systemd_relabelto_transient_unit_dirs (systemd_t))
 

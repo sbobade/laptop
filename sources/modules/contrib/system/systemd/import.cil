@@ -7,7 +7,7 @@
 (context importd_exec (system_u object_r importd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-importd" file importd_exec)
 
-(call dbus_system_service (importd_t))
+; (call dbus_system_service (importd_t))
 
 (macro import_exec_importd ((type ARG1))
     (call can_exec (ARG1 importd_exec_t)))

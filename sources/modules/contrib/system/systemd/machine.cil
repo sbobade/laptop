@@ -81,7 +81,7 @@
 
 (call dbus_system_client_subject_type (machine_machinectl_subject_type))
 
-(call import_dbus_chat_importd (machine_machinectl_subject_type))
+; (call import_dbus_chat_importd (machine_machinectl_subject_type))
 
 (call machine_dbus_chat_machined (machine_machinectl_subject_type))
 
