@@ -128,7 +128,6 @@
 
 (call usersubject_common_login_user_home_template (nspawn_common_container_subject_type))
 (call usersubject_common_login_user_tmp_template (nspawn_common_container_subject_type))
-(call usersubject_common_login_user_tmpfs_template (nspawn_common_container_subject_type))
 
 (allow nspawn_t nspawn_common_container_subject_type (process (sigkill)))
 
