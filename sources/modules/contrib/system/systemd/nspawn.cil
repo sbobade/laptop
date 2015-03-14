@@ -47,7 +47,7 @@
 (roletype nspawn_role mycontainer_subject_t)
 
 (type mycontainer_object_t)
-(call filesystems_object_type (nspawn_common_container_object_type))
+(call files_object_type (nspawn_common_container_object_type))
 
 (context mycontainer (system_u object_r mycontainer_object_t (systemlow systemlow)))
 (filecon "/var/lib/machines/mycontainer(/.*)?" any mycontainer)
