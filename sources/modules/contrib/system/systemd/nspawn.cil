@@ -147,6 +147,7 @@
 (call subject_execstack (nspawn_common_container_subject_type))
 (call subject_mmap_low (nspawn_common_container_subject_type))
 
+(call nspawn_search_systemd_runtime (nspawn_common_container_subject_type))
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
 
@@ -157,7 +158,7 @@
 (optional nspawn_common_container_subject_type_optional_http
     (call http_tcp_connect_http_port (nspawn_common_container_subject_type)))
 
-(allow nspawn_t nspawn_common_container_subject_type (process (sigkill)))
+(allow nspawn_t nspawn_common_container_subject_type (process (sigkill signal)))
 
 (allow nspawn_t nspawn_common_container_object_type (dir (mounton relabelfrom relabelto
     create open getattr setattr read write link unlink rename search add_name remove_name reparent
@@ -169,7 +170,7 @@
 (allow nspawn_t nspawn_common_container_object_type (chr_file (mounton)))
 (allow nspawn_t nspawn_common_container_object_type create_chr_file_perms)
 
-(allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount relabelto relabelfrom)))
+(allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount unmount relabelto relabelfrom)))
 
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
 
