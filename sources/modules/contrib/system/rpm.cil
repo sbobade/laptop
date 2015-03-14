@@ -195,6 +195,12 @@
 (macro rpm_shell_manual_subject_type_transition_rpm_script ((type ARG1))
     (call commands_shell_exec_manual_subject_type_transition (ARG1 rpm_script_t)))
 
+(macro rpm_spec_manual_subject_type_transition_rpm_script ((type ARG1)(type ARG2))
+    (call manual_subject_type_transition_pattern (ARG1 ARG2 rpm_script_t)))
+
+(macro rpm_roletype ((role ARG1))
+    (roleattributeset rpm_role ARG1))
+
 (macro rpm_search_config ((type ARG1))
     (call files_search_config (ARG1))
     (allow ARG1 rpm_config_t search_dir_perms))

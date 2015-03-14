@@ -128,6 +128,8 @@
 
 (call filesystems_dontaudit_audit_access_hugetlbfs_dirs (nspawn_common_container_subject_type))
 (call filesystems_list_hugetlbfs (nspawn_common_container_subject_type))
+(call filesystems_setattr_hugetlbfs_dirs (nspawn_common_container_subject_type))
+
 (call filesystems_list_proc (nspawn_common_container_subject_type))
 (call filesystems_read_sysfs (nspawn_common_container_subject_type))
 (call filesystems_manage_cgroup_dirs (nspawn_common_container_subject_type))
@@ -146,13 +148,15 @@
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
 
-(call rpm_read_state (nspawn_common_container_subject_type))
-(call rpm_read_state_script (nspawn_common_container_subject_type))
-(call rpm_run (nspawn_common_container_subject_type nspawn_role))
-
 (call systemd_exec_object_entry_subject (nspawn_common_container_subject_type))
 
 (call usersubject_link_keyring_all_common_login_subjects (nspawn_common_container_subject_type))
+
+(optional nspawn_common_container_subject_type_optional_http
+    (call http_tcp_connect_http_port (nspawn_common_container_subject_type)))
+
+(optional nspawn_common_container_subject_type_optional_rpm
+    (call rpm_read_state_script (nspawn_common_container_subject_type)))
 
 (allow nspawn_t nspawn_common_container_subject_type (process (sigkill)))
 
@@ -258,6 +262,9 @@
 
 (call usersubject_search_home_dir (nspawn_t))
 
+(optional nspawn_optional_rpm
+    (call rpm_roletype (nspawn_role)))
+
 (allow nspawn_admin_subject_type nspawn_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (nspawn_admin_subject_type nspawn_t))
 
@@ -359,7 +366,9 @@
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 exec_file_perms)
     (allow ARG1 ARG2 (all_file_objects (manage)))
-    (call filesystems_tmpfs_object_type_transition (ARG1 ARG2 all_file_objects "*")))
+    (call filesystems_tmpfs_object_type_transition (ARG1 ARG2 all_file_objects "*"))
+    (optional nspawn_common_container_template_optional_rpm
+        (call rpm_spec_manual_subject_type_transition_rpm_script (ARG1 ARG2))))
 
 (macro nspawn_read_state ((type ARG1))
     (call filesystems_search_proc (ARG1))
