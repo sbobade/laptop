@@ -201,9 +201,10 @@
 (call selinux_remount_securityfs (nspawn_t))
 (call selinux_validate_context (nspawn_t))
 
-(call subject_identity_change_exemption (nspawn_t))
+(call subject_system_identity_change_exemption (nspawn_t))
+(call subject_system_role_change_exemption (nspawn_t))
+(call subject_change_exemption (nspawn_t))
 (call subject_object_identity_change_exemption (nspawn_t))
-(call subject_role_change_exemption (nspawn_t))
 
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
