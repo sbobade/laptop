@@ -33,7 +33,7 @@
 
 (call systemd_bounded_subject_type (importd_t))
 (call systemd_exec_systemdhelper (importd_t))
-(call systemd_stream_connect (importd_t))
+(call systemd_write_systemd_runtime_sock_files (importd_t))
 
 (optional import_optional_http
     (call http_tcp_connect_http_port (importd_t)))

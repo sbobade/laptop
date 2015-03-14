@@ -214,7 +214,7 @@
 (call journal_relabelto_log_files (systemd_t))
 (call journal_use_fd_journald (systemd_t))
 
-(call machine_manage_lib (systemd_t))
+(call machine_manage_lib_files (systemd_t))
 
 (call miscfiles_read_modules (systemd_t))
 
@@ -1033,6 +1033,10 @@
 (macro systemd_stream_connect ((type ARG1))
     (call files_search_runtime (ARG1))
     (call stream_connect_pattern (ARG1 systemd_runtime_t systemd_runtime_t systemd_t)))
+
+(macro systemd_write_systemd_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call write_sock_files_pattern (ARG1 systemd_runtime_t systemd_runtime_t)))
 
 (macro systemd_dbus_chat ((type ARG1))
     (allow ARG1 systemd_t (dbus (send_msg)))
