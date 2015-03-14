@@ -149,8 +149,8 @@
 (call system_request_load_module (nspawn_t))
 (call system_setsched (nspawn_t))
 (call system_mounton_sysctl_dirs (nspawn_t))
-;(call system_mounton_kernel_sysctl_files (nspawn_t))
-;(call system_mounton_kmsg_proc_files (nspawn_t))
+(call system_mounton_kernel_sysctl_files (nspawn_t))
+(call system_mounton_kmsg_proc_files (nspawn_t))
 
 (call devices_getattr_random (nspawn_t))
 (call devices_getattr_tun_tap (nspawn_t))
@@ -161,33 +161,28 @@
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
 (call filesystems_list_debugfs (nspawn_t))
 
-;(call filesystems_mounton_devtmpfs_dirs (nspawn_t))
-;(call filesystems_mounton_proc_dirs (nspawn_t))
 (call filesystems_mounton_cgroup_dirs (nspawn_t))
 (call filesystems_mounton_rootfs_dirs (nspawn_t))
+(call filesystems_mounton_sysfs_dirs (nspawn_t))
 (call filesystems_mounton_tmpfs_dirs (nspawn_t))
 
 (call filesystems_mount (nspawn_t))
-
+(call filesystems_mount_cgroup (nspawn_t))
 (call filesystems_mount_devpts (nspawn_t))
-
 (call filesystems_mount_proc (nspawn_t))
+(call filesystems_mount_sysfs (nspawn_t))
+(call filesystems_mount_tmpfs (nspawn_t))
+
+(call filesystems_remount_cgroup (nspawn_t))
 (call filesystems_remount_proc (nspawn_t))
+(call filesystems_remount_sysfs (nspawn_t))
+(call filesystems_remount_tmpfs (nspawn_t))
 
 (call filesystems_manage_cgroup_dirs (nspawn_t))
 
 (call filesystems_relabelfrom_tmpfs_filesystems (nspawn_t))
 (call filesystems_manage_tmpfs_dirs (nspawn_t))
 (call filesystems_manage_tmpfs_lnk_files (nspawn_t))
-
-(call filesystems_mount_cgroup (nspawn_t))
-(call filesystems_remount_cgroup (nspawn_t))
-
-(call filesystems_mount_tmpfs (nspawn_t))
-(call filesystems_remount_tmpfs (nspawn_t))
-
-(call filesystems_mount_sysfs (nspawn_t))
-(call filesystems_remount_sysfs (nspawn_t))
 
 (call filesystems_read_sysfs (nspawn_t))
 
