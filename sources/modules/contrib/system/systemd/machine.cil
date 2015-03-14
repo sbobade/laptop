@@ -84,7 +84,7 @@
 (optional machined_optional_usersubject
     (call usersubject_getattr_ptys (machined_t)))
 
-(allow machine_machinectl_subject_type self (capability (dac_override net_admin)))
+(allow machine_machinectl_subject_type self (capability (dac_override net_admin sys_admin)))
 (allow machine_machinectl_subject_type self rw_fifo_file_perms)
 
 (call commands_exec (machine_machinectl_subject_type))
