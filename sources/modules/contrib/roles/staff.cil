@@ -279,6 +279,9 @@
 (optional staff_optional_journal
     (call journal_exec_journalctl (staff_t)))
 
+(optional staff_optional_machine
+    (call machine_exec_machinectl (staff_t)))
+
 (optional staff_optional_mail
     (type staff_mutt_t)
     (call mail_role_template_mutt (staff_r staff_subject_type staff_mutt_t))
