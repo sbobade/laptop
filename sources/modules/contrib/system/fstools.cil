@@ -71,6 +71,7 @@
 (call fstools_runtime_object_type_transition_runtime_dirs (fstools_t))
 
 (call system_get_sysvipc_info (fstools_t))
+(call system_request_load_module (fstools_t))
 
 (call devices_read_urandom (fstools_t))
 (call devices_read_random (fstools_t))
