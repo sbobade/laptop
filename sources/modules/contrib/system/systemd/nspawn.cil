@@ -101,14 +101,6 @@
     all_fifo_file_perms_except_mounton_and_execmod)
 
 (call system_link_keyring (nspawn_common_container_subject_type))
-(call system_unconfined_subject_type (nspawn_common_container_subject_type))
-
-(call files_rootfs_object_type_transition_file (nspawn_common_container_subject_type))
-(call files_unconfined_subject_type (nspawn_common_container_subject_type))
-
-(call filesystems_unconfined_subject_type (nspawn_common_container_subject_type))
-
-(call network_unconfined_subject_type (nspawn_common_container_subject_type))
 
 (call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
@@ -116,8 +108,6 @@
 (call subject_execmem (nspawn_common_container_subject_type))
 (call subject_execstack (nspawn_common_container_subject_type))
 (call subject_mmap_low (nspawn_common_container_subject_type))
-
-(call subject_object_identity_change_exemption (nspawn_common_container_subject_type))
 
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
@@ -129,9 +119,6 @@
 (call systemd_exec_object_entry_subject (nspawn_common_container_subject_type))
 
 (call usersubject_link_keyring_all_common_login_subjects (nspawn_common_container_subject_type))
-
-(call usersubject_common_login_user_home_template (nspawn_common_container_subject_type))
-(call usersubject_common_login_user_tmp_template (nspawn_common_container_subject_type))
 
 (allow nspawn_t nspawn_common_container_subject_type (process (sigkill)))
 
@@ -161,7 +148,6 @@
 (call system_read_net_proc (nspawn_t))
 (call system_request_load_module (nspawn_t))
 (call system_setsched (nspawn_t))
-(call system_mounton_sysctl_dirs (nspawn_t))
 (call system_mounton_kernel_sysctl_files (nspawn_t))
 (call system_mounton_kmsg_proc_files (nspawn_t))
 
@@ -169,10 +155,6 @@
 (call devices_getattr_tun_tap (nspawn_t))
 (call devices_getattr_urandom (nspawn_t))
 (call devices_rw_loop_control (nspawn_t))
-
-(call files_manage_config_lnk_files (nspawn_t))
-(call files_mounton_runtime_dirs (nspawn_t))
-(call files_read_config_files (nspawn_t)) ; FIXME: /etc/machine-id
 
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
@@ -189,26 +171,20 @@
 (call filesystems_mount_proc (nspawn_t))
 (call filesystems_remount_proc (nspawn_t))
 
-(call filesystems_mprot_write_rootfs_dirs (nspawn_t))
-
 (call filesystems_manage_cgroup_dirs (nspawn_t))
 
 (call filesystems_relabelfrom_tmpfs_filesystems (nspawn_t))
-(call filesystems_mounton_tmpfs_dirs (nspawn_t))
 (call filesystems_manage_tmpfs_dirs (nspawn_t))
 (call filesystems_manage_tmpfs_lnk_files (nspawn_t))
 
-(call filesystems_mounton_cgroup_dirs (nspawn_t))
 (call filesystems_mount_cgroup (nspawn_t))
 (call filesystems_remount_cgroup (nspawn_t))
 
-(call filesystems_mounton_rootfs_dirs (nspawn_t))
 (call filesystems_mount_tmpfs (nspawn_t))
 (call filesystems_remount_tmpfs (nspawn_t))
 
 (call filesystems_mount_sysfs (nspawn_t))
 (call filesystems_remount_sysfs (nspawn_t))
-(call filesystems_mounton_sysfs_dirs (nspawn_t))
 
 (call filesystems_read_sysfs (nspawn_t))
 
@@ -225,9 +201,6 @@
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
 (call dbus_system_client_subject_type (nspawn_t))
-
-(call dns_config_object_type_transition_resolve_config_files (nspawn_t))
-(call dns_manage_resolve_config_files (nspawn_t))
 
 (call journal_search_log (nspawn_t))
 (call journal_client_subject_type (nspawn_t))
@@ -347,6 +320,7 @@
     (call nspawn_common_container_object_type (ARG2))
     (allow ARG1 ARG2 (file (entrypoint)))
     (call manual_subject_type_transition_pattern (nspawn_t ARG2 ARG1))
+    (allow ARG1 ARG2 (filesystem (getattr)))
     (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 (all_file_objects (manage))))
