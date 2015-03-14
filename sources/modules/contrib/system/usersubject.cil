@@ -1077,6 +1077,10 @@
     (call files_search_spool (ARG1))
     (allow ARG1 user_mail_spool_t relabel_file_perms))
 
+(macro usersubject_getattr_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 user_pty_dev_t (chr_file (getattr))))
+
 (macro usersubject_use_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 user_pty_dev_t rw_term_perms))
