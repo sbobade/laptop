@@ -177,6 +177,8 @@
 
 (call filesystems_mount (nspawn_t))
 
+(call filesystems_mount_devpts (nspawn_t))
+
 (call filesystems_mprot_write_devtmpfs_dirs (nspawn_t))
 (call filesystems_mounton_devtmpfs_dirs (nspawn_t))
 

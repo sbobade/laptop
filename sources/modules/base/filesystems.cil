@@ -702,6 +702,9 @@
 (macro filesystems_mount_all ((type ARG1))
     (allow ARG1 filesystems_object_type (filesystem (mount))))
 
+(macro filesystems_mount_devpts ((type ARG1))
+    (allow ARG1 devpts_fs_t (filesystem (mount))))
+
 (macro filesystems_remount_devpts ((type ARG1))
     (allow ARG1 devpts_fs_t (filesystem (remount))))
 
