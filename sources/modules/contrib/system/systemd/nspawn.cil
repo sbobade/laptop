@@ -49,6 +49,8 @@
 (type mycontainer_object_t)
 (call files_object_type (nspawn_common_container_object_type))
 
+(typeattributeset nspawn_object_type nspawn_common_container_object_type)
+
 (context mycontainer (system_u object_r mycontainer_object_t (systemlow systemlow)))
 (filecon "/var/lib/machines/mycontainer(/.*)?" any mycontainer)
 
@@ -325,6 +327,22 @@
 
 (macro nspawn_common_container_object_type ((type ARG1))
     (typeattributeset nspawn_common_container_object_type ARG1))
+
+(macro nspawn_search_all_common_container_objects ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (allow ARG1 spawn_common_container_object_type search_dir_perms))
+
+(macro nspawn_list_all_common_container_objects ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (allow ARG1 spawn_common_container_object_type list_dir_perms))
+
+(macro nspawn_read_all_common_container_objects ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (allow ARG1 spawn_common_container_object_type (all_file_objects (read))))
+
+(macro nspawn_manage_all_common_container_objects ((type ARG1))
+    (call machine_rw_lib_dirs (ARG1))
+    (allow ARG1 spawn_common_container_object_type (all_file_objects (manage))))
 
 (macro nspawn_common_container_template ((type ARG1)(type ARG2))
     (call nspawn_common_container_subject_type (ARG1))
