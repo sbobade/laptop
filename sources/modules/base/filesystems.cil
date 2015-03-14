@@ -121,8 +121,9 @@
 (type nsfs_fs_t)
 (call filesystems_object_type (nsfs_fs_t))
 
-(context nsfs_fs (system_u object_r nsfs_fs_t (systemlow systemlow)))
-(genfscon "nsfs" "/" nsfs_fs)
+;(context nsfs_fs (system_u object_r nsfs_fs_t (systemlow systemlow)))
+;(genfscon "nsfs" "/" nsfs_fs)
+(fsuse task "nsfs" fs)
 
 (type proc_fs_t)
 (call filesystems_object_type (proc_fs_t))
