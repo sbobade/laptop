@@ -148,8 +148,9 @@
 (call system_read_net_proc (nspawn_t))
 (call system_request_load_module (nspawn_t))
 (call system_setsched (nspawn_t))
-(call system_mounton_kernel_sysctl_files (nspawn_t))
-(call system_mounton_kmsg_proc_files (nspawn_t))
+(call system_mounton_sysctl_dirs (nspawn_t))
+;(call system_mounton_kernel_sysctl_files (nspawn_t))
+;(call system_mounton_kmsg_proc_files (nspawn_t))
 
 (call devices_getattr_random (nspawn_t))
 (call devices_getattr_tun_tap (nspawn_t))
@@ -160,14 +161,16 @@
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
 (call filesystems_list_debugfs (nspawn_t))
 
+;(call filesystems_mounton_devtmpfs_dirs (nspawn_t))
+;(call filesystems_mounton_proc_dirs (nspawn_t))
+(call filesystems_mounton_cgroup_dirs (nspawn_t))
+(call filesystems_mounton_rootfs_dirs (nspawn_t))
+(call filesystems_mounton_tmpfs_dirs (nspawn_t))
+
 (call filesystems_mount (nspawn_t))
 
 (call filesystems_mount_devpts (nspawn_t))
 
-(call filesystems_mprot_write_devtmpfs_dirs (nspawn_t))
-(call filesystems_mounton_devtmpfs_dirs (nspawn_t))
-
-(call filesystems_mounton_proc_dirs (nspawn_t))
 (call filesystems_mount_proc (nspawn_t))
 (call filesystems_remount_proc (nspawn_t))
 
@@ -201,6 +204,8 @@
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
 (call dbus_system_client_subject_type (nspawn_t))
+
+(call dns_read_resolve_config_files (nspawn_t))
 
 (call journal_search_log (nspawn_t))
 (call journal_client_subject_type (nspawn_t))
@@ -323,6 +328,7 @@
     (allow ARG1 ARG2 (filesystem (getattr)))
     (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
+    (allow ARG1 ARG2 exec_file_perms)
     (allow ARG1 ARG2 (all_file_objects (manage))))
 
 (macro nspawn_read_state ((type ARG1))
