@@ -204,6 +204,8 @@
 
 (call terminals_use_unallocated_ttys (systemd_t))
 
+(call import_exec_object_entry_subject (systemd_t))
+
 (call journal_list_log (systemd_t))
 (call journal_test_for_systemd (systemd_t))
 (call journal_read_journald_systemd_runtime (systemd_t))
