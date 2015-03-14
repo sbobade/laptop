@@ -525,6 +525,9 @@
     (call systemd_auto_subject_type_transition_systemctl (ARG1))
     (roleattributeset systemd_systemctl_role ARG2))
 
+(macro systemd_exec_object_entry_subject ((type ARG1))
+    (call subject_entry (ARG1 systemd_exec_t)))
+
 (macro systemd_daemon_subject_type ((type ARG1))
     (typeattributeset systemd_daemon_subject_type ARG1))
 
@@ -540,9 +543,6 @@
 
 (macro systemd_object_type ((type ARG1))
     (typeattributeset systemd_object_type ARG1))
-
-(macro systemd_exec_object_entry_subject ((type ARG1))
-    (call subject_entry (ARG1 systemd_exec_t)))
 
 (macro systemd_unit_object_type ((type ARG1))
     (call files_object_type (ARG1))

@@ -83,6 +83,7 @@
 (allow nspawn_common_container_subject_type self create_dccp_stream_socket_perms)
 (allow nspawn_common_container_subject_type self (tun_socket (all)))
 
+(allow nspawn_common_container_subject_type self (process (setsched)))
 (allow nspawn_common_container_subject_type self
     all_capability_perms_except_sys_module_and_sys_nice)
 (allow nspawn_common_container_subject_type self
@@ -97,12 +98,9 @@
 (call files_rootfs_object_type_transition_file (nspawn_common_container_subject_type))
 (call files_unconfined_subject_type (nspawn_common_container_subject_type))
 
-(call filesystems_list_sysfs (nspawn_common_container_subject_type))
-(call filesystems_rw_sysfs_files (nspawn_common_container_subject_type))
-(call filesystems_read_sysfs_lnk_files (nspawn_common_container_subject_type))
+(call filesystems_unconfined_subject_type (nspawn_common_container_subject_type))
 
-(call filesystems_getattr_filesystems (nspawn_common_container_subject_type))
-(call filesystems_list_proc (nspawn_common_container_subject_type))
+(call network_unconfined_subject_type (nspawn_common_container_subject_type))
 
 (call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
@@ -118,7 +116,11 @@
 
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
 
+(call rpm_read_state (nspawn_common_container_subject_type))
+(call rpm_read_state_script (nspawn_common_container_subject_type))
 (call rpm_run (nspawn_common_container_subject_type nspawn_role))
+
+(call systemd_exec_object_entry_subject (nspawn_common_container_subject_type))
 
 (call usersubject_common_login_user_home_template (nspawn_common_container_subject_type))
 (call usersubject_common_login_user_tmp_template (nspawn_common_container_subject_type))

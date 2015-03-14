@@ -405,6 +405,18 @@
     (allow ARG1 rpm_tmpfs_t manage_dir_perms)
     (allow ARG1 rpm_tmpfs_t manage_lnk_file_perms))
 
+(macro rpm_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 rpm_t read_file_perms)
+    (allow ARG1 rpm_t list_dir_perms)
+    (allow ARG1 rpm_t read_lnk_file_perms))
+
+(macro rpm_read_state_script ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 rpm_script_t read_file_perms)
+    (allow ARG1 rpm_script_t list_dir_perms)
+    (allow ARG1 rpm_script_t read_lnk_file_perms))
+
 (macro rpm_use_fd ((type ARG1))
     (allow ARG1 rpm_t (fd (use))))
 
