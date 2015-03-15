@@ -5,7 +5,8 @@
 (call applications_app (power_t power_exec_t))
 (roletype power_role power_t)
 
-(filecon "/usr/bin/power" file (system_u object_r power_exec_t (systemlow systemlow)))
+(context power_exec (system_u object_r power_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/power" file power_exec)
 
 (allow power_t self (capability (dac_override)))
 (allow power_t self rw_fifo_file_perms)

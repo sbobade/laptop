@@ -26,3 +26,5 @@
     or maybe unspecific, and allow systemd to bind tcp/udp sockets to all ports conditionally...
 
 * review my audit_set_loginuid() and audit_set_params() macro calls
+
+* e145: power script needs to be moved (/usr/(.local)/bin -> /usr/(.local)/sbin/

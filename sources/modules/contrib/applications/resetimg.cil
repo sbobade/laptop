@@ -1,0 +1,30 @@
+(roleattribute resetimg_role)
+
+(type resetimg_t)
+(type resetimg_exec_t)
+(call applications_app (resetimg_t resetimg_exec_t))
+(roletype resetimg_role resetimg_t)
+
+(context resetimg_exec (system_u object_r resetimg_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/resetimg" file resetimg_exec)
+
+(call machine_exec_machinectl (resetimg_t))
+
+(call mount_exec (resetimg_t))
+
+(call fstools_exec (resetimg_t))
+
+(macro resetimg_exec ((type ARG1))
+    (call can_exec (ARG1 resetimg_exec_t)))
+
+(macro resetimg_auto_subject_type_transition ((type ARG1))
+    (call resetimg_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 resetimg_exec_t resetimg_t)))
+
+(macro resetimg_send_signal ((type ARG1))
+    (allow ARG1 resetimg_t (process (signal))))
+
+(macro resetimg_run ((type ARG1)(role ARG2))
+    (call resetimg_auto_subject_type_transition (ARG1))
+    (roleattributeset resetimg_role ARG2))
