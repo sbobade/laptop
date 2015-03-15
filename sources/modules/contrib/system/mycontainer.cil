@@ -1,0 +1,12 @@
+(type mycontainer_subject_t)
+(type mycontainer_object_t)
+(call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
+
+(context mycontainer (system_u object_r mycontainer_object_t (systemlow systemlow)))
+(filecon "/var/lib/machines/mycontainer(/.*)?" any mycontainer)
+
+(optional mycontainer_optional_http
+    (call http_tcp_connect_http_port (mycontainer_subject_t)))
+
+(macro mycontainer_rw_inherited_container_object_chr_files ((type ARG1))
+    (allow ARG1 mycontainer_object_t rw_inherited_chr_file_perms))

@@ -315,7 +315,7 @@
     (call mail_role_template_mutt (staff_r staff_nb_t staff_mutt_t)))
 
 (optional staff_optional_mycontainer
-    (call mycontainer_rw_all_inherited_container_object_chr_files (staff_t)))
+    (call mycontainer_rw_inherited_container_object_chr_files (staff_t)))
 
 (optional staff_optional_nb
     (type staff_nb_t)
