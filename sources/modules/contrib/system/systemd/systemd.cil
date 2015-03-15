@@ -151,8 +151,10 @@
 (call commands_auditallow_exec (systemd_t))
 (call commands_auditallow_exec_shell (systemd_t))
 
-(call devices_create_devtty (systemd_t))
 (call devices_create_null (systemd_t))
+(call devices_tmpfs_object_type_transition_null_dev (systemd_t))
+
+(call devices_create_devtty (systemd_t))
 (call devices_create_random (systemd_t))
 (call devices_create_urandom (systemd_t))
 (call devices_create_zero (systemd_t))
