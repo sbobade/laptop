@@ -42,11 +42,9 @@
 (type nspawn_pty_dev_t)
 (call terminals_pty_object_type (nspawn_pty_dev_t))
 
-(type mycontainer_subject_t)
 (call subject_common_type (nspawn_common_container_subject_type))
-(roletype nspawn_role mycontainer_subject_t)
+(roletype nspawn_role nspawn_common_container_subject_type)
 
-(type mycontainer_object_t)
 (call files_object_type (nspawn_common_container_object_type))
 
 (call filesystems_associate_tmpfs (nspawn_common_container_object_type))
@@ -54,9 +52,6 @@
 (call subject_entry_object_type (nspawn_common_container_object_type))
 
 (typeattributeset nspawn_object_type nspawn_common_container_object_type)
-
-(context mycontainer (system_u object_r mycontainer_object_t (systemlow systemlow)))
-(filecon "/var/lib/machines/mycontainer(/.*)?" any mycontainer)
 
 (allow nspawn_common_container_subject_type self
     all_process_perms_except_transition_ptrace_setsched_dyntransition_setcurrent_execmem_execstack_and_execheap)
@@ -155,9 +150,6 @@
 
 (call usersubject_link_keyring_all_common_login_subjects (nspawn_common_container_subject_type))
 
-(optional nspawn_common_container_subject_type_optional_http
-    (call http_tcp_connect_http_port (nspawn_common_container_subject_type)))
-
 (allow nspawn_t nspawn_common_container_subject_type (process (sigkill signal)))
 
 (allow nspawn_t nspawn_common_container_object_type (dir (mounton relabelfrom relabelto
@@ -172,11 +164,8 @@
 
 (allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount relabelto relabelfrom)))
 
-(call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
-
 (allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod
     fsetid sys_admin)))
-(allow nspawn_t self (capability (audit_control))) ; FIXME
 (allow nspawn_t self (process (getcap setcap setexec)))
 (allow nspawn_t self create_netlink_route_socket_perms)
 (allow nspawn_t self create_unix_dgram_socket_perms)
@@ -236,11 +225,13 @@
 
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
+(call audit_set_loginuid (nspawn_t))
+
 (call dbus_system_client_subject_type (nspawn_t))
 
 (call dns_read_resolve_config_files (nspawn_t))
 
-(call jounal_manage_log_lnk_files (nspawn_t))
+(call journal_manage_log_lnk_files (nspawn_t))
 (call journal_client_subject_type (nspawn_t))
 
 (call machine_manage_lib_files (nspawn_t))

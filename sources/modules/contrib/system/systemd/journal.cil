@@ -265,11 +265,11 @@
     (call journal_search_log (ARG1))
     (allow ARG1 journal_log_t relabelto_file_perms))
 
-(macro jounal_read_log_lnk_files ((type ARG1))
+(macro journal_read_log_lnk_files ((type ARG1))
     (call files_search_log (ARG1))
     (call read_lnk_files_pattern (ARG1 journal_log_t journal_log_t)))
 
-(macro jounal_manage_log_lnk_files ((type ARG1))
+(macro journal_manage_log_lnk_files ((type ARG1))
     (call files_search_log (ARG1))
     (call manage_lnk_files_pattern (ARG1 journal_log_t journal_log_t)))
 

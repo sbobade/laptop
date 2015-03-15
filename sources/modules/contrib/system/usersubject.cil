@@ -195,7 +195,7 @@
             (call usersubject_dontaudit_relabelfrom_ptys (usersubject_priv_login_subject_type))
             (call usersubject_create_ptys (usersubject_priv_login_subject_type))
 
-            (call audit_set_params (usersubject_priv_login_subject_type))
+            (call audit_set_params (usersubject_priv_login_subject_type)) ; FIXME
 
             (call miscfiles_read_net_config (usersubject_priv_login_subject_type)))))
 
