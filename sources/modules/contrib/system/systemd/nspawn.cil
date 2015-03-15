@@ -87,7 +87,9 @@
 (allow nspawn_common_container_subject_type self create_dccp_stream_socket_perms)
 (allow nspawn_common_container_subject_type self (tun_socket (all)))
 
+(allow nspawn_common_container_subject_type self (capability (sys_nice)))
 (allow nspawn_common_container_subject_type self (process (setsched)))
+
 (allow nspawn_common_container_subject_type self
     all_capability_perms_except_sys_module_and_sys_nice)
 (allow nspawn_common_container_subject_type self
@@ -100,6 +102,8 @@
 (call system_link_keyring (nspawn_common_container_subject_type))
 
 (call system_read_all_proc (nspawn_common_container_subject_type))
+
+(call system_list_net_sysctl (nspawn_common_container_subject_type))
 
 (call system_read_crypto_sysctl (nspawn_common_container_subject_type))
 (call system_read_dev_sysctl (nspawn_common_container_subject_type))

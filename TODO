@@ -28,3 +28,4 @@
 * review my audit_set_loginuid() and audit_set_params() macro calls
 
 * e145: power script needs to be moved (/usr/(.local)/bin -> /usr/(.local)/sbin/
+    copy /usr/.local/sbin/resetimg from x131e to e145

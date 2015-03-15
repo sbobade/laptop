@@ -627,6 +627,10 @@
     (call system_search_sysctl (ARG1))
     (allow ARG1 net_sysctl_t search_dir_perms))
 
+(macro system_list_net_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 net_sysctl_t list_dir_perms))
+
 (macro system_read_net_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (call read_files_pattern (ARG1 net_sysctl_t net_sysctl_t)))
