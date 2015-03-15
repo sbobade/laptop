@@ -9,6 +9,9 @@
     (call network_udp_bind_all_unreserved_ports (mycontainer_subject_t))
     (call dhcp_udp_bind_dhcp_port (mycontainer_subject_t)))
 
+(optional mycontainer_optional_ftp
+    (call ftp_tcp_connect_ftp_port (mycontainer_subject_t)))
+
 (optional mycontainer_optional_http
     (call http_tcp_connect_http_port (mycontainer_subject_t)))
 
