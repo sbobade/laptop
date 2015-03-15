@@ -125,6 +125,7 @@
 (call system_read_dev_sysctl (nspawn_common_container_subject_type))
 (call system_read_fs_sysctl (nspawn_common_container_subject_type))
 (call system_read_sysctl (nspawn_common_container_subject_type))
+(call system_read_irq_sysctl (nspawn_common_container_subject_type))
 (call system_read_kernel_sysctl (nspawn_common_container_subject_type))
 (call system_read_net_sysctl (nspawn_common_container_subject_type))
 (call system_read_vm_sysctl (nspawn_common_container_subject_type))
@@ -163,8 +164,11 @@
 (call subject_execstack (nspawn_common_container_subject_type))
 (call subject_mmap_low (nspawn_common_container_subject_type))
 
+(call nspawn_dontaudit_audit_access_tmpfs_dirs (nspawn_common_container_subject_type))
+(call nspawn_setattr_tmpfs_dirs (nspawn_common_container_subject_type))
 (call nspawn_list_tmpfs (nspawn_common_container_subject_type))
 (call nspawn_read_tmpfs_lnk_files (nspawn_common_container_subject_type))
+
 (call nspawn_search_systemd_runtime (nspawn_common_container_subject_type))
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
@@ -462,6 +466,13 @@
 (macro nspawn_read_tmpfs_lnk_files ((type ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call read_lnk_files_pattern (ARG1 nspawn_tmpfs_t nspawn_tmpfs_t)))
+
+(macro nspawn_dontaudit_audit_access_tmpfs_dirs ((type ARG1))
+    (dontaudit ARG1 nspawn_tmpfs_t (dir (audit_access))))
+
+(macro nspawn_setattr_tmpfs_dirs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call setattr_dirs_pattern (ARG1 nspawn_tmpfs_t nspawn_tmpfs_t)))
 
 (macro nspawn_read_tmpfs ((type ARG1))
     (call filesystems_search_tmpfs (ARG1))
