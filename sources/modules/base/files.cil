@@ -885,6 +885,22 @@
 (macro files_rw_mnt_dirs ((type ARG1))
     (allow ARG1 mnt_t rw_dir_perms))
 
+(macro files_manage_mnt_dirs ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (allow ARG1 mnt_t manage_dir_perms))
+
+(macro files_setattr_mnt_dirs ((type ARG1))
+    (call setattr_dirs_pattern (ARG1 mnt_t mnt_t)))
+
+(macro files_dontaudit_audit_access_mnt_dirs ((type ARG1))
+    (dontaudit ARG1 mnt_t (dir (audit_access))))
+
+(macro files_mounton_mnt_dirs ((type ARG1))
+    (call files_dontaudit_audit_access_mnt_dirs (ARG1))
+    (call files_setattr_mnt_dirs (ARG1))
+    (call files_list_mnt (ARG1))
+    (allow ARG1 mnt_t (dir (mounton))))
+
 (macro files_search_runtime ((type ARG1))
     (call files_read_runtime_lnk_files (ARG1))
     (allow ARG1 runtime_t search_dir_perms))
@@ -1289,6 +1305,9 @@
 
 (macro files_relabel_all_except ((type ARG1))
     (allow ARG1 files_except (all_file_objects (relabel))))
+
+(macro files_relabelfrom_all_except ((type ARG1))
+    (allow ARG1 files_except (all_file_objects (relabelfrom))))
 
 (macro files_setattr_all_dirs_except ((type ARG1))
     (allow ARG1 files_except (dir (setattr))))

@@ -8,11 +8,36 @@
 (context resetimg_exec (system_u object_r resetimg_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/resetimg" file resetimg_exec)
 
+(call system_get_sysvipc_info (resetimg_t))
+(call system_request_load_module (resetimg_t))
+(call system_use_fd (resetimg_t))
+(call system_setsched (resetimg_t))
+
+(call system_rw_invalid_dirs (resetimg_t))
+(call system_relabelfrom_invalid (resetimg_t))
+
 (call commands_mprot_read_shell_exec_files (resetimg_t))
 
+(call devices_read_urandom (resetimg_t))
+(call devices_rw_lvm_control (resetimg_t))
 (call devices_rw_loop_control (resetimg_t))
 
+(call files_mounton_mnt_dirs (resetimg_t))
+(call files_manage_mnt_dirs (resetimg_t))
+
+(call files_list_all (resetimg_t))
+(call files_relabelfrom_all_except (resetimg_t))
+
+(call filesystems_mount_filesystems (resetimg_t))
+
+(call filesystems_list_sysfs (resetimg_t))
+(call filesystems_read_sysfs_files (resetimg_t))
+(call filesystems_read_sysfs_lnk_files (resetimg_t))
+
+(call filesystems_read_devtmpfs_lnk_files (resetimg_t))
 (call filesystems_list_debugfs (resetimg_t))
+
+(call selinux_validate_context (resetimg_t))
 
 (call storage_rw_fixed_disk (resetimg_t))
 
@@ -20,6 +45,9 @@
 (call machine_rw_lib_files (resetimg_t))
 
 (call mount_exec (resetimg_t))
+(call mount_rw_runtime_files (resetimg_t))
+
+(call nspawn_relabelto_all_common_container_objects (resetimg_t))
 
 (call fstools_exec (resetimg_t))
 

@@ -755,6 +755,9 @@
 (macro system_manage_invalid_dirs ((type ARG1))
     (allow ARG1 invalid_t manage_dir_perms))
 
+(macro system_rw_invalid_dirs ((type ARG1))
+    (allow ARG1 invalid_t rw_dir_perms))
+
 (macro system_relabelfrom_invalid ((type ARG1))
     (allow ARG1 invalid_t (all_file_objects (relabelfrom))))
 

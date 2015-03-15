@@ -719,6 +719,9 @@
 (macro filesystems_remount_dosfs ((type ARG1))
     (allow ARG1 dosfs_fs_t (filesystem (remount))))
 
+(macro filesystems_mount_filesystems ((type ARG1))
+    (allow ARG1 fs_t (filesystem (mount))))
+
 (macro filesystems_remount_filesystems ((type ARG1))
     (allow ARG1 fs_t (filesystem (remount))))
 

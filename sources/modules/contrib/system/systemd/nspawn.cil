@@ -353,6 +353,10 @@
     (call machine_search_lib (ARG1))
     (allow ARG1 nspawn_common_container_object_type (all_file_objects (read))))
 
+(macro nspawn_relabelto_all_common_container_objects ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (allow ARG1 nspawn_common_container_object_type (all_file_objects (relabelto))))
+
 (macro nspawn_manage_all_common_container_objects ((type ARG1))
     (call machine_rw_lib_dirs (ARG1))
     (allow ARG1 nspawn_common_container_object_type (all_file_objects (manage))))
