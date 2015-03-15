@@ -341,6 +341,9 @@
 (optional systemd_systemctl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role)))
 
+(optional systemd_systemctl_subject_type_optional_nspawn
+    (call nspawn_read_state_all_common_container_subjects (systemd_systemctl_subject_type)))
+
 (optional systemd_systemctl_subject_type_optional_systemduser
     (call systemduser_control_config_home (systemd_systemctl_subject_type))
     (call systemduser_control_transient_units (systemd_systemctl_subject_type))
