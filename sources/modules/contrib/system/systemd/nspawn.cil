@@ -407,7 +407,8 @@
     (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 exec_file_perms)
-    (allow ARG1 ARG2 (all_file_objects (manage))))
+    (allow ARG1 ARG2 (all_file_objects (manage)))
+    (call filesystems_tmpfs_object_type_transition (ARG1 ARG2 all_file_objects "*")))
 
 (macro nspawn_read_state ((type ARG1))
     (call filesystems_search_proc (ARG1))
