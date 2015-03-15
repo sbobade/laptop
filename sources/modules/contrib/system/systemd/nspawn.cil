@@ -336,6 +336,11 @@
     (call machine_search_lib (ARG1))
     (allow ARG1 nspawn_common_container_object_type list_dir_perms))
 
+(macro nspawn_delete_all_common_container_object_dirs ((type ARG1))
+    (call machine_rw_lib_dirs (ARG1))
+    (call delete_dirs_pattern (ARG1 nspawn_common_container_object_type
+        nspawn_common_container_object_type)))
+
 (macro nspawn_rw_all_common_container_object_chr_files ((type ARG1))
     (call machine_search_lib (ARG1))
     (call rw_chr_files_pattern (ARG1 nspawn_common_container_object_type

@@ -279,6 +279,9 @@
     (call plymouth_manage_plymouthd_runtime_files (system_t))
     (call plymouth_manage_plymouthd_lib_files (system_t)))
 
+(optional system_optional_resetimg
+    (call resetimg_use_fd (system_t)))
+
 (optional system_optional_storage
     (call storage_devtmpfs_object_type_transition_fixed_disk (system_t))
     (call storage_devtmpfs_object_type_transition_removable (system_t)))
