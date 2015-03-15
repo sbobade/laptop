@@ -31,6 +31,8 @@
 
 (call ns_client_subject_type (vconsole_t))
 
+(call udev_rw_inherited_udevd_udp_sockets (vconsole_t))
+
 (call vconsole_read_config_files (vconsole_t))
 
 (optional vconsole_optional_loadkeys

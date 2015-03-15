@@ -190,6 +190,9 @@
 (call filesystems_unmount_all (systemd_t))
 (call filesystems_write_inherited_devpts_chr_files (systemd_t))
 
+(call filesystems_relabel_devtmpfs_dirs (systemd_t))
+(call filesystems_relabel_sysfs_dirs (systemd_t))
+
 (call storage_read_fixed_disk (systemd_t))
 (call storage_read_removable (systemd_t))
 (call storage_read_scsi_generic (systemd_t))

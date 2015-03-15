@@ -371,6 +371,9 @@
 (macro filesystems_setattr_devtmpfs_chr_files ((type ARG1))
     (call setattr_chr_files_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
 
+(macro filesystems_relabel_devtmpfs_dirs ((type ARG1))
+    (call relabel_dirs_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
+
 (macro filesystems_relabelfrom_devtmpfs_dirs ((type ARG1))
     (call relabelfrom_dirs_pattern (ARG1 devtmpfs_fs_t devtmpfs_fs_t)))
 
@@ -557,6 +560,9 @@
 (macro filesystems_dontaudit_audit_access_sysfs_dirs ((type ARG1))
     (dontaudit ARG1 sysfs_fs_t (dir (audit_access))))
 
+(macro filesystems_relabel_sysfs_dirs ((type ARG1))
+    (call relabel_dirs_pattern (ARG1 sysfs_fs_t sysfs_fs_t)))
+
 (macro filesystems_relabelfrom_sysfs_dirs ((type ARG1))
     (call relabelfrom_dirs_pattern (ARG1 sysfs_fs_t sysfs_fs_t)))
 
@@ -639,6 +645,10 @@
 
 (macro filesystems_relabelfrom_tmpfs_filesystems ((type ARG1))
     (allow ARG1 tmpfs_fs_t (filesystem (relabelfrom))))
+
+(macro filesystems_relabel_tmpfs_dirs ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call relabel_dirs_pattern (ARG1 tmpfs_fs_t tmpfs_fs_t)))
 
 (macro filesystems_relabelfrom_tmpfs_dirs ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
