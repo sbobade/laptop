@@ -501,6 +501,10 @@
     (allow ARG1 shadow_t read_file_perms)
     (typeattributeset can_read_shadow_passwords ARG1))
 
+(macro auth_relabelfrom_shadow ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 shadow_t relabelfrom_file_perms))
+
 (macro auth_relabelto_shadow ((type ARG1))
     (call files_search_config (ARG1))
     (allow ARG1 shadow_t relabelto_file_perms)

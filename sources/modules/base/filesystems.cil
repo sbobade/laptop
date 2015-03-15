@@ -725,6 +725,9 @@
 (macro filesystems_remount_filesystems ((type ARG1))
     (allow ARG1 fs_t (filesystem (remount))))
 
+(macro filesystems_unmount_filesystems ((type ARG1))
+    (allow ARG1 fs_t (filesystem (unmount))))
+
 (macro filesystems_remount_cgroup ((type ARG1))
     (allow ARG1 cgroup_fs_t (filesystem (remount))))
 

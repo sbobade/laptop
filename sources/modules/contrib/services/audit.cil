@@ -357,6 +357,10 @@
     (allow ARG1 auditd_log_t manage_dir_perms)
     (allow ARG1 auditd_log_t manage_lnk_file_perms))
 
+(macro audit_relabelfrom_auditd_log_dirs ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 auditd_log_t relabelfrom_dir_perms))
+
 (macro audit_relabel_auditd_log ((type ARG1))
     (call files_search_log (ARG1))
     (allow ARG1 auditd_log_t relabel_file_perms)

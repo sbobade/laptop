@@ -34,6 +34,7 @@
 (call filesystems_getattr_filesystems (resetimg_t))
 
 (call filesystems_mount_filesystems (resetimg_t))
+(call filesystems_unmount_filesystems (resetimg_t))
 
 (call filesystems_list_sysfs (resetimg_t))
 (call filesystems_read_sysfs_files (resetimg_t))
@@ -47,6 +48,10 @@
 (call storage_rw_fixed_disk (resetimg_t))
 
 (call subject_object_identity_change_exemption (resetimg_t))
+
+(call auth_relabelfrom_shadow (resetimg_t))
+
+(call audit_relabelfrom_auditd_log_dirs (resetimg_t))
 
 (call import_dbus_chat_importd (resetimg_t))
 
