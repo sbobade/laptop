@@ -1,11 +1,14 @@
 (roleattribute nspawn_role)
 
 (typeattribute nspawn_admin_subject_type)
+(typeattribute nspawn_subject_type)
 
 (typeattribute nspawn_object_type)
 
 (typeattribute nspawn_common_container_subject_type)
 (typeattribute nspawn_common_container_object_type)
+
+(typeattribute nspawn_systemd_unit_object_type)
 
 (type nspawn_t)
 (type nspawn_exec_t)
@@ -15,13 +18,15 @@
 
 (roleattributeset nspawn_role system_r)
 
+(typeattributeset nspawn_subject_type nspawn_t)
+
 (context nspawn_exec (system_u object_r nspawn_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-nspawn" file nspawn_exec)
 
 (type nspawn_unit_t)
-(call systemd_unit_object_type (nspawn_unit_t))
+(call nspawn_systemd_unit_object_type (nspawn_unit_t))
 
-(typeattributeset nspawn_object_type nspawn_unit_t)
+(typeattributeset nspawn_object_type nspawn_systemd_unit_object_type)
 
 (context nspawn_unit (system_u object_r nspawn_unit_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/system/[^/]*systemd-nspawn.*" file nspawn_unit)
@@ -44,6 +49,8 @@
 
 (call subject_common_type (nspawn_common_container_subject_type))
 (roletype nspawn_role nspawn_common_container_subject_type)
+
+(typeattributeset nspawn_subject_type nspawn_common_container_subject_type)
 
 (call files_object_type (nspawn_common_container_object_type))
 
@@ -257,13 +264,17 @@
 
 (call usersubject_search_home_dir (nspawn_t))
 
-(allow nspawn_admin_subject_type nspawn_t (process (ptrace signal signull sigkill sigstop)))
-(call ps_subject_pattern (nspawn_admin_subject_type nspawn_t))
+(allow nspawn_admin_subject_type nspawn_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (nspawn_admin_subject_type nspawn_subject_type))
 
-(allow nspawn_admin_subject_type nspawn_unit_t (service (all)))
+(allow nspawn_admin_subject_type nspawn_systemd_unit_object_type (service (all)))
 
 (allow nspawn_admin_subject_type nspawn_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
+
+(macro nspawn_systemd_unit_object_type ((type ARG1))
+    (call systemd_unit_object_type (ARG1))
+    (typeattributeset nspawn_systemd_unit_object_type ARG1))
 
 (macro nspawn_exec ((type ARG1))
     (call can_exec (ARG1 nspawn_exec_t)))
@@ -415,6 +426,18 @@
 (macro nspawn_stop_unit ((type ARG1))
     (call systemd_search_unit (ARG1))
     (allow ARG1 nspawn_unit_t (service (stop))))
+
+(macro nspawn_start_all_unit ((type ARG1))
+    (call systemd_search_unit (ARG1))
+    (allow ARG1 nspawn_systemd_unit_object_type (service (start))))
+
+(macro nspawn_status_all_unit ((type ARG1))
+    (call systemd_search_unit (ARG1))
+    (allow ARG1 nspawn_systemd_unit_object_type (service (status))))
+
+(macro nspawn_stop_all_unit ((type ARG1))
+    (call systemd_search_unit (ARG1))
+    (allow ARG1 nspawn_systemd_unit_object_type (service (stop))))
 
 (macro nspawn_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

@@ -27,7 +27,3 @@
 
 * i should be able to shave off some nspawn_common_container_subject_type self permissions
     for example there is no audit, and no selinux either in the container.
-
-* add ftp port for confined (containerized) package managers
-
-* create an nspawn_unit_object_type for container service units

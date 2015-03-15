@@ -70,9 +70,9 @@
 (call nspawn_stream_connect_all_common_containers (machined_t))
 (call nspawn_getattr_all_common_container_filesystems (machined_t))
 (call nspawn_rw_all_common_container_object_chr_files (machined_t))
-(call nspawn_start_unit (machined_t))
-(call nspawn_stop_unit (machined_t))
-(call nspawn_status_unit (machined_t))
+(call nspawn_start_all_unit (machined_t))
+(call nspawn_stop_all_unit (machined_t))
+(call nspawn_status_all_unit (machined_t))
 
 (call systemd_dbus_chat (machined_t))
 (call systemd_start_system (machined_t))
