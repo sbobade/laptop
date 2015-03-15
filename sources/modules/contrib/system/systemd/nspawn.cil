@@ -100,9 +100,9 @@
     all_fifo_file_perms_except_mounton_and_execmod)
 
 (call system_link_keyring (nspawn_common_container_subject_type))
+(call system_read_ring_buffer (nspawn_common_container_subject_type))
 
 (call system_read_all_proc (nspawn_common_container_subject_type))
-
 (call system_list_net_sysctl (nspawn_common_container_subject_type))
 
 (call system_read_crypto_sysctl (nspawn_common_container_subject_type))
@@ -135,6 +135,7 @@
 (call filesystems_rw_cgroup_files (nspawn_common_container_subject_type))
 (call filesystems_setattr_cgroup_files (nspawn_common_container_subject_type))
 
+(call network_tcp_bind_generic_node (nspawn_common_container_subject_type))
 (call network_udp_bind_generic_node (nspawn_common_container_subject_type))
 
 (call selinux_dontaudit_list_securityfs (nspawn_common_container_subject_type))
@@ -379,7 +380,7 @@
     (call nspawn_common_container_object_type (ARG2))
     (allow ARG1 ARG2 (file (entrypoint)))
     (call manual_subject_type_transition_pattern (nspawn_t ARG2 ARG1))
-    (allow ARG1 ARG2 (filesystem (getattr unmount)))
+    (allow ARG1 ARG2 (filesystem (getattr unmount remount)))
     (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 exec_file_perms)
