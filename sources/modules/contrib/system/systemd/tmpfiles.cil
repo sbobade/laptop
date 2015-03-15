@@ -52,6 +52,10 @@
 (call filesystems_manage_tmpfs_dirs (tmpfiles_t))
 (call filesystems_read_sysfs (tmpfiles_t))
 
+(call filesystems_relabelfrom_devtmpfs_dirs (tmpfiles_t))
+(call filesystems_relabelfrom_sysfs_dirs (tmpfiles_t))
+(call filesystems_relabelfrom_tmpfs_dirs (tmpfiles_t))
+
 (call journal_client_subject_type (tmpfiles_t))
 
 (call miscfiles_read_factory_data (tmpfiles_t))
