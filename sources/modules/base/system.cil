@@ -509,6 +509,7 @@
     (call system_read_fs_sysctl (ARG1))
     (call system_read_sysctl (ARG1))
     (call system_read_kernel_sysctl (ARG1))
+    (call system_read_irq_sysctl (ARG1))
     (call system_read_net_sysctl (ARG1))
     (call system_read_security_sysctl (ARG1))
     (call system_read_usermodehelper_sysctl (ARG1))
@@ -521,6 +522,7 @@
     (call system_rw_fs_sysctl (ARG1))
     (call system_rw_sysctl (ARG1))
     (call system_rw_kernel_sysctl (ARG1))
+    (call system_rw_irq_sysctl (ARG1))
     (call system_rw_net_sysctl (ARG1))
     (call system_rw_security_sysctl (ARG1))
     (call system_rw_usermodehelper_sysctl (ARG1))
@@ -603,6 +605,22 @@
 (macro system_write_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (allow ARG1 sysctl_t write_file_perms))
+
+(macro system_search_irq_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 irq_sysctl_t search_dir_perms))
+
+(macro system_read_irq_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 irq_sysctl_t irq_sysctl_t)))
+
+(macro system_rw_irq_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 irq_sysctl_t irq_sysctl_t)))
+
+(macro system_write_irq_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 irq_sysctl_t irq_sysctl_t)))
 
 (macro system_search_kernel_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
