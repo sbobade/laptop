@@ -29,3 +29,6 @@
 
 * e145: power script needs to be moved (/usr/(.local)/bin -> /usr/(.local)/sbin/
     copy /usr/.local/sbin/resetimg from x131e to e145
+
+* i should be able to shave off some nspawn_common_container_subject_type self permissions
+    for example there is no audit, and no selinux either in the container.
