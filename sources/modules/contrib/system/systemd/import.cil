@@ -20,6 +20,8 @@
 
 (call system_read_kernel_sysctl (importd_t))
 
+(call devices_read_urandom (importd_t))
+
 (call dbus_system_service (importd_t))
 
 (call journal_client_subject_type (importd_t))

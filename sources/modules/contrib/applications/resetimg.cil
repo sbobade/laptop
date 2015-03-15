@@ -8,6 +8,8 @@
 (context resetimg_exec (system_u object_r resetimg_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/resetimg" file resetimg_exec)
 
+(allow resetimg_t self (capability (sys_admin)))
+
 (call system_get_sysvipc_info (resetimg_t))
 (call system_request_load_module (resetimg_t))
 (call system_use_fd (resetimg_t))
@@ -26,7 +28,10 @@
 (call files_manage_mnt_dirs (resetimg_t))
 
 (call files_list_all (resetimg_t))
+(call files_read_config_files (resetimg_t))
 (call files_relabelfrom_all_except (resetimg_t))
+
+(call filesystems_getattr_filesystems (resetimg_t))
 
 (call filesystems_mount_filesystems (resetimg_t))
 
@@ -40,6 +45,10 @@
 (call selinux_validate_context (resetimg_t))
 
 (call storage_rw_fixed_disk (resetimg_t))
+
+(call subject_object_identity_change_exemption (resetimg_t))
+
+(call import_dbus_chat_importd (resetimg_t))
 
 (call machine_exec_machinectl (resetimg_t))
 (call machine_rw_lib_files (resetimg_t))
