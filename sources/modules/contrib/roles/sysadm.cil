@@ -65,6 +65,8 @@
 (call subject_getattr_all_common_subjects (sysadm_t))
 (call subject_read_all_common_subjects_state (sysadm_t))
 
+(call subject_object_identity_change_exemption (sysadm_t))
+
 (call terminals_use_inherited_unallocated_ttys (sysadm_t))
 
 (call audit_admin (sysadm_t))
