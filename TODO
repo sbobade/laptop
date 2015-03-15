@@ -27,3 +27,5 @@
 
 * i should be able to shave off some nspawn_common_container_subject_type self permissions
     for example there is no audit, and no selinux either in the container.
+
+* fix /usr/local/sbin/resetimg on e145

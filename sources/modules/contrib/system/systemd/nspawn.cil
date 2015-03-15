@@ -39,6 +39,16 @@
 (context nspawn_systemd_runtime (system_u object_r nspawn_systemd_runtime_t (systemlow systemlow)))
 (filecon "/var/run/systemd/nspawn(/.*)?" any nspawn_systemd_runtime)
 
+(type nspawn_tmpfs_t)
+(call files_tmpfs_object_type (nspawn_tmpfs_t))
+
+(typeattributeset nspawn_object_type nspawn_tmpfs_t)
+
+(allow nspawn_t nspawn_tmpfs_t (dir (mounton)))
+(allow nspawn_t nspawn_tmpfs_t manage_dir_perms)
+(allow nspawn_t nspawn_tmpfs_t manage_lnk_file_perms)
+(call filesystems_tmpfs_object_type_transition (nspawn_t nspawn_tmpfs_t dir "*"))
+
 (allow nspawn_t nspawn_systemd_runtime_t manage_dir_perms)
 (allow nspawn_t nspawn_systemd_runtime_t manage_file_perms)
 (allow nspawn_t nspawn_systemd_runtime_t manage_lnk_file_perms)
@@ -202,7 +212,6 @@
 (call filesystems_mounton_cgroup_dirs (nspawn_t))
 (call filesystems_mounton_rootfs_dirs (nspawn_t))
 (call filesystems_mounton_sysfs_dirs (nspawn_t))
-(call filesystems_mounton_tmpfs_dirs (nspawn_t))
 
 (call filesystems_mount (nspawn_t))
 (call filesystems_mount_cgroup (nspawn_t))
@@ -219,8 +228,6 @@
 (call filesystems_manage_cgroup_dirs (nspawn_t))
 
 (call filesystems_relabelfrom_tmpfs_filesystems (nspawn_t))
-(call filesystems_manage_tmpfs_dirs (nspawn_t))
-(call filesystems_manage_tmpfs_lnk_files (nspawn_t))
 
 (call filesystems_read_sysfs (nspawn_t))
 
@@ -394,8 +401,7 @@
     (allow ARG2 ARG2 (filesystem (associate)))
     (allow ARG1 ARG2 (dir (mounton)))
     (allow ARG1 ARG2 exec_file_perms)
-    (allow ARG1 ARG2 (all_file_objects (manage)))
-    (call filesystems_tmpfs_object_type_transition (ARG1 ARG2 all_file_objects "*")))
+    (allow ARG1 ARG2 (all_file_objects (manage))))
 
 (macro nspawn_read_state ((type ARG1))
     (call filesystems_search_proc (ARG1))
@@ -438,6 +444,34 @@
 (macro nspawn_stop_all_unit ((type ARG1))
     (call systemd_search_unit (ARG1))
     (allow ARG1 nspawn_systemd_unit_object_type (service (stop))))
+
+(macro nspawn_search_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 nspawn_tmpfs_t search_dir_perms))
+
+(macro nspawn_list_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 nspawn_tmpfs_t list_dir_perms))
+
+(macro nspawn_read_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_files_pattern (ARG1 nspawn_tmpfs_t nspawn_tmpfs_t)))
+
+(macro nspawn_read_tmpfs_lnk_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call read_lnk_files_pattern (ARG1 nspawn_tmpfs_t nspawn_tmpfs_t)))
+
+(macro nspawn_read_tmpfs ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 nspawn_tmpfs_t read_file_perms)
+    (allow ARG1 nspawn_tmpfs_t list_dir_perms)
+    (allow ARG1 nspawn_tmpfs_t read_lnk_file_perms))
+
+(macro nspawn_manage_tmpfs ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 nspawn_tmpfs_t manage_file_perms)
+    (allow ARG1 nspawn_tmpfs_t manage_dir_perms)
+    (allow ARG1 nspawn_tmpfs_t manage_lnk_file_perms))
 
 (macro nspawn_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))
