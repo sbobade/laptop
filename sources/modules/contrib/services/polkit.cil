@@ -140,7 +140,7 @@
 (call filesystems_list_devtmpfs (pkagent_t))
 (call filesystems_search_devpts (pkagent_t))
 
-(call audit_set_loginuid (pkagent_t)) ; FIXME
+(call audit_set_params (pkagent_t))
 
 (call auth_read_authconfig_pam_config (pkagent_t))
 (call auth_read_pam_config_files (pkagent_t))
