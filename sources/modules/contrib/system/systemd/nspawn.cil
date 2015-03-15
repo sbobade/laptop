@@ -163,6 +163,8 @@
 (call subject_execstack (nspawn_common_container_subject_type))
 (call subject_mmap_low (nspawn_common_container_subject_type))
 
+(call nspawn_list_tmpfs (nspawn_common_container_subject_type))
+(call nspawn_read_tmpfs_lnk_files (nspawn_common_container_subject_type))
 (call nspawn_search_systemd_runtime (nspawn_common_container_subject_type))
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
