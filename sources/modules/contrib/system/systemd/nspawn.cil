@@ -100,8 +100,6 @@
     all_capability_perms_except_sys_module_and_sys_nice)
 (allow nspawn_common_container_subject_type self
     all_capability2_perms_except_mac_override_and_mac_admin)
-(allow nspawn_common_container_subject_type self (process
-    (transition dyntransition setcurrent)))
 (allow nspawn_common_container_subject_type self
     all_fifo_file_perms_except_mounton_and_execmod)
 
@@ -147,8 +145,6 @@
 (call network_udp_bind_generic_node (nspawn_common_container_subject_type))
 
 (call selinux_dontaudit_list_securityfs (nspawn_common_container_subject_type))
-
-(call subject_dynamic_subject_type_transition_subject_type (nspawn_common_container_subject_type))
 
 (call subject_execheap (nspawn_common_container_subject_type))
 (call subject_execmem (nspawn_common_container_subject_type))
