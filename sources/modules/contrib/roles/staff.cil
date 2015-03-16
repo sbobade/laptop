@@ -315,6 +315,8 @@
     (call mail_role_template_mutt (staff_r staff_nb_t staff_mutt_t)))
 
 (optional staff_optional_mycontainer
+    (call mycontainer_getattr_subject (staff_t))
+    (call mycontainer_read_state (staff_t))
     (call mycontainer_status_unit (staff_t))
     (call mycontainer_start_unit (staff_t))
     (call mycontainer_stop_unit (staff_t))

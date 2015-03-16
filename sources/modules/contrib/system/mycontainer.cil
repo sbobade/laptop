@@ -68,6 +68,9 @@
 (macro mycontainer_rw_inherited_container_object_chr_files ((type ARG1))
     (allow ARG1 mycontainer_object_t rw_inherited_chr_file_perms))
 
+(macro mycontainer_getattr_subject ((type ARG1))
+    (allow ARG1 mycontainer_subject_t (process (getattr))))
+
 (macro mycontainer_read_state ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 mycontainer_subject_t read_file_perms)
