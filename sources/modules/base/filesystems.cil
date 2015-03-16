@@ -259,6 +259,9 @@
     (call filesystems_read_tmpfs_lnk_files (ARG1))
     (allow ARG1 cgroup_fs_t list_dir_perms))
 
+(macro filesystems_dontaudit_getattr_cgroup_filesystems ((type ARG1))
+    (dontaudit ARG1 cgroup_fs_t (filesystem (getattr))))
+
 (macro filesystems_getattr_cgroup_filesystems ((type ARG1))
     (allow ARG1 cgroup_fs_t (filesystem (getattr))))
 

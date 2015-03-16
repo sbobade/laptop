@@ -130,6 +130,7 @@
 (call system_read_net_sysctl (nspawn_common_container_subject_type))
 (call system_read_vm_sysctl (nspawn_common_container_subject_type))
 
+(call filesystems_getattr_cgroup_filesystems (nspawn_common_container_subject_type))
 (call filesystems_getattr_filesystems (nspawn_common_container_subject_type))
 (call filesystems_getattr_hugetlbfs_filesystems (nspawn_common_container_subject_type))
 (call filesystems_getattr_proc_filesystems (nspawn_common_container_subject_type))
