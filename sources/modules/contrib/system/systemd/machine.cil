@@ -127,7 +127,7 @@
 
 (allow machine_machinectl_subject_type self (capability (dac_override net_admin sys_chroot sys_admin)))
 
-(call files_read_all_except (machine_machinectl_subject_type))
+(call files_read_config (machine_machinectl_subject_type))
 
 (call import_dbus_chat_importd (machine_machinectl_subject_type))
 
