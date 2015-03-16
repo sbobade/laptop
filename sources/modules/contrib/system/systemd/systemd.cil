@@ -341,6 +341,7 @@
     (call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role)))
 
 (optional systemd_systemctl_subject_type_optional_machine
+    (call machine_list_machined_systemd_runtime (systemd_systemctl_subject_type))
     (call machine_read_machined_systemd_runtime_files (systemd_systemctl_subject_type)))
 
 (optional systemd_systemctl_subject_type_optional_nspawn
