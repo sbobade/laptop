@@ -502,5 +502,8 @@
 (macro systemduser_send_sigchld_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (process (sigchld))))
 
+(macro systemduser_dontaudit_link_keyring_all_subjects ((type ARG1))
+    (dontaudit ARG1 systemduser_subject_type (key (search link))))
+
 (macro systemduser_manage_keyring_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (key (create search link write))))

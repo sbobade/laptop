@@ -143,6 +143,7 @@
 (call filesystems_unmount_tmpfs (nspawn_common_container_subject_type))
 
 (call filesystems_dontaudit_audit_access_hugetlbfs_dirs (nspawn_common_container_subject_type))
+(call filesystems_dontaudit_setattr_proc_dirs (nspawn_common_container_subject_type))
 (call filesystems_list_hugetlbfs (nspawn_common_container_subject_type))
 (call filesystems_setattr_hugetlbfs_dirs (nspawn_common_container_subject_type))
 
@@ -172,6 +173,8 @@
 (call nspawn_search_systemd_runtime (nspawn_common_container_subject_type))
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
+
+(call systemduser_dontaudit_link_keyring_all_subjects (nspawn_common_container_subject_type))
 
 (call usersubject_dontaudit_link_keyring_all_common_login_subjects (nspawn_common_container_subject_type))
 

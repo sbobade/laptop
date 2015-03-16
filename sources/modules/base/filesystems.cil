@@ -510,6 +510,9 @@
     (call filesystems_search_proc (ARG1))
     (allow ARG1 proc_fs_t (filesystem (remount))))
 
+(macro filesystems_dontaudit_setattr_proc_dirs ((type ARG1))
+    (dontaudit ARG1 proc_fs_t (dir (setattr))))
+
 (macro filesystems_setattr_proc_dirs ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 proc_fs_t (dir (setattr))))
