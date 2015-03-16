@@ -411,10 +411,6 @@
     (call machine_rw_lib_dirs (ARG1))
     (allow ARG1 nspawn_common_container_object_type (all_file_objects (manage))))
 
-(macro nspawn_stream_connect_all_common_containers ((type ARG1))
-    (call stream_connect_pattern (ARG1 nspawn_common_container_object_type nspawn_common_container_object_type
-        nspawn_common_container_subject_type)))
-
 (macro nspawn_common_container_template ((type ARG1)(type ARG2))
     (call nspawn_common_container_subject_type (ARG1))
     (call nspawn_common_container_object_type (ARG2))
@@ -444,6 +440,11 @@
 
 (macro nspawn_getattr_all_common_container_filesystems ((type ARG1))
     (allow ARG1 nspawn_common_container_object_type (filesystem (getattr))))
+
+(macro nspawn_stream_connect_all_common_containers ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (call stream_connect_pattern (ARG1 nspawn_common_container_object_type
+        nspawn_common_container_object_type nspawn_common_container_subject_type)))
 
 (macro nspawn_use_fd ((type ARG1))
     (allow ARG1 nspawn_t (fd (use))))

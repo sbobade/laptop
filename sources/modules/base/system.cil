@@ -762,6 +762,10 @@
 (macro system_use_fd ((type ARG1))
     (allow ARG1 system_t (fd (use))))
 
+(macro system_read_state_files ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call read_files_pattern (ARG1 system_t system_t)))
+
 (macro system_read_state_invalid ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 invalid_t read_file_perms)

@@ -320,8 +320,11 @@
 (context systemctl_exec (system_u object_r systemctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemctl" file systemctl_exec)
 
-(allow systemd_systemctl_subject_type self (capability (dac_override net_admin sys_resource)))
+(allow systemd_systemctl_subject_type self (capability (dac_override sys_chroot net_admin
+    sys_resource setgid setuid sys_admin)))
 (allow systemd_systemctl_subject_type self (process (setfscreate)))
+
+(call system_read_state_files (systemd_systemctl_subject_type))
 
 (call terminals_use_inherited_console (systemd_systemctl_subject_type))
 
@@ -337,7 +340,13 @@
 (optional systemd_systemctl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role)))
 
+(optional systemd_systemctl_subject_type_optional_machine
+    (call machine_read_machined_systemd_runtime_files (systemd_systemctl_subject_type)))
+
 (optional systemd_systemctl_subject_type_optional_nspawn
+    (call nspawn_list_all_common_container_objects (systemd_systemctl_subject_type))
+    (call nspawn_read_all_common_container_object_lnk_files (systemd_systemctl_subject_type))
+    (call nspawn_stream_connect_all_common_containers (systemd_systemctl_subject_type))
     (call nspawn_read_state_all_common_container_subjects (systemd_systemctl_subject_type)))
 
 (optional systemd_systemctl_subject_type_optional_systemduser
