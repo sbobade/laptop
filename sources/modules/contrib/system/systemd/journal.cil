@@ -19,7 +19,10 @@
 (context journalctl_exec (system_u object_r journalctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/journalctl" file journalctl_exec)
 
-(allow journal_journalctl_subject_type self (capability (dac_override net_admin sys_resource)))
+(allow journal_journalctl_subject_type self (capability (dac_override net_admin sys_resource
+    sys_chroot setgid setuid sys_admin)))
+(allow journal_journalctl_subject_type self create_unix_dgram_socket_perms)
+(allow journal_journalctl_subject_type self (unix_dgram_socket (sendto)))
 
 (call journal_manage_log (journal_journalctl_subject_type))
 (call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
@@ -34,6 +37,7 @@
     (call machine_read_machined_systemd_runtime_files (journal_journalctl_subject_type)))
 
 (optional journal_journalctl_subject_type_optional_nspawn
+    (call nspawn_read_state_all_common_container_subjects (journal_journalctl_subject_type))
     (call nspawn_list_all_common_container_objects (journal_journalctl_subject_type))
     (call nspawn_read_all_common_container_object_files (journal_journalctl_subject_type)))
 
