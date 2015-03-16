@@ -183,6 +183,8 @@
     create open getattr setattr read write link unlink rename search add_name remove_name reparent
     rmdir lock ioctl)))
 (allow nspawn_t nspawn_common_container_object_type manage_file_perms)
+(allow nspawn_t nspawn_common_container_object_type (file (mounton)))
+
 (allow nspawn_t nspawn_common_container_object_type manage_lnk_file_perms)
 (allow nspawn_t nspawn_common_container_object_type manage_fifo_file_perms)
 
@@ -211,6 +213,8 @@
 (call devices_read_urandom (nspawn_t))
 (call devices_rw_loop_control (nspawn_t))
 
+(call files_getattr_all_except (nspawn_t))
+
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
 (call filesystems_list_debugfs (nspawn_t))
@@ -226,6 +230,7 @@
 (call filesystems_mount_sysfs (nspawn_t))
 (call filesystems_mount_tmpfs (nspawn_t))
 
+(call filesystems_remount_filesystems (nspawn_t))
 (call filesystems_remount_cgroup (nspawn_t))
 (call filesystems_remount_proc (nspawn_t))
 (call filesystems_remount_sysfs (nspawn_t))
