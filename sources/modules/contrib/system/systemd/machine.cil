@@ -52,17 +52,20 @@
 (filecon "/var/lib/machines" dir machine_lib)
 (filecon "/var/lib/machines(/.*)?" any ())
 
-(allow machined_t self (capability (sys_ptrace sys_chroot setgid sys_admin)))
+(allow machined_t self (capability (sys_ptrace sys_chroot setgid sys_admin dac_read_search)))
 (allow machined_t self r_netlink_route_socket_perms)
 (allow machined_t self (process (setfscreate)))
 
 (call system_read_kernel_sysctl (machined_t))
 
 (call filesystems_search_tmpfs (machined_t))
+(call filesystems_list_rootfs (machined_t))
 
 (call dbus_system_service (machined_t))
 
 (call journal_client_subject_type (machined_t))
+
+(call machine_manage_lib (machined_t))
 
 (call nspawn_read_state (machined_t))
 (call nspawn_list_all_common_container_objects (machined_t))
