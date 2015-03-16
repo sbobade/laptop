@@ -21,6 +21,9 @@
 (context mycontainer_unit (system_u object_r mycontainer_unit_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/system/[^/]*systemd-nspawn@mycontainer.*" file mycontainer_unit)
 
+(call network_tcp_connect_all_unreserved_ports (mycontainer_subject_t))
+(call network_tcp_connect_all_ephemeral_ports (mycontainer_subject_t))
+
 (allow mycontainer_admin_subject_type mycontainer_subject_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (mycontainer_admin_subject_type mycontainer_subject_t))
 
