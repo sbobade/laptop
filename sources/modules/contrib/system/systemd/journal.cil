@@ -21,8 +21,6 @@
 
 (allow journal_journalctl_subject_type self (capability (dac_override net_admin sys_resource)))
 
-(call devices_read_random (journal_journalctl_subject_type))
-
 (call journal_manage_log (journal_journalctl_subject_type))
 (call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
 (call journal_journalctl_client_subject_type (journal_journalctl_subject_type))
@@ -159,6 +157,7 @@
 
 (call filesystems_getattr_filesystems (journal_journalctl_client_subject_type))
 (call filesystems_getattr_tmpfs_filesystems (journal_journalctl_client_subject_type))
+(call filesystems_read_sysfs_files (journal_journalctl_client_subject_type))
 
 (call journal_read_log (journal_journalctl_client_subject_type))
 
@@ -167,8 +166,15 @@
 
 (call systemd_stream_connect (journal_journalctl_client_subject_type))
 
+(optional journal_journalctl_client_subject_type_optional_dbus
+    (call systemd_dbus_chat (journal_journalctl_client_subject_type))
+    (call dbus_system_client_subject_type (journal_journalctl_client_subject_type)))
+
 (optional journal_journalctl_client_subject_type_optional_machine
     (call machine_read_config_files (journal_journalctl_client_subject_type)))
+
+(optional journal_journalctl_client_subject_type_optional_polkit
+    (call polkit_dbus_chat_polkitd (journal_journalctl_client_subject_type)))
 
 (optional journal_journalctl_client_subject_type_optional_usersubject
     (call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type)))

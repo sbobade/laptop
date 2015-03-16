@@ -53,6 +53,7 @@
 (filecon "/var/lib/machines(/.*)?" any ())
 
 (allow machined_t self (capability (sys_ptrace sys_chroot setgid sys_admin)))
+(allow machined_t self r_netlink_route_socket_perms)
 (allow machined_t self (process (setfscreate)))
 
 (call system_read_kernel_sysctl (machined_t))
@@ -66,6 +67,7 @@
 (call nspawn_read_state (machined_t))
 (call nspawn_list_all_common_container_objects (machined_t))
 (call nspawn_read_all_common_container_object_lnk_files (machined_t))
+(call nspawn_read_all_common_container_object_files (machined_t))
 (call nspawn_read_state_all_common_container_subjects (machined_t))
 (call nspawn_stream_connect_all_common_containers (machined_t))
 (call nspawn_getattr_all_common_container_filesystems (machined_t))
@@ -89,21 +91,34 @@
 (optional machined_optional_usersubject
     (call usersubject_getattr_terminals (machined_t)))
 
+(allow machine_machinectl_client_subject_type self (capability (ipc_lock)))
+(allow machine_machinectl_client_subject_type self (process (setrlimit)))
+(allow machine_machinectl_client_subject_type self create_unix_dgram_socket_perms)
 (allow machine_machinectl_client_subject_type self rw_fifo_file_perms)
+
+(call system_read_net_proc (machine_machinectl_client_subject_type))
+(call system_read_crypto_sysctl (machine_machinectl_client_subject_type))
+(call system_read_kernel_sysctl (machine_machinectl_client_subject_type))
 
 (call commands_exec (machine_machinectl_client_subject_type))
 
 (call devices_read_urandom (machine_machinectl_client_subject_type))
+
+(call filesystems_getattr_filesystems (machine_machinectl_client_subject_type))
+(call filesystems_getattr_tmpfs_filesystems (machine_machinectl_client_subject_type))
+(call filesystems_read_sysfs_files (machine_machinectl_client_subject_type))
+(call filesystems_read_cgroup (machine_machinectl_client_subject_type))
 
 (call dbus_system_client_subject_type (machine_machinectl_client_subject_type))
 
 (call machine_dbus_chat_machined (machine_machinectl_client_subject_type))
 (call machine_use_machined_fd (machine_machinectl_client_subject_type))
 
-(call nspawn_rw_all_inherited_common_container_object_chr_files (machine_machinectl_subject_type))
-
 (call miscfiles_read_all_terminfo (machine_machinectl_client_subject_type))
 (call miscfiles_read_locale (machine_machinectl_client_subject_type))
+
+(call nspawn_dontaudit_list_all_common_container_objects (machine_machinectl_client_subject_type))
+(call nspawn_read_state (machine_machinectl_client_subject_type))
 
 (call systemd_dbus_chat (machine_machinectl_client_subject_type))
 
@@ -118,8 +133,12 @@
 
 (call machine_machinectl_client_subject_type (machine_machinectl_subject_type))
 
+(call nspawn_status_all_unit (machine_machinectl_subject_type))
 (call nspawn_read_state_all_common_container_subjects (machine_machinectl_subject_type))
 (call nspawn_manage_all_common_container_objects (machine_machinectl_subject_type))
+
+(optional machine_machinectl_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (machine_machinectl_subject_type machine_machinectl_role)))
 
 (optional machine_machinectl_subject_type_optional_usersubject
     (call usersubject_manage_tmp (machine_machinectl_subject_type))

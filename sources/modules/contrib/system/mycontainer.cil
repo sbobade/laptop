@@ -50,6 +50,10 @@
     (call machine_search_lib (ARG1))
     (allow ARG1 mycontainer_object_t list_dir_perms))
 
+(macro mycontainer_read_object_files ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (call read_files_pattern (ARG1 mycontainer_object_t mycontainer_object_t)))
+
 (macro mycontainer_read_object ((type ARG1))
     (call machine_search_lib (ARG1))
     (allow ARG1 mycontainer_object_t (all_file_objects (read))))
@@ -66,6 +70,9 @@
     (allow ARG1 mycontainer_subject_t read_file_perms)
     (allow ARG1 mycontainer_subject_t list_dir_perms)
     (allow ARG1 mycontainer_subject_t read_file_perms))
+
+(macro mycontainer_status_unit ((type ARG1))
+    (allow ARG1 mycontainer_unit_t (service (status))))
 
 (macro mycontainer_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

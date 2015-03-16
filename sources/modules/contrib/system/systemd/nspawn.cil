@@ -365,6 +365,9 @@
     (call machine_search_lib (ARG1))
     (allow ARG1 nspawn_common_container_object_type search_dir_perms))
 
+(macro nspawn_dontaudit_list_all_common_container_objects ((type ARG1))
+    (dontaudit ARG1 nspawn_common_container_object_type list_dir_perms))
+
 (macro nspawn_list_all_common_container_objects ((type ARG1))
     (call machine_search_lib (ARG1))
     (allow ARG1 nspawn_common_container_object_type list_dir_perms))
@@ -381,6 +384,11 @@
 
 (macro nspawn_rw_all_inherited_common_container_object_chr_files ((type ARG1))
     (allow ARG1 nspawn_common_container_object_type rw_inherited_chr_file_perms))
+
+(macro nspawn_read_all_common_container_object_files ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (call read_files_pattern (ARG1 nspawn_common_container_object_type
+        nspawn_common_container_object_type)))
 
 (macro nspawn_read_all_common_container_object_lnk_files ((type ARG1))
     (call machine_search_lib (ARG1))
