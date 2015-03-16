@@ -316,6 +316,8 @@
 
 (optional staff_optional_mycontainer
     (call mycontainer_status_unit (staff_t))
+    (call mycontainer_start_unit (staff_t))
+    (call mycontainer_stop_unit (staff_t))
     (call mycontainer_rw_inherited_container_object_chr_files (staff_t)))
 
 (optional staff_optional_nb

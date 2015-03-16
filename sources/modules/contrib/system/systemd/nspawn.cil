@@ -429,6 +429,9 @@
     (allow ARG1 nspawn_t list_dir_perms)
     (allow ARG1 nspawn_t read_lnk_file_perms))
 
+(macro nspawn_send_signal_all_common_container_subjects ((type ARG1))
+    (allow ARG1 nspawn_common_container_subject_type (process (signal))))
+
 (macro nspawn_read_state_all_common_container_subjects ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 nspawn_common_container_subject_type read_file_perms)

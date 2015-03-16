@@ -70,6 +70,7 @@
 (call nspawn_read_all_common_container_object_files (machined_t))
 (call nspawn_read_state_all_common_container_subjects (machined_t))
 (call nspawn_stream_connect_all_common_containers (machined_t))
+(call nspawn_send_signal_all_common_container_subjects (machined_t))
 (call nspawn_getattr_all_common_container_filesystems (machined_t))
 (call nspawn_rw_all_common_container_object_chr_files (machined_t))
 (call nspawn_start_all_unit (machined_t))
@@ -134,6 +135,8 @@
 (call machine_machinectl_client_subject_type (machine_machinectl_subject_type))
 
 (call nspawn_status_all_unit (machine_machinectl_subject_type))
+(call nspawn_start_all_unit (machine_machinectl_subject_type))
+(call nspawn_stop_all_unit (machine_machinectl_subject_type))
 (call nspawn_read_state_all_common_container_subjects (machine_machinectl_subject_type))
 (call nspawn_manage_all_common_container_objects (machine_machinectl_subject_type))
 

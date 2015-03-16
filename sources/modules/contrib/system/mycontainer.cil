@@ -19,7 +19,7 @@
 (typeattributeset mycontainer_object_type mycontainer_unit_t)
 
 (context mycontainer_unit (system_u object_r mycontainer_unit_t (systemlow systemlow)))
-(filecon "/usr/lib/systemd/system/[^/]*mycontainer.*" file mycontainer_unit)
+(filecon "/usr/lib/systemd/system/[^/]*systemd-nspawn@mycontainer.*" file mycontainer_unit)
 
 (allow mycontainer_admin_subject_type mycontainer_subject_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (mycontainer_admin_subject_type mycontainer_subject_t))
@@ -73,6 +73,12 @@
 
 (macro mycontainer_status_unit ((type ARG1))
     (allow ARG1 mycontainer_unit_t (service (status))))
+
+(macro mycontainer_start_unit ((type ARG1))
+    (allow ARG1 mycontainer_unit_t (service (start))))
+
+(macro mycontainer_stop_unit ((type ARG1))
+    (allow ARG1 mycontainer_unit_t (service (stop))))
 
 (macro mycontainer_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))
