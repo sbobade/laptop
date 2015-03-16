@@ -24,3 +24,5 @@
 
 /etc/systemd/system /usr/lib/systemd/system
 /etc/systemd/user /usr/lib/systemd/user
+
+/var/lib/container /var/lib/machines

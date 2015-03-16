@@ -51,8 +51,6 @@
 (context machine_lib (system_u object_r machine_lib_t (systemlow systemlow)))
 (filecon "/var/lib/machines" dir machine_lib)
 (filecon "/var/lib/machines(/.*)?" any ())
-(filecon "/var/lib/container" dir machine_lib)
-(filecon "/var/lib/container(/.*)?" any ())
 
 (allow machined_t self (capability (sys_ptrace sys_chroot setgid sys_admin)))
 (allow machined_t self (process (setfscreate)))
