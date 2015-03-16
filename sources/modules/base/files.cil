@@ -1291,6 +1291,9 @@
 (macro files_getattr_all_except ((type ARG1))
     (allow ARG1 files_except (all_file_objects (getattr))))
 
+(macro files_read_all_except ((type ARG1))
+    (allow ARG1 files_except (all_file_objects (read))))
+
 (macro files_read_all_files_except ((type ARG1))
     (call read_files_pattern (ARG1 files_except files_except)))
 

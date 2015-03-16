@@ -1322,6 +1322,9 @@
     (allow ARG1 usersubject_common_login_subject_type list_dir_perms)
     (allow ARG1 usersubject_common_login_subject_type read_lnk_file_perms))
 
+(macro usersubject_dontaudit_link_keyring_all_common_login_subjects ((type ARG1))
+    (dontaudit ARG1 usersubject_common_login_subject_type (key (search link))))
+
 (macro usersubject_link_keyring_all_common_login_subjects ((type ARG1))
     (allow ARG1 usersubject_common_login_subject_type (key (search link))))
 

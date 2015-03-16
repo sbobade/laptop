@@ -29,6 +29,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/system/systemd/sessions.cil sources/modules/contrib/system/systemd/sleep.cil sources/modules/contrib/system/systemd/systemduser.cil \
         sources/modules/contrib/system/systemd/sysusers.cil sources/modules/contrib/system/systemd/tmpfiles.cil sources/modules/contrib/system/systemd/updatedone.cil \
         sources/modules/contrib/system/systemd/vconsole.cil sources/modules/contrib/applications/b43fwcutter.cil sources/modules/contrib/applications/bti.cil \
+        sources/modules/contrib/system/mycontainer.cil sources/modules/contrib/system/systemd/nspawn.cil sources/modules/contrib/system/systemd/import.cil \
         sources/modules/contrib/applications/emacs.cil sources/modules/contrib/applications/ffmpeg.cil sources/modules/contrib/applications/firefox.cil \
         sources/modules/contrib/applications/fop.cil sources/modules/contrib/applications/gpg.cil sources/modules/contrib/applications/gstreamer.cil \
         sources/modules/contrib/applications/http.cil sources/modules/contrib/applications/irc.cil sources/modules/contrib/applications/java.cil \
@@ -39,7 +40,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/applications/torrent.cil sources/modules/contrib/applications/xlock.cil sources/modules/contrib/applications/xpdf.cil \
         sources/modules/contrib/applications/xterm.cil sources/modules/contrib/applications/xutil.cil sources/modules/contrib/applications/cowsay.cil \
         sources/modules/contrib/applications/festival.cil sources/modules/contrib/applications/dbuslaunch.cil sources/modules/contrib/applications/atspi2.cil \
-        sources/modules/contrib/applications/xbindkeys.cil sources/modules/contrib/applications/fpaste.cil
+        sources/modules/contrib/applications/xbindkeys.cil sources/modules/contrib/applications/fpaste.cil sources/modules/contrib/applications/resetimg.cil \
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 

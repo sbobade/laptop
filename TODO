@@ -2,13 +2,7 @@
 
 * is there a pattern that all nsswitch client subjects want to read machine runtime files?
 
-* test all the systemd "ctl" apps (as staff_t) by commenting out systemctl_client_subject_type first because that provides a lot of permissions that all have in common.
-
 * do journal clients still need net_admin?
-
-* there might be some redundant net_admins' in there because journal_client_subject_type also has it.
-
-* review pretty much all net_admins everywhere. in a lot of instances it is not really needed.
 
 * implement system_map_t for /boot/System.map.* files?
 
@@ -25,10 +19,7 @@
 
     or maybe unspecific, and allow systemd to bind tcp/udp sockets to all ports conditionally...
 
-* review my audit_set_loginuid() and audit_set_params() macro calls
-
-* e145: power script needs to be moved (/usr/(.local)/bin -> /usr/(.local)/sbin/
-    copy /usr/.local/sbin/resetimg from x131e to e145
-
 * i should be able to shave off some nspawn_common_container_subject_type self permissions
     for example there is no audit, and no selinux either in the container.
+
+* fix /usr/local/sbin/resetimg on e145

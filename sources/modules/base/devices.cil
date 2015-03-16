@@ -368,6 +368,10 @@
     (call filesystems_add_entry_devtmpfs (ARG1))
     (allow ARG1 null_dev_t create_chr_file_perms))
 
+(macro devices_tmpfs_object_type_transition_null_dev ((type ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 null_dev_t chr_file "full"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 null_dev_t chr_file "null")))
+
 (macro devices_create_random ((type ARG1))
     (allow ARG1 self (capability (mknod)))
     (call filesystems_add_entry_devtmpfs (ARG1))

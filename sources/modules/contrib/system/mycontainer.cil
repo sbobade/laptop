@@ -1,13 +1,43 @@
+(typeattribute mycontainer_admin_subject_type)
+
+(typeattribute mycontainer_object_type)
+
 (type mycontainer_subject_t)
+
 (type mycontainer_object_t)
+
+(typeattributeset mycontainer_object_type mycontainer_object_t)
+
 (call nspawn_common_container_template (mycontainer_subject_t mycontainer_object_t))
 
 (context mycontainer (system_u object_r mycontainer_object_t (systemlow systemlow)))
 (filecon "/var/lib/machines/mycontainer(/.*)?" any mycontainer)
 
+(type mycontainer_unit_t)
+(call nspawn_systemd_unit_object_type (mycontainer_unit_t))
+
+(typeattributeset mycontainer_object_type mycontainer_unit_t)
+
+(context mycontainer_unit (system_u object_r mycontainer_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-nspawn@mycontainer.*" file mycontainer_unit)
+
+(call network_tcp_connect_all_unreserved_ports (mycontainer_subject_t))
+(call network_tcp_connect_all_ephemeral_ports (mycontainer_subject_t))
+
+(allow mycontainer_admin_subject_type mycontainer_subject_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (mycontainer_admin_subject_type mycontainer_subject_t))
+
+(allow mycontainer_admin_subject_type mycontainer_unit_t (service (all)))
+
+(allow mycontainer_admin_subject_type mycontainer_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
 (optional mycontainer_optional_dhcp
     (call network_udp_bind_all_unreserved_ports (mycontainer_subject_t))
     (call dhcp_udp_bind_dhcp_port (mycontainer_subject_t)))
+
+(optional mycontainer_optional_ftp
+    (call ftp_tcp_connect_ftp_port (mycontainer_subject_t)))
 
 (optional mycontainer_optional_http
     (call http_tcp_connect_http_port (mycontainer_subject_t)))
@@ -15,5 +45,45 @@
 (optional mycontainer_optional_ssh
     (call ssh_tcp_bind_ssh_port (mycontainer_subject_t)))
 
+(macro mycontainer_search_object ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (allow ARG1 mycontainer_object_t search_dir_perms))
+
+(macro mycontainer_list_object ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (allow ARG1 mycontainer_object_t list_dir_perms))
+
+(macro mycontainer_read_object_files ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (call read_files_pattern (ARG1 mycontainer_object_t mycontainer_object_t)))
+
+(macro mycontainer_read_object ((type ARG1))
+    (call machine_search_lib (ARG1))
+    (allow ARG1 mycontainer_object_t (all_file_objects (read))))
+
+(macro mycontainer_manage_object ((type ARG1))
+    (call machine_rw_lib_dirs (ARG1))
+    (allow ARG1 mycontainer_object_t (all_file_objects (manage))))
+
 (macro mycontainer_rw_inherited_container_object_chr_files ((type ARG1))
     (allow ARG1 mycontainer_object_t rw_inherited_chr_file_perms))
+
+(macro mycontainer_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 mycontainer_subject_t read_file_perms)
+    (allow ARG1 mycontainer_subject_t list_dir_perms)
+    (allow ARG1 mycontainer_subject_t read_file_perms))
+
+(macro mycontainer_status_unit ((type ARG1))
+    (allow ARG1 mycontainer_unit_t (service (status))))
+
+(macro mycontainer_start_unit ((type ARG1))
+    (allow ARG1 mycontainer_unit_t (service (start))))
+
+(macro mycontainer_stop_unit ((type ARG1))
+    (allow ARG1 mycontainer_unit_t (service (stop))))
+
+(macro mycontainer_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset mycontainer_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

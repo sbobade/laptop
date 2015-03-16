@@ -151,8 +151,10 @@
 (call commands_auditallow_exec (systemd_t))
 (call commands_auditallow_exec_shell (systemd_t))
 
-(call devices_create_devtty (systemd_t))
 (call devices_create_null (systemd_t))
+(call devices_tmpfs_object_type_transition_null_dev (systemd_t))
+
+(call devices_create_devtty (systemd_t))
 (call devices_create_random (systemd_t))
 (call devices_create_urandom (systemd_t))
 (call devices_create_zero (systemd_t))
@@ -207,17 +209,12 @@
 
 (call terminals_use_unallocated_ttys (systemd_t))
 
-(call import_exec_object_entry_subject (systemd_t))
-(call import_manage_systemd_runtime (systemd_t))
-
 (call journal_list_log (systemd_t))
 (call journal_test_for_systemd (systemd_t))
 (call journal_read_journald_systemd_runtime (systemd_t))
 (call journal_relabelto_log_dirs (systemd_t))
 (call journal_relabelto_log_files (systemd_t))
 (call journal_use_fd_journald (systemd_t))
-
-(call machine_manage_lib_files (systemd_t))
 
 (call miscfiles_read_modules (systemd_t))
 
@@ -256,8 +253,15 @@
 (optional systemd_optional_http
     (call http_tcp_connect_http_port (systemd_t)))
 
+(optional systemd_optional_import
+    (call import_exec_object_entry_subject (systemd_t))
+    (call import_manage_systemd_runtime (systemd_t)))
+
 (optional systemd_optional_login_logind
     (call login_read_logind_systemd_runtime (systemd_t)))
+
+(optional systemd_optional_machine
+    (call machine_manage_lib_files (systemd_t)))
 
 (optional systemd_optional_plymouth
     (call plymouth_exec (systemd_t))
@@ -318,16 +322,8 @@
 
 (allow systemd_systemctl_subject_type self (capability (dac_override net_admin sys_resource)))
 (allow systemd_systemctl_subject_type self (process (setfscreate)))
-(allow systemd_systemctl_subject_type self rw_fifo_file_perms)
-
-(call commands_exec (systemd_systemctl_subject_type))
-
-(call filesystems_getattr_filesystems (systemd_systemctl_subject_type))
 
 (call terminals_use_inherited_console (systemd_systemctl_subject_type))
-
-(call miscfiles_read_all_terminfo (systemd_systemctl_subject_type))
-(call miscfiles_read_locale (systemd_systemctl_subject_type))
 
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
@@ -421,18 +417,25 @@
 
 (allow systemd_systemctl_client_subject_type self (capability (ipc_lock)))
 (allow systemd_systemctl_client_subject_type self (process (setrlimit)))
+(allow systemd_systemctl_client_subject_type self rw_fifo_file_perms)
 
 (call system_read_crypto_sysctl (systemd_systemctl_client_subject_type))
 (call system_read_kernel_sysctl (systemd_systemctl_client_subject_type))
 (call system_use_fd (systemd_systemctl_client_subject_type))
 
+(call commands_exec (systemd_systemctl_client_subject_type))
+
 (call devices_read_urandom (systemd_systemctl_client_subject_type))
 
+(call filesystems_getattr_filesystems (systemd_systemctl_client_subject_type))
 (call filesystems_getattr_tmpfs_filesystems (systemd_systemctl_client_subject_type))
 (call filesystems_read_sysfs_files (systemd_systemctl_client_subject_type))
 (call filesystems_read_cgroup (systemd_systemctl_client_subject_type))
 
 (call journal_read_log (systemd_systemctl_client_subject_type))
+
+(call miscfiles_read_all_terminfo (systemd_systemctl_client_subject_type))
+(call miscfiles_read_locale (systemd_systemctl_client_subject_type))
 
 (call systemd_dgram_send (systemd_systemctl_client_subject_type))
 (call systemd_read_state_lnk_files (systemd_systemctl_client_subject_type))
