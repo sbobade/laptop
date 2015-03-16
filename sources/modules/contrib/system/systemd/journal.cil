@@ -30,6 +30,13 @@
 (optional journal_journalctl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (journal_journalctl_subject_type journal_journalctl_role)))
 
+(optional journal_journalctl_subject_type_optional_machine
+    (call machine_read_machined_systemd_runtime_files (journal_journalctl_subject_type)))
+
+(optional journal_journalctl_subject_type_optional_nspawn
+    (call nspawn_list_all_common_container_objects (journal_journalctl_subject_type))
+    (call nspawn_read_all_common_container_object_files (journal_journalctl_subject_type)))
+
 (type journald_t)
 (type journald_exec_t)
 (call systemd_daemon (journald_t journald_exec_t))
