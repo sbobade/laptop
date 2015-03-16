@@ -59,10 +59,14 @@
 (call usersubject_manage_user_home_files (ssh_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (ssh_subject_type file "*"))
 
+(optional ssh_subject_type_optional_dbus
+    (call dbus_system_client_subject_type (ssh_subject_type)))
+
 (optional ssh_subject_type_optional_gpg
     (call gpg_search_home (ssh_subject_type)))
 
 (optional ssh_subject_type_optional_machine
+    (call machine_dbus_chat_machined (ssh_subject_type))
     (call machine_read_machined_systemd_runtime_files (ssh_subject_type)))
 
 (type sshagent_exec_t)
