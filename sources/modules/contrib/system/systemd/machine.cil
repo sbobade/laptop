@@ -115,6 +115,9 @@
 
 (call machine_machinectl_client_subject_type (machine_machinectl_subject_type))
 
+(optional machine_machinectl_subject_type_optional_usersubject
+    (call usersubject_dontaudit_read_user_home_files (machine_machinectl_subject_type)))
+
 (macro machine_machinectl_client_subject_type ((type ARG1))
     (typeattributeset machine_machinectl_client_subject_type ARG1))
 

@@ -449,6 +449,9 @@
 (macro system_link_keyring ((type ARG1))
     (allow ARG1 system_t (key (search link))))
 
+(macro system_dontaudit_link_keyring ((type ARG1))
+    (dontaudit ARG1 system_t (key (search link))))
+
 (macro system_load_kernel_module ((type ARG1))
     (typeattributeset system_can_load_kernel_module ARG1))
 
