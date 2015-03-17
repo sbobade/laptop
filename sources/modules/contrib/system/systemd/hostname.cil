@@ -1,6 +1,7 @@
 (roleattribute hostname_hostnamectl_role)
 
 (typeattribute hostname_hostnamectl_subject_type)
+(typeattribute hostname_hostnamectl_client_subject_type)
 
 (type hostnamectl_t)
 (type hostnamectl_exec_t)
@@ -17,22 +18,24 @@
 
 (call system_read_kernel_sysctl (hostname_hostnamectl_subject_type))
 
-(call commands_exec (hostname_hostnamectl_subject_type))
-
 (call askpwd_run_askpwdagent (hostname_hostnamectl_subject_type hostname_hostnamectl_role))
-
-(call dbus_system_client_subject_type (hostname_hostnamectl_subject_type))
-
-(call hostname_dbus_chat_hostnamed (hostname_hostnamectl_subject_type))
-
-(call machine_read_config_files (hostname_hostnamectl_subject_type))
-
-(call miscfiles_read_locale (hostname_hostnamectl_subject_type))
-
-(call polkit_dbus_chat_polkitd (hostname_hostnamectl_subject_type))
 
 (call systemd_dbus_chat (hostname_hostnamectl_subject_type))
 (call systemd_status_system (hostname_hostnamectl_subject_type))
+
+(call hostname_dbus_chat_hostnamed (hostname_hostnamectl_subject_type))
+(call hostname_hostnamectl_client_subject_type (hostname_hostnamectl_subject_type))
+
+(call machine_read_config_files (hostname_hostnamectl_subject_type))
+
+(call dbus_system_client_subject_type (hostname_hostnamectl_client_subject_type))
+
+(call commands_exec (hostname_hostnamectl_client_subject_type))
+
+(call miscfiles_read_locale (hostname_hostnamectl_client_subject_type))
+
+(optional hostname_hostnamectl_client_subject_type_optional_polkit
+    (call polkit_dbus_chat_polkitd (hostname_hostnamectl_client_subject_type)))
 
 (type hostnamed_t)
 (type hostnamed_exec_t)
@@ -80,7 +83,8 @@
     (call can_exec (ARG1 hostnamed_exec_t)))
 
 (macro hostname_exec_hostnamectl ((type ARG1))
-    (call can_exec (ARG1 hostnamectl_exec_t)))
+    (call can_exec (ARG1 hostnamectl_exec_t))
+    (call hostname_hostnamectl_client_subject_type (ARG1)))
 
 (macro hostname_auto_subject_type_transition_hostnamed ((type ARG1))
     (call hostname_send_signal_hostnamed (ARG1))
@@ -100,6 +104,9 @@
 
 (macro hostname_hostnamectl_subject_type ((type ARG1))
     (typeattributeset hostname_hostnamectl_subject_type ARG1))
+
+(macro hostname_hostnamectl_client_subject_type ((type ARG1))
+    (typeattributeset hostname_hostnamectl_client_subject_type ARG1))
 
 (macro hostname_role_template_hostnamectl ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern

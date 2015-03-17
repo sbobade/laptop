@@ -169,6 +169,8 @@
 (optional logind_optional_unconfineduser
     (call unconfineduser_read_state_all_subjects (logind_t)))
 
+(call login_loginctl_client_subject_type (login_loginctl_subject_type))
+
 (allow login_logind_admin_subject_type logind_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (login_logind_admin_subject_type logind_t))
 

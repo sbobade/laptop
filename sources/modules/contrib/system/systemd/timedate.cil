@@ -74,6 +74,8 @@
 
 (call miscfiles_read_locale (timedate_timedatectl_client_subject_type))
 
+(call timedate_timedatectl_client_subject_type (timedate_timedatectl_subject_type))
+
 (optional timedate_timedatectl_client_subject_type_polkit
     (call polkit_dbus_chat_polkitd (timedate_timedatectl_client_subject_type)))
 
