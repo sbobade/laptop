@@ -157,7 +157,10 @@
 (call devices_create_devtty (systemd_t))
 (call devices_create_random (systemd_t))
 (call devices_create_urandom (systemd_t))
+
 (call devices_create_zero (systemd_t))
+(call devices_tmpfs_object_type_transition_zero_dev (systemd_t))
+
 (call devices_read_autofs (systemd_t))
 (call devices_read_memory (systemd_t))
 (call devices_relabel_all (systemd_t))
@@ -262,6 +265,9 @@
 
 (optional systemd_optional_machine
     (call machine_manage_lib_files (systemd_t)))
+
+(optional systemd_optional_network_networkd
+    (call network_create_networkd_netlink_route_socket (systemd_t)))
 
 (optional systemd_optional_plymouth
     (call plymouth_exec (systemd_t))

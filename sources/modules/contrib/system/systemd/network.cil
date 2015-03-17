@@ -68,6 +68,7 @@
 (allow networkd_t self create_rawip_socket_perms)
 (allow networkd_t self (netlink_route_socket (nlmsg_write)))
 
+(call system_request_load_module (networkd_t))
 (call system_read_kernel_sysctl (networkd_t))
 (call system_rw_net_sysctl (networkd_t))
 
@@ -80,6 +81,7 @@
 (call dbus_system_service (networkd_t))
 
 (call dhcp_udp_bind_dhcp_port (networkd_t))
+(call dhcp_udp_bind_dhcpv6_client_port (networkd_t))
 
 (call hostname_dbus_chat_hostnamed (networkd_t))
 
@@ -92,6 +94,26 @@
 (call ns_client_subject_type (networkd_t))
 
 (call udev_client_subject_type (networkd_t))
+
+(allow networkctl_t self (capability (dac_override)))
+
+(call udev_client_subject_type (networkctl_t))
+
+(optional networkctl_optional_usersubject
+    (call usersubject_dontaudit_read_user_home_files (networkctl_t)))
+
+(allow network_networkctl_client_subject_type self rw_fifo_file_perms)
+(allow network_networkctl_client_subject_type self create_udp_socket_perms)
+(allow network_networkctl_client_subject_type self r_netlink_route_socket_perms)
+
+(call commands_exec (network_networkctl_client_subject_type))
+
+(call filesystems_read_sysfs (network_networkctl_client_subject_type))
+
+(call miscfiles_read_all_terminfo (network_networkctl_client_subject_type))
+(call miscfiles_read_locale (network_networkctl_client_subject_type))
+
+(call network_read_networkd_systemd_runtime_files (network_networkctl_client_subject_type))
 
 (allow network_networkd_admin_subject_type networkd_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (network_networkd_admin_subject_type networkd_t))
@@ -203,6 +225,9 @@
 (macro network_dbus_chat_networkd ((type ARG1))
     (allow ARG1 networkd_t (dbus (send_msg)))
     (allow networkd_t ARG1 (dbus (send_msg))))
+
+(macro network_create_networkd_netlink_route_socket ((type ARG1))
+    (allow ARG1 networkd_t (netlink_route_socket (create setopt bind))))
 
 (macro network_networkd_client_subject_type ((type ARG1))
     (typeattributeset network_networkd_client_subject_type ARG1))

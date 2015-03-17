@@ -33,7 +33,9 @@
     (not_mounton_entrypoint_and_execmod)))
 
 (optional mycontainer_optional_dhcp
+    (call network_tcp_bind_all_unreserved_ports (mycontainer_subject_t))
     (call network_udp_bind_all_unreserved_ports (mycontainer_subject_t))
+    (call dhcp_udp_bind_dhcpv6_client_port (mycontainer_subject_t))
     (call dhcp_udp_bind_dhcp_port (mycontainer_subject_t)))
 
 (optional mycontainer_optional_ftp

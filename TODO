@@ -26,3 +26,5 @@
     the ones that have a ctl app as well as a service unit
 
 * make sure admin has access to all of /var/lib/systemd and /run/systemd
+
+* pkttyagent is run by the systemd "ctl" utils

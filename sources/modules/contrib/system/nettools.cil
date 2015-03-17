@@ -62,10 +62,12 @@
 (allow ping_t self create_rawip_socket_perms)
 
 (call miscfiles_read_locale (ping_t))
+(call miscfiles_read_net_config_files (ping_t))
 
 (call ns_client_subject_type (ping_t))
 
-(call miscfiles_read_net_config_files (ping_t))
+(optional ping_optional_machine
+    (call machine_read_machined_systemd_runtime_files (ping_t)))
 
 (type traceroute_t)
 (type traceroute_exec_t)

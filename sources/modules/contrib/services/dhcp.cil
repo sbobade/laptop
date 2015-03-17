@@ -82,6 +82,13 @@
 (portcon "tcp" 68 dhcp_port)
 (portcon "udp" 68 dhcp_port)
 
+(type dhcpv6_client_port_t)
+(call network_hi_reserved_port_object_type (dhcpv6_client_port_t))
+
+(context dhcpv6_client_port (system_u object_r dhcpv6_client_port_t (systemlow systemlow)))
+(portcon "tcp" 546 dhcpv6_client_port)
+(portcon "udp" 546 dhcpv6_client_port)
+
 (macro dhcp_exec_dhclient ((type ARG1))
     (call can_exec (ARG1 dhclient_exec_t)))
 
@@ -179,3 +186,7 @@
 (macro dhcp_udp_bind_dhcp_port ((type ARG1))
     (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 dhcp_port_t (udp_socket (name_bind))))
+
+(macro dhcp_udp_bind_dhcpv6_client_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 dhcpv6_client_port_t (udp_socket (name_bind))))

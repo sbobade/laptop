@@ -19,12 +19,17 @@
 (context timedatectl_exec (system_u object_r timedatectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/timedatectl" file timedatectl_exec)
 
+(type timedatex_t)
+(type timedatex_exec_t)
+(call systemd_daemon (timedatex_t timedatex_exec_t))
+
 (type timedated_t)
 (type timedated_exec_t)
 (call systemd_daemon (timedated_t timedated_exec_t))
 
 (context timedated_exec (system_u object_r timedated_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-timedated" file timedated_exec)
+(filecon "/usr/sbin/timedatex" file timedated_exec)
 
 (type timedated_unit_t)
 (call systemd_unit_object_type (timedated_unit_t))
@@ -32,12 +37,26 @@
 (typeattributeset timedate_timedated_object_type timedated_unit_t)
 
 (context timedated_unit (system_u object_r timedated_unit_t (systemlow systemlow)))
-(filecon "/usr/lib/systemd/system/[^/]*systemd-timedated.*" file logind_unit)
+(filecon "/usr/lib/systemd/system/[^/]*systemd-timedated.*" file timedated_unit)
+(filecon "/usr/lib/systemd/system/[^/]*timedatex.*" file timedated_unit)
 
 (type timedated_dbus_config_t)
 (call dbus_config_object_type (timedated_dbus_config_t))
 
 (typeattributeset timedate_timedated_object_type timedated_dbus_config_t)
+
+(call system_read_kernel_sysctl (timedated_t))
+
+(call devices_read_kmsg (timedated_t))
+
+(call dbus_system_service (timedated_t))
+
+(call hwclock_read_config_files (timedated_t))
+
+(call journal_client_subject_type (timedated_t))
+
+(call systemd_dbus_chat (timedated_t))
+(call systemd_status_system (timedated_t))
 
 (context timedated_dbus_config (system_u object_r timedated_dbus_config_t (systemlow systemlow)))
 (filecon "/etc/dbus-1/system\.d/org\.freedesktop\.timedate1\.conf" file timedated_dbus_config)
@@ -46,6 +65,17 @@
 (call ps_subject_pattern (timedate_timedated_admin_subject_type timedated_t))
 
 (allow timedate_timedated_admin_subject_type timedated_unit_t (service (all)))
+
+(allow timedatectl_t self (capability (net_admin)))
+
+(call commands_exec (timedate_timedatectl_client_subject_type))
+
+(call dbus_system_client_subject_type (timedate_timedatectl_client_subject_type))
+
+(call miscfiles_read_locale (timedate_timedatectl_client_subject_type))
+
+(optional timedate_timedatectl_client_subject_type_polkit
+    (call polkit_dbus_chat_polkitd (timedate_timedatectl_client_subject_type)))
 
 (allow timedate_timedated_admin_subject_type timedate_timedated_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
@@ -70,6 +100,17 @@
 
 (macro timedate_send_signal_timedated ((type ARG1))
     (allow ARG1 timedated_t (process (signal))))
+
+(macro timedate_exec_timedatex ((type ARG1))
+    (call can_exec (ARG1 timedatex_exec_t)))
+
+(macro timedate_auto_subject_type_transition_timedatex ((type ARG1))
+    (call timedate_send_signal_timedatex (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 timedatex_exec_t timedatex_t)))
+
+(macro timedate_send_signal_timedatex ((type ARG1))
+    (allow ARG1 timedatex_t (process (signal))))
 
 (macro timedate_auto_subject_type_transition_timedatectl ((type ARG1))
     (call timedate_send_signal_timedatectl (ARG1))
@@ -102,6 +143,10 @@
 (macro timedate_dbus_chat_timedated ((type ARG1))
     (allow ARG1 timedated_t (dbus (send_msg)))
     (allow timedated_t ARG1 (dbus (send_msg))))
+
+(macro timedate_dbus_chat_timedatex ((type ARG1))
+    (allow ARG1 timedatex_t (dbus (send_msg)))
+    (allow timedatex_t ARG1 (dbus (send_msg))))
 
 (macro timedate_timedated_client_subject_type ((type ARG1))
     (typeattributeset timedate_timedated_client_subject_type ARG1))
