@@ -23,7 +23,7 @@
     (context initctl_runtime (system_u object_r initctl_runtime_t (systemlow systemlow)))
     (filecon "/var/run/systemd/initctl(/.*)?" any initctl_runtime)
 
-    (call systemd_runtime_object_type_transition (initctl_t initctl_runtime_t dir "*")))
+    (call systemd_runtime_object_type_transition (initctl_t initctl_runtime_t dir "initctl")))
 
 (macro initctl_exec ((type ARG1))
     (call can_exec (ARG1 initctl_exec_t)))

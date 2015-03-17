@@ -36,6 +36,7 @@
 (call system_read_kernel_sysctl (localed_t))
 
 (call devices_read_urandom (localed_t))
+(call devices_write_kmsg (localed_t))
 
 (call filesystems_search_tmpfs (localed_t))
 
@@ -47,8 +48,6 @@
 
 (call seutil_read_selinux_config_files (localed_t))
 (call seutil_read_file_context_files (localed_t))
-
-(call systemd_stream_connect (localed_t))
 
 (call vconsole_read_config_files (localed_t))
 

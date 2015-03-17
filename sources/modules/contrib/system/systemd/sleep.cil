@@ -11,6 +11,7 @@
 (call filesystems_read_sysfs_lnk_files (sleep_t))
 
 (call devices_read_urandom (sleep_t))
+(call devices_write_kmsg (sleep_t))
 
 (call journal_client_subject_type (sleep_t))
 

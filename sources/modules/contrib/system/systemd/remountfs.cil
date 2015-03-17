@@ -6,6 +6,7 @@
 (filecon "/usr/lib/systemd/systemd-remount-fs" file remountfs_exec)
 
 (call devices_read_urandom (remountfs_t))
+(call devices_write_kmsg (remountfs_t))
 
 (call files_read_config_files (remountfs_t))
 

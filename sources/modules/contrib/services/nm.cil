@@ -64,7 +64,7 @@
 (call files_lib_object_type_transition (nm_t nm_lib_t dir "*"))
 
 (allow nm_t self (process (setpgid)))
-(allow nm_t self (capability (net_admin net_raw sys_admin)))
+(allow nm_t self (capability (net_admin net_raw sys_admin dac_override)))
 (allow nm_t self create_netlink_socket_perms)
 (allow nm_t self (netlink_route_socket (nlmsg_write)))
 (allow nm_t self (unix_stream_socket (listen accept)))
@@ -142,6 +142,9 @@
 
 (optional nm_optinal_polkit
     (call polkit_dbus_chat_polkitd (nm_t)))
+
+(optional nm_optional_resolved
+    (call resolve_manage_resolved_systemd_runtime_files (nm_t)))
 
 (optional nm_optional_systemd
     (call systemd_daemon (nm_t nm_exec_t))

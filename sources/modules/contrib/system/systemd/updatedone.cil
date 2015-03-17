@@ -16,6 +16,8 @@
 (call files_config_object_type_transition (updatedone_t updatedone_flag_t file "*"))
 (call files_var_object_type_transition (updatedone_t updatedone_flag_t file "*"))
 
+(call devices_write_kmsg (updatedone_t))
+
 (call journal_client_subject_type (updatedone_t))
 
 (call seutil_read_selinux_config_files (updatedone_t))

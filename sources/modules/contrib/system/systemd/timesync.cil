@@ -20,20 +20,22 @@
 (allow timesyncd_t timesyncd_systemd_lib_t manage_file_perms)
 (call systemd_lib_object_type_transition (timesyncd_t timesyncd_systemd_lib_t file "clock"))
 
-(allow timesyncd_t self (capability (chown fowner setuid setgid setpcap)))
+(allow timesyncd_t self (capability (chown fowner setuid setgid setpcap dac_override)))
 (allow timesyncd_t self (process (getcap setcap setrlimit)))
 
 (call system_read_kernel_sysctl (timesyncd_t))
 
+(call devices_write_kmsg (timesyncd_t))
+
 (call hwclock_read_config_files (timesyncd_t))
+
+(call journal_client_subject_type (timesyncd_t))
 
 (call miscfiles_read_net_config (timesyncd_t))
 
 (call network_read_networkd_systemd_runtime (timesyncd_t))
 
 (call ns_client_subject_type (timesyncd_t))
-
-(call systemd_stream_connect (timesyncd_t))
 
 (call timesync_read_timesyncd_systemd_config_files (timesyncd_t))
 

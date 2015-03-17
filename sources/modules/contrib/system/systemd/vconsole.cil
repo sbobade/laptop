@@ -16,7 +16,7 @@
 
 (call system_use_fd (vconsole_t))
 
-(call terminals_use_unallocated_ttys (vconsole_t))
+(call devices_write_kmsg (vconsole_t))
 
 (call filesystems_list_rootfs (vconsole_t))
 (call filesystems_write_inherited_devpts_chr_files (vconsole_t))
@@ -24,6 +24,8 @@
 
 (call commands_exec (vconsole_t))
 (call commands_exec_shell (vconsole_t))
+
+(call terminals_use_unallocated_ttys (vconsole_t))
 
 (call journal_client_subject_type (vconsole_t))
 

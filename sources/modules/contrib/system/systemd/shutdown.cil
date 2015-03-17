@@ -126,6 +126,8 @@
 (allow shutdownd_t self (capability (dac_override sys_tty_config)))
 (allow shutdownd_t self (process (setfscreate)))
 
+(call devices_write_kmsg (shutdownd_t))
+
 (call journal_client_subject_type (shutdownd_t))
 
 (call miscfiles_read_locale (shutdownd_t))

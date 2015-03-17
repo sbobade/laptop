@@ -54,6 +54,8 @@
 
 (call system_read_kernel_sysctl (resolved_t))
 
+(call devices_write_kmsg (resolved_t))
+
 (call filesystems_read_sysfs (resolved_t))
 
 (call selinux_get_enforce_mode (resolved_t))
@@ -66,7 +68,7 @@
 (call network_tcp_bind_all_unreserved_ports (resolved_t))
 (call network_udp_bind_generic_node (resolved_t))
 (call network_udp_bind_all_unreserved_ports (resolved_t))
-(call network_read_networkd_systemd_runtime_files (resolved_t))
+(call network_read_networkd_systemd_runtime (resolved_t))
 
 (call ns_client_subject_type (resolved_t))
 
@@ -74,8 +76,6 @@
 
 (call seutil_read_selinux_config_files (resolved_t))
 (call seutil_read_file_context_files (resolved_t))
-
-(call systemd_stream_connect (resolved_t))
 
 (allow resolve_resolved_admin_subject_type resolved_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (resolve_resolved_admin_subject_type resolved_t))
@@ -123,6 +123,10 @@
 (macro resolve_read_resolved_systemd_runtime_files ((type ARG1))
     (call systemd_search_runtime (ARG1))
     (call read_files_pattern (ARG1 resolved_systemd_runtime_t resolved_systemd_runtime_t)))
+
+(macro resolve_manage_resolved_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 resolved_systemd_runtime_t resolved_systemd_runtime_t)))
 
 (macro resolve_read_resolved_systemd_runtime_lnk_files ((type ARG1))
     (call systemd_search_runtime (ARG1))

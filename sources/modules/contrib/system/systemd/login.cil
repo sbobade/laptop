@@ -155,7 +155,6 @@
 (call systemd_stop_transient_units (logind_t))
 (call systemd_start_system (logind_t))
 (call systemd_stop_system (logind_t))
-(call systemd_stream_connect (logind_t))
 
 (call systemduser_status_user_units (logind_t))
 (call systemduser_start_user_units (logind_t))

@@ -52,6 +52,7 @@
 (call system_read_kernel_sysctl (hostnamed_t))
 
 (call devices_read_urandom (hostnamed_t))
+(call devices_write_kmsg (hostnamed_t))
 
 (call filesystems_read_sysfs (hostnamed_t))
 (call filesystems_search_tmpfs (hostnamed_t))
@@ -74,8 +75,6 @@
 
 (call seutil_read_selinux_config_files (hostnamed_t))
 (call seutil_read_file_context_files (hostnamed_t))
-
-(call systemd_stream_connect (hostnamed_t))
 
 (macro hostname_exec_hostnamed ((type ARG1))
     (call can_exec (ARG1 hostnamed_exec_t)))

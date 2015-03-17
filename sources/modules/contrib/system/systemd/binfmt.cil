@@ -12,6 +12,7 @@
 (filecon "/etc/binfmt\.d(/.*)?" any binfmt_config)
 
 (call devices_read_urandom (binfmt_t))
+(call devices_write_kmsg (binfmt_t))
 
 (call journal_client_subject_type (binfmt_t))
 

@@ -58,6 +58,8 @@
 
 (call system_read_kernel_sysctl (machined_t))
 
+(call devices_write_kmsg (machined_t))
+
 (call filesystems_search_tmpfs (machined_t))
 (call filesystems_list_rootfs (machined_t))
 
@@ -87,7 +89,6 @@
 (call systemd_status_transient_units (machined_t))
 (call systemd_start_transient_units (machined_t))
 (call systemd_stop_transient_units (machined_t))
-(call systemd_stream_connect (machined_t))
 
 (optional machined_subject_type_optional_polkit
     (call polkit_dbus_chat_polkitd (machined_t)))

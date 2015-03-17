@@ -191,19 +191,21 @@
     (call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type)))
 
 (allow journal_client_subject_type self (capability (net_admin))) ; FIXME
+(allow journal_client_subject_type self create_unix_stream_socket_perms)
+(allow journal_client_subject_type self create_unix_dgram_socket_perms)
 (allow journal_client_subject_type self (unix_dgram_socket (sendto)))
 
 (call dgram_send_pattern
     (journal_client_subject_type journald_systemd_runtime_t journald_systemd_runtime_t journald_t))
 
-(call system_dgram_send (journal_client_subject_type))
 (call system_stream_connect (journal_client_subject_type))
+(call system_dgram_send (journal_client_subject_type))
 
 (call filesystems_read_devtmpfs_lnk_files (journal_client_subject_type))
 
 (call terminals_use_console (journal_client_subject_type))
 
-(call systemd_search_runtime (journal_client_subject_type))
+(call systemd_write_systemd_runtime_sock_files (journal_client_subject_type))
 
 (allow journal_admin_subject_type journald_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (journal_admin_subject_type journald_t))
