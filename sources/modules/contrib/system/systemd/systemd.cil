@@ -336,7 +336,7 @@
 
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
-(call systemd_getattr_config_dirs (systemd_systemctl_subject_type))
+(call systemd_search_config (systemd_systemctl_subject_type))
 (call systemd_getattr_unit_dirs (systemd_systemctl_subject_type))
 (call systemd_control_all_units (systemd_systemctl_subject_type))
 (call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
@@ -595,10 +595,6 @@
 (macro systemd_read_config_files ((type ARG1))
     (call files_search_config (ARG1))
     (call read_files_pattern (ARG1 systemd_config_t systemd_config_t)))
-
-(macro systemd_getattr_config_dirs ((type ARG1))
-    (call files_search_config (ARG1))
-    (allow ARG1 systemd_config_t (dir (getattr))))
 
 (macro systemd_rw_config_dirs ((type ARG1))
     (call files_search_config (ARG1))
