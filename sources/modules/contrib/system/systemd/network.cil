@@ -1,0 +1,203 @@
+(roleattribute network_networkctl_role)
+
+(typeattribute network_networkctl_client_subject_type)
+
+(typeattribute network_networkd_client_subject_type)
+
+(typeattribute network_networkd_admin_subject_type)
+
+(typeattribute network_networkd_object_type)
+
+(type networkctl_t)
+(type networkctl_exec_t)
+(call applications_app (networkctl_t networkctl_exec_t))
+(roletype network_networkctl_role networkctl_t)
+
+(call network_networkctl_client_subject_type (networkctl_t))
+
+(context networkctl_exec (system_u object_r networkctl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/networkctl" file networkctl_exec)
+
+(type networkd_t)
+(type networkd_exec_t)
+(call systemd_daemon (networkd_t networkd_exec_t))
+
+(context networkd_exec (system_u object_r networkd_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-networkd" file networkd_exec)
+(filecon "/usr/lib/systemd/systemd-networkd-wait-online" file networkd_exec)
+
+(type networkd_unit_t)
+(call systemd_unit_object_type (networkd_unit_t))
+
+(typeattributeset network_networkd_object_type networkd_unit_t)
+
+(context networkd_unit (system_u object_r networkd_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-networkd.*" file networkd_unit)
+
+(type networkd_systemd_config_t)
+(call systemd_config_object_type (networkd_systemd_config_t))
+
+(typeattributeset network_networkd_object_type networkd_systemd_config_t)
+
+(context networkd_systemd_config (system_u object_r networkd_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/network(/.*)?" any networkd_systemd_config)
+
+(type networkd_dbus_config_t)
+(call dbus_config_object_type (networkd_dbus_config_t))
+
+(typeattributeset network_networkd_object_type networkd_dbus_config_t)
+
+(context networkd_dbus_config (system_u object_r networkd_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.network1\.conf" file networkd_dbus_config)
+
+(type networkd_systemd_runtime_t)
+(call systemd_runtime_object_type (networkd_systemd_runtime_t))
+
+(typeattributeset network_networkd_object_type networkd_systemd_runtime_t)
+
+(allow networkd_t networkd_systemd_runtime_t manage_dir_perms)
+(allow networkd_t networkd_systemd_runtime_t manage_file_perms)
+(call systemd_runtime_object_type_transition (networkd_t networkd_systemd_runtime_t dir "netif"))
+
+(context networkd_systemd_runtime (system_u object_r networkd_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/netif(/.*)?" any networkd_systemd_runtime)
+
+(allow networkd_t self (capability (chown setgid setuid dac_override setpcap)))
+(allow networkd_t self (process (setfscreate getcap setcap)))
+(allow networkd_t self (netlink_route_socket (nlmsg_write)))
+
+(call system_read_kernel_sysctl (networkd_t))
+(call system_rw_net_sysctl (networkd_t))
+
+(call filesystems_read_sysfs (networkd_t))
+
+(call dbus_system_service (networkd_t))
+
+(call journal_client_subject_type (networkd_t))
+
+(call network_read_networkd_systemd_config (networkd_t))
+
+(call ns_client_subject_type (networkd_t))
+
+(call systemd_stream_connect (networkd_t))
+
+(call udev_client_subject_type (networkd_t))
+
+(allow network_networkd_admin_subject_type networkd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (network_networkd_admin_subject_type networkd_t))
+
+(allow network_networkd_admin_subject_type networkd_unit_t (service (all)))
+
+(call network_systemd_config_object_type_transition_netword_systemd_config_dirs (network_networkd_admin_subject_type))
+
+(allow network_networkd_admin_subject_type network_networkd_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro network_exec_networkctl ((type ARG1))
+    (call can_exec (ARG1 networkctl_exec_t))
+    (call network_networkctl_client_subject_type (ARG1)))
+
+(macro network_networkctl_client_subject_type ((type ARG1))
+    (typeattributeset network_networkctl_client_subject_type ARG1))
+
+(macro network_exec_networkd ((type ARG1))
+    (call can_exec (ARG1 networkd_exec_t)))
+
+(macro network_auto_subject_type_transition_networkd ((type ARG1))
+    (call network_send_signal_networkd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 networkd_exec_t networkd_t)))
+
+(macro network_send_signal_networkd ((type ARG1))
+    (allow ARG1 networkd_t (process (signal))))
+
+(macro network_auto_subject_type_transition_networkctl ((type ARG1))
+    (call network_send_signal_networkctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 networkctl_exec_t networkctl_t)))
+
+(macro network_send_signal_networkctl ((type ARG1))
+    (allow ARG1 networkctl_t (process (signal))))
+
+(macro network_run_networkctl ((type ARG1)(role ARG2))
+    (call network_auto_subject_type_transition_networkctl (ARG1))
+    (roleattributeset network_networkctl_role ARG2))
+
+(macro network_search_networkd_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 networkd_systemd_config_t search_dir_perms))
+
+(macro network_list_networkd_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 networkd_systemd_config_t list_dir_perms))
+
+(macro network_read_networkd_systemd_config_files ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (call read_files_pattern (ARG1 networkd_systemd_config_t network_systemd_config_t)))
+
+(macro network_manage_networkd_systemd_config_files ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (call manage_files_pattern (ARG1 networkd_systemd_config_t networkd_systemd_config_t)))
+
+(macro network_read_networkd_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 networkd_systemd_config_t read_file_perms)
+    (allow ARG1 networkd_systemd_config_t list_dir_perms)
+    (allow ARG1 networkd_systemd_config_t read_lnk_file_perms))
+
+(macro network_manage_networkd_systemd_config ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 networkd_systemd_config_t manage_file_perms)
+    (allow ARG1 networkd_systemd_config_t manage_dir_perms)
+    (allow ARG1 networkd_systemd_config_t manage_lnk_file_perms))
+
+(macro network_systemd_config_object_type_transition_netword_systemd_config_dirs ((type ARG1))
+    (call systemd_config_object_type_transition (ARG1 networkd_systemd_config_t dir "network")))
+
+(macro network_read_networkd_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 networkd_dbus_config_t read_file_perms))
+
+(macro network_manage_networkd_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 networkd_dbus_config_t manage_file_perms))
+
+(macro network_search_networkd_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 networkd_systemd_runtime_t search_dir_perms))
+
+(macro network_list_networkd_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 networkd_systemd_runtime_t list_dir_perms))
+
+(macro network_read_networkd_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 networkd_systemd_runtime_t networkd_systemd_runtime_t)))
+
+(macro network_read_networkd_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 networkd_systemd_runtime_t networkd_systemd_runtime_t)))
+
+(macro network_read_networkd_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 networkd_systemd_runtime_t read_file_perms)
+    (allow ARG1 networkd_systemd_runtime_t list_dir_perms)
+    (allow ARG1 networkd_systemd_runtime_t read_lnk_file_perms))
+
+(macro network_manage_networkd_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 networkd_systemd_runtime_t manage_file_perms)
+    (allow ARG1 networkd_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 networkd_systemd_runtime_t manage_lnk_file_perms))
+
+(macro network_dbus_chat_networkd ((type ARG1))
+    (allow ARG1 networkd_t (dbus (send_msg)))
+    (allow networkd_t ARG1 (dbus (send_msg))))
+
+(macro network_networkd_client_subject_type ((type ARG1))
+    (typeattributeset network_networkd_client_subject_type ARG1))
+
+(macro network_networkd_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset network_networkd_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

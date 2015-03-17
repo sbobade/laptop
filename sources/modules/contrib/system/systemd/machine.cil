@@ -43,7 +43,7 @@
 (allow machined_t machined_systemd_runtime_t manage_dir_perms)
 (allow machined_t machined_systemd_runtime_t manage_file_perms)
 (allow machined_t machined_systemd_runtime_t manage_lnk_file_perms)
-(call systemd_runtime_object_type_transition (machined_t machined_systemd_runtime_t dir "*"))
+(call systemd_runtime_object_type_transition (machined_t machined_systemd_runtime_t dir "machines"))
 
 (type machine_lib_t)
 (call files_lib_object_type (machine_lib_t))

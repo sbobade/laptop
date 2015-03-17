@@ -147,6 +147,9 @@
 (optional udevd_optional_lvm
     (call lvm_auto_subject_type_transition (udevd_t)))
 
+(optional udevd_optional_network_networkd
+    (call network_list_networkd_systemd_config (udevd_t)))
+
 (optional udevd_optional_systemd
     (call systemd_daemon (udevd_t udevd_exec_t))
 

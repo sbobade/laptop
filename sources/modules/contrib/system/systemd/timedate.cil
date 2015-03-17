@@ -1,0 +1,112 @@
+(roleattribute timedate_timedatectl_role)
+
+(typeattribute timedate_timedatectl_subject_type)
+(typeattribute timedate_timedatectl_client_subject_type)
+
+(typeattribute timedate_timedated_client_subject_type)
+
+(typeattribute timedate_timedated_admin_subject_type)
+
+(typeattribute timedate_timedated_object_type)
+
+(type timedatectl_t)
+(type timedatectl_exec_t)
+(call applications_app (timedate_timedatectl_subject_type timedatectl_exec_t))
+(roletype timedate_timedatectl_role timedatectl_t)
+
+(call timedate_timedatectl_client_subject_type (timedatectl_t))
+
+(context timedatectl_exec (system_u object_r timedatectl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/timedatectl" file timedatectl_exec)
+
+(type timedated_t)
+(type timedated_exec_t)
+(call systemd_daemon (timedated_t timedated_exec_t))
+
+(context timedated_exec (system_u object_r timedated_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-timedated" file timedated_exec)
+
+(type timedated_unit_t)
+(call systemd_unit_object_type (timedated_unit_t))
+
+(typeattributeset timedate_timedated_object_type timedated_unit_t)
+
+(context timedated_unit (system_u object_r timedated_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-timedated.*" file logind_unit)
+
+(type timedated_dbus_config_t)
+(call dbus_config_object_type (timedated_dbus_config_t))
+
+(typeattributeset timedate_timedated_object_type timedated_dbus_config_t)
+
+(context timedated_dbus_config (system_u object_r timedated_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.timedate1\.conf" file timedated_dbus_config)
+
+(allow timedate_timedated_admin_subject_type timedated_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (timedate_timedated_admin_subject_type timedated_t))
+
+(allow timedate_timedated_admin_subject_type timedated_unit_t (service (all)))
+
+(allow timedate_timedated_admin_subject_type timedate_timedated_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro timedate_exec_timedatectl ((type ARG1))
+    (call can_exec (ARG1 timedatectl_exec_t))
+    (call timedate_timedatectl_client_subject_type (ARG1)))
+
+(macro timedate_timedatectl_subject_type ((type ARG1))
+    (typeattributeset timedate_timedatectl_subject_type ARG1))
+
+(macro timedate_timedatectl_client_subject_type ((type ARG1))
+    (typeattributeset timedate_timedatectl_client_subject_type ARG1))
+
+(macro timedate_exec_timedated ((type ARG1))
+    (call can_exec (ARG1 timedated_exec_t)))
+
+(macro timedate_auto_subject_type_transition_timedated ((type ARG1))
+    (call timedate_send_signal_timedated (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 timedated_exec_t timedated_t)))
+
+(macro timedate_send_signal_timedated ((type ARG1))
+    (allow ARG1 timedated_t (process (signal))))
+
+(macro timedate_auto_subject_type_transition_timedatectl ((type ARG1))
+    (call timedate_send_signal_timedatectl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 timedatectl_exec_t timedatectl_t)))
+
+(macro timedate_send_signal_timedatectl ((type ARG1))
+    (allow ARG1 timedatectl_t (process (signal))))
+
+(macro timedate_role_template_timedatectl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 timedatectl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (roleattributeset timedate_timedatectl_role ARG1)
+    (allow ARG3 ARG2 (process (signal)))
+    (call timedate_timedatectl_subject_type (ARG3)))
+
+(macro timedate_run_timedatectl ((type ARG1)(role ARG2))
+    (call timedate_auto_subject_type_transition_timedatectl (ARG1))
+    (roleattributeset timedate_timdatectl_role ARG2))
+
+(macro timedate_read_timedated_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 timedated_dbus_config_t read_file_perms))
+
+(macro timedate_manage_timedated_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 timedated_dbus_config_t manage_file_perms))
+
+(macro timedate_dbus_chat_timedated ((type ARG1))
+    (allow ARG1 timedated_t (dbus (send_msg)))
+    (allow timedated_t ARG1 (dbus (send_msg))))
+
+(macro timedate_timedated_client_subject_type ((type ARG1))
+    (typeattributeset timedate_timedated_client_subject_type ARG1))
+
+(macro timedate_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset timedate_timedated_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

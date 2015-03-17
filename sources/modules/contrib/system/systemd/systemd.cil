@@ -641,6 +641,10 @@
     (allow ARG1 systemd_config_object_type manage_dir_perms)
     (allow ARG1 systemd_config_object_type manage_lnk_file_perms))
 
+(macro systemd_config_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_config (ARG1))
+    (call object_type_transition_pattern (ARG1 systemd_config_t ARG2 ARG3 ARG4)))
+
 (macro systemd_read_dbus_config_files ((type ARG1))
     (call dbus_search_config (ARG1))
     (allow ARG1 systemd_dbus_config_t read_file_perms))
@@ -950,6 +954,12 @@
 (macro systemd_reload_system ((type ARG1))
     (allow ARG1 systemd_t (system (reload))))
 
+(macro systemd_enable_system ((type ARG1))
+    (allow ARG1 systemd_t (system (enable))))
+
+(macro systemd_disable_system ((type ARG1))
+    (allow ARG1 systemd_t (system (disable))))
+
 (macro systemd_status_system ((type ARG1))
     (allow ARG1 systemd_t (system (status))))
 
@@ -1021,6 +1031,8 @@
     (call systemd_reboot_system (ARG1))
     (call systemd_reload_system (ARG1))
     (call systemd_status_system (ARG1))
+    (call systemd_disable_system (ARG1))
+    (call systemd_enable_system (ARG1))
     (call systemd_start_system (ARG1))
     (call systemd_stop_system (ARG1)))
 

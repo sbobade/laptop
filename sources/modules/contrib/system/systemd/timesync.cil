@@ -1,0 +1,65 @@
+(type timesyncd_t)
+(type timesyncd_exec_t)
+(call systemd_daemon (timesyncd_t timesyncd_exec_t))
+
+(context timesyncd_exec (system_u object_r timesyncd_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-timesyncd" file timesyncd_exec)
+
+(type timesyncd_systemd_config_t)
+(call systemd_config_object_type (timesyncd_systemd_config_t))
+
+(context timesyncd_systemd_config (system_u object_r timesyncd_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/timesyncd\.conf" file timesyncd_systemd_config)
+
+(type timesyncd_systemd_lib_t)
+(call systemd_lib_object_type (timesyncd_systemd_lib_t))
+
+(context timesyncd_systemd_lib (system_u object_r timesyncd_systemd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/systemd/clock(/.*)?" any timesyncd_systemd_lib)
+
+(allow timesyncd_t timesyncd_systemd_lib_t manage_file_perms)
+(call systemd_lib_object_type_transition (timesyncd_t timesyncd_systemd_lib_t file "clock"))
+
+(allow timesyncd_t self (capability (chown fowner setuid setgid setpcap)))
+(allow timesyncd_t self (process (getcap setcap setrlimit)))
+
+(call system_read_kernel_sysctl (timesyncd_t))
+
+(call hwclock_read_config_files (timesyncd_t))
+
+(call miscfiles_read_net_config (timesyncd_t))
+
+(call network_read_networkd_systemd_runtime (timesyncd_t))
+
+(call ns_client_subject_type (timesyncd_t))
+
+(call systemd_stream_connect (timesyncd_t))
+
+(call timesync_read_timesyncd_systemd_config_files (timesyncd_t))
+
+(macro timesync_exec_timesyncd ((type ARG1))
+    (call can_exec (ARG1 timesyncd_exec_t)))
+
+(macro timesync_auto_subject_type_transition_timesyncd ((type ARG1))
+    (call timesync_send_signal_timesyncd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 timesyncd_exec_t timesyncd_t)))
+
+(macro timesync_send_signal_timesyncd ((type ARG1))
+    (allow ARG1 timesyncd_t (process (signal))))
+
+(macro timesync_read_timesyncd_systemd_config_files ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 timesyncd_systemd_config_t read_file_perms))
+
+(macro timesync_manage_timesyncd_systemd_config_files ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 coredump_systemd_config_t manage_file_perms))
+
+(macro timesync_read_timesyncd_systemd_lib_files ((type ARG1))
+    (call systemd_search_lib (ARG1))
+    (allow ARG1 timesyncd_systemd_lib_t read_file_perms))
+
+(macro timesync_manage_timesyncd_systemd_lib_files ((type ARG1))
+    (call systemd_rw_lib_dirs (ARG1))
+    (allow ARG1 timesyncd_systemd_lib_t manage_file_perms))

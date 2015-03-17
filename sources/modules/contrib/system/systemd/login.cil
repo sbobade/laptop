@@ -1,5 +1,6 @@
 (roleattribute login_loginctl_role)
 
+(typeattribute login_loginctl_subject_type)
 (typeattribute login_loginctl_client_subject_type)
 
 (typeattribute login_logind_client_subject_type)
@@ -10,7 +11,7 @@
 
 (type loginctl_t)
 (type loginctl_exec_t)
-(call applications_app (loginctl_t loginctl_exec_t))
+(call applications_app (login_loginctl_subject_type loginctl_exec_t))
 (roletype login_loginctl_role loginctl_t)
 
 (call login_loginctl_client_subject_type (loginctl_t))
@@ -32,7 +33,6 @@
 
 (context logind_unit (system_u object_r logind_unit_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/system/[^/]*systemd-logind.*" file logind_unit)
-(filecon "/usr/lib/systemd/system/[^/]*org\.freedesktop\.login1.*" file logind_unit)
 
 (type logind_systemd_config_t)
 (call systemd_config_object_type (logind_systemd_config_t))
@@ -188,6 +188,9 @@
     (call can_exec (ARG1 loginctl_exec_t))
     (call login_loginctl_client_subject_type (ARG1)))
 
+(macro login_loginctl_subject_type ((type ARG1))
+    (typeattributeset login_loginctl_subject_type ARG1))
+
 (macro login_loginctl_client_subject_type ((type ARG1))
     (typeattributeset login_loginctl_client_subject_type ARG1))
 
@@ -209,6 +212,14 @@
 
 (macro login_send_signal_loginctl ((type ARG1))
     (allow ARG1 loginctl_t (process (signal))))
+
+(macro login_role_template_loginctl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 loginctl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (roleattributeset login_loginctl_role ARG1)
+    (allow ARG3 ARG2 (process (signal)))
+    (call login_loginctl_subject_type (ARG3)))
 
 (macro login_run_loginctl ((type ARG1)(role ARG2))
     (call login_auto_subject_type_transition_loginctl (ARG1))

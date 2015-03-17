@@ -21,3 +21,11 @@
 
 * i should be able to shave off some nspawn_common_container_subject_type self permissions
     for example there is no audit, and no selinux either in the container.
+
+* add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
+    the ones that have a ctl app as well as a service unit
+
+* make sure admin has access to all of /var/lib/systemd and /run/systemd
+
+* review all systemd_stream_connect and systemd_dgram_send calls (they use systemd_runtime_t sock_file (/run/systemd/notify) to unix_dgram_socket sendto *system_t*
+    it may or may not be a journal thing

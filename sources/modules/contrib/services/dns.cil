@@ -53,6 +53,8 @@
 (macro dns_read_resolve_config_files ((type ARG1))
     (call files_read_config_lnk_files (ARG1))
     (allow ARG1 resolve_config_t read_file_perms)
+    (optional dns_read_resolve_config_files_optional_resolved
+        (call resolve_read_resolved_systemd_runtime_files (ARG1)))
     (optional dns_read_resolve_config_files_optional_nm
         (call nm_read_runtime_files (ARG1))))
 

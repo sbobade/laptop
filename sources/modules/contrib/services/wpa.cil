@@ -40,6 +40,7 @@
 
 (allow wpa_t wpa_runtime_t manage_dir_perms)
 (allow wpa_t wpa_runtime_t manage_file_perms)
+(allow wpa_t wpa_runtime_t manage_sock_file_perms)
 (call files_runtime_object_type_transition (wpa_t wpa_runtime_t dir "*"))
 
 (type wpa_log_t)
@@ -77,6 +78,8 @@
 (call filesystems_read_sysfs (wpa_t))
 
 (call dbus_system_service (wpa_t))
+
+(call wpa_read_config_files (wpa_t))
 
 (optional wpa_optional_logrotate
     (call logrotate_log_object_type (wpa_log_t)))
@@ -195,12 +198,14 @@
     (call files_search_runtime (ARG1))
     (allow ARG1 wpa_runtime_t read_file_perms)
     (allow ARG1 wpa_runtime_t list_dir_perms)
+    (allow ARG1 wpa_runtime_t read_sock_file_perms)
     (allow ARG1 wpa_runtime_t read_lnk_file_perms))
 
 (macro wpa_manage_runtime ((type ARG1))
     (call files_rw_runtime_dirs (ARG1))
     (allow ARG1 wpa_runtime_t manage_file_perms)
     (allow ARG1 wpa_runtime_t manage_dir_perms)
+    (allow ARG1 wpa_runtime_t manage_sock_file_perms)
     (allow ARG1 wpa_runtime_t manage_lnk_file_perms))
 
 (macro wpa_read_log_files ((type ARG1))

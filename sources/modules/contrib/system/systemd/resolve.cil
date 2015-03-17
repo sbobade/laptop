@@ -1,0 +1,153 @@
+(typeattribute resolve_resolved_client_subject_type)
+
+(typeattribute resolve_resolved_admin_subject_type)
+
+(typeattribute resolve_resolved_object_type)
+
+(type resolved_t)
+(type resolved_exec_t)
+(call systemd_daemon (resolved_t resolved_exec_t))
+
+(context resolved_exec (system_u object_r resolved_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-resolved" file resolved_exec)
+(filecon "/usr/lib/systemd/systemd-resolve-host" file resolved_exec)
+
+(type resolved_unit_t)
+(call systemd_unit_object_type (resolved_unit_t))
+
+(typeattributeset resolve_resolved_object_type resolved_unit_t)
+
+(context resolved_unit (system_u object_r resolved_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-resolved.*" file logind_unit)
+
+(type resolved_systemd_config_t)
+(call systemd_config_object_type (resolved_systemd_config_t))
+
+(typeattributeset resolve_resolved_object_type resolved_systemd_config_t)
+
+(context resolved_systemd_config (system_u object_r resolved_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/resolved\.conf" file resolved_systemd_config)
+
+(type resolved_dbus_config_t)
+(call dbus_config_object_type (resolved_dbus_config_t))
+
+(typeattributeset resolve_resolved_object_type resolved_dbus_config_t)
+
+(context resolved_dbus_config (system_u object_r resolved_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.resolve1\.conf" file resolved_dbus_config)
+
+(type resolved_systemd_runtime_t)
+(call systemd_runtime_object_type (resolved_systemd_runtime_t))
+
+(typeattributeset resolve_resolved_object_type resolved_systemd_runtime_t)
+
+(context resolved_systemd_runtime (system_u object_r resolved_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/resolve(/.*)?" any resolved_systemd_runtime)
+
+(allow resolved_t resolved_systemd_runtime_t manage_dir_perms)
+(allow resolved_t resolved_systemd_runtime_t manage_file_perms)
+(call systemd_runtime_object_type_transition (resolved_t resolved_systemd_runtime_t dir "resolve"))
+
+(allow resolved_t self (capability (chown setuid setgid setpcap)))
+(allow resolved_t self (process (setfscreate getcap setcap)))
+(allow resolved_t self (tcp_socket (listen accept)))
+
+(call system_read_kernel_sysctl (resolved_t))
+
+(call filesystems_read_sysfs (resolved_t))
+
+(call selinux_get_enforce_mode (resolved_t))
+
+(call dbus_system_service (resolved_t))
+
+(call journal_client_subject_type (resolved_t))
+
+(call network_tcp_bind_generic_node (resolved_t))
+(call network_tcp_bind_all_unreserved_ports (resolved_t))
+(call network_udp_bind_generic_node (resolved_t))
+(call network_udp_bind_all_unreserved_ports (resolved_t))
+(call network_read_networkd_systemd_runtime_files (resolved_t))
+
+(call ns_client_subject_type (resolved_t))
+
+(call resolve_read_resolved_systemd_config_files (resolved_t))
+
+(call seutil_read_selinux_config_files (resolved_t))
+(call seutil_read_file_context_files (resolved_t))
+
+(call systemd_stream_connect (resolved_t))
+
+(allow resolve_resolved_admin_subject_type resolved_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (resolve_resolved_admin_subject_type resolved_t))
+
+(allow resolve_resolved_admin_subject_type resolved_unit_t (service (all)))
+
+(allow resolve_resolved_admin_subject_type resolve_resolved_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro resolve_exec_resolved ((type ARG1))
+    (call can_exec (ARG1 resolved_exec_t)))
+
+(macro resolve_auto_subject_type_transition_resolved ((type ARG1))
+    (call resolve_send_signal_resolved (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 resolved_exec_t resolved_t)))
+
+(macro resolve_send_signal_resolved ((type ARG1))
+    (allow ARG1 resolved_t (process (signal))))
+
+(macro resolve_read_resolved_systemd_config_files ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 resolved_systemd_config_t read_file_perms))
+
+(macro resolve_manage_resolved_systemd_config_files ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 resolved_systemd_config_t manage_file_perms))
+
+(macro resolve_read_resolved_dbus_config_files ((type ARG1))
+    (call dbus_search_config (ARG1))
+    (allow ARG1 resolved_dbus_config_t read_file_perms))
+
+(macro resolve_manage_resolved_dbus_config_files ((type ARG1))
+    (call dbus_rw_config_dirs (ARG1))
+    (allow ARG1 resolved_dbus_config_t manage_file_perms))
+
+(macro resolve_search_resolved_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 resolved_systemd_runtime_t search_dir_perms))
+
+(macro resolve_list_resolved_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 resolved_systemd_runtime_t list_dir_perms))
+
+(macro resolve_read_resolved_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 resolved_systemd_runtime_t resolved_systemd_runtime_t)))
+
+(macro resolve_read_resolved_systemd_runtime_lnk_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 resolved_systemd_runtime_t resolved_systemd_runtime_t)))
+
+(macro resolve_read_resolved_systemd_runtime ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 resolved_systemd_runtime_t read_file_perms)
+    (allow ARG1 resolved_systemd_runtime_t list_dir_perms)
+    (allow ARG1 resolved_systemd_runtime_t read_lnk_file_perms))
+
+(macro resolve_manage_resolved_systemd_runtime ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 resolved_systemd_runtime_t manage_file_perms)
+    (allow ARG1 resolved_systemd_runtime_t manage_dir_perms)
+    (allow ARG1 resolved_systemd_runtime_t manage_lnk_file_perms))
+
+(macro resolve_dbus_chat_resolved ((type ARG1))
+    (allow ARG1 resolved_t (dbus (send_msg)))
+    (allow resolved_t ARG1 (dbus (send_msg))))
+
+(macro resolve_resolved_client_subject_type ((type ARG1))
+    (typeattributeset resolve_resolved_client_subject_type ARG1))
+
+(macro resolve_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset resolve_resolved_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1)))

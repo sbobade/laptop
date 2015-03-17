@@ -527,7 +527,9 @@
 
 (optional sysadm_optional_loginctl
     (call login_logind_admin (sysadm_t))
-    (call login_run_loginctl (sysadm_subject_type sysadm_r)))
+
+    (type sysadm_loginctl_t)
+    (call login_role_template_loginctl (sysadm_r sysadm_subject_type sysadm_loginctl_t)))
 
 (optional sysadm_optional_machine
     (type sysadm_machinectl_t)
@@ -536,6 +538,10 @@
     (call machine_manage_config_files (sysadm_t))
     (call machine_manage_lib (sysadm_t))
     (call machine_manage_machined_systemd_runtime (sysadm_t)))
+
+(optional sysadm_optional_network_networkd
+    (call network_networkd_admin (sysadm_t))
+    (call network_run_networkctl (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_nspawn
     (call nspawn_admin (sysadm_t))
@@ -547,12 +553,21 @@
 (optional sysadm_optional_notify
     (call notify_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_resolve
+    (call resolve_admin (sysadm_t)))
+
 (optional sysadm_optional_shutdown
     (call shutdown_admin (sysadm_t)))
 
 (optional sysadm_optional_sysusers
     (call sysusers_admin (sysadm_t))
     (call sysusers_run (sysadm_subject_type sysadm_r)))
+
+(optional sysadm_optional_timedatectl
+    (call timedate_admin (sysadm_t))
+
+    (type sysadm_timedatectl_t)
+    (call timedate_role_template_timedatectl (sysadm_r sysadm_subject_type sysadm_timedatectl_t)))
 
 (optional sysadm_optional_tmpfiles
     (call tmpfiles_run (sysadm_subject_type sysadm_r))
@@ -570,6 +585,12 @@
 
 (optional sysadm_localectl_optional_ssh
     (call ssh_role_template (sysadm_r sysadm_localectl_t sysadm_ssh_t)))
+
+(optional sysadm_loginctl_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_loginctl_t sysadm_ssh_t)))
+
+(optional sysadm_timedatectl_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_timedatectl_t sysadm_ssh_t)))
 
 (optional sysadm_systemctl_optional_ssh
     (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
