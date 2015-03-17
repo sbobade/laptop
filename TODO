@@ -28,3 +28,5 @@
 * make sure admin has access to all of /var/lib/systemd and /run/systemd
 
 * pkttyagent is run by the systemd "ctl" utils
+
+* systemd-hwdb

@@ -125,8 +125,8 @@
 (call filesystems_getattr_tmpfs_filesystems (nspawn_common_container_subject_type))
 
 (call filesystems_mount_hugetlbfs (nspawn_common_container_subject_type))
-
 (call filesystems_mount_tmpfs (nspawn_common_container_subject_type))
+(call filesystems_remount_hugetlbfs (nspawn_common_container_subject_type))
 (call filesystems_remount_filesystems (nspawn_common_container_subject_type))
 (call filesystems_remount_tmpfs (nspawn_common_container_subject_type))
 (call filesystems_unmount_tmpfs (nspawn_common_container_subject_type))
