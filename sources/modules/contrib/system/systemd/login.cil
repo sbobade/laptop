@@ -14,7 +14,7 @@
 (call applications_app (login_loginctl_subject_type loginctl_exec_t))
 (roletype login_loginctl_role loginctl_t)
 
-(call login_loginctl_client_subject_type (loginctl_t))
+(call login_loginctl_subject_type (loginctl_t))
 
 (context loginctl_exec (system_u object_r loginctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/loginctl" file loginctl_exec)

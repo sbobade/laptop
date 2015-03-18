@@ -12,7 +12,7 @@
 (call applications_app (timedate_timedatectl_subject_type timedatectl_exec_t))
 (roletype timedate_timedatectl_role timedatectl_t)
 
-(call timedate_timedatectl_client_subject_type (timedatectl_t))
+(call timedate_timedatectl_subject_type (timedatectl_t))
 
 (context timedatectl_exec (system_u object_r timedatectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/timedatectl" file timedatectl_exec)
@@ -21,13 +21,15 @@
 (type timedatex_exec_t)
 (call systemd_daemon (timedatex_t timedatex_exec_t))
 
+(context timedatex_exec (system_u object_r timedatex_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/timedatex" file timedatex_exec)
+
 (type timedated_t)
 (type timedated_exec_t)
 (call systemd_daemon (timedated_t timedated_exec_t))
 
 (context timedated_exec (system_u object_r timedated_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-timedated" file timedated_exec)
-(filecon "/usr/sbin/timedatex" file timedated_exec)
 
 (type timedated_unit_t)
 (call systemd_unit_object_type (timedated_unit_t))
@@ -64,17 +66,17 @@
 
 (allow timedate_timedated_admin_subject_type timedated_unit_t (service (all)))
 
-(allow timedatectl_t self (capability (net_admin)))
-
 (call commands_exec (timedate_timedatectl_client_subject_type))
 
 (call dbus_system_client_subject_type (timedate_timedatectl_client_subject_type))
 
 (call miscfiles_read_locale (timedate_timedatectl_client_subject_type))
 
+(allow timedate_timedatectl_subject_type self (capability (net_admin)))
+
 (call timedate_timedatectl_client_subject_type (timedate_timedatectl_subject_type))
 
-(optional timedate_timedatectl_client_subject_type_polkit
+(optional timedate_timedatectl_client_subject_type_optional_polkit
     (call polkit_dbus_chat_polkitd (timedate_timedatectl_client_subject_type)))
 
 (allow timedate_timedated_admin_subject_type timedate_timedated_object_type (all_file_objects
