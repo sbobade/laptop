@@ -2,8 +2,6 @@
 
 (typeattribute network_networkctl_client_subject_type)
 
-(typeattribute network_networkd_client_subject_type)
-
 (typeattribute network_networkd_admin_subject_type)
 
 (typeattribute network_networkd_object_type)
@@ -230,9 +228,6 @@
 
 (macro network_create_networkd_netlink_route_socket ((type ARG1))
     (allow ARG1 networkd_t (netlink_route_socket (create setopt bind))))
-
-(macro network_networkd_client_subject_type ((type ARG1))
-    (typeattributeset network_networkd_client_subject_type ARG1))
 
 (macro network_networkd_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

@@ -1,5 +1,3 @@
-(typeattribute resolve_resolved_client_subject_type)
-
 (typeattribute resolve_resolved_admin_subject_type)
 
 (typeattribute resolve_resolved_object_type)
@@ -147,9 +145,6 @@
 (macro resolve_dbus_chat_resolved ((type ARG1))
     (allow ARG1 resolved_t (dbus (send_msg)))
     (allow resolved_t ARG1 (dbus (send_msg))))
-
-(macro resolve_resolved_client_subject_type ((type ARG1))
-    (typeattributeset resolve_resolved_client_subject_type ARG1))
 
 (macro resolve_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))

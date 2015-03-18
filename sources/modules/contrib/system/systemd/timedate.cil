@@ -3,8 +3,6 @@
 (typeattribute timedate_timedatectl_subject_type)
 (typeattribute timedate_timedatectl_client_subject_type)
 
-(typeattribute timedate_timedated_client_subject_type)
-
 (typeattribute timedate_timedated_admin_subject_type)
 
 (typeattribute timedate_timedated_object_type)
@@ -149,9 +147,6 @@
 (macro timedate_dbus_chat_timedatex ((type ARG1))
     (allow ARG1 timedatex_t (dbus (send_msg)))
     (allow timedatex_t ARG1 (dbus (send_msg))))
-
-(macro timedate_timedated_client_subject_type ((type ARG1))
-    (typeattributeset timedate_timedated_client_subject_type ARG1))
 
 (macro timedate_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))
