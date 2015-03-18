@@ -166,6 +166,12 @@
 
 (call udev_client_subject_type (logind_t))
 
+(optional logind_optional_resolve
+    (call resolve_dbus_chat_resolved (logind_t)))
+
+(optional logind_optional_network_networkd
+    (call network_dbus_chat_networkd (logind_t)))
+
 (optional logind_optional_unconfineduser
     (call unconfineduser_read_state_all_subjects (logind_t)))
 

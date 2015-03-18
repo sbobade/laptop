@@ -97,6 +97,8 @@
 
 (allow networkctl_t self (capability (dac_override)))
 
+(call systemd_search_config (networkctl_t))
+
 (call udev_client_subject_type (networkctl_t))
 
 (optional networkctl_optional_usersubject
