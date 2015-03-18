@@ -93,11 +93,10 @@
 (allow nspawn_common_container_subject_type self (netlink_kobject_uevent_socket (all))) 
 (allow nspawn_common_container_subject_type self (key (all)))
 
-(allow nspawn_common_container_subject_type self (capability (sys_nice)))
+(allow nspawn_common_container_subject_type self (capability (chown dac_override dac_read_search fowner
+    ipc_owner fsetid kill linux_immutable net_admin net_broadcast net_raw setgid setfcap setpcap setuid
+    sys_admin sys_chroot sys_nice sys_ptrace sys_tty_config sys_resource sys_boot audit_write audit_control)))
 (allow nspawn_common_container_subject_type self (process (setsched)))
-
-(allow nspawn_common_container_subject_type self
-    all_capability_perms_except_sys_module_and_sys_nice)
 (allow nspawn_common_container_subject_type self
     all_fifo_file_perms_except_mounton_and_execmod)
 
