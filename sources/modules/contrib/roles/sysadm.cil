@@ -494,11 +494,15 @@
 (optional sysadm_optional_autorelabel
     (call autorelabel_manage_flag_files (sysadm_t)))
 
+(optional sysadm_optional_backlight
+    (call backlight_manage_systemd_lib (sysadm_t)))
+
 (optional sysadm_optional_binfmt
     (call binfmt_manage_config (sysadm_t)))
 
 (optional sysadm_optional_coredump
-    (call coredump_run_coredumpctl (sysadm_subject_type sysadm_r)))
+    (call coredump_run_coredumpctl (sysadm_subject_type sysadm_r))
+    (call coredump_manage_systemd_lib (sysadm_t)))
 
 (optional sysadm_optional_hostnamectl
     (type sysadm_hostnamectl_t)
@@ -553,6 +557,12 @@
 (optional sysadm_optional_notify
     (call notify_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_randomseed
+    (call randomseed_manage_systemd_lib_files (sysadm_t)))
+
+(optional sysadm_optional_rfkill
+    (call rfkill_manage_systemd_lib (sysadm_t)))
+
 (optional sysadm_optional_resolve
     (call resolve_admin (sysadm_t)))
 
@@ -568,6 +578,9 @@
 
     (type sysadm_timedatectl_t)
     (call timedate_role_template_timedatectl (sysadm_r sysadm_subject_type sysadm_timedatectl_t)))
+
+(optional sysadm_optional_timesync
+    (call timesync_manage_timesyncd_systemd_lib_files (sysadm_t)))
 
 (optional sysadm_optional_tmpfiles
     (call tmpfiles_run (sysadm_subject_type sysadm_r))
