@@ -247,6 +247,10 @@
     (call files_search_config (ARG1))
     (call read_files_pattern (ARG1 udev_config_t udev_config_t)))
 
+(macro udev_manage_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call manage_files_pattern (ARG1 udev_config_t udev_config_t)))
+
 (macro udev_read_config_lnk_files ((type ARG1))
     (call files_search_config (ARG1))
     (call read_lnk_files_pattern (ARG1 udev_config_t udev_config_t)))
