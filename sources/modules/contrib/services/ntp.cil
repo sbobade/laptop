@@ -340,6 +340,9 @@
     (allow ARG1 self (capability (net_bind_service)))
     (allow ARG1 ntp_cmdmon_port_t (udp_socket (name_bind))))
 
+(macro ntp_status_ntpd_unit ((type ARG1))
+    (allow ARG1 ntpd_unit_t (service (status))))
+
 (macro ntp_admin ((type ARG1))
     (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset ntp_admin_subject_type ARG1)

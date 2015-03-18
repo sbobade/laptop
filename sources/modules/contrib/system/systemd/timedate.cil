@@ -45,6 +45,9 @@
 
 (typeattributeset timedate_timedated_object_type timedated_dbus_config_t)
 
+(context timedated_dbus_config (system_u object_r timedated_dbus_config_t (systemlow systemlow)))
+(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.timedate1\.conf" file timedated_dbus_config)
+
 (call system_read_kernel_sysctl (timedated_t))
 
 (call devices_read_kmsg (timedated_t))
@@ -58,26 +61,64 @@
 (call systemd_dbus_chat (timedated_t))
 (call systemd_status_system (timedated_t))
 
-(context timedated_dbus_config (system_u object_r timedated_dbus_config_t (systemlow systemlow)))
-(filecon "/etc/dbus-1/system\.d/org\.freedesktop\.timedate1\.conf" file timedated_dbus_config)
+(allow timedate_timedatectl_subject_type self (capability (net_admin sys_chroot setgid setuid dac_override)))
 
-(allow timedate_timedated_admin_subject_type timedated_t (process (ptrace signal signull sigkill sigstop)))
-(call ps_subject_pattern (timedate_timedated_admin_subject_type timedated_t))
+(call timedate_timedatectl_client_subject_type (timedate_timedatectl_subject_type))
 
-(allow timedate_timedated_admin_subject_type timedated_unit_t (service (all)))
+(optional timedate_timedatectl_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (timedate_timedatectl_subject_type timedate_timedatectl_role)))
+
+(optional timedate_timedatectl_subject_type_optional_machine
+    (call machine_read_machined_systemd_runtime_files (timedate_timedatectl_subject_type)))
+
+(optional timedate_timedatectl_subject_type_optional_nspawn
+    (call nspawn_read_state_all_common_container_subjects (timedate_timedatectl_subject_type))
+    (call nspawn_list_all_common_container_objects (timedate_timedatectl_subject_type))
+    (call nspawn_stream_connect_all_common_containers (timedate_timedatectl_subject_type))
+    (call nspawn_read_all_common_container_object_files (timedate_timedatectl_subject_type)))
+
+(allow timedate_timedatectl_client_subject_type self rw_fifo_file_perms)
 
 (call commands_exec (timedate_timedatectl_client_subject_type))
 
 (call dbus_system_client_subject_type (timedate_timedatectl_client_subject_type))
 
 (call miscfiles_read_locale (timedate_timedatectl_client_subject_type))
+(call miscfiles_read_all_terminfo (timedate_timedatectl_client_subject_type))
 
-(allow timedate_timedatectl_subject_type self (capability (net_admin)))
-
-(call timedate_timedatectl_client_subject_type (timedate_timedatectl_subject_type))
+(call timedate_dbus_chat_timedatex (timedate_timedatectl_client_subject_type))
 
 (optional timedate_timedatectl_client_subject_type_optional_polkit
     (call polkit_dbus_chat_polkitd (timedate_timedatectl_client_subject_type)))
+
+(optional timedate_timedatectl_client_subject_type_optional_usersubject
+    (call usersubject_dontaudit_read_user_home_files (timedate_timedatectl_client_subject_type)))
+
+(call devices_read_clock (timedatex_t))
+
+(call filesystems_read_devtmpfs_lnk_files (timedatex_t))
+
+(call dbus_system_service (timedatex_t))
+
+(call hwclock_read_config_files (timedatex_t))
+
+(call miscfiles_read_locale (timedatex_t))
+
+(call systemd_dbus_chat (timedatex_t))
+(call systemd_status_system (timedatex_t))
+(call systemd_list_unit (timedatex_t))
+(call systemd_read_unit_files (timedatex_t))
+
+(optional timedatex_optional_ntpd
+    (call ntp_status_ntpd_unit (timedatex_t)))
+
+(optional timedatex_optional_polkit
+    (call polkit_dbus_chat_polkitd (timedatex_t)))
+
+(allow timedate_timedated_admin_subject_type timedated_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (timedate_timedated_admin_subject_type timedated_t))
+
+(allow timedate_timedated_admin_subject_type timedated_unit_t (service (all)))
 
 (allow timedate_timedated_admin_subject_type timedate_timedated_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))

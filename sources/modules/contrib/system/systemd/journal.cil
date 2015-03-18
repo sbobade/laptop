@@ -38,6 +38,7 @@
 
 (optional journal_journalctl_subject_type_optional_nspawn
     (call nspawn_read_state_all_common_container_subjects (journal_journalctl_subject_type))
+    (call nspawn_stream_connect_all_common_containers (journal_journalctl_subject_type))
     (call nspawn_list_all_common_container_objects (journal_journalctl_subject_type))
     (call nspawn_read_all_common_container_object_files (journal_journalctl_subject_type)))
 

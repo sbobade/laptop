@@ -391,6 +391,10 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 autofs_dev_t read_chr_file_perms))
 
+(macro devices_read_clock ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 clock_dev_t read_chr_file_perms))
+
 (macro devices_read_event ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 event_dev_t read_chr_file_perms))
