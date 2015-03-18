@@ -2,8 +2,6 @@
 
 * is there a pattern that all nsswitch client subjects want to read machine runtime files?
 
-* do journal clients still need net_admin?
-
 * implement system_map_t for /boot/System.map.* files?
 
 * firewalld i suppose, vlock

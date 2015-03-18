@@ -60,7 +60,7 @@
 (context networkd_systemd_runtime (system_u object_r networkd_systemd_runtime_t (systemlow systemlow)))
 (filecon "/var/run/systemd/netif(/.*)?" any networkd_systemd_runtime)
 
-(allow networkd_t self (capability (chown setgid setuid dac_override setpcap net_raw)))
+(allow networkd_t self (capability (chown setgid setuid dac_override setpcap net_raw net_admin)))
 (allow networkd_t self (process (setfscreate getcap setcap)))
 (allow networkd_t self create_packet_socket_perms)
 (allow networkd_t self create_rawip_socket_perms)

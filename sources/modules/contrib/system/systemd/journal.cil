@@ -191,7 +191,7 @@
 (optional journal_journalctl_client_subject_type_optional_usersubject
     (call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type)))
 
-(allow journal_client_subject_type self (capability (net_admin))) ; FIXME
+(dontaudit journal_client_subject_type self (capability (net_admin))) ; FIXME
 (allow journal_client_subject_type self create_unix_stream_socket_perms)
 (allow journal_client_subject_type self create_unix_dgram_socket_perms)
 (allow journal_client_subject_type self (unix_dgram_socket (sendto)))

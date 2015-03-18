@@ -17,6 +17,8 @@
 (filecon "/etc/sysctl\.conf" file sysctl_config)
 (filecon "/etc/sysctl\.d(/.*)?" any sysctl_config)
 
+(allow sysctrl_t self (capability (net_admin)))
+
 (call system_rw_all_sysctls (sysctrl_t))
 
 (call devices_read_urandom (sysctrl_t))
