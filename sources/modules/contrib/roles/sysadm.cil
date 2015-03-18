@@ -508,6 +508,9 @@
     (type sysadm_hostnamectl_t)
     (call hostname_role_template_hostnamectl (sysadm_r sysadm_subject_type sysadm_hostnamectl_t)))
 
+(optional sysadm_optional_hwdb
+    (call hwdb_run (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_import
     (call import_manage_systemd_runtime (sysadm_t)))
 

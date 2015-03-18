@@ -158,9 +158,11 @@
 (call nspawn_setattr_terminals (nspawn_common_container_subject_type))
 (call nspawn_use_terminals (nspawn_common_container_subject_type))
 
-(call systemduser_dontaudit_link_keyring_all_subjects (nspawn_common_container_subject_type))
+(optional nspawn_common_container_subject_type_optional_systemduser
+    (call systemduser_dontaudit_link_keyring_all_subjects (nspawn_common_container_subject_type)))
 
-(call usersubject_dontaudit_link_keyring_all_common_login_subjects (nspawn_common_container_subject_type))
+(optional nspawn_common_container_subject_type_optional_usersubject
+    (call usersubject_dontaudit_link_keyring_all_common_login_subjects (nspawn_common_container_subject_type)))
 
 (allow nspawn_t nspawn_common_container_subject_type (process (sigkill signal)))
 
@@ -266,7 +268,8 @@
 
 (call udev_read_config_files (nspawn_t))
 
-(call usersubject_search_home_dir (nspawn_t))
+(optional nspawn_optional_usersubject
+    (call usersubject_search_home_dir (nspawn_t)))
 
 (allow nspawn_admin_subject_type nspawn_subject_type (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (nspawn_admin_subject_type nspawn_subject_type))

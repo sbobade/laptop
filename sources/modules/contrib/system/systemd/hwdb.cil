@@ -1,0 +1,27 @@
+(roleattribute hwdb_role)
+
+(typeattribute hwdb_admin_subject_type)
+
+(type hwdb_t)
+(type hwdb_exec_t)
+(call applications_app (hwdb_t hwdb_exec_t))
+(call systemd_daemon (hwdb_t hwdb_exec_t))
+(roletype hwdb_role hwdb_t)
+
+(context hwdb_exec (system_u object_r hwdb_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-hwdb" file hwdb_exec)
+
+(macro hwdb_exec ((type ARG1))
+    (call can_exec (ARG1 hwdb_exec_t)))
+
+(macro hwdb_auto_subject_type_transition ((type ARG1))
+    (call hwdb_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 hwdb_exec_t hwdb_t)))
+
+(macro hwdb_send_signal ((type ARG1))
+    (allow ARG1 hwdb_t (process (signal))))
+
+(macro hwdb_run ((type ARG1)(role ARG2))
+    (call hwdb_auto_subject_type_transition (ARG1))
+    (roleattributeset hwdb_role ARG2))

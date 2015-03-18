@@ -16,7 +16,7 @@
 (typeattributeset resolve_resolved_object_type resolved_unit_t)
 
 (context resolved_unit (system_u object_r resolved_unit_t (systemlow systemlow)))
-(filecon "/usr/lib/systemd/system/[^/]*systemd-resolved.*" file logind_unit)
+(filecon "/usr/lib/systemd/system/[^/]*systemd-resolved.*" file resolved_unit)
 
 (type resolved_systemd_config_t)
 (call systemd_config_object_type (resolved_systemd_config_t))
