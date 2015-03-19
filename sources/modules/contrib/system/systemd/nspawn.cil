@@ -181,7 +181,7 @@
 (allow nspawn_t nspawn_common_container_object_type (filesystem (mount remount relabelto relabelfrom)))
 
 (allow nspawn_t self (capability (dac_override sys_chroot setpcap setgid setuid mknod
-    fsetid sys_admin chown kill fowner)))
+    fsetid sys_admin chown kill fowner net_admin)))
 (allow nspawn_t self (process (getcap setcap setexec setfscreate)))
 (allow nspawn_t self create_netlink_route_socket_perms)
 (allow nspawn_t self rw_fifo_file_perms)
