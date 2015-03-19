@@ -276,6 +276,9 @@
     (call fop_relabel_home (staff_t))
     (call fop_home_dir_object_type_transition_fop_home_dirs (staff_t)))
 
+(optional staff_optional_login_logind
+    (call login_logind_client_subject_type (staff_t)))
+
 (optional staff_optional_journal
     (call journal_exec_journalctl (staff_t)))
 

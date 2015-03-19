@@ -4,7 +4,7 @@
 
 * implement system_map_t for /boot/System.map.* files?
 
-* firewalld i suppose, vlock
+* vlock
 
 * think about support for systemd network socket activated subjects (sshd -> tcp_socket -> 22)
     would probably want to be specific about that but not sure how to implement that:
@@ -20,4 +20,4 @@
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
     the ones that have a ctl app as well as a service unit
 
-* pkttyagent is run by the systemd "ctl" utils
+* work on localectl loginctl timedatectl hostnamectl
