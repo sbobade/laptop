@@ -63,6 +63,9 @@
 
 (allow timedate_timedatectl_subject_type self (capability (net_admin sys_chroot setgid setuid dac_override)))
 
+(call dbus_system_client_subject_type (timedate_timedatectl_subject_type))
+
+(call timedate_dbus_chat_timedatex (timedate_timedatectl_subject_type))
 (call timedate_timedatectl_client_subject_type (timedate_timedatectl_subject_type))
 
 (optional timedate_timedatectl_subject_type_optional_askpwd
@@ -81,15 +84,8 @@
 
 (call commands_exec (timedate_timedatectl_client_subject_type))
 
-(call dbus_system_client_subject_type (timedate_timedatectl_client_subject_type))
-
 (call miscfiles_read_locale (timedate_timedatectl_client_subject_type))
 (call miscfiles_read_all_terminfo (timedate_timedatectl_client_subject_type))
-
-(call timedate_dbus_chat_timedatex (timedate_timedatectl_client_subject_type))
-
-(optional timedate_timedatectl_client_subject_type_optional_polkit
-    (call polkit_dbus_chat_polkitd (timedate_timedatectl_client_subject_type)))
 
 (optional timedate_timedatectl_client_subject_type_optional_usersubject
     (call usersubject_dontaudit_read_user_home_files (timedate_timedatectl_client_subject_type)))

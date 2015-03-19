@@ -101,7 +101,6 @@
 (allow machine_machinectl_client_subject_type self create_unix_dgram_socket_perms)
 (allow machine_machinectl_client_subject_type self rw_fifo_file_perms)
 
-(call system_read_net_proc (machine_machinectl_client_subject_type))
 (call system_read_crypto_sysctl (machine_machinectl_client_subject_type))
 (call system_read_kernel_sysctl (machine_machinectl_client_subject_type))
 
@@ -127,17 +126,12 @@
 
 (call systemd_dbus_chat (machine_machinectl_client_subject_type))
 
-(optional machine_machinectl_client_subject_type_optional_polkit
-    (call polkit_dbus_chat_polkitd (machine_machinectl_client_subject_type)))
-
 (optional machine_machinectl_client_subject_type_optional_usersubject
     (call usersubject_dontaudit_read_user_home_files (machine_machinectl_client_subject_type)))
 
 (allow machine_machinectl_subject_type self (capability (dac_override net_admin sys_chroot sys_admin)))
 
 (call files_read_config (machine_machinectl_subject_type))
-
-(call import_dbus_chat_importd (machine_machinectl_subject_type))
 
 (call machine_machinectl_client_subject_type (machine_machinectl_subject_type))
 
@@ -149,6 +143,9 @@
 
 (optional machine_machinectl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (machine_machinectl_subject_type machine_machinectl_role)))
+
+(optional machine_machinectl_subject_type_optional_dbus
+    (call import_dbus_chat_importd (machine_machinectl_subject_type)))
 
 (optional machine_machinectl_subject_type_optional_usersubject
     (call usersubject_manage_tmp (machine_machinectl_subject_type))

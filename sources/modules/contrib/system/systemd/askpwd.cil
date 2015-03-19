@@ -117,7 +117,7 @@
     (call askpwd_auto_subject_type_transition_askpwdagent (ARG1))
     (roleattributeset askpwd_askpwdagent_role ARG2)
     (optional askpwd_run_optional_polkit
-        (call polkit_run_pkagent (ARG1 ARG2))))
+        (call polkit_run_pkttyagent (ARG1 ARG2))))
 
 (macro askpwd_search_systemd_runtime ((type ARG1))
     (call systemd_search_runtime (ARG1))

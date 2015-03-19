@@ -363,7 +363,8 @@
 (optional sysadm_optional_polkit
     (call polkit_admin (sysadm_t))
     (call polkit_run_pklauth (sysadm_subject_type sysadm_r))
-    (call polkit_run_pkladm (sysadm_subject_type sysadm_r)))
+    (call polkit_run_pkladm (sysadm_subject_type sysadm_r))
+    (call polkit_run_pkttyagent (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_power
     (call power_run (sysadm_subject_type sysadm_r)))

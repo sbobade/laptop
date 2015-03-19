@@ -363,6 +363,9 @@
     (call filesystems_add_entry_devtmpfs (ARG1))
     (allow ARG1 devtty_dev_t create_chr_file_perms))
 
+(macro devices_tmpfs_object_type_transition_devtty_dev ((type ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 devtty_dev_t chr_file "tty")))
+
 (macro devices_create_null ((type ARG1))
     (allow ARG1 self (capability (mknod)))
     (call filesystems_add_entry_devtmpfs (ARG1))
@@ -377,10 +380,17 @@
     (call filesystems_add_entry_devtmpfs (ARG1))
     (allow ARG1 random_dev_t create_chr_file_perms))
 
+(macro devices_tmpfs_object_type_transition_random_dev ((type ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 random_dev_t chr_file "hwrng"))
+    (call filesystems_tmpfs_object_type_transition (ARG1 random_dev_t chr_file "random")))
+
 (macro devices_create_urandom ((type ARG1))
     (allow ARG1 self (capability (mknod)))
     (call filesystems_add_entry_devtmpfs (ARG1))
     (allow ARG1 urandom_dev_t create_chr_file_perms))
+
+(macro devices_tmpfs_object_type_transition_urandom_dev ((type ARG1))
+    (call filesystems_tmpfs_object_type_transition (ARG1 urandom_dev_t chr_file "urandom")))
 
 (macro devices_create_zero ((type ARG1))
     (allow ARG1 self (capability (mknod)))

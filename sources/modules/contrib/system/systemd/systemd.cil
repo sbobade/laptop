@@ -155,8 +155,13 @@
 (call devices_tmpfs_object_type_transition_null_dev (systemd_t))
 
 (call devices_create_devtty (systemd_t))
+(call devices_tmpfs_object_type_transition_devtty_dev (systemd_t))
+
 (call devices_create_random (systemd_t))
+(call devices_tmpfs_object_type_transition_random_dev (systemd_t))
+
 (call devices_create_urandom (systemd_t))
+(call devices_tmpfs_object_type_transition_urandom_dev (systemd_t))
 
 (call devices_create_zero (systemd_t))
 (call devices_tmpfs_object_type_transition_zero_dev (systemd_t))
@@ -466,9 +471,6 @@
 
 (optional systemd_systemctl_client_subject_type_optional_machine
     (call machine_read_config_files (systemd_systemctl_client_subject_type)))
-
-(optional systemd_systemctl_client_subject_type_optional_polkit
-    (call polkit_dbus_chat_polkitd (systemd_systemctl_client_subject_type)))
 
 (call systemd_control_system (systemd_admin_subject_type))
 (call systemd_control_transient_units (systemd_admin_subject_type))

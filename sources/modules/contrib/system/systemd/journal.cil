@@ -34,6 +34,7 @@
     (call askpwd_run_askpwdagent (journal_journalctl_subject_type journal_journalctl_role)))
 
 (optional journal_journalctl_subject_type_optional_machine
+    (call machine_list_machined_systemd_runtime (journal_journalctl_subject_type))
     (call machine_read_machined_systemd_runtime_files (journal_journalctl_subject_type)))
 
 (optional journal_journalctl_subject_type_optional_nspawn
@@ -184,9 +185,6 @@
 
 (optional journal_journalctl_client_subject_type_optional_machine
     (call machine_read_config_files (journal_journalctl_client_subject_type)))
-
-(optional journal_journalctl_client_subject_type_optional_polkit
-    (call polkit_dbus_chat_polkitd (journal_journalctl_client_subject_type)))
 
 (optional journal_journalctl_client_subject_type_optional_usersubject
     (call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type)))

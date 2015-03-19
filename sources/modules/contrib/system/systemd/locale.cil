@@ -53,9 +53,10 @@
 (optional localed_optional_xserver
     (call xserver_read_config_files (localed_t)))
 
-(call askpwd_run_askpwdagent (locale_localectl_subject_type locale_localectl_role))
-
 (call locale_localectl_client_subject_type (locale_localectl_subject_type))
+
+(optional locale_localectl_client_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (locale_localectl_subject_type locale_localectl_role)))
 
 (macro locale_exec_localectl ((type ARG1))
     (call can_exec (ARG1 localectl_exec_t))

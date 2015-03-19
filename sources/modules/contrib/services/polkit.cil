@@ -1,13 +1,17 @@
 (roleattribute polkit_pkladm_role)
 (roleattribute polkit_pklauth_role)
+
 (roleattribute polkit_pkagent_role)
 (roleattribute polkit_pkexec_role)
+(roleattribute polkit_pkttyagent_role)
 
 (typeattribute polkit_admin_subject_type)
 (typeattribute polkit_subject_type)
 
 (typeattribute polkit_pkexec_subject_type)
 (typeattribute polkit_pkexec_client_subject_type)
+
+(typeattribute polkit_pkttyagent_client_subject_type)
 
 (typeattribute polkit_object_type)
 
@@ -200,6 +204,27 @@
 (filecon "/usr/bin/pkcheck" file pkexec_exec)
 (filecon "/usr/bin/pkexec" file pkexec_exec)
 
+(type pkttyagent_t)
+(type pkttyagent_exec_t)
+(call applications_app (pkttyagent_t pkttyagent_exec_t))
+(roletype polkit_pkttyagent_role pkttyagent_t)
+
+(allow pkttyagent_t self rw_fifo_file_perms)
+
+(allow pkttyagent_t polkit_pkttyagent_client_subject_type read_file_perms)
+(allow pkttyagent_t polkit_pkttyagent_client_subject_type list_dir_perms)
+(allow pkttyagent_t polkit_pkttyagent_client_subject_type read_lnk_file_perms)
+
+(call dbus_system_client_subject_type (pkttyagent_t))
+
+(call ns_client_subject_type (pkttyagent_t))
+
+(call polkit_run_pkagent (pkttyagent_t polkit_pkttyagent_role))
+(call polkit_dbus_chat_polkitd (pkttyagent_t))
+
+(context pkttyagent_exec (system_u object_r pkttyagent_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/pkttyagent" file pkttyagent_exec)
+
 (allow polkit_admin_subject_type polkit_subject_type (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (polkit_admin_subject_type polkit_subject_type))
 
@@ -222,6 +247,13 @@
     (call polkit_pkexec_client_subject_type (ARG1))
     (call can_exec (ARG1 pkexec_exec_t)))
 
+(macro polkit_exec_pkttyagent ((type ARG1))
+    (call can_exec (ARG1 pkttyagent_exec_t))
+    (call polkit_pkttyagent_client_subject_type (ARG1)))
+
+(macro polkit_pkttyagent_client_subject_type ((type ARG1))
+    (typeattributeset polkit_pkttyagent_client_subject_type ARG1))
+
 (macro polkit_pkexec_subject_type ((type ARG1))
     (typeattributeset polkit_pkexec_subject_type ARG1))
 
@@ -238,7 +270,7 @@
     (allow ARG3 ARG2 (key (search link)))
     (call polkit_run_pkagent (ARG3 ARG1)))
 
-(macro polkit_auto_subject_type_transition_pattern_polkitd ((type ARG1))
+(macro polkit_auto_subject_type_transition_polkitd ((type ARG1))
     (call polkit_send_signal_polkitd (ARG1))
     (call auto_subject_type_transition_pattern
         (ARG1 polkitd_exec_t polkitd_t)))
@@ -281,6 +313,19 @@
 (macro polkit_run_pkagent ((type ARG1)(role ARG2))
     (call polkit_auto_subject_type_transition_pkagent (ARG1))
     (roleattributeset polkit_pkagent_role ARG2))
+
+(macro polkit_auto_subject_type_transition_pkttyagent ((type ARG1))
+    (call polkit_pkttyagent_client_subject_type (ARG1))
+    (call polkit_send_signal_pkttyagent (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pkttyagent_exec_t pkttyagent_t)))
+
+(macro polkit_send_signal_pkttyagent ((type ARG1))
+    (allow ARG1 pkttyagent_t (process (signal))))
+
+(macro polkit_run_pkttyagent ((type ARG1)(role ARG2))
+    (call polkit_auto_subject_type_transition_pkttyagent (ARG1))
+    (roleattributeset polkit_pkttyagent_role ARG2))
 
 (macro polkit_search_config ((type ARG1))
     (call files_search_config (ARG1))

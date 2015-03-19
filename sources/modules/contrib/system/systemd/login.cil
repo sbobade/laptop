@@ -177,6 +177,9 @@
 
 (call login_loginctl_client_subject_type (login_loginctl_subject_type))
 
+(optional login_loginctl_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (login_loginctl_subject_type login_loginctl_role)))
+
 (allow login_logind_admin_subject_type logind_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (login_logind_admin_subject_type logind_t))
 
