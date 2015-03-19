@@ -34,6 +34,9 @@
 
 (call udev_write_inherited_fifo_files_udevd (loadkeys_t))
 
+(optional loadkeys_optional_systemd
+    (call systemd_use_fd (loadkeys_t)))
+
 (macro loadkeys_exec ((type ARG1))
     (call can_exec (ARG1 loadkeys_exec_t)))
 
