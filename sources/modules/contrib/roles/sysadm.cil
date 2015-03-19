@@ -561,6 +561,9 @@
 (optional sysadm_optional_notify
     (call notify_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_quotacheck
+    (call quotacheck_manage_systemd_runtime_files (sysadm_t)))
+
 (optional sysadm_optional_randomseed
     (call randomseed_manage_systemd_lib_files (sysadm_t)))
 

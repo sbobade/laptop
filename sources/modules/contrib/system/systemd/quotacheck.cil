@@ -1,0 +1,34 @@
+(type quotacheck_t)
+(type quotacheck_exec_t)
+(call systemd_daemon (quotacheck_t quotacheck_exec_t))
+
+(context quotacheck_exec (system_u object_r quotacheck_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/systemd-quotacheck" file quotacheck_exec)
+
+(type quotacheck_systemd_runtime_t)
+(call systemd_runtime_object_type (quotacheck_systemd_runtime_t))
+
+(context quotacheck_systemd_runtime (system_u object_r quotacheck_systemd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/quotacheck" file quotacheck_systemd_runtime)
+
+(allow quotacheck_t quotacheck_systemd_runtime_t manage_file_perms)
+(call systemd_runtime_object_type_transition (quotacheck_t quotacheck_systemd_runtime_t file "quotacheck"))
+
+(macro quotacheck_exec ((type ARG1))
+    (call can_exec (ARG1 quotacheck_exec_t)))
+
+(macro quotacheck_auto_subject_type_transition ((type ARG1))
+    (call quotacheck_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 quotacheck_exec_t quotacheck_t)))
+
+(macro quotacheck_send_signal ((type ARG1))
+    (allow ARG1 quotacheck_t (process (signal))))
+
+(macro quotacheck_read_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 quotacheck_systemd_runtime_t read_file_perms))
+
+(macro quotacheck_manage_systemd_runtime_files ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 quotacheck_systemd_runtime_t manage_file_perms))

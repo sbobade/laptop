@@ -15,7 +15,7 @@
 (call systemd_lib_object_type (timesyncd_systemd_lib_t))
 
 (context timesyncd_systemd_lib (system_u object_r timesyncd_systemd_lib_t (systemlow systemlow)))
-(filecon "/var/lib/systemd/clock(/.*)?" any timesyncd_systemd_lib)
+(filecon "/var/lib/systemd/clock" file timesyncd_systemd_lib)
 
 (allow timesyncd_t timesyncd_systemd_lib_t manage_file_perms)
 (call systemd_lib_object_type_transition (timesyncd_t timesyncd_systemd_lib_t file "clock"))

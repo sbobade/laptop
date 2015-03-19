@@ -30,7 +30,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/system/systemd/sysusers.cil sources/modules/contrib/system/systemd/tmpfiles.cil sources/modules/contrib/system/systemd/updatedone.cil \
         sources/modules/contrib/system/systemd/vconsole.cil sources/modules/contrib/applications/b43fwcutter.cil sources/modules/contrib/applications/bti.cil \
         sources/modules/contrib/system/systemd/network.cil sources/modules/contrib/system/systemd/timesync.cil sources/modules/contrib/system/systemd/resolve.cil \
-        sources/modules/contrib/system/systemd/timedate.cil \
+        sources/modules/contrib/system/systemd/timedate.cil sources/modules/contrib/system/systemd/quotacheck.cil \
         sources/modules/contrib/system/mycontainer.cil sources/modules/contrib/system/systemd/nspawn.cil sources/modules/contrib/system/systemd/import.cil \
         sources/modules/contrib/applications/emacs.cil sources/modules/contrib/applications/ffmpeg.cil sources/modules/contrib/applications/firefox.cil \
         sources/modules/contrib/applications/fop.cil sources/modules/contrib/applications/gpg.cil sources/modules/contrib/applications/gstreamer.cil \
