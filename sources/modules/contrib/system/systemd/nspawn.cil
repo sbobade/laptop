@@ -102,7 +102,10 @@
 
 (call system_dontaudit_link_keyring (nspawn_common_container_subject_type))
 
+(call system_dontaudit_manage_all_proc (nspawn_common_container_subject_type))
 (call system_read_all_proc (nspawn_common_container_subject_type))
+
+(call system_dontaudit_manage_all_sysctl (nspawn_common_container_subject_type))
 (call system_list_net_sysctl (nspawn_common_container_subject_type))
 
 (call system_read_crypto_sysctl (nspawn_common_container_subject_type))
