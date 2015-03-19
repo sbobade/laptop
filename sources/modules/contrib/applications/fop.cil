@@ -39,6 +39,9 @@
 (call miscfiles_read_net_config_files (fop_t))
 (call miscfiles_read_locale (fop_t))
 
+(call usersubject_manage_user_home_files (fop_t))
+(call usersubject_home_dir_object_type_transition_user_home (fop_t file "*"))
+
 (macro fop_exec ((type ARG1))
     (call can_exec (ARG1 fop_exec_t)))
 
