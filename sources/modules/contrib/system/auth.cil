@@ -257,6 +257,9 @@
 (optional auth_login_program_subject_type_optional_login_logind
     (call login_logind_client_subject_type (auth_login_program_subject_type)))
 
+(optional auth_login_program_subject_type_optional_systemduser
+    (call systemduser_link_keyring_all_subjects (auth_login_program_subject_type)))
+
 (optional auth_login_program_subject_type_optional_usersubject
     (call usersubject_create_keyring_all_common_login_subjects (auth_login_program_subject_type))
     (call usersubject_send_signal_all_common_login_subjects (auth_login_program_subject_type)))
