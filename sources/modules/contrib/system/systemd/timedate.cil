@@ -61,7 +61,7 @@
 (call systemd_dbus_chat (timedated_t))
 (call systemd_status_system (timedated_t))
 
-(allow timedate_timedatectl_subject_type self (capability (net_admin sys_chroot setgid setuid dac_override)))
+(allow timedate_timedatectl_subject_type self (capability (net_admin sys_chroot setgid setuid dac_override sys_admin)))
 
 (call dbus_system_client_subject_type (timedate_timedatectl_subject_type))
 
