@@ -175,10 +175,27 @@
 (optional logind_optional_unconfineduser
     (call unconfineduser_read_state_all_subjects (logind_t)))
 
+(allow login_loginctl_subject_type self (capability (net_admin dac_override)))
+
+(call dbus_system_client_subject_type (login_loginctl_subject_type))
+
+(call login_dbus_chat_logind (login_loginctl_subject_type))
 (call login_loginctl_client_subject_type (login_loginctl_subject_type))
+
+(call ns_client_subject_type (login_loginctl_subject_type))
 
 (optional login_loginctl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (login_loginctl_subject_type login_loginctl_role)))
+
+(optional login_loginctl_subject_type_optional_usersubject
+    (call usersubject_dontaudit_read_user_home_files (login_loginctl_client_subject_type)))
+
+(allow login_loginctl_client_subject_type self rw_fifo_file_perms)
+
+(call commands_exec (login_loginctl_client_subject_type))
+
+(call miscfiles_read_locale (login_loginctl_client_subject_type))
+(call miscfiles_read_all_terminfo (login_loginctl_client_subject_type))
 
 (allow login_logind_admin_subject_type logind_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (login_logind_admin_subject_type logind_t))
