@@ -384,9 +384,7 @@
     (call commands_exec_auto_subject_type_transition (staff_pkexec_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_pkexec_t staff_t))
 
-    (call usersubject_exec_home_auto_subject_type_transition (staff_pkexec_t staff_t))
-
-    (call polkit_run_pkttyagent (staff_subject_type staff_r)))
+    (call usersubject_exec_home_auto_subject_type_transition (staff_pkexec_t staff_t)))
 
 (optional staff_optional_power
     (call power_exec (staff_t)))
