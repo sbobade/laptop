@@ -1235,6 +1235,7 @@
 (macro usersubject_base_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
     (call usersubject_base_subject_template (ARG2 ARG3))
     (call system_roleallow_role (ARG2))
+    (call system_object_userrole (ARG1))
     (userrole ARG1 ARG2))
 
 (macro usersubject_type ((type ARG1))
