@@ -1,5 +1,13 @@
 (typeattribute systemduser_subject_type)
-(typeattribute systemduser_socket_activated_subject_type)
+
+(typeattribute systemduser_tcp_socket_activated_subject_type)
+(typeattribute systemduser_tcp_socket_activated_object_type)
+(typeattribute systemduser_udp_socket_activated_subject_type)
+(typeattribute systemduser_udp_socket_activated_object_type)
+(typeattribute systemduser_dccp_socket_activated_subject_type)
+(typeattribute systemduser_dccp_socket_activated_object_type)
+(typeattribute systemduser_unix_stream_socket_activated_subject_type)
+(typeattribute systemduser_unix_dgram_socket_activated_subject_type)
 
 (typeattribute systemduser_unit_object_type)
 
@@ -38,8 +46,17 @@
 (context systemduser_pam_config (system_u object_r systemduser_pam_config_t (systemlow systemlow)))
 (filecon "/etc/pam\.d/systemd-user" file systemduser_pam_config)
 
-(allow systemduser_subject_type systemduser_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
-(allow systemduser_subject_type systemduser_socket_activated_subject_type create_unix_stream_stream_socket_perms)
+(allow systemduser_subject_type systemduser_tcp_socket_activated_subject_type create_tcp_stream_socket_perms)
+(allow systemduser_subject_type systemduser_tcp_socket_activated_object_type (tcp_socket (name_bind)))
+
+(allow systemduser_subject_type systemduser_udp_socket_activated_subject_type create_udp_socket_perms)
+(allow systemduser_subject_type systemduser_udp_socket_activated_object_type (udp_socket (name_bind)))
+
+(allow systemduser_subject_type systemduser_dccp_socket_activated_subject_type create_dccp_stream_socket_perms)
+(allow systemduser_subject_type systemduser_dccp_socket_activated_object_type (dccp_socket (name_bind)))
+
+(allow systemduser_subject_type systemduser_unix_stream_socket_activated_subject_type create_unix_stream_stream_socket_perms)
+(allow systemduser_subject_type systemduser_unix_dgram_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
 
 (call devices_getattr_all (systemduser_subject_type))
 
@@ -104,8 +121,29 @@
     (call systemduser_control_transient_units (ARG2))
     (call systemduser_control_units (ARG2)))
 
-(macro systemduser_socket_activated_subject_type ((type ARG1))
-    (typeattributeset systemduser_socket_activated_subject_type ARG1))
+(macro systemduser_tcp_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemduser_tcp_socket_activated_subject_type ARG1))
+
+(macro systemduser_tcp_socket_activated_object_type ((type ARG1))
+    (typeattributeset systemduser_tcp_socket_activated_object_type ARG1))
+
+(macro systemduser_udp_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemduser_udp_socket_activated_subject_type ARG1))
+
+(macro systemduser_udp_socket_activated_object_type ((type ARG1))
+    (typeattributeset systemduser_udp_socket_activated_object_type ARG1))
+
+(macro systemduser_dccp_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemduser_dccp_socket_activated_subject_type ARG1))
+
+(macro systemduser_dccp_socket_activated_object_type ((type ARG1))
+    (typeattributeset systemduser_dccp_socket_activated_object_type ARG1))
+
+(macro systemduser_unix_stream_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemduser_unix_stream_socket_activated_subject_type ARG1))
+
+(macro systemduser_unix_dgram_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemduser_unix_dgram_socket_activated_subject_type ARG1))
 
 (macro systemduser_rw_unix_stream_sockets_all_subjects ((type ARG1))
     (allow ARG1 systemduser_subject_type (unix_stream_socket (read write ioctl getattr))))

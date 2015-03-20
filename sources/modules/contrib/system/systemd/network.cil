@@ -20,6 +20,8 @@
 (type networkd_exec_t)
 (call systemd_daemon (networkd_t networkd_exec_t))
 
+(call systemd_netlink_socket_activated_subject_type (networkd_t netlink_route_socket))
+
 (context networkd_exec (system_u object_r networkd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-networkd" file networkd_exec)
 (filecon "/usr/lib/systemd/systemd-networkd-wait-online" file networkd_exec)

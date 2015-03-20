@@ -4,43 +4,6 @@
 
 * vlock
 
-* probably should rethink socket activation completely (also specify the sockets)
-
-    examples
-
-    network socket activation:
-
-    (call systemd_tcp_socket_activated_subject_type (sshd_t))
-    (call systemd_tcp_socket_activated_object_type (ssh_port_t))
-
-    translates to:
-
-    (allow systemd_t sshd_t create_tcp_stream_socket_perms)
-    (allow systemd_t ssh_port_t (tcp_socket (name_bind)))
-
-    netlink socket activation:
-
-    (call systemd_netlink_socket_activated_subject_type (udevd_t netlink_kobject_uevent_socket))
-
-    translates to:
-
-    (allow systemd_t udevd_t (netlink_kobject_uevent_socket (...))) # where ... is "create_netlink_socket_perms"
-
-    file socket activation:
-
-    (call systemd_unix_stream_socket_activated_subject_type (dbusd_t))
-    (call systemd_socket_activated_object_type (dbusd_lib_t))
-
-    translates to:
-
-    (allow systemd_t systemd_socket_activated_file_object_type create_dir_perms)
-
-    (allow systemd_t dbusd_t create_unix_stream_stream_socket_perms)
-    (call create_sock_files_pattern (systemd_t dbusd_lib_t dbusd_lib_t))
-
-    note that currently udevd netlink_kobject_uevent_socket, networkd netlink_route_socket, and journald netlink_audit_socket activation is
-    implemented independent of my current socket activation solution, and that i should merge that eventually.
-
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
     the ones that have a ctl app as well as a service unit
 

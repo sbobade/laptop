@@ -13,7 +13,7 @@
 (optional initctl_optional_systemd
     (call systemd_daemon (initctl_t initctl_exec_t))
 
-    (call systemd_socket_activated (initctl_t initctl_runtime_t))
+    (call systemd_fifo_file_socket_activated_object_type (initctl_runtime_t))
 
     (context initctl_exec (system_u object_r initctl_exec_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/systemd-initctl" file initctl_exec)

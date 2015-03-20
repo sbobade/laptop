@@ -262,6 +262,10 @@
     (allow ARG1 ARG2 search_dir_perms)
     (allow ARG1 ARG3 (fifo_file (getattr))))
 
+(macro create_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
+    (allow ARG1 ARG2 add_entry_dir_perms)
+    (allow ARG1 ARG3 create_fifo_file_perms))
+
 (macro read_fifo_files_pattern ((type ARG1)(type ARG2)(type ARG3))
     (allow ARG1 ARG2 search_dir_perms)
     (allow ARG1 ARG3 read_fifo_file_perms))

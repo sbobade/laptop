@@ -64,7 +64,7 @@
     (call dbuslaunch_role_template (staff_r staff_dbususer_t staff_dbuslaunch_t)))
 
 (optional staff_systemduser_optional_staff_dbususer
-    (call systemduser_socket_activated_subject_type (staff_dbususer_t))
+    (call systemduser_unix_stream_socket_activated_subject_type (staff_dbususer_t))
 
     (call dbususer_manage_tmpfs (staff_systemduser_t))
     (call dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs (staff_systemduser_t)))

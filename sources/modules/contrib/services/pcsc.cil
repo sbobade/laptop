@@ -55,6 +55,9 @@
 (optional pcscd_optional_systemd
     (call systemd_daemon (pcscd_t pcscd_exec_t))
 
+    (call systemd_unix_stream_socket_activated_subject_type (pcscd_t))
+    (call systemd_sock_file_socket_activated_object_type (pcscd_runtime_t))
+
     (type pcscd_unit_t)
     (call systemd_unit_object_type (pcscd_unit_t))
 
@@ -63,9 +66,7 @@
     (context pcscd_unit (system_u object_r pcscd_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*pcscd.*" file pcscd_unit)
 
-    (allow pcsc_admin_subject_type pcscd_unit_t (service (all)))
-
-    (call systemd_socket_activated (pcscd_t pcscd_runtime_t)))
+    (allow pcsc_admin_subject_type pcscd_unit_t (service (all))))
 
 (optional pcscd_optional_unconfined
     (call unconfined_read_state_all_subjects (pcscd_t)))

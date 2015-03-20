@@ -3,14 +3,29 @@
 (typeattribute systemd_admin_subject_type)
 (typeattribute systemd_subject_type)
 (typeattribute systemd_daemon_subject_type)
-(typeattribute systemd_socket_activated_subject_type)
 (typeattribute systemd_system_service_admin_subject_type)
 
 (typeattribute systemd_systemctl_subject_type)
 (typeattribute systemd_systemctl_client_subject_type)
 
-(typeattribute systemd_object_type)
 (typeattribute systemd_socket_activated_object_type)
+
+(typeattribute systemd_tcp_socket_activated_subject_type)
+(typeattribute systemd_tcp_socket_activated_object_type)
+
+(typeattribute systemd_udp_socket_activated_subject_type)
+(typeattribute systemd_udp_socket_activated_object_type)
+
+(typeattribute systemd_dccp_socket_activated_subject_type)
+(typeattribute systemd_dccp_socket_activated_object_type)
+
+(typeattribute systemd_fifo_file_socket_activated_object_type)
+
+(typeattribute systemd_unix_stream_socket_activated_subject_type)
+(typeattribute systemd_unix_dgram_socket_activated_subject_type)
+(typeattribute systemd_sock_file_socket_activated_object_type)
+
+(typeattribute systemd_object_type)
 (typeattribute systemd_pid_object_type)
 (typeattribute systemd_unit_object_type)
 
@@ -130,12 +145,24 @@
 
 (call systemd_runtime_object_type_transition (systemd_t systemd_transient_unit_t dir "system"))
 
-(allow systemd_t systemd_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
-(allow systemd_t systemd_socket_activated_subject_type create_unix_stream_stream_socket_perms)
+(allow systemd_t systemd_socket_activated_object_type create_dir_perms)
 
-(allow systemd_t systemd_socket_activated_object_type manage_dir_perms)
-(allow systemd_t systemd_socket_activated_object_type manage_fifo_file_perms)
-(allow systemd_t systemd_socket_activated_object_type manage_sock_file_perms)
+(allow systemd_t systemd_tcp_socket_activated_subject_type create_tcp_stream_socket_perms)
+(allow systemd_t systemd_tcp_socket_activated_object_type (tcp_socket (name_bind)))
+
+(allow systemd_t systemd_udp_socket_activated_subject_type create_udp_socket_perms)
+(allow systemd_t systemd_udp_socket_activated_object_type (udp_socket (name_bind)))
+
+(allow systemd_t systemd_dccp_socket_activated_subject_type create_dccp_stream_socket_perms)
+(allow systemd_t systemd_dccp_socket_activated_object_type (dccp_socket (name_bind)))
+
+(call manage_fifo_files_pattern (systemd_t systemd_fifo_file_socket_activated_object_type
+    systemd_fifo_file_socket_activated_object_type))
+
+(allow systemd_t systemd_unix_stream_socket_activated_subject_type create_unix_stream_stream_socket_perms)
+(allow systemd_t systemd_unix_dgram_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
+(call manage_sock_files_pattern (systemd_t systemd_sock_file_socket_activated_object_type
+    systemd_sock_file_socket_activated_object_type))
 
 (allow systemd_t systemd_pid_object_type manage_file_perms)
 
@@ -217,7 +244,6 @@
 (call terminals_use_unallocated_ttys (systemd_t))
 
 (call journal_list_log (systemd_t))
-(call journal_create_journald_netlink_audit_sockets (systemd_t))
 (call journal_read_journald_systemd_runtime (systemd_t))
 (call journal_relabelto_log_dirs (systemd_t))
 (call journal_relabelto_log_files (systemd_t))
@@ -236,8 +262,6 @@
 (call systemd_auto_subject_type_transition (systemd_t))
 (call systemd_exec_systemdhelper (systemd_t))
 (call systemd_relabelto_transient_unit_dirs (systemd_t))
-
-(call udev_create_udevd_netlink_kobject_uevent_socket (systemd_t))
 
 (call utmp_rw_utmp_runtime_files (systemd_t))
 (call utmp_write_wtmp_log_files (systemd_t))
@@ -269,9 +293,6 @@
 
 (optional systemd_optional_machine
     (call machine_manage_lib_files (systemd_t)))
-
-(optional systemd_optional_network_networkd
-    (call network_create_networkd_netlink_route_socket (systemd_t)))
 
 (optional systemd_optional_plymouth
     (call plymouth_exec (systemd_t))
@@ -946,12 +967,41 @@
 (macro systemd_socket_activated_object_type ((type ARG1))
     (typeattributeset systemd_socket_activated_object_type ARG1))
 
-(macro systemd_socket_activated_subject_type ((type ARG1))
-    (typeattributeset systemd_socket_activated_subject_type ARG1))
+(macro systemd_tcp_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemd_tcp_socket_activated_subject_type ARG1))
 
-(macro systemd_socket_activated ((type ARG1)(type ARG2))
-    (call systemd_socket_activated_subject_type (ARG1))
-    (call systemd_socket_activated_object_type (ARG2)))
+(macro systemd_tcp_socket_activated_object_type ((type ARG1))
+    (typeattributeset systemd_tcp_socket_activated_object_type ARG1))
+
+(macro systemd_udp_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemd_udp_socket_activated_subject_type ARG1))
+
+(macro systemd_udp_socket_activated_object_type ((type ARG1))
+    (typeattributeset systemd_udp_socket_activated_object_type ARG1))
+
+(macro systemd_dccp_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemd_dccp_socket_activated_subject_type ARG1))
+
+(macro systemd_dccp_socket_activated_object_type ((type ARG1))
+    (typeattributeset systemd_dccp_socket_activated_object_type ARG1))
+
+(macro systemd_fifo_file_socket_activated_object_type ((type ARG1))
+    (call systemd_socket_activated_object_type (ARG1))
+    (typeattributeset systemd_fifo_file_socket_activated_object_type ARG1))
+
+(macro systemd_unix_stream_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemd_unix_stream_socket_activated_subject_type ARG1))
+
+(macro systemd_unix_dgram_socket_activated_subject_type ((type ARG1))
+    (typeattributeset systemd_unix_dgram_socket_activated_subject_type ARG1))
+
+(macro systemd_sock_file_socket_activated_object_type ((type ARG1))
+    (call systemd_socket_activated_object_type (ARG1))
+    (typeattributeset systemd_sock_file_socket_activated_object_type ARG1))
+
+(macro systemd_netlink_socket_activated_subject_type ((type ARG1)(class ARG2))
+    (allow systemd_t ARG1 (ARG2 (create ioctl read getattr write setattr
+        append bind connect getopt setopt shutdown))))
 
 (macro systemd_halt_system ((type ARG1))
     (allow ARG1 systemd_t (system (halt))))

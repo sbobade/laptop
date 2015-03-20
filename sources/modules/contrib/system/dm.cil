@@ -35,8 +35,6 @@
     (context dmeventd_unit (system_u object_r dmeventd_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/dm-event.*" file dmeventd_unit)
 
-    (call systemd_socket_activated (dmeventd_t dmeventd_runtime_t))
-
     (allow dm_admin_subject_type dmeventd_unit_t (service (all))))
 
 (type dmsetup_t)

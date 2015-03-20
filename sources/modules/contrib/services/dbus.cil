@@ -79,7 +79,8 @@
 (optional dbusd_optional_systemd
     (call systemd_daemon (dbusd_t dbusd_exec_t))
 
-    (call systemd_socket_activated (dbusd_t dbus_runtime_t))
+    (call systemd_unix_stream_socket_activated_subject_type (dbusd_t))
+    (call systemd_sock_file_socket_activated_object_type (dbus_runtime_t))
 
     (type dbusd_unit_t)
     (call systemd_unit_object_type (dbusd_unit_t))

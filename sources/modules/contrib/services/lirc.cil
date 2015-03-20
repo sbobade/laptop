@@ -84,8 +84,6 @@
 
     (typeattributeset lirc_object_type lircd_unit_t)
 
-    (call systemd_socket_activated (lircd_t lirc_runtime_t))
-
     (context lircd_unit (system_u object_r lircd_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*lircd.*" file lircd_unit)
 

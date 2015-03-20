@@ -147,7 +147,6 @@
     (filecon "/usr/lib/systemd/system/lvm2-lvmetad.*" file lvmetad_unit)
 
     (call systemd_pid_object_type (lvmetad_runtime_t))
-    (call systemd_socket_activated (lvmetad_t lvmetad_runtime_t))
 
     (allow lvm_admin_subject_type lvmetad_unit_t (service (all))))
 
