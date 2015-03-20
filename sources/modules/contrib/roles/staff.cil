@@ -340,6 +340,9 @@
 (optional staff_optional_nm
     (call nm_run_nmcli (staff_subject_type staff_r)))
 
+(optional staff_optional_notify
+    (call notify_run (staff_t staff_r)))
+
 (optional staff_optional_pa
     (call pa_run (staff_subject_type staff_r))
     (call pa_run_pactl (staff_subject_type staff_r))
@@ -480,6 +483,10 @@
     (call systemduser_manage_tmpfs (staff_t))
     (call systemduser_relabel_tmpfs (staff_t))
     (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (staff_t))
+
+    (call systemduser_manage_private_tmpfs_sock_files (staff_t))
+    (call systemduser_relabel_private_tmpfs_sock_files (staff_t))
+    (call systemduser_tmpfs_object_type_transition_private_tmpfs_sock_files (staff_t))
 
     (call systemduser_manage_transient_unit (staff_t))
     (call systemduser_relabel_transient_unit (staff_t))

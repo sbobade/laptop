@@ -3,8 +3,9 @@
 (type notify_t)
 (type notify_exec_t)
 (call applications_app (notify_t notify_exec_t))
-(call systemd_daemon (notify_t notify_exec_t))
 (roletype notify_role notify_t)
+
+(roleattributeset notify_role system_r)
 
 (context notify_exec (system_u object_r notify_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-notify" file notify_exec)

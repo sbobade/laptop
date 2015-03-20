@@ -470,6 +470,10 @@
     (call systemduser_relabel_tmpfs (sysadm_t))
     (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (sysadm_t))
 
+    (call systemduser_manage_private_tmpfs_sock_files (sysadm_t))
+    (call systemduser_relabel_private_tmpfs_sock_files (sysadm_t))
+    (call systemduser_tmpfs_object_type_transition_private_tmpfs_sock_files (sysadm_t))
+
     (call systemduser_manage_transient_unit (sysadm_t))
     (call systemduser_relabel_transient_unit (sysadm_t))
     (call systemduser_tmpfs_object_type_transition_systemduser_transient_unit_dirs (sysadm_t))

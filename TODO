@@ -8,3 +8,14 @@
     the ones that have a ctl app as well as a service unit
 
 * work on localectl loginctl timedatectl hostnamectl
+
+* cover /usr/lib/systemd/system/cpupower.service debug-shell.service dnsmasq
+
+* give /run/systemd/private a private type (/run/user/UID/systemd/private is already done)
+
+    (implies also revisiting journal_client_subject_type (and other systemd_stream_connect/ systemd_dgram_send calls)  once again
+    since it calls systemd_write_systemd_runtime_sock_files either for notify or private sock file)
+
+* systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
+
+* enable man-db timer on e145

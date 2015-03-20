@@ -14,6 +14,9 @@
 (type systemduser_tmpfs_t)
 (call usersubject_tmpfs_object_type (systemduser_tmpfs_t))
 
+(type systemduser_private_tmpfs_t)
+(call usersubject_tmpfs_object_type (systemduser_private_tmpfs_t))
+
 (type systemduser_config_home_t)
 (call usersubject_config_home_object_type (systemduser_config_home_t))
 
@@ -88,6 +91,8 @@
 (call systemduser_manage_config_home_dirs (systemduser_subject_type))
 (call systemduser_manage_config_home_lnk_files (systemduser_subject_type))
 (call systemduser_manage_tmpfs (systemduser_subject_type))
+(call systemduser_manage_private_tmpfs_sock_files (systemduser_subject_type))
+(call systemduser_tmpfs_object_type_transition_private_tmpfs_sock_files (systemduser_subject_type))
 (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (systemduser_subject_type))
 (call systemduser_tmpfs_object_type_transition_tmpfs_files (systemduser_subject_type))
 (call systemduser_manage_transient_unit (systemduser_subject_type))
@@ -253,6 +258,11 @@
     (call filesystems_search_tmpfs (ARG1))
     (call delete_sock_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
 
+(macro systemduser_rw_tmpfs_dirs ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_tmpfs_t rw_dir_perms))
+
 (macro systemduser_manage_tmpfs_dirs ((type ARG1))
     (call files_search_user_runtime (ARG1))
     (call filesystems_rw_tmpfs_dirs (ARG1))
@@ -267,11 +277,6 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (call relabel_dirs_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
-
-(macro systemduser_rw_tmpfs_dirs ((type ARG1))
-    (call files_search_user_runtime (ARG1))
-    (call filesystems_search_tmpfs (ARG1))
-    (allow ARG1 systemduser_tmpfs_t rw_dir_perms))
 
 (macro systemduser_read_tmpfs ((type ARG1))
     (call files_search_user_runtime (ARG1))
@@ -293,6 +298,29 @@
     (allow ARG1 systemduser_tmpfs_t relabel_dir_perms)
     (allow ARG1 systemduser_tmpfs_t relabel_file_perms)
     (allow ARG1 systemduser_tmpfs_t relabel_sock_file_perms))
+
+(macro systemduser_read_private_tmpfs_sock_files ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_private_tmpfs_t read_sock_file_perms))
+
+(macro systemduser_write_private_tmpfs_sock_files ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_private_tmpfs_t write_sock_file_perms))
+
+(macro systemduser_rw_private_tmpfs_sock_files ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_private_tmpfs_t rw_sock_file_perms))
+
+(macro systemduser_manage_private_tmpfs_sock_files ((type ARG1))
+    (call systemduser_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 systemduser_private_tmpfs_t manage_sock_file_perms))
+
+(macro systemduser_relabel_private_tmpfs_sock_files ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (allow ARG1 systemduser_private_tmpfs_t relabel_sock_file_perms))
+
+(macro systemduser_tmpfs_object_type_transition_private_tmpfs_sock_files ((type ARG1))
+    (call systemduser_tmpfs_object_type_transition (ARG1 systemduser_private_tmpfs_t sock_file "private")))
 
 (macro systemduser_halt_system ((type ARG1)(type ARG2))
     (allow ARG1 ARG2 (system (halt))))
