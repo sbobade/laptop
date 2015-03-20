@@ -204,7 +204,6 @@
 (call files_relabelto_lock_dirs (systemd_t))
 
 (call filesystems_getattr_all_filesystems (systemd_t))
-(call filesystems_list_autofs (systemd_t))
 (call filesystems_list_binfmt_misc (systemd_t))
 (call filesystems_list_efivarfs (systemd_t))
 (call filesystems_list_pstore (systemd_t))
