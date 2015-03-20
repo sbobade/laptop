@@ -24,6 +24,7 @@
 (typeattributeset resolve_resolved_object_type resolved_systemd_config_t)
 
 (context resolved_systemd_config (system_u object_r resolved_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/resolved\.conf\.d(/.*)?" any resolved_systemd_config)
 (filecon "/etc/systemd/resolved\.conf" file resolved_systemd_config)
 
 (type resolved_dbus_config_t)
@@ -85,6 +86,8 @@
 (allow resolve_resolved_admin_subject_type resolve_resolved_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
+(call resolve_systemd_config_object_type_transition_resolved_systemd_config_dirs (resolve_resolved_admin_subject_type))
+
 (macro resolve_exec_resolved ((type ARG1))
     (call can_exec (ARG1 resolved_exec_t)))
 
@@ -96,13 +99,36 @@
 (macro resolve_send_signal_resolved ((type ARG1))
     (allow ARG1 resolved_t (process (signal))))
 
+(macro resolve_search_resolved_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 resolved_systemd_config_t search_dir_perms))
+
+(macro resolve_list_resolved_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 resolved_systemd_config_t list_dir_perms))
+
 (macro resolve_read_resolved_systemd_config_files ((type ARG1))
     (call systemd_search_config (ARG1))
-    (allow ARG1 resolved_systemd_config_t read_file_perms))
+    (call read_files_pattern (ARG1 resolved_systemd_config_t resolved_systemd_config_t)))
 
 (macro resolve_manage_resolved_systemd_config_files ((type ARG1))
     (call systemd_rw_config_dirs (ARG1))
-    (allow ARG1 resolved_systemd_config_t manage_file_perms))
+    (call manage_files_pattern (ARG1 resolved_systemd_config_t resolved_systemd_config_t)))
+
+(macro resolve_read_resolved_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 resolved_systemd_config_t read_file_perms)
+    (allow ARG1 resolved_systemd_config_t list_dir_perms)
+    (allow ARG1 resolved_systemd_config_t read_lnk_file_perms))
+
+(macro resolve_manage_resolved_systemd_config ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 resolved_systemd_config_t manage_file_perms)
+    (allow ARG1 resolved_systemd_config_t manage_dir_perms)
+    (allow ARG1 resolved_systemd_config_t manage_lnk_file_perms))
+
+(macro resolve_systemd_config_object_type_transition_resolved_systemd_config_dirs ((type ARG1))
+    (call systemd_config_object_type_transition (ARG1 resolved_systemd_config_t dir "resolved.conf.d")))
 
 (macro resolve_read_resolved_dbus_config_files ((type ARG1))
     (call dbus_search_config (ARG1))
