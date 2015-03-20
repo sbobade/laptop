@@ -153,9 +153,8 @@
 (optional udevd_optional_systemd
     (call systemd_daemon (udevd_t udevd_exec_t))
 
-    (call systemd_netlink_socket_activated_subject_type (udevd_t netlink_kobject_uevent_socket))
-    (call systemd_unix_stream_socket_activated_subject_type (udevd_t))
-    (call systemd_sock_file_socket_activated_object_type (udev_runtime_t))
+    (call systemd_netlink_socket_activated (udevd_t netlink_kobject_uevent_socket))
+    (call systemd_unix_stream_socket_activated (udevd_t udev_runtime_t))
 
     (type udevd_unit_t)
     (call systemd_unit_object_type (udevd_unit_t))

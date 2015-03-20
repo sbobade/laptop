@@ -47,7 +47,7 @@
 (type journald_exec_t)
 (call systemd_daemon (journald_t journald_exec_t))
 
-(call systemd_netlink_socket_activated_subject_type (journald_t netlink_audit_socket))
+(call systemd_netlink_socket_activated (journald_t netlink_audit_socket))
 
 (context journald_exec (system_u object_r journald_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-journald" file journald_exec)

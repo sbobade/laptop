@@ -972,17 +972,29 @@
 (macro systemd_tcp_socket_activated_object_type ((type ARG1))
     (typeattributeset systemd_tcp_socket_activated_object_type ARG1))
 
+(macro systemd_tcp_socket_activated ((type ARG1)(type ARG2))
+    (call systemd_tcp_socket_activated_subject_type (ARG1))
+    (call systemd_tcp_socket_activated_object_type (ARG2)))
+
 (macro systemd_udp_socket_activated_subject_type ((type ARG1))
     (typeattributeset systemd_udp_socket_activated_subject_type ARG1))
 
 (macro systemd_udp_socket_activated_object_type ((type ARG1))
     (typeattributeset systemd_udp_socket_activated_object_type ARG1))
 
+(macro systemd_udp_socket_activated ((type ARG1)(type ARG2))
+    (call systemd_udp_socket_activated_subject_type (ARG1))
+    (call systemd_udp_socket_activated_object_type (ARG2)))
+
 (macro systemd_dccp_socket_activated_subject_type ((type ARG1))
     (typeattributeset systemd_dccp_socket_activated_subject_type ARG1))
 
 (macro systemd_dccp_socket_activated_object_type ((type ARG1))
     (typeattributeset systemd_dccp_socket_activated_object_type ARG1))
+
+(macro systemd_dccp_socket_activated ((type ARG1)(type ARG2))
+    (call systemd_dccp_socket_activated_subject_type (ARG1))
+    (call systemd_dccp_socket_activated_object_type (ARG2)))
 
 (macro systemd_fifo_file_socket_activated_object_type ((type ARG1))
     (call systemd_socket_activated_object_type (ARG1))
@@ -991,14 +1003,22 @@
 (macro systemd_unix_stream_socket_activated_subject_type ((type ARG1))
     (typeattributeset systemd_unix_stream_socket_activated_subject_type ARG1))
 
+(macro systemd_unix_stream_socket_activated ((type ARG1)(type ARG2))
+    (call systemd_unix_stream_socket_activated_subject_type (ARG1))
+    (call systemd_sock_file_socket_activated_object_type (ARG2)))
+
 (macro systemd_unix_dgram_socket_activated_subject_type ((type ARG1))
     (typeattributeset systemd_unix_dgram_socket_activated_subject_type ARG1))
+
+(macro systemd_unix_dgram_socket_activated ((type ARG1)(type ARG2))
+    (call systemd_unix_dgram_socket_activated_subject_type (ARG1))
+    (call systemd_sock_file_socket_activated_object_type (ARG2)))
 
 (macro systemd_sock_file_socket_activated_object_type ((type ARG1))
     (call systemd_socket_activated_object_type (ARG1))
     (typeattributeset systemd_sock_file_socket_activated_object_type ARG1))
 
-(macro systemd_netlink_socket_activated_subject_type ((type ARG1)(class ARG2))
+(macro systemd_netlink_socket_activated ((type ARG1)(class ARG2))
     (allow systemd_t ARG1 (ARG2 (create ioctl read getattr write setattr
         append bind connect getopt setopt shutdown))))
 

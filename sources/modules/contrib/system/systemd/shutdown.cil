@@ -95,7 +95,7 @@
 (type shutdownd_exec_t)
 (call systemd_daemon (shutdownd_t shutdownd_exec_t))
 
-(call systemd_unix_dgram_socket_activated_subject_type (shutdownd_t))
+(call systemd_unix_dgram_socket_activated (shutdownd_t shutdownd_systemd_runtime_t))
 
 (context shutdownd_exec (system_u object_r shutdownd_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-shutdownd" file shutdownd_exec)
@@ -110,8 +110,6 @@
 
 (type shutdownd_systemd_runtime_t)
 (call systemd_runtime_object_type (shutdownd_systemd_runtime_t))
-
-(call systemd_sock_file_socket_activated_object_type (shutdownd_systemd_runtime_t))
 
 (typeattributeset shutdown_object_type shutdownd_systemd_runtime_t)
 
