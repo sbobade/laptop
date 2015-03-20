@@ -53,6 +53,7 @@
 (allow sudo_subject_type sudo_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (sudo_subject_type sudo_tmpfs_t file "*"))
 
+(call system_audit_client_subject_type (sudo_subject_type))
 (call system_getattr_core_if (sudo_subject_type))
 (call system_read_kernel_sysctl (sudo_subject_type))
 (call system_link_keyring (sudo_subject_type))
@@ -73,8 +74,6 @@
 
 (call subject_interactive_fd_subject_type (sudo_subject_type))
 (call subject_role_change_exemption (sudo_subject_type))
-
-(call audit_client_subject_type (sudo_subject_type))
 
 (call applications_send_signal_all_subjects (sudo_subject_type))
 

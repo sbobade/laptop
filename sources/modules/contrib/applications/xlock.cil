@@ -30,14 +30,14 @@
 (allow xlock_t self (process (setsched)))
 (allow xlock_t self rw_fifo_file_perms)
 
+(call system_audit_client_subject_type (xlock_t))
+
 (call devices_rw_dri (xlock_t))
 
 (call files_read_config_files (xlock_t))
 (call files_read_data_files (xlock_t))
 
 (call filesystems_read_sysfs (xlock_t))
-
-(call audit_client_subject_type (xlock_t))
 
 (call auth_read_pam_config_files (xlock_t))
 (call auth_read_authconfig_pam_config (xlock_t))

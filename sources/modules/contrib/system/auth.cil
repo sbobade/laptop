@@ -60,11 +60,10 @@
 
 (allow chkpwd_t self (capability (dac_override setuid)))
 
+(call system_audit_client_subject_type (chkpwd_t))
 (call system_read_crypto_sysctl (chkpwd_t))
 
 (call terminals_dontaudit_use_console (chkpwd_t))
-
-(call audit_client_subject_type (chkpwd_t))
 
 (call auth_read_shadow (chkpwd_t))
 
@@ -264,7 +263,7 @@
     (call usersubject_create_keyring_all_common_login_subjects (auth_login_program_subject_type))
     (call usersubject_send_signal_all_common_login_subjects (auth_login_program_subject_type)))
 
-(call audit_client_subject_type (auth_pam_client_subject_type))
+(call system_audit_client_subject_type (auth_pam_client_subject_type))
 
 (call auth_auto_subject_type_transition_chkpwd (auth_pam_client_subject_type))
 (call auth_auto_subject_type_transition_updpwd (auth_pam_client_subject_type))

@@ -36,6 +36,7 @@
 (allow usermanage_passwd_subject_type self create_netlink_selinux_socket_perms)
 (allow usermanage_passwd_subject_type self rw_fifo_file_perms)
 
+(call system_audit_client_subject_type (usermanage_passwd_subject_type))
 (call system_read_crypto_sysctl (usermanage_passwd_subject_type))
 
 (call devices_read_urandom (usermanage_passwd_subject_type))
@@ -50,8 +51,6 @@
 (call selinux_compute_access_vector (usermanage_passwd_subject_type))
 
 (call subject_object_identity_change_exemption (usermanage_passwd_subject_type))
-
-(call audit_client_subject_type (usermanage_passwd_subject_type))
 
 (call auth_manage_passwd_config_files (usermanage_passwd_subject_type))
 (call auth_manage_shadow (usermanage_passwd_subject_type))
@@ -107,6 +106,7 @@
 (allow useradd_t self (capability (chown fsetid fowner sys_ptrace dac_override)))
 (allow useradd_t self (process (setfscreate)))
 
+(call system_audit_client_subject_type (useradd_t))
 (call system_read_kernel_sysctl (useradd_t))
 
 (call filesystems_list_proc (useradd_t))
@@ -119,8 +119,6 @@
 
 (call subject_object_identity_change_exemption (useradd_t))
 (call subject_read_all_common_subjects_state (useradd_t))
-
-(call audit_client_subject_type (useradd_t))
 
 (call auth_manage_passwd_config_files (useradd_t))
 (call auth_config_object_type_transition_passwd_config_files (useradd_t "*"))
@@ -164,13 +162,13 @@
 (allow groupadd_t self (capability (dac_override setuid)))
 (allow groupadd_t self (process (setfscreate setrlimit)))
 
+(call system_audit_client_subject_type (groupadd_t))
+
 (call files_read_config_files (groupadd_t))
 
 (call selinux_validate_context (groupadd_t))
 
 (call subject_object_identity_change_exemption (groupadd_t))
-
-(call audit_client_subject_type (groupadd_t))
 
 (call auth_manage_passwd_config_files (groupadd_t))
 (call auth_config_object_type_transition_passwd_config_files (groupadd_t "*"))

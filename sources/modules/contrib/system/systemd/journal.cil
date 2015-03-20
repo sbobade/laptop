@@ -82,6 +82,9 @@
 (filecon "/var/log/journal(/.*)?" any journal_log)
 (filecon "/var/run/log(/.*)?" any journal_log)
 
+(allow journald_t self (capability (audit_control)))
+(allow journald_t self (capability2 (audit_read)))
+(allow journald_t self create_netlink_audit_socket_perms)
 (allow journald_t self create_unix_stream_stream_socket_perms)
 
 (allow journald_t journal_log_t manage_dir_perms)
@@ -140,10 +143,7 @@
 
 (call terminals_write_console (journald_t))
 
-(call audit_test_for_journald (journald_t))
-
 (call journal_read_journald_systemd_config_files (journald_t))
-(call journal_test_for_systemd (journald_t))
 
 (call miscfiles_read_locale (journald_t))
 
@@ -374,8 +374,7 @@
 (macro journal_use_fd_journald ((type ARG1))
     (allow ARG1 journald_t (fd (use))))
 
-(macro journal_test_for_systemd ((type ARG1))
-    (allow ARG1 self (capability2 (audit_read)))
+(macro journal_create_journald_netlink_audit_sockets ((type ARG1))
     (allow ARG1 journald_t create_netlink_audit_socket_perms))
 
 (macro journal_stream_connect_journald ((type ARG1))

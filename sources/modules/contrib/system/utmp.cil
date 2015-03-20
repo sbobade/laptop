@@ -16,9 +16,9 @@
 (context wtmp_log (system_u object_r wtmp_log_t (systemlow systemlow)))
 (filecon "/var/log/wtmp.*" file wtmp_log)
 
-(call files_search_config (utmp_t))
+(call system_audit_client_subject_type (utmp_t))
 
-(call audit_client_subject_type (utmp_t))
+(call files_search_config (utmp_t))
 
 (call utmp_manage_utmp_runtime_files (utmp_t))
 (call utmp_runtime_type_transition_utmp_runtime_files (utmp_t "utmp"))

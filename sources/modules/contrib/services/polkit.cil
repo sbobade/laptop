@@ -139,12 +139,12 @@
 (allow pkagent_t self (capability (setuid)))
 (allow pkagent_t self rw_fifo_file_perms)
 
+(call system_audit_set_params (pkagent_t))
+
 (call files_read_config_files (pkagent_t))
 
 (call filesystems_list_devtmpfs (pkagent_t))
 (call filesystems_search_devpts (pkagent_t))
-
-(call audit_set_params (pkagent_t))
 
 (call auth_read_authconfig_pam_config (pkagent_t))
 (call auth_read_pam_config_files (pkagent_t))
@@ -169,6 +169,7 @@
 (allow polkit_pkexec_client_subject_type self (process (setsched)))
 (allow polkit_pkexec_client_subject_type self rw_fifo_file_perms)
 
+(call system_audit_set_params (polkit_pkexec_client_subject_type))
 (call system_link_keyring (polkit_pkexec_client_subject_type))
 (call system_read_kernel_sysctl (polkit_pkexec_client_subject_type))
 
@@ -187,9 +188,6 @@
 (call polkit_read_pam_config_files (polkit_pkexec_client_subject_type))
 
 (call utmp_read_utmp_runtime_files (polkit_pkexec_client_subject_type))
-
-(optional polkit_pkexec_client_subject_type_optional_audit
-    (call audit_set_params (polkit_pkexec_client_subject_type)))
 
 (optional polkit_pkexec_client_subject_type_optional_journal
     (call journal_client_subject_type (polkit_pkexec_client_subject_type)))

@@ -72,6 +72,7 @@
 (allow systemd_subject_type self (unix_stream_socket (listen accept)))
 (allow systemd_subject_type self create_netlink_selinux_socket_perms)
 
+(call system_audit_client_subject_type (systemd_subject_type))
 (call system_read_kernel_sysctl (systemd_subject_type))
 
 (call devices_read_urandom (systemd_subject_type))
@@ -88,8 +89,6 @@
 (call selinux_compute_access_vector (systemd_subject_type))
 (call selinux_compute_create_context (systemd_subject_type))
 (call selinux_list_securityfs (systemd_subject_type))
-
-(call audit_client_subject_type (systemd_subject_type))
 
 (call journal_client_subject_type (systemd_subject_type))
 (call journal_stream_connect_journald (systemd_subject_type))
@@ -111,7 +110,7 @@
 (allow systemd_t self (capability (dac_override net_admin sys_time
     kill sys_tty_config sys_boot chown setgid setuid setpcap sys_resource
     sys_admin fsetid fowner)))
-(allow systemd_t self (capability2 (block_suspend)))
+(allow systemd_t self (capability2 (block_suspend audit_read)))
 (allow systemd_t self (unix_dgram_socket (lock)))
 (allow systemd_t self (netlink_route_socket (nlmsg_write)))
 (allow systemd_t self rw_fifo_file_perms)
@@ -218,7 +217,7 @@
 (call terminals_use_unallocated_ttys (systemd_t))
 
 (call journal_list_log (systemd_t))
-(call journal_test_for_systemd (systemd_t))
+(call journal_create_journald_netlink_audit_sockets (systemd_t))
 (call journal_read_journald_systemd_runtime (systemd_t))
 (call journal_relabelto_log_dirs (systemd_t))
 (call journal_relabelto_log_files (systemd_t))

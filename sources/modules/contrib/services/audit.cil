@@ -4,7 +4,6 @@
 
 (typeattribute audit_admin_subject_type)
 (typeattribute audit_audispd_subject_type)
-(typeattribute audit_client_subject_type)
 
 (typeattribute audit_object_type)
 (typeattribute audit_subject_type)
@@ -140,11 +139,12 @@
 
 (allow auditctl_t self (netlink_audit_socket (nlmsg_readpriv)))
 
+(call system_audit_client_subject_type (auditctl_t))
+(call system_audit_set_params (auditctl_t))
+
 (call files_getattr_all (auditctl_t))
 
-(call audit_client_subject_type (auditctl_t))
 (call audit_read_auditd_config (auditctl_t))
-(call audit_set_params (auditctl_t))
 
 (call auth_read_pam_config_files (auditctl_t))
 
@@ -186,10 +186,6 @@
 (call audit_rw_audispd_unix_stream_sockets (audit_audispd_subject_type))
 (call audit_use_fd_auditd (audit_audispd_subject_type))
 
-(allow audit_client_subject_type self (capability (audit_write)))
-(allow audit_client_subject_type self r_netlink_audit_socket_perms)
-(allow audit_client_subject_type self (netlink_audit_socket (nlmsg_relay)))
-
 (typeattributeset audit_subject_type audit_audispd_subject_type)
 
 (allow audit_admin_subject_type audit_subject_type (process (ptrace signal signull sigkill sigstop)))
@@ -210,33 +206,12 @@
 (call audit_relabel_auditd_log (audit_admin_subject_type))
 (call audit_log_object_type_transition_auditd_log_dirs (audit_admin_subject_type))
 
-(macro audit_client_subject_type ((type ARG1))
-    (typeattributeset audit_client_subject_type ARG1))
-
 (macro audit_audispd_daemon ((type ARG1)(type ARG2))
     (call auto_subject_type_transition_pattern (audispd_t ARG2 ARG1))
     (call audit_audispd_subject_type (ARG1)))
 
 (macro audit_audispd_subject_type ((type ARG1))
     (typeattributeset audit_audispd_subject_type ARG1))
-
-(macro audit_set_loginuid ((type ARG1))
-    (allow ARG1 self (capability (audit_control)))
-    (allow ARG1 self r_netlink_audit_socket_perms)
-    (allow ARG1 self (netlink_audit_socket (nlmsg_relay))))
-
-(macro audit_set_tty_audit ((type ARG1))
-    (allow ARG1 self r_netlink_audit_socket_perms)
-    (allow ARG1 self (netlink_audit_socket (nlmsg_tty_audit))))
-
-(macro audit_set_params ((type ARG1))
-    (allow ARG1 self (capability (audit_write audit_control)))
-    (allow ARG1 self create_netlink_audit_socket_perms)
-    (allow ARG1 self (netlink_audit_socket (nlmsg_relay))))
-
-(macro audit_test_for_journald ((type ARG1))
-    (allow ARG1 self (capability (audit_control)))
-    (allow ARG1 self create_netlink_audit_socket_perms))
 
 (macro audit_exec_auditctl ((type ARG1))
     (call can_exec (ARG1 auditctl_exec_t)))

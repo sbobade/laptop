@@ -50,12 +50,11 @@
 (allow dbusd_t self (process (getcap setcap setrlimit)))
 (allow dbusd_t self (capability (setgid setuid sys_resource)))
 
+(call system_audit_client_subject_type (dbusd_t))
 (call system_read_kernel_sysctl (dbusd_t))
 
 (call devices_rw_inherited_dri (dbusd_t))
 (call devices_rw_inherited_event (dbusd_t))
-
-(call audit_client_subject_type (dbusd_t))
 
 (call auth_read_pam_console_runtime_files (dbusd_t))
 

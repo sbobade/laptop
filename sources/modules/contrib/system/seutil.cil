@@ -57,6 +57,7 @@
 
 (allow setfiles_t self (capability (dac_override fowner)))
 
+(call system_audit_client_subject_type (setfiles_t))
 (call system_list_invalid (setfiles_t))
 (call system_relabelfrom_invalid (setfiles_t))
 
@@ -81,8 +82,6 @@
 (call subject_object_identity_change_exemption (setfiles_t))
 
 (call terminals_use_inherited_console (setfiles_t))
-
-(call audit_client_subject_type (setfiles_t))
 
 (call audit_relabel_auditd_config (setfiles_t))
 (call audit_relabel_auditd_log (setfiles_t))

@@ -189,6 +189,7 @@
 (allow nspawn_t self create_netlink_route_socket_perms)
 (allow nspawn_t self rw_fifo_file_perms)
 
+(call system_audit_set_loginuid (nspawn_t))
 (call system_read_kernel_message (nspawn_t))
 (call system_read_kernel_sysctl (nspawn_t))
 (call system_read_net_proc (nspawn_t))
@@ -245,8 +246,6 @@
 (call subject_object_identity_change_exemption (nspawn_t))
 
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
-
-(call audit_set_loginuid (nspawn_t))
 
 (call dbus_system_client_subject_type (nspawn_t))
 

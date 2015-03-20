@@ -44,14 +44,13 @@
 (allow screen_subject_type screen_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (screen_subject_type screen_tmpfs_t file "*"))
 
+(call system_audit_client_subject_type (screen_subject_type))
 (call system_read_crypto_sysctl (screen_subject_type))
 
 (call files_dontaudit_catchall_subject_type (screen_subject_type))
 (call files_read_config_files (screen_subject_type))
 
 (call subject_interactive_fd_subject_type (screen_subject_type))
-
-(call audit_client_subject_type (screen_subject_type))
 
 (call auth_read_pam_config_files (screen_subject_type))
 (call auth_read_authconfig_pam_config (screen_subject_type))
