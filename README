@@ -1,7 +1,8 @@
 How to test:
 ------------
 
-Install an *minimal* Fedora (=> 21) *server* product.
+Install an *minimal* Fedora (=> 21) *server* product, and create an administrator user by associating the user with the wheel group.
+
 Install git, iptables-services
 
 Compile and install the SELinux CIL compiler: https://github.com/SELinuxProject/cil/blob/master/README
