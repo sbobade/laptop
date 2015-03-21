@@ -19,6 +19,8 @@
 
 (call commands_exec (autorelabel_t))
 
+(call devices_write_kmsg (autorelabel_t))
+
 (call files_read_config_files (autorelabel_t))
 
 (call files_getattr_all_tmpfs_files (autorelabel_t))

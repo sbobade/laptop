@@ -35,6 +35,8 @@
 
     (call devices_write_kmsg (utmp_t))
 
+    (call terminals_use_console (utmp_t))
+
     (call journal_client_subject_type (utmp_t))
 
     (call systemd_status_system_units (utmp_t))

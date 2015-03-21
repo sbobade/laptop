@@ -18,6 +18,8 @@
 
 (call devices_write_kmsg (updatedone_t))
 
+(call terminals_use_console (updatedone_t))
+
 (call journal_client_subject_type (updatedone_t))
 
 (call seutil_read_selinux_config_files (updatedone_t))

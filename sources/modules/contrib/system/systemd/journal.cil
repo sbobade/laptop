@@ -22,13 +22,14 @@
 (allow journal_journalctl_subject_type self (capability (dac_override net_admin sys_resource
     sys_chroot setgid setuid sys_admin)))
 (allow journal_journalctl_subject_type self create_unix_dgram_socket_perms)
-(allow journal_journalctl_subject_type self (unix_dgram_socket (sendto)))
 
 (call journal_manage_log (journal_journalctl_subject_type))
 (call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
 (call journal_journalctl_client_subject_type (journal_journalctl_subject_type))
 (call journal_read_journald_systemd_runtime (journal_journalctl_subject_type))
 (call journal_stop_journald_units (journal_journalctl_subject_type))
+
+(call systemd_stream_connect (journal_journalctl_subject_type))
 
 (optional journal_journalctl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (journal_journalctl_subject_type journal_journalctl_role)))
@@ -118,6 +119,7 @@
 (call systemd_lib_object_type_transition (journald_t journald_systemd_lib_t dir "*"))
 
 (allow journald_t self (capability (setgid setuid sys_admin sys_ptrace)))
+(allow journald_t self create_unix_dgram_stream_socket_perms)
 (allow journald_t self (process (getcap)))
 
 (call system_dgram_send (journald_t))
@@ -147,7 +149,7 @@
 
 (call miscfiles_read_locale (journald_t))
 
-(call systemd_dgram_send (journald_t))
+(call systemd_notify_system (journald_t))
 
 (call udev_client_subject_type (journald_t))
 
@@ -177,8 +179,6 @@
 (call miscfiles_read_all_terminfo (journal_journalctl_client_subject_type))
 (call miscfiles_read_locale (journal_journalctl_client_subject_type))
 
-(call systemd_stream_connect (journal_journalctl_client_subject_type))
-
 (optional journal_journalctl_client_subject_type_optional_dbus
     (call systemd_dbus_chat (journal_journalctl_client_subject_type))
     (call dbus_system_client_subject_type (journal_journalctl_client_subject_type)))
@@ -192,7 +192,6 @@
 (dontaudit journal_client_subject_type self (capability (net_admin))) ; FIXME
 (allow journal_client_subject_type self create_unix_stream_socket_perms)
 (allow journal_client_subject_type self create_unix_dgram_socket_perms)
-(allow journal_client_subject_type self (unix_dgram_socket (sendto)))
 
 (call dgram_send_pattern
     (journal_client_subject_type journald_systemd_runtime_t journald_systemd_runtime_t journald_t))
@@ -200,11 +199,13 @@
 (call system_stream_connect (journal_client_subject_type))
 (call system_dgram_send (journal_client_subject_type))
 
+(call devices_dontaudit_write_kmsg (journal_client_subject_type))
+
 (call filesystems_read_devtmpfs_lnk_files (journal_client_subject_type))
 
-(call terminals_use_console (journal_client_subject_type))
+(call terminals_dontaudit_use_console (journal_client_subject_type))
 
-(call systemd_write_systemd_runtime_sock_files (journal_client_subject_type))
+(call systemd_search_runtime (journal_client_subject_type))
 
 (allow journal_admin_subject_type journald_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (journal_admin_subject_type journald_t))

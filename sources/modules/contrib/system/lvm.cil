@@ -60,7 +60,6 @@
 (call devices_getattr_all (lvm_t))
 (call devices_read_urandom (lvm_t))
 (call devices_rw_lvm_control (lvm_t))
-(call devices_write_kmsg (lvm_t))
 
 (call filesystems_list_debugfs (lvm_t))
 (call filesystems_getattr_devpts_chr_files (lvm_t))
@@ -87,6 +86,12 @@
 (call miscfiles_read_locale (lvm_t))
 
 (call udev_client_subject_type (lvm_t))
+
+(optional lvm_optional_journal
+    (call journal_client_subject_type (lvm_t))
+
+    (call devices_write_kmsg (lvm_t))
+    (call terminals_use_console (lvm_t)))
 
 (optional lvm_optional_systemd
     (call systemd_daemon (lvm_t lvm_exec_t))

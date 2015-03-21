@@ -25,6 +25,8 @@
 
 (call fstools_auto_subject_type_transition (fsck_t))
 
+(call terminals_use_console (fsck_t))
+
 (call journal_client_subject_type (fsck_t))
 
 (call plymouth_read_plymouthd_runtime_files (fsck_t))

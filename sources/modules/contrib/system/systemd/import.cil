@@ -23,6 +23,8 @@
 (call devices_read_urandom (importd_t))
 (call devices_write_kmsg (importd_t))
 
+(call terminals_use_console (importd_t))
+
 (call dbus_system_service (importd_t))
 
 (call journal_client_subject_type (importd_t))

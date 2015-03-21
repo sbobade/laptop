@@ -21,6 +21,8 @@
 (call filesystems_rw_sysfs_files (backlight_t))
 (call filesystems_read_sysfs_lnk_files (backlight_t))
 
+(call terminals_use_console (backlight_t))
+
 (call journal_client_subject_type (backlight_t))
 
 (call udev_client_subject_type (backlight_t))

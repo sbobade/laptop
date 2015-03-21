@@ -29,6 +29,8 @@
 
 (call network_udp_bind_generic_node (timesyncd_t))
 
+(call terminals_use_console (timesyncd_t))
+
 (call hwclock_read_config_files (timesyncd_t))
 
 (call journal_client_subject_type (timesyncd_t))
@@ -38,6 +40,8 @@
 (call network_read_networkd_systemd_runtime (timesyncd_t))
 
 (call ns_client_subject_type (timesyncd_t))
+
+(call systemd_notify_system (timesyncd_t))
 
 (call timesync_read_timesyncd_systemd_config_files (timesyncd_t))
 

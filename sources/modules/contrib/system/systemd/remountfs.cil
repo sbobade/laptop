@@ -10,6 +10,8 @@
 
 (call files_read_config_files (remountfs_t))
 
+(call terminals_use_console (remountfs_t))
+
 (call journal_client_subject_type (remountfs_t))
 
 (call mount_auto_subject_type_transition (remountfs_t))

@@ -75,6 +75,17 @@
 (allow systemd_t systemd_runtime_t manage_sock_file_perms)
 (call files_runtime_object_type_transition (systemd_t systemd_runtime_t dir "systemd"))
 
+(type systemd_private_runtime_t)
+(call systemd_runtime_object_type (systemd_private_runtime_t))
+
+(typeattributeset systemd_object_type systemd_private_runtime_t)
+
+(context systemd_private_runtime (system_u object_r systemd_private_runtime_t (systemlow systemlow)))
+(filecon "/var/run/systemd/private" socket systemd_private_runtime)
+
+(allow systemd_t systemd_private_runtime_t manage_sock_file_perms)
+(call systemd_runtime_object_type_transition (systemd_t systemd_private_runtime_t sock_file "private"))
+
 (type systemd_lib_t)
 (call systemd_lib_object_type (systemd_lib_t))
 
@@ -86,6 +97,7 @@
 (allow systemd_subject_type self (process (getsched setsched setrlimit setfscreate setsockcreate)))
 (allow systemd_subject_type self (unix_stream_socket (listen accept)))
 (allow systemd_subject_type self create_netlink_selinux_socket_perms)
+(allow systemd_subject_type self (unix_dgram_socket (sendto)))
 
 (call system_audit_client_subject_type (systemd_subject_type))
 (call system_read_kernel_sysctl (systemd_subject_type))
@@ -240,6 +252,7 @@
 (call subject_send_signal_all_common_subjects (systemd_t))
 (call subject_send_signull_all_common_subjects (systemd_t))
 
+(call terminals_use_console (systemd_t))
 (call terminals_use_unallocated_ttys (systemd_t))
 
 (call journal_list_log (systemd_t))
@@ -364,6 +377,7 @@
 (call systemd_getattr_unit_dirs (systemd_systemctl_subject_type))
 (call systemd_control_all_units (systemd_systemctl_subject_type))
 (call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
+(call systemd_stream_connect (systemd_systemctl_subject_type))
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_control_system (systemd_systemctl_subject_type))
@@ -478,10 +492,8 @@
 (call miscfiles_read_all_terminfo (systemd_systemctl_client_subject_type))
 (call miscfiles_read_locale (systemd_systemctl_client_subject_type))
 
-(call systemd_dgram_send (systemd_systemctl_client_subject_type))
 (call systemd_read_state_lnk_files (systemd_systemctl_client_subject_type))
 (call systemd_search_transient_unit (systemd_systemctl_client_subject_type))
-(call systemd_stream_connect (systemd_systemctl_client_subject_type))
 (call systemd_use_fd (systemd_systemctl_client_subject_type))
 
 (optional systemd_systemctl_client_subject_type_optional_dbus
@@ -756,6 +768,22 @@
     (allow ARG1 systemd_runtime_object_type manage_dir_perms)
     (allow ARG1 systemd_runtime_object_type manage_sock_file_perms)
     (allow ARG1 systemd_runtime_object_type manage_lnk_file_perms))
+
+(macro systemd_read_private_runtime_sock_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 systemd_private_runtime_t read_sock_file_perms))
+
+(macro systemd_write_private_runtime_sock_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 systemd_private_runtime_t write_sock_file_perms))
+
+(macro systemd_rw_private_runtime_sock_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (allow ARG1 systemd_private_runtime_t rw_sock_file_perms))
+
+(macro systemd_manage_private_runtime_sock_files ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (allow ARG1 systemd_private_runtime_t manage_sock_file_perms))
 
 (macro systemd_lib_object_type ((type ARG1))
     (call files_lib_object_type (ARG1))
@@ -1137,13 +1165,13 @@
     (call systemd_reload_all_units (ARG1))
     (call systemd_start_all_units (ARG1)))
 
-(macro systemd_dgram_send ((type ARG1))
-    (call files_search_runtime (ARG1))
-    (call dgram_send_pattern (ARG1 systemd_runtime_t systemd_runtime_t systemd_t)))
-
 (macro systemd_stream_connect ((type ARG1))
     (call files_search_runtime (ARG1))
-    (call stream_connect_pattern (ARG1 systemd_runtime_t systemd_runtime_t systemd_t)))
+    (call stream_connect_pattern (ARG1 systemd_private_runtime_t systemd_private_runtime_t systemd_t)))
+
+(macro systemd_notify_system ((type ARG1))
+    (allow ARG1 self (unix_dgram_socket (sendto)))
+    (call systemd_write_systemd_runtime_sock_files (ARG1)))
 
 (macro systemd_write_systemd_runtime_sock_files ((type ARG1))
     (call files_search_runtime (ARG1))

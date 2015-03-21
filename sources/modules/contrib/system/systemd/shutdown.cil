@@ -128,6 +128,8 @@
 
 (call devices_write_kmsg (shutdownd_t))
 
+(call terminals_use_console (shutdownd_t))
+
 (call journal_client_subject_type (shutdownd_t))
 
 (call miscfiles_read_locale (shutdownd_t))

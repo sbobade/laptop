@@ -117,9 +117,7 @@
     (context bluetoothd_unit (system_u object_r bluetoothd_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*bluetooth.*" file bluetoothd_unit)
 
-    (allow bluetooth_admin_subject_type bluetoothd_unit_t (service (all)))
-
-    (call systemd_stream_connect (bluetoothd_t)))
+    (allow bluetooth_admin_subject_type bluetoothd_unit_t (service (all))))
 
 (type obexd_exec_t)
 (call applications_app (bluetooth_obexd_subject_type obexd_exec_t))

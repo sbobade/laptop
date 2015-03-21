@@ -50,7 +50,9 @@
 
 (call system_read_kernel_sysctl (timedated_t))
 
-(call devices_read_kmsg (timedated_t))
+(call devices_rw_kmsg (timedated_t))
+
+(call terminals_use_console (timedated_t))
 
 (call dbus_system_service (timedated_t))
 

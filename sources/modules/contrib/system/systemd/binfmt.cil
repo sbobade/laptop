@@ -14,6 +14,8 @@
 (call devices_read_urandom (binfmt_t))
 (call devices_write_kmsg (binfmt_t))
 
+(call terminals_use_console (binfmt_t))
+
 (call journal_client_subject_type (binfmt_t))
 
 (macro binfmt_exec ((type ARG1))

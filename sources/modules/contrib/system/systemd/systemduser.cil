@@ -79,7 +79,7 @@
 (call applications_send_sigstop_all_subjects (systemduser_subject_type))
 
 (call systemd_exec_object_entry_subject (systemduser_subject_type))
-(call systemd_dgram_send (systemduser_subject_type))
+(call systemd_notify_system (systemduser_subject_type))
 (call systemd_read_all_unit (systemduser_subject_type))
 (call systemd_read_config_files (systemduser_subject_type))
 (call systemd_read_state (systemduser_subject_type))
@@ -248,6 +248,15 @@
     (call filesystems_search_tmpfs (ARG1))
     (call read_sock_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
 
+(macro systemduser_notify_session ((type ARG1))
+    (allow ARG1 self (unix_dgram_socket (sendto)))
+    (call systemduser_write_tmpfs_sock_files (ARG1)))
+
+(macro systemduser_write_tmpfs_sock_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (call write_sock_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
+
 (macro systemduser_manage_tmpfs_sock_files ((type ARG1))
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
@@ -314,6 +323,10 @@
 (macro systemduser_manage_private_tmpfs_sock_files ((type ARG1))
     (call systemduser_rw_tmpfs_dirs (ARG1))
     (allow ARG1 systemduser_private_tmpfs_t manage_sock_file_perms))
+
+(macro systemuser_stream_connect_all_subjects ((type ARG1))
+    (call systemduser_search_tmpfs (ARG1))
+    (call stream_connect_pattern (ARG1 systemuser_private_tmpfs_t systemduser_tmpfs_t systemduser_subject_type)))
 
 (macro systemduser_relabel_private_tmpfs_sock_files ((type ARG1))
     (call systemduser_search_tmpfs (ARG1))

@@ -534,6 +534,9 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 v4l_dev_t (chr_file (setattr))))
 
+(macro devices_dontaudit_write_kmsg ((type ARG1))
+    (dontaudit ARG1 kmsg_dev_t write_chr_file_perms))
+
 (macro devices_write_kmsg ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 kmsg_dev_t write_chr_file_perms))

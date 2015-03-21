@@ -33,6 +33,7 @@
 (call ns_client_subject_type (loadkeys_t))
 
 (call udev_write_inherited_fifo_files_udevd (loadkeys_t))
+(call udev_rw_inherited_udevd_udp_sockets (loadkeys_t))
 
 (optional loadkeys_optional_systemd
     (call systemd_use_fd (loadkeys_t)))

@@ -19,6 +19,8 @@
 
 (call files_search_config (sessions_t))
 
+(call terminals_use_console (sessions_t))
+
 (call journal_client_subject_type (sessions_t))
 
 (macro sessions_exec ((type ARG1))

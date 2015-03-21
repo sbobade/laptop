@@ -22,7 +22,6 @@
 (call system_rw_all_sysctls (sysctrl_t))
 
 (call devices_read_urandom (sysctrl_t))
-(call devices_write_kmsg (sysctrl_t))
 
 (call filesystems_read_sysfs (sysctrl_t))
 (call filesystems_read_binfmt_misc (sysctrl_t))
@@ -34,7 +33,10 @@
 (call udev_rw_inherited_udevd_udp_sockets (sysctrl_t))
 
 (optional sysctrl_optional_journal
-    (call journal_client_subject_type (sysctrl_t)))
+    (call journal_client_subject_type (sysctrl_t))
+
+    (call devices_write_kmsg (sysctrl_t))
+    (call terminals_use_console (sysctrl_t)))
 
 (optional sysctrl_optional_systemd
     (call systemd_daemon (sysctrl_t sysctrl_exec_t))

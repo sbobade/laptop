@@ -244,6 +244,8 @@
 (call subject_role_change_exemption (auth_login_program_subject_type))
 (call subject_object_identity_change_exemption (auth_login_program_subject_type))
 
+(call applications_send_signal_all_subjects (auth_login_program_subject_type))
+
 (call auth_pam_client_subject_type (auth_login_program_subject_type))
 
 (call miscfiles_read_locale (auth_login_program_subject_type))

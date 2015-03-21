@@ -166,6 +166,7 @@
 
     (allow udev_admin_subject_type udevd_unit_t (service (all)))
 
+    (call systemd_notify_system (udevd_t))
     (call systemd_search_config (udevd_t))
     (call systemd_exec_systemctl (udevd_t)))
 

@@ -128,6 +128,7 @@
 (call storage_getattr_scsi_generic (logind_t))
 (call storage_setattr_scsi_generic (logind_t))
 
+(call terminals_use_console (logind_t))
 (call terminals_use_unallocated_ttys (logind_t))
 
 (call auth_read_state_all_login_program_subjects (logind_t))
@@ -148,6 +149,7 @@
 (call seutil_read_file_context_files (logind_t))
 
 (call systemd_dbus_chat (logind_t))
+(call systemd_write_systemd_runtime_sock_files (logind_t))
 (call systemd_status_system (logind_t))
 (call systemd_start_power_units (logind_t))
 (call systemd_status_transient_units (logind_t))

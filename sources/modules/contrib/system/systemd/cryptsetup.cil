@@ -30,6 +30,8 @@
 (call storage_rw_removable (cryptsetup_t))
 (call storage_rw_scsi_generic (cryptsetup_t))
 
+(call terminals_use_console (cryptsetup_t))
+
 (call askpwd_manage_systemd_runtime_files (cryptsetup_t))
 (call askpwd_manage_systemd_runtime_sock_files (cryptsetup_t))
 

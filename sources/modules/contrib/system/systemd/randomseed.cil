@@ -19,6 +19,8 @@
 (call devices_rw_urandom (randomseed_t))
 (call devices_write_kmsg (randomseed_t))
 
+(call terminals_use_console (randomseed_t))
+
 (call files_search_config (randomseed_t))
 
 (call selinux_list_securityfs (randomseed_t))

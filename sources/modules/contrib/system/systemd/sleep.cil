@@ -13,6 +13,8 @@
 (call devices_read_urandom (sleep_t))
 (call devices_write_kmsg (sleep_t))
 
+(call terminals_use_console (sleep_t))
+
 (call journal_client_subject_type (sleep_t))
 
 (call systemd_search_config (sleep_t))

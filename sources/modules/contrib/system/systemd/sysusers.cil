@@ -48,6 +48,8 @@
 
 (call selinux_list_securityfs (sysusers_t))
 
+(call terminals_use_console (sysusers_t))
+
 (call auth_manage_passwd_config_files (sysusers_t))
 (call auth_read_shadow (sysusers_t))
 

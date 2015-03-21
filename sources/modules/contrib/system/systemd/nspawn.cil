@@ -245,6 +245,7 @@
 (call subject_change_exemption (nspawn_t))
 (call subject_object_identity_change_exemption (nspawn_t))
 
+(call terminals_use_console (nspawn_t))
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
 (call dbus_system_client_subject_type (nspawn_t))
@@ -264,6 +265,7 @@
 (call nspawn_use_terminals (nspawn_t))
 
 (call systemd_mmap_exec_files (nspawn_t))
+(call systemd_notify_system (nspawn_t))
 (call systemd_search_transient_unit (nspawn_t))
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))

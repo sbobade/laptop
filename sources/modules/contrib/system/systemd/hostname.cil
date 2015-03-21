@@ -79,6 +79,8 @@
 (call seutil_read_selinux_config_files (hostnamed_t))
 (call seutil_read_file_context_files (hostnamed_t))
 
+(call systemd_notify_system (hostnamed_t))
+
 (macro hostname_exec_hostnamed ((type ARG1))
     (call can_exec (ARG1 hostnamed_exec_t)))
 

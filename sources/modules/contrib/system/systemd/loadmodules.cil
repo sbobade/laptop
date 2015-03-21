@@ -13,6 +13,8 @@
 
 (call devices_write_kmsg (loadmodules_t))
 
+(call terminals_use_console (loadmodules_t))
+
 (call journal_client_subject_type (loadmodules_t))
 
 (macro loadmodules_exec ((type ARG1))

@@ -63,6 +63,8 @@
 (call filesystems_search_tmpfs (machined_t))
 (call filesystems_list_rootfs (machined_t))
 
+(call terminals_use_console (machined_t))
+
 (call dbus_system_service (machined_t))
 
 (call journal_client_subject_type (machined_t))
@@ -83,6 +85,7 @@
 (call nspawn_status_all_unit (machined_t))
 
 (call systemd_dbus_chat (machined_t))
+(call systemd_notify_system (machined_t))
 (call systemd_start_system (machined_t))
 (call systemd_stop_system (machined_t))
 (call systemd_status_system (machined_t))
