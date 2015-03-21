@@ -24,6 +24,9 @@
 (type xpdf_tmpfs_t)
 (call usersubject_tmpfs_object_type (xpdf_tmpfs_t))
 
+(allow xpdf_t xpdf_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (xpdf_t xpdf_tmpfs_t file "*"))
+
 (allow xpdf_t self rw_fifo_file_perms)
 
 (call files_dontaudit_catchall_subject_type (xpdf_t))
