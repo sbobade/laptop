@@ -14,3 +14,6 @@
 * Test it: systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
 
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
+
+* update dobackup on e145: add support for setbacklight and other e145 specifics
+    See how i did it on x131e

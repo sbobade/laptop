@@ -46,7 +46,10 @@
 
 (call usersubject_manage_user_home_files (gpg_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (gpg_subject_type file "*"))
-(call usersubject_read_tmpfs_files (gpg_subject_type))
+
+(call usersubject_manage_tmpfs_files (gpg_subject_type))
+(call usersubject_tmpfs_object_type_transition_user_tmpfs (gpg_subject_type file "*"))
+
 (call usersubject_use_terminals (gpg_subject_type))
 
 (optional gpg_subject_type_optional_git

@@ -62,6 +62,9 @@
 (call usersubject_manage_user_home_files (ssh_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (ssh_subject_type file "*"))
 
+(call usersubject_manage_tmpfs_files (ssh_subject_type))
+(call usersubject_tmpfs_object_type_transition_user_tmpfs (ssh_subject_type file "*"))
+
 (optional ssh_subject_type_optional_dbus
     (call dbus_system_client_subject_type (ssh_subject_type)))
 

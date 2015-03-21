@@ -37,6 +37,10 @@
 (macro power_send_signal ((type ARG1))
     (allow ARG1 power_t (process (signal))))
 
+(macro power_read_exec_files ((type ARG1))
+    (call commands_search (ARG1))
+    (allow ARG1 power_exec_t read_file_perms))
+
 (macro power_run ((type ARG1)(role ARG2))
     (call power_auto_subject_type_transition (ARG1))
     (roleattributeset power_role ARG2))

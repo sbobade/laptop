@@ -34,6 +34,10 @@
 (macro setbacklight_send_signal ((type ARG1))
     (allow ARG1 setbacklight_t (process (signal))))
 
+(macro setbacklight_read_exec_files ((type ARG1))
+    (call commands_search (ARG1))
+    (allow ARG1 setbacklight_exec_t read_file_perms))
+
 (macro setbacklight_run ((type ARG1)(role ARG2))
     (call setbacklight_auto_subject_type_transition (ARG1))
     (roleattributeset setbacklight_role ARG2))
