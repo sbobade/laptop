@@ -567,7 +567,7 @@
     (call ssh_role_template (sysadm_r sysadm_machinectl_t sysadm_ssh_t)))
 
 (optional sysadm_optional_notify
-    (call notify_run (sysadm_subject_type sysadm_r)))
+    (call notify_exec (sysadm_t)))
 
 (optional sysadm_optional_quotacheck
     (call quotacheck_manage_systemd_runtime_files (sysadm_t)))

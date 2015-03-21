@@ -341,7 +341,7 @@
     (call nm_run_nmcli (staff_subject_type staff_r)))
 
 (optional staff_optional_notify
-    (call notify_run (staff_t staff_r)))
+    (call notify_exec (staff_t)))
 
 (optional staff_optional_pa
     (call pa_run (staff_subject_type staff_r))
