@@ -86,6 +86,8 @@
 (call files_read_config (fstools_t))
 
 (call storage_manage_fixed_disk (fstools_t))
+(call storage_swapon_fixed_disk (fstools_t))
+
 (call storage_manage_removable (fstools_t))
 (call storage_manage_scsi_generic (fstools_t))
 

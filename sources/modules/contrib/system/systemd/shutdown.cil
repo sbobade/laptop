@@ -29,15 +29,15 @@
 (call commands_exec (shutdown_t))
 (call commands_exec_shell (shutdown_t))
 
-(call devices_read_loop_control (shutdown_t))
 (call devices_read_urandom (shutdown_t))
 (call devices_rw_lvm_control (shutdown_t))
+(call devices_rw_loop_control (shutdown_t))
 (call devices_write_kmsg (shutdown_t))
 
 (call files_read_config (shutdown_t))
 (call files_read_data (shutdown_t))
 
-(call filesystems_getattr_sysfs_filesystems (shutdown_t))
+(call filesystems_getattr_all_filesystems (shutdown_t))
 (call filesystems_list_proc (shutdown_t))
 (call filesystems_list_devtmpfs (shutdown_t))
 (call filesystems_read_devtmpfs_lnk_files (shutdown_t))

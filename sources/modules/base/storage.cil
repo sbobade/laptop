@@ -141,6 +141,11 @@
     (allow ARG1 fixed_disk_dev_t (chr_file (getattr)))
     (allow ARG1 fixed_disk_dev_t (blk_file (getattr))))
 
+(macro storage_swapon_fixed_disk ((type ARG1))
+    (call storage_getattr_fixed_disk (ARG1))
+    (allow ARG1 fixed_disk_dev_t (chr_file (swapon)))
+    (allow ARG1 fixed_disk_dev_t (blk_file (swapon))))
+
 (macro storage_setattr_fixed_disk ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 fixed_disk_dev_t (chr_file (setattr)))
