@@ -16,7 +16,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/system/hwclock.cil sources/modules/contrib/services/dbususer.cil \
         sources/modules/contrib/system/dm.cil sources/modules/contrib/system/dmesg.cil sources/modules/contrib/system/dmi.cil \
         sources/modules/contrib/system/dracut.cil sources/modules/contrib/system/fuse.cil sources/modules/contrib/system/hostname.cil \
-        sources/modules/contrib/system/ld.cil sources/modules/contrib/system/login.cil \
+        sources/modules/contrib/system/ld.cil sources/modules/contrib/system/login.cil sources/modules/contrib/system/cpupower.cil \
         sources/modules/contrib/system/lvm.cil sources/modules/contrib/system/md.cil sources/modules/contrib/system/nettools.cil \
         sources/modules/contrib/system/pcitools.cil sources/modules/contrib/system/rpm.cil sources/modules/contrib/system/usbutils.cil \
         sources/modules/contrib/system/usersubject.cil sources/modules/contrib/system/systemd/askpwd.cil sources/modules/contrib/system/systemd/autorelabel.cil \

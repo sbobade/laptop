@@ -131,6 +131,10 @@
     (call bootloader_manage_config (sysadm_t))
     (call bootloader_manage_log_files (sysadm_t)))
 
+(optional sysadm_optional_cpupower
+    (call cpupower_admin (sysadm_t))
+    (call cpupower_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_dbus
     (call dbus_admin (sysadm_t))
     (call dbus_manage_all_config (sysadm_t)))

@@ -439,6 +439,10 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 wireless_dev_t read_chr_file_perms))
 
+(macro devices_rw_cpu ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 cpu_dev_t rw_chr_file_perms))
+
 (macro devices_rw_devtty ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 devtty_dev_t rw_chr_file_perms))

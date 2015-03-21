@@ -1,0 +1,86 @@
+(roleattribute cpupower_role)
+
+(typeattribute cpupower_admin_subject_type)
+
+(typeattribute cpupower_object_type)
+
+(type cpupower_t)
+(type cpupower_exec_t)
+(call applications_app (cpupower_t cpupower_exec_t))
+(roletype cpupower_role cpupower_t)
+
+(roleattributeset cpupower_role system_r)
+
+(context cpupower_exec (system_u object_r cpupower_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/centrino-decode" file cpupower_exec)
+(filecon "/usr/bin/cpupower" file cpupower_exec)
+(filecon "/usr/bin/powernow-k8-decode" file cpupower_exec)
+(filecon "/usr/bin/tmon" file cpupower_exec)
+(filecon "/usr/bin/turbostat" file cpupower_exec)
+(filecon "/usr/bin/x86_energy_perf_policy" file cpupower_exec)
+
+(type cpupower_config_t)
+(call files_config_object_type (cpupower_config_t))
+
+(typeattributeset cpupower_object_type cpupower_config_t)
+
+(context cpupower_config (system_u object_r cpupower_config_t (systemlow systemlow)))
+(filecon "/etc/sysconfig/cpupower" file cpupower_config)
+
+(allow cpupower_t self (capability (sys_rawio)))
+
+(call devices_rw_cpu (cpupower_t))
+
+(call filesystems_list_sysfs (cpupower_t))
+(call filesystems_rw_sysfs_files (cpupower_t))
+(call filesystems_read_sysfs_lnk_files (cpupower_t))
+
+(call miscfiles_read_locale (cpupower_t))
+
+(optional cpupower_optional_systemd
+    (call systemd_daemon (cpupower_t cpupower_exec_t))
+
+    (type cpupower_unit_t)
+    (call systemd_unit_object_type (cpupower_unit_t))
+
+    (typeattributeset cpupower_object_type cpupower_unit_t)
+
+    (context cpupower_unit (system_u object_r cpupower_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*cpupower.*" file cpupower_unit)
+
+    (allow cpupower_admin_subject_type cpupower_unit_t (service (all)))
+
+    (allow cpupower_admin_subject_type cpupower_object_type (all_file_objects
+        (not_mounton_entrypoint_and_execmod))))
+
+(allow cpupower_admin_subject_type cpupower_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (cpupower_admin_subject_type cpupower_t))
+
+(macro cpupower_exec ((type ARG1))
+    (call can_exec (ARG1 cpupower_exec_t)))
+
+(macro cpupower_auto_subject_type_transition ((type ARG1))
+    (call cpupower_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 cpupower_exec_t cpupower_t)))
+
+(macro cpupower_send_signal ((type ARG1))
+    (allow ARG1 cpupower_t (process (signal))))
+
+(macro cpupower_run ((type ARG1)(role ARG2))
+    (call cpupower_auto_subject_type_transition (ARG1))
+    (roleattributeset cpupower_role ARG2))
+
+(macro cpupower_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 cpupower_config_t read_file_perms))
+
+(macro cpupower_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 cpupower_config_t manage_file_perms))
+
+(macro cpupower_admin ((type ARG1))
+    (allow ARG1 self (capability (kill sys_ptrace)))
+    (typeattributeset cpupower_admin_subject_type ARG1)
+    (optional cpupower_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

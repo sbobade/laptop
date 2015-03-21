@@ -9,8 +9,8 @@
 
 * work on localectl loginctl timedatectl hostnamectl
 
-* cover /usr/lib/systemd/system/cpupower.service debug-shell.service dnsmasq
+* cover debug-shell.service
 
-* systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
+* Test it: systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
 
 * enable man-db timer on e145
