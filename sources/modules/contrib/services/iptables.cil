@@ -17,6 +17,7 @@
 (filecon "/usr/libexec/iptables/iptables\.init" file iptables_exec)
 (filecon "/usr/sbin/ebtables.*" file iptables_exec)
 (filecon "/usr/sbin/arptables.*" file iptables_exec)
+(filecon "/usr/sbin/nft" file iptables_exec)
 (filecon "/usr/sbin/xtables-multi" file iptables_exec)
 
 (type iptables_config_t)
@@ -31,6 +32,7 @@
 (filecon "/etc/sysconfig/iptables.*" file iptables_config)
 (filecon "/etc/sysconfig/ip6tables.*" file iptables_config)
 (filecon "/etc/xtables(/.*)?" any iptables_config)
+(filecon "/etc/nftables(/.*)?" any iptables_config)
 
 (call manage_files_pattern (iptables_t iptables_config_t iptables_config_t))
 (call files_config_object_type_transition (iptables_t iptables_config_t file "*"))

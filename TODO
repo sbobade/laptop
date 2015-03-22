@@ -15,4 +15,4 @@
 
 * migrate to dnf on e145
 
-* support nftables
+* target crypto-policies

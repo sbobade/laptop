@@ -32,7 +32,7 @@
 (filecon "/etc/dnf(/.*)?" any rpm_config)
 (filecon "/etc/rpm(/.*)?" any rpm_config)
 (filecon "/etc/yum(/.*)?" any rpm_config)
-(filecon "/etc/yum\.conf" file rpm_config)
+(filecon "/etc/yum\.conf.*" file rpm_config)
 (filecon "/etc/yum\.repos\.d(/.*)?" any rpm_config)
 
 (type rpm_cache_t)
