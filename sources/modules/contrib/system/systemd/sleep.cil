@@ -5,6 +5,13 @@
 (context sleep_exec (system_u object_r sleep_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-sleep" file sleep_exec)
 
+(type sleep_systemd_config_t)
+(call systemd_config_object_type (sleep_systemd_config_t))
+
+(context sleep_systemd_config (system_u object_r sleep_systemd_config_t (systemlow systemlow)))
+(filecon "/etc/systemd/sleep\.conf\.d(/.*)?" any sleep_systemd_config)
+(filecon "/etc/systemd/sleep\.conf" file sleep_systemd_config)
+
 (call filesystems_list_debugfs (sleep_t))
 (call filesystems_list_sysfs (sleep_t))
 (call filesystems_rw_sysfs_files (sleep_t))
@@ -29,3 +36,35 @@
 
 (macro sleep_send_signal ((type ARG1))
     (allow ARG1 sleep_t (process (signal))))
+
+(macro sleep_search_sleep_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 sleep_systemd_config_t search_dir_perms))
+
+(macro sleep_list_sleep_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 sleep_systemd_config_t list_dir_perms))
+
+(macro sleep_read_sleep_systemd_config_files ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (call read_files_pattern (ARG1 sleep_systemd_config_t sleep_systemd_config_t)))
+
+(macro sleep_manage_sleep_systemd_config_files ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (call manage_files_pattern (ARG1 sleep_systemd_config_t sleep_systemd_config_t)))
+
+(macro sleep_read_sleep_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 sleep_systemd_config_t read_file_perms)
+    (allow ARG1 sleep_systemd_config_t list_dir_perms)
+    (allow ARG1 sleep_systemd_config_t read_lnk_file_perms))
+
+(macro sleep_manage_sleep_systemd_config ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 sleep_systemd_config_t manage_file_perms)
+    (allow ARG1 sleep_systemd_config_t manage_dir_perms)
+    (allow ARG1 sleep_systemd_config_t manage_lnk_file_perms))
+
+(macro sleep_systemd_config_object_type_transition_sleep_systemd_config ((type ARG1))
+    (call systemd_config_object_type_transition (ARG1 sleep_systemd_config_t file "sleep.conf"))
+    (call systemd_config_object_type_transition (ARG1 sleep_systemd_config_t dir "sleep.conf.d")))

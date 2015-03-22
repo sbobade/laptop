@@ -90,7 +90,7 @@
 (allow resolve_resolved_admin_subject_type resolve_resolved_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
-(call resolve_systemd_config_object_type_transition_resolved_systemd_config_dirs (resolve_resolved_admin_subject_type))
+(call resolve_systemd_config_object_type_transition_resolved_systemd_config (resolve_resolved_admin_subject_type))
 
 (macro resolve_exec_resolved ((type ARG1))
     (call can_exec (ARG1 resolved_exec_t)))
@@ -131,7 +131,8 @@
     (allow ARG1 resolved_systemd_config_t manage_dir_perms)
     (allow ARG1 resolved_systemd_config_t manage_lnk_file_perms))
 
-(macro resolve_systemd_config_object_type_transition_resolved_systemd_config_dirs ((type ARG1))
+(macro resolve_systemd_config_object_type_transition_resolved_systemd_config ((type ARG1))
+    (call systemd_config_object_type_transition (ARG1 resolved_systemd_config_t file "resolved.conf"))
     (call systemd_config_object_type_transition (ARG1 resolved_systemd_config_t dir "resolved.conf.d")))
 
 (macro resolve_read_resolved_dbus_config_files ((type ARG1))

@@ -586,6 +586,10 @@
 (optional sysadm_optional_shutdown
     (call shutdown_admin (sysadm_t)))
 
+(optional sysadm_optional_sleep
+    (call sleep_manage_sleep_systemd_config (sysadm_t))
+    (call sleep_systemd_config_object_type_transition_sleep_systemd_config (sysadm_t)))
+
 (optional sysadm_optional_sysusers
     (call sysusers_admin (sysadm_t))
     (call sysusers_run (sysadm_subject_type sysadm_r)))
