@@ -48,6 +48,7 @@
 
 (call devices_getattr_all (sysadm_t))
 
+(call files_manage_boot (sysadm_t))
 (call files_manage_config (sysadm_t))
 
 (call files_manage_file (sysadm_t))
@@ -129,6 +130,7 @@
 (optional sysadm_optional_bootloader
     (call bootloader_run (sysadm_subject_type sysadm_r))
     (call bootloader_manage_config (sysadm_t))
+    (call bootloader_manage_system_map_files (sysadm_t))
     (call bootloader_manage_log_files (sysadm_t)))
 
 (optional sysadm_optional_cpupower

@@ -1,7 +1,5 @@
 * is there a pattern that all nsswitch client subjects want to read machine runtime files?
 
-* implement system_map_t for /boot/System.map.* files?
-
 * vlock
 
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
