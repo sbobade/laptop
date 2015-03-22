@@ -12,3 +12,7 @@
 * Test it: systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
 
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
+
+* migrate to dnf on e145
+
+* support nftables

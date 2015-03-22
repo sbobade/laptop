@@ -15,7 +15,7 @@
 (typeattributeset rpm_subject_type rpm_t)
 
 (context rpm_exec (system_u object_r rpm_exec_t (systemlow systemlow)))
-(filecon "/usr/bin/dnf" file rpm_exec)
+(filecon "/usr/bin/dnf-.*" file rpm_exec)
 (filecon "/usr/bin/repoquery" file rpm_exec)
 (filecon "/usr/bin/rpm" file rpm_exec)
 (filecon "/usr/bin/yum" file rpm_exec)
@@ -29,6 +29,7 @@
 (typeattributeset rpm_object_type rpm_config_t)
 
 (context rpm_config (system_u object_r rpm_config_t (systemlow systemlow)))
+(filecon "/etc/dnf(/.*)?" any rpm_config)
 (filecon "/etc/rpm(/.*)?" any rpm_config)
 (filecon "/etc/yum(/.*)?" any rpm_config)
 (filecon "/etc/yum\.conf" file rpm_config)
@@ -65,6 +66,12 @@
 (filecon "/var/log/dnf\.log.*" file rpm_log)
 (filecon "/var/log/dnf\.plugin\.log.*" file rpm_log)
 (filecon "/var/log/dnf\.rpm\.log.*" file rpm_log)
+(filecon "/var/log/hawkey\.log.*" file rpm_log)
+
+(call files_log_object_type_transition (rpm_t rpm_log_t file "dnf.log"))
+(call files_log_object_type_transition (rpm_t rpm_log_t file "dnf.plugin.log"))
+(call files_log_object_type_transition (rpm_t rpm_log_t file "dnf.rpm.log"))
+(call files_log_object_type_transition (rpm_t rpm_log_t file "hawkey.log"))
 
 (type rpm_tmp_t)
 (call files_tmp_object_type (rpm_tmp_t))
