@@ -13,6 +13,8 @@
 
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
 
+* dnf can be used as unpriv user (it maintains /run/UID/dnf(/.*)?): see how i can support that
+
 * migrate to dnf on e145
 
 * target crypto-policies
