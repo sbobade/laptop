@@ -7,7 +7,7 @@
 
 * work on localectl loginctl timedatectl hostnamectl
 
-* cover debug-shell.service
+* cover debug-shell.service, systemd-analyze
 
 * Test it: systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
 

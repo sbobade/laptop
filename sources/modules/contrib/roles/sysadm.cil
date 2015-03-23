@@ -511,6 +511,10 @@
 (optional sysadm_optional_binfmt
     (call binfmt_manage_config (sysadm_t)))
 
+(optional sysadm_optional_bootchart
+    (call bootchart_manage_systemd_config (sysadm_t))
+    (call bootchart_systemd_config_object_type_transition_bootchart_config (sysadm_t)))
+
 (optional sysadm_optional_coredump
     (call coredump_run_coredumpctl (sysadm_subject_type sysadm_r))
     (call coredump_manage_systemd_lib (sysadm_t)))
