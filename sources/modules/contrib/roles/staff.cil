@@ -401,6 +401,9 @@
 (optional staff_optional_resetimg
     (call resetimg_read_exec_files (staff_t)))
 
+(optional staff_optional_run
+    (call run_exec (staff_t)))
+
 (optional staff_optional_screen
     (type staff_screen_t)
     (call screen_role_template (staff_r staff_subject_type staff_screen_t))

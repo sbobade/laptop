@@ -591,6 +591,17 @@
 (optional sysadm_optional_resolve
     (call resolve_admin (sysadm_t)))
 
+(optional sysadm_optional_run
+    (type sysadm_run_t)
+    (call run_role_template (sysadm_r sysadm_subject_type sysadm_run_t))
+
+    (call sysadm_subject_type (sysadm_run_t))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_run_t sysadm_t))
+    (call commands_shell_exec_auto_subject_type_transition (sysadm_run_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_run_t sysadm_t)))
+
 (optional sysadm_optional_shutdown
     (call shutdown_admin (sysadm_t)))
 
@@ -633,6 +644,9 @@
 
 (optional sysadm_loginctl_optional_ssh
     (call ssh_role_template (sysadm_r sysadm_loginctl_t sysadm_ssh_t)))
+
+(optional sysadm_run_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_run_t sysadm_ssh_t)))
 
 (optional sysadm_timedatectl_optional_ssh
     (call ssh_role_template (sysadm_r sysadm_timedatectl_t sysadm_ssh_t)))

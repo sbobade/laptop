@@ -1,0 +1,72 @@
+(roleattribute run_role)
+
+(typeattribute run_subject_type)
+
+(type run_t)
+(type run_exec_t)
+(call applications_app (run_subject_type run_exec_t))
+(roletype run_role run_t)
+
+(call run_subject_type (run_t))
+
+(context run_exec (system_u object_r run_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-run" file run_exec)
+
+(allow run_subject_type self (capability (net_admin sys_chroot setgid setuid sys_admin)))
+
+(call systemd_stream_connect (run_subject_type))
+(call systemd_start_system (run_subject_type))
+(call systemd_start_transient_units (run_subject_type))
+
+(optional run_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (run_subject_type run_role)))
+
+(optional run_subject_type_optional_dbus
+    (call systemd_dbus_chat (run_subject_type))
+    (call dbus_system_client_subject_type (run_subject_type)))
+
+(optional run_subject_type_optional_machine
+    (call machine_list_machined_systemd_runtime (run_subject_type))
+    (call machine_read_machined_systemd_runtime_files (run_subject_type)))
+
+(optional run_subject_type_optional_nspawn
+    (call nspawn_read_state_all_common_container_subjects (run_subject_type))
+    (call nspawn_stream_connect_all_common_containers (run_subject_type))
+    (call nspawn_read_all_common_container_object_lnk_files (run_subject_type))
+    (call nspawn_list_all_common_container_objects (run_subject_type))
+    (call nspawn_read_all_common_container_object_files (run_subject_type)))
+
+(optional run_subject_type_optional_systemduser
+    (call systemduser_stream_connect_all_subjects (run_subject_type))
+    (call systemduser_start_all_system (run_subject_type))
+    (call systemduser_start_transient_units (run_subject_type)))
+
+(macro run_exec ((type ARG1))
+    (call can_exec (ARG1 run_exec_t)))
+
+(macro run_subject_type ((type ARG1))
+    (typeattributeset run_subject_type ARG1))
+
+(macro run_auto_subject_type_transition ((type ARG1))
+    (call run_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 run_exec_t run_t)))
+
+(macro run_send_signal ((type ARG1))
+    (allow ARG1 run_t (process (signal))))
+
+(macro run_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 run_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (roleattributeset run_role ARG1)
+    (allow ARG3 ARG2 (process (signal)))
+    (allow ARG2 ARG3 (process (noatsecure)))
+    (call run_subject_type (ARG3)))
+
+(macro run_run ((type ARG1)(role ARG2))
+    (call run_auto_subject_type_transition (ARG1))
+    (roleattributeset run_role ARG2))
+
+(macro run_getattr_all_subjects ((type ARG1))
+    (allow ARG1 run_subject_type (process (getattr))))

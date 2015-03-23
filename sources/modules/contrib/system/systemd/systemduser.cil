@@ -113,6 +113,9 @@
 (optional systemduser_subject_type_optional_dbus
     (call dbus_system_client_subject_type (systemduser_subject_type)))
 
+(optional systemduser_subject_type_optional_run
+    (call run_getattr_all_subjects (systemduser_subject_type)))
+
 (macro systemduser_subject_type ((type ARG1))
     (typeattributeset systemduser_subject_type ARG1))
 
@@ -329,9 +332,9 @@
     (call systemduser_rw_tmpfs_dirs (ARG1))
     (allow ARG1 systemduser_private_tmpfs_t manage_sock_file_perms))
 
-(macro systemuser_stream_connect_all_subjects ((type ARG1))
+(macro systemduser_stream_connect_all_subjects ((type ARG1))
     (call systemduser_search_tmpfs (ARG1))
-    (call stream_connect_pattern (ARG1 systemuser_private_tmpfs_t systemduser_tmpfs_t systemduser_subject_type)))
+    (call stream_connect_pattern (ARG1 systemduser_private_tmpfs_t systemduser_private_tmpfs_t systemduser_subject_type)))
 
 (macro systemduser_relabel_private_tmpfs_sock_files ((type ARG1))
     (call systemduser_search_tmpfs (ARG1))
