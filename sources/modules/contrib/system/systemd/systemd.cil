@@ -188,9 +188,6 @@
 (call system_rw_unix_stream_sockets (systemd_t))
 (call system_use_fd (systemd_t))
 
-(call commands_auditallow_exec (systemd_t))
-(call commands_auditallow_exec_shell (systemd_t))
-
 (call devices_create_null (systemd_t))
 (call devices_tmpfs_object_type_transition_null_dev (systemd_t))
 
@@ -417,14 +414,8 @@
 (call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
 (call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
 
-(call commands_auditallow_exec_all (systemd_generic_t))
-(call commands_auditallow_exec_shell (systemd_generic_t))
-
 (call systemd_send_signal (systemd_generic_t))
 (call systemd_send_signal_all_systemd_daemon_subjects (systemd_generic_t))
-
-(optional systemd_generic_optional_unconfined
-    (call unconfined_subject_type (systemd_generic_t)))
 
 (type systemd_unit_t)
 (call systemd_unit_object_type (systemd_unit_t))
