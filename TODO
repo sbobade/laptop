@@ -3,7 +3,7 @@
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
     the ones that have a ctl app as well as a service unit
 
-* work on localectl loginctl timedatectl hostnamectl systemd-analyze
+* work on localectl loginctl timedatectl hostnamectl
 
 * cover debug-shell.service
 
@@ -11,10 +11,6 @@
 
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
 
-* dnf can be used as unpriv user (it maintains /run/UID/dnf(/.*)?): see how i can support that
-
 * migrate to dnf on e145
 
 * target crypto-policies
-
-* maybe easier to make all systemd daemons systemd_notify_system_subject_type() and all systemduser daemon systemduser_notify_session_subject_type()

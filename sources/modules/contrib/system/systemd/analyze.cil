@@ -13,7 +13,8 @@
 (context analyze_exec (system_u object_r analyze_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-analyze" file analyze_exec)
 
-(allow analyze_subject_type self (capability (net_admin dac_override)))
+(allow analyze_subject_type self (capability (net_admin dac_override sys_chroot
+    setgid setuid sys_admin)))
 
 (call analyze_client_subject_type (analyze_subject_type))
 
@@ -23,6 +24,17 @@
 
 (optional analyze_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (analyze_subject_type analyze_role)))
+
+(optional analyze_subject_type_optional_machine
+    (call machine_list_machined_systemd_runtime (analyze_subject_type))
+    (call machine_read_machined_systemd_runtime_files (analyze_subject_type)))
+
+(optional analyze_subject_type_optional_nspawn
+    (call nspawn_read_state_all_common_container_subjects (analyze_subject_type))
+    (call nspawn_stream_connect_all_common_containers (analyze_subject_type))
+    (call nspawn_list_all_common_container_objects (analyze_subject_type))
+    (call nspawn_read_all_common_container_object_lnk_files (analyze_subject_type))
+    (call nspawn_read_all_common_container_object_files (analyze_subject_type)))
 
 (allow analyze_client_subject_type self rw_fifo_file_perms)
 
