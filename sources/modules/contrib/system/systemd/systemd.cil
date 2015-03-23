@@ -1,3 +1,18 @@
+(optional systemd_unconfined_unknown_daemons_optional_unconfined
+    (boolean systemd_unconfined_unknown_daemons false)
+
+    (type systemd_unconfined_unknown_daemons_t)
+    (call selinux_bool_object_type (systemd_unconfined_unknown_daemons_t))
+
+    (context systemd_unconfined_unknown_daemons (system_u object_r systemd_unconfined_unknown_daemons_t (systemlow systemlow)))
+    (genfscon "selinuxfs" "/booleans/systemd_unconfined_unknown_daemons" systemd_unconfined_unknown_daemons)
+
+    (call unconfined_subject_type (systemd_generic_t))
+
+    (call selinux_set_spec_boolean (systemd_admin_subject_type systemd_unconfined_unknown_daemons_t))
+
+    (call seutil_exec_setsebool (systemd_admin_subject_type)))
+
 (roleattribute systemd_systemctl_role)
 
 (typeattribute systemd_admin_subject_type)
@@ -500,6 +515,7 @@
 (optional systemd_systemctl_client_subject_type_optional_machine
     (call machine_read_config_files (systemd_systemctl_client_subject_type)))
 
+(call systemd_control_system_units (systemd_admin_subject_type))
 (call systemd_control_system (systemd_admin_subject_type))
 (call systemd_control_transient_units (systemd_admin_subject_type))
 

@@ -313,6 +313,11 @@
 (allow ssh_admin_subject_type ssh_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
+(call selinux_set_spec_boolean (ssh_admin_subject_type ssh_priv_user_login_t))
+
+(optional ssh_admin_subject_type_optional_seutil
+    (call seutil_exec_setsebool (ssh_admin_subject_type)))
+
 (macro ssh_exec ((type ARG1))
     (call can_exec (ARG1 ssh_exec_t)))
 

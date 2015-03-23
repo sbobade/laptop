@@ -132,6 +132,12 @@
         (true
             (allow ARG1 selinux_load_policy_t (file (append write))))))
 
+(macro selinux_set_spec_boolean ((type ARG1)(type ARG2))
+    (call filesystems_search_sysfs (ARG1))
+    (allow ARG1 ARG2 rw_file_perms)
+    (call read_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
+    (allow ARG1 securityfs_fs_t (security (setbool))))
+
 (macro selinux_set_check_req_prot ((type ARG1))
     (call filesystems_search_sysfs (ARG1))
     (call rw_files_pattern (ARG1 securityfs_fs_t securityfs_fs_t))
