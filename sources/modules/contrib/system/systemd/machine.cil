@@ -85,7 +85,7 @@
 (call nspawn_status_all_unit (machined_t))
 
 (call systemd_dbus_chat (machined_t))
-(call systemd_notify_system (machined_t))
+(call systemd_notify_system_subject_type (machined_t))
 (call systemd_start_system (machined_t))
 (call systemd_stop_system (machined_t))
 (call systemd_status_system (machined_t))

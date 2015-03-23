@@ -36,6 +36,7 @@
 (call udev_rw_inherited_udevd_udp_sockets (loadkeys_t))
 
 (optional loadkeys_optional_systemd
+    (call systemd_rw_unix_stream_sockets (loadkeys_t))
     (call systemd_use_fd (loadkeys_t)))
 
 (macro loadkeys_exec ((type ARG1))

@@ -1,5 +1,7 @@
 (typeattribute systemduser_subject_type)
 
+(typeattribute systemduser_notify_session_subject_type)
+
 (typeattribute systemduser_tcp_socket_activated_subject_type)
 (typeattribute systemduser_tcp_socket_activated_object_type)
 (typeattribute systemduser_udp_socket_activated_subject_type)
@@ -49,6 +51,10 @@
 (context systemduser_pam_config (system_u object_r systemduser_pam_config_t (systemlow systemlow)))
 (filecon "/etc/pam\.d/systemd-user" file systemduser_pam_config)
 
+(allow systemduser_notify_session_subject_type self (unix_dgram_socket (sendto)))
+(allow systemduser_notify_session_subject_type  systemduser_subject_type (unix_dgram_socket (sendto)))
+(call systemduser_write_tmpfs_sock_files (systemduser_notify_session_subject_type))
+
 (allow systemduser_subject_type systemduser_tcp_socket_activated_subject_type create_tcp_stream_socket_perms)
 (allow systemduser_subject_type systemduser_tcp_socket_activated_object_type (tcp_socket (name_bind)))
 
@@ -79,7 +85,7 @@
 (call applications_send_sigstop_all_subjects (systemduser_subject_type))
 
 (call systemd_exec_object_entry_subject (systemduser_subject_type))
-(call systemd_notify_system (systemduser_subject_type))
+(call systemd_notify_system_subject_type (systemduser_subject_type))
 (call systemd_read_all_unit (systemduser_subject_type))
 (call systemd_read_config_files (systemduser_subject_type))
 (call systemd_read_state (systemduser_subject_type))
@@ -248,9 +254,8 @@
     (call filesystems_search_tmpfs (ARG1))
     (call read_sock_files_pattern (ARG1 systemduser_tmpfs_t systemduser_tmpfs_t)))
 
-(macro systemduser_notify_session ((type ARG1))
-    (allow ARG1 self (unix_dgram_socket (sendto)))
-    (call systemduser_write_tmpfs_sock_files (ARG1)))
+(macro systemduser_notify_session_subject_type ((type ARG1))
+    (typeattributeset systemduser_notify_session_subject_type ARG1))
 
 (macro systemduser_write_tmpfs_sock_files ((type ARG1))
     (call files_search_user_runtime (ARG1))

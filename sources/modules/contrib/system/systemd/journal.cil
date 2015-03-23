@@ -49,6 +49,8 @@
 (call systemd_daemon (journald_t journald_exec_t))
 
 (call systemd_netlink_socket_activated (journald_t netlink_audit_socket))
+(call systemd_unix_dgram_socket_activated (journald_t journald_systemd_runtime_t))
+(call systemd_unix_stream_socket_activated (journald_t journald_systemd_runtime_t))
 
 (context journald_exec (system_u object_r journald_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-journald" file journald_exec)
@@ -149,7 +151,7 @@
 
 (call miscfiles_read_locale (journald_t))
 
-(call systemd_notify_system (journald_t))
+(call systemd_notify_system_subject_type (journald_t))
 
 (call udev_client_subject_type (journald_t))
 

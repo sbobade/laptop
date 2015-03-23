@@ -119,7 +119,7 @@
 
     (allow bluetooth_admin_subject_type bluetoothd_unit_t (service (all)))
 
-    (call systemd_notify_system (bluetoothd_t)))
+    (call systemd_notify_system_subject_type (bluetoothd_t)))
 
 (type obexd_exec_t)
 (call applications_app (bluetooth_obexd_subject_type obexd_exec_t))

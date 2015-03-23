@@ -6,6 +6,8 @@
 (type resolved_exec_t)
 (call systemd_daemon (resolved_t resolved_exec_t))
 
+(call systemd_notify_system_subject_type (resolved_t))
+
 (context resolved_exec (system_u object_r resolved_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-resolved" file resolved_exec)
 (filecon "/usr/lib/systemd/systemd-resolve-host" file resolved_exec)

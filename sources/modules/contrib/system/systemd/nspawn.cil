@@ -265,7 +265,7 @@
 (call nspawn_use_terminals (nspawn_t))
 
 (call systemd_mmap_exec_files (nspawn_t))
-(call systemd_notify_system (nspawn_t))
+(call systemd_notify_system_subject_type (nspawn_t))
 (call systemd_search_transient_unit (nspawn_t))
 (call systemd_stop_system (nspawn_t))
 (call systemd_status_transient_units (nspawn_t))

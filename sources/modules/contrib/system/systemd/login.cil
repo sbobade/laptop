@@ -23,6 +23,8 @@
 (type logind_exec_t)
 (call systemd_daemon (logind_t logind_exec_t))
 
+(call systemd_notify_system_subject_type (logind_t))
+
 (context logind_exec (system_u object_r logind_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-logind" file logind_exec)
 

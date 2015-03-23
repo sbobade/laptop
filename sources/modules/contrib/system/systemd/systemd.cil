@@ -5,6 +5,8 @@
 (typeattribute systemd_daemon_subject_type)
 (typeattribute systemd_system_service_admin_subject_type)
 
+(typeattribute systemd_notify_system_subject_type)
+
 (typeattribute systemd_systemctl_subject_type)
 (typeattribute systemd_systemctl_client_subject_type)
 
@@ -466,6 +468,10 @@
 (filecon "/usr/lib/systemd/system/[^/]*sleep.*" file systemd_power_unit)
 (filecon "/usr/lib/systemd/system/[^/]*shutdown.*" file systemd_power_unit)
 (filecon "/usr/lib/systemd/system/[^/]*suspend.*" file systemd_power_unit)
+
+(allow systemd_notify_system_subject_type self (unix_dgram_socket (sendto)))
+(allow systemd_notify_system_subject_type systemd_t (unix_dgram_socket (sendto)))
+(call systemd_write_systemd_runtime_sock_files (systemd_notify_system_subject_type))
 
 (call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
 (call systemd_read_state (systemd_daemon_subject_type))
@@ -1169,9 +1175,12 @@
     (call files_search_runtime (ARG1))
     (call stream_connect_pattern (ARG1 systemd_private_runtime_t systemd_private_runtime_t systemd_t)))
 
-(macro systemd_notify_system ((type ARG1))
-    (allow ARG1 self (unix_dgram_socket (sendto)))
-    (call systemd_write_systemd_runtime_sock_files (ARG1)))
+(macro systemd_dgram_send ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call dgram_send_pattern (ARG1 systemd_private_runtime_t systemd_private_runtime_t systemd_t)))
+
+(macro systemd_notify_system_subject_type ((type ARG1))
+    (typeattributeset systemd_notify_system_subject_type ARG1))
 
 (macro systemd_write_systemd_runtime_sock_files ((type ARG1))
     (call files_search_runtime (ARG1))
