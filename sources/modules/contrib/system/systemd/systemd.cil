@@ -1,17 +1,9 @@
+(tunable systemd_unconfined_unknown_daemons false)
+
 (optional systemd_unconfined_unknown_daemons_optional_unconfined
-    (boolean systemd_unconfined_unknown_daemons false)
-
-    (type systemd_unconfined_unknown_daemons_t)
-    (call selinux_bool_object_type (systemd_unconfined_unknown_daemons_t))
-
-    (context systemd_unconfined_unknown_daemons (system_u object_r systemd_unconfined_unknown_daemons_t (systemlow systemlow)))
-    (genfscon "selinuxfs" "/booleans/systemd_unconfined_unknown_daemons" systemd_unconfined_unknown_daemons)
-
-    (call unconfined_subject_type (systemd_generic_t))
-
-    (call selinux_set_spec_boolean (systemd_admin_subject_type systemd_unconfined_unknown_daemons_t))
-
-    (call seutil_exec_setsebool (systemd_admin_subject_type)))
+    (tunableif systemd_unconfined_unknown_daemons
+        (true
+            (call unconfined_subject_type (systemd_generic_t)))))
 
 (roleattribute systemd_systemctl_role)
 

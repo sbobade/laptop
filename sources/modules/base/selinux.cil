@@ -57,7 +57,7 @@
 (allow selinux_unconfined_subject_type securityfs_fs_t
     all_security_perms_except_load_policy_and_setenforce)
 
-(booleanif (selinux_load_policy)
+(booleanif selinux_load_policy
     (true
         (allow selinux_unconfined_subject_type securityfs_fs_t
             (security (load_policy setenforce)))
