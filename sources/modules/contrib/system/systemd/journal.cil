@@ -23,6 +23,8 @@
     sys_chroot setgid setuid sys_admin)))
 (allow journal_journalctl_subject_type self create_unix_dgram_socket_perms)
 
+(call commands_read_all_exec_files (journal_journalctl_subject_type))
+
 (call journal_manage_log (journal_journalctl_subject_type))
 (call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
 (call journal_journalctl_client_subject_type (journal_journalctl_subject_type))

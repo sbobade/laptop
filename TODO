@@ -1,13 +1,11 @@
-* is there a pattern that all nsswitch client subjects want to read machine runtime files?
-
 * vlock
 
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
     the ones that have a ctl app as well as a service unit
 
-* work on localectl loginctl timedatectl hostnamectl
+* work on localectl loginctl timedatectl hostnamectl systemd-analyze
 
-* cover debug-shell.service, systemd-analyze
+* cover debug-shell.service
 
 * Test it: systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
 
@@ -18,3 +16,5 @@
 * migrate to dnf on e145
 
 * target crypto-policies
+
+* maybe easier to make all systemd daemons systemd_notify_system_subject_type() and all systemduser daemon systemduser_notify_session_subject_type()

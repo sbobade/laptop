@@ -20,6 +20,9 @@
     (call alsa_manage_alsautil_tmpfs_files (staff_t))
     (call alsa_relabel_alsautil_tmpfs_files (staff_t)))
 
+(optional staff_optional_analyze
+    (call analyze_exec (staff_t)))
+
 (optional staff_optional_askpwd
     (call askpwd_run_askpwdagent (staff_subject_type staff_r)))
 

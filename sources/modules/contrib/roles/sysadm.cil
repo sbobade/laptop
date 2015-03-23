@@ -498,6 +498,10 @@
     (call systemd_admin (sysadm_t))
     (call systemd_manage_all_config (sysadm_t)))
 
+(optional sysadm_optional_analyze
+    (type sysadm_analyze_t)
+    (call analyze_role_template (sysadm_r sysadm_subject_type sysadm_analyze_t)))
+
 (optional sysadm_optional_askpwd
     (call askpwd_admin (sysadm_t))
     (call askpwd_run (sysadm_subject_type sysadm_r)))
@@ -614,6 +618,9 @@
 
 (optional sysadm_optional_vconsole
     (call vconsole_manage_config_files (sysadm_t)))
+
+(optional sysadm_analyze_optional_ssh
+    (call ssh_role_template (sysadm_r sysadm_analyze_t sysadm_ssh_t)))
 
 (optional sysadm_hostnamectl_optional_ssh
     (call ssh_role_template (sysadm_r sysadm_hostnamectl_t sysadm_ssh_t)))

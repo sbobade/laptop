@@ -1,0 +1,72 @@
+(roleattribute analyze_role)
+
+(typeattribute analyze_subject_type)
+(typeattribute analyze_client_subject_type)
+
+(type analyze_t)
+(type analyze_exec_t)
+(call applications_app (analyze_subject_type analyze_exec_t))
+(roletype analyze_role analyze_t)
+
+(call analyze_subject_type (analyze_t))
+
+(context analyze_exec (system_u object_r analyze_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-analyze" file analyze_exec)
+
+(allow analyze_subject_type self (capability (net_admin dac_override)))
+
+(call analyze_client_subject_type (analyze_subject_type))
+
+(call systemd_stream_connect (analyze_subject_type))
+(call systemd_status_system (analyze_subject_type))
+(call systemd_status_all_units (analyze_subject_type))
+
+(optional analyze_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (analyze_subject_type analyze_role)))
+
+(allow analyze_client_subject_type self rw_fifo_file_perms)
+
+(call commands_exec (analyze_client_subject_type))
+
+(call miscfiles_read_all_terminfo (analyze_client_subject_type))
+(call miscfiles_read_locale (analyze_client_subject_type))
+
+(optional analyze_client_subject_type_optional_dbus
+    (call dbus_system_client_subject_type (analyze_client_subject_type))
+    (call systemd_dbus_chat (analyze_client_subject_type)))
+
+(optional analyze_client_subject_type_optional_machine
+    (call machine_read_config_files (analyze_client_subject_type)))
+
+(optional analyze_client_subject_type_optional_usersubject
+    (call usersubject_dontaudit_read_user_home_files (analyze_client_subject_type)))
+
+(macro analyze_exec ((type ARG1))
+    (call analyze_client_subject_type (ARG1))
+    (call can_exec (ARG1 analyze_exec_t)))
+
+(macro analyze_subject_type ((type ARG1))
+    (typeattributeset analyze_subject_type ARG1))
+
+(macro analyze_client_subject_type ((type ARG1))
+    (typeattributeset analyze_client_subject_type ARG1))
+
+(macro analyze_auto_subject_type_transition ((type ARG1))
+    (call analyze_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 analyze_exec_t analyze_t)))
+
+(macro analyze_send_signal ((type ARG1))
+    (allow ARG1 analyze_t (process (signal))))
+
+(macro analyze_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 analyze_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (roleattributeset analyze_role ARG1)
+    (allow ARG3 ARG2 (process (signal)))
+    (call analyze_subject_type (ARG3)))
+
+(macro analyze_run ((type ARG1)(role ARG2))
+    (call analyze_auto_subject_type_transition (ARG1))
+    (roleattributeset analyze_role ARG2))
