@@ -14,3 +14,5 @@
 * migrate to dnf on e145
 
 * target crypto-policies
+
+* migrate to nftables on e145, service units, /etc/modprobe.d/iptable_nat.conf /etc/nftables fix /usr/local/sbin/ipfwd_by_mac

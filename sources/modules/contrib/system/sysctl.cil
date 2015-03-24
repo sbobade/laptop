@@ -19,6 +19,7 @@
 
 (allow sysctrl_t self (capability (net_admin)))
 
+(call system_list_all_sysctl (sysctrl_t))
 (call system_rw_all_sysctls (sysctrl_t))
 
 (call devices_read_urandom (sysctrl_t))

@@ -19,6 +19,7 @@
 
 (type autofs_fs_t)
 (call filesystems_object_type (autofs_fs_t))
+(call system_mountpoint_object_type (autofs_fs_t))
 
 (context autofs_fs (system_u object_r autofs_fs_t (systemlow systemlow)))
 (genfscon "autofs" "/" autofs_fs)
@@ -31,6 +32,7 @@
 
 (type binfmt_misc_fs_t)
 (call filesystems_object_type (binfmt_misc_fs_t))
+(call system_mountpoint_object_type (binfmt_misc_fs_t))
 
 (context binfmt_misc_fs (system_u object_r binfmt_misc_fs_t (systemlow systemlow)))
 (genfscon "binfmt_misc" "/" binfmt_misc_fs)

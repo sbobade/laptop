@@ -537,6 +537,7 @@
     (call system_read_kernel_sysctl (ARG1))
     (call system_read_irq_sysctl (ARG1))
     (call system_read_net_sysctl (ARG1))
+    (call system_read_net_unix_sysctl (ARG1))
     (call system_read_security_sysctl (ARG1))
     (call system_read_usermodehelper_sysctl (ARG1))
     (call system_read_vm_sysctl (ARG1))
@@ -550,6 +551,7 @@
     (call system_rw_kernel_sysctl (ARG1))
     (call system_rw_irq_sysctl (ARG1))
     (call system_rw_net_sysctl (ARG1))
+    (call system_rw_net_unix_sysctl (ARG1))
     (call system_rw_security_sysctl (ARG1))
     (call system_rw_usermodehelper_sysctl (ARG1))
     (call system_rw_vm_sysctl (ARG1))
@@ -687,6 +689,26 @@
     (call system_search_sysctl (ARG1))
     (call write_files_pattern (ARG1 net_sysctl_t net_sysctl_t)))
 
+(macro system_search_net_unix_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 net_unix_sysctl_t search_dir_perms))
+
+(macro system_list_net_unix_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (allow ARG1 net_unix_sysctl_t list_dir_perms))
+
+(macro system_read_net_unix_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call read_files_pattern (ARG1 net_unix_sysctl_t net_unix_sysctl_t)))
+
+(macro system_rw_net_unix_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call rw_files_pattern (ARG1 net_unix_sysctl_t net_unix_sysctl_t)))
+
+(macro system_write_net_unix_sysctl ((type ARG1))
+    (call system_search_sysctl (ARG1))
+    (call write_files_pattern (ARG1 net_unix_sysctl_t net_unix_sysctl_t)))
+
 (macro system_read_security_sysctl ((type ARG1))
     (call system_search_sysctl (ARG1))
     (allow ARG1 fs_sysctl_t search_dir_perms)
@@ -751,6 +773,10 @@
 
 (macro system_dontaudit_list_all_sysctl ((type ARG1))
     (dontaudit ARG1 system_sysctl_object_type list_dir_perms))
+
+(macro system_list_all_sysctl ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (call list_dirs_pattern (ARG1 system_sysctl_object_type system_sysctl_object_type)))
 
 (macro system_dontaudit_getattr_all_sysctl_files ((type ARG1))
     (dontaudit ARG1 system_sysctl_object_type (file (getattr))))
