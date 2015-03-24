@@ -22,6 +22,8 @@
 (filecon "/etc/depmod\.d(/.*)?" any kmod_config)
 (filecon "/etc/modprobe\.d(/.*)?" any kmod_config)
 
+(allow kmod_t self (capability (dac_override)))
+
 (call system_link_keyring (kmod_t))
 (call system_load_kernel_module (kmod_t))
 (call system_request_load_module (kmod_t))
