@@ -12,3 +12,6 @@
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
 
 * target crypto-policies
+
+* disable IPMasquerade on e145: cp /usr/lib/systemd/network/80-container-ve.network /etc/systemd/network/ve.network and set IPMasquerade=no
+    (also in /etc/systemd/network/ve-mycontainer.network)
