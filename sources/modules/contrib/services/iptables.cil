@@ -64,6 +64,7 @@
 (call files_lib_object_type_transition (iptables_t iptables_lib_t dir "*"))
 
 (allow iptables_t self (capability (net_raw net_admin)))
+(allow iptables_t self create_netlink_socket_perms)
 (allow iptables_t self create_rawip_socket_perms)
 (allow iptables_t self rw_fifo_file_perms)
 
@@ -88,6 +89,9 @@
 (call miscfiles_read_net_config_files (iptables_t))
 
 (call ns_client_subject_type (iptables_t))
+
+(optional iptables_optional_iptools
+    (call iptools_read_config_files (iptables_t)))
 
 (optional iptables_optional_plymouth
     (call plymouth_exec (iptables_t)))
