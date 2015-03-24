@@ -73,6 +73,7 @@
 (call system_read_kernel_sysctl (iptables_t))
 (call system_read_usermodehelper_sysctl (iptables_t))
 (call system_request_load_module (iptables_t))
+(call system_load_kernel_module (iptables_t))
 
 (call commands_exec (iptables_t))
 (call commands_mprot_read_shell_exec_files (iptables_t))
