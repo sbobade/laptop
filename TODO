@@ -11,8 +11,4 @@
 
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
 
-* migrate to dnf on e145
-
 * target crypto-policies
-
-* migrate to nftables on e145, service units, /etc/modprobe.d/iptable_nat.conf /etc/nftables fix /usr/local/sbin/ipfwd_by_mac
