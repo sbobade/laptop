@@ -25,7 +25,7 @@
 (allow kmod_t self (capability (dac_override)))
 
 (call commands_exec (kmod_t))
-(call commands_mmap_shell (kmod_t))
+(call commands_exec_shell (kmod_t))
 
 (call system_link_keyring (kmod_t))
 (call system_load_kernel_module (kmod_t))
