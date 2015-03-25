@@ -21,6 +21,7 @@
 
 (call files_dontaudit_catchall_subject_type (dmesg_t))
 
+(call miscfiles_read_all_terminfo (dmesg_t))
 (call miscfiles_read_locale (dmesg_t))
 
 (macro dmesg_exec ((type ARG1))
