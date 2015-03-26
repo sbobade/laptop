@@ -63,7 +63,7 @@
 (allow iptables_t iptables_lib_t manage_file_perms)
 (call files_lib_object_type_transition (iptables_t iptables_lib_t dir "*"))
 
-(allow iptables_t self (capability (net_raw net_admin dac_read_search dac_override)))
+(allow iptables_t self (capability (net_raw net_admin dac_override)))
 (allow iptables_t self create_netlink_socket_perms)
 (allow iptables_t self create_rawip_socket_perms)
 (allow iptables_t self create_unix_dgram_socket_perms)

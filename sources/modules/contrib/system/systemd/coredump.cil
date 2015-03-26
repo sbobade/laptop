@@ -59,7 +59,7 @@
 (allow coredump_t coredump_systemd_lib_t manage_file_perms)
 (call systemd_lib_object_type_transition (coredump_t coredump_systemd_lib_t dir "*"))
 
-(allow coredump_t self (capability (setuid setgid setpcap sys_ptrace dac_read_search dac_override)))
+(allow coredump_t self (capability (setuid setgid setpcap sys_ptrace dac_override)))
 (allow coredump_t self (process (getcap setcap setfscreate)))
 
 (call system_read_kernel_sysctl (coredump_t))

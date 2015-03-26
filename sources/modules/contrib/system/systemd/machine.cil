@@ -52,7 +52,7 @@
 (filecon "/var/lib/machines" dir machine_lib)
 (filecon "/var/lib/machines(/.*)?" any ())
 
-(allow machined_t self (capability (sys_ptrace sys_chroot setgid sys_admin dac_read_search)))
+(allow machined_t self (capability (sys_ptrace sys_chroot setgid sys_admin dac_override)))
 (allow machined_t self r_netlink_route_socket_perms)
 (allow machined_t self (process (setfscreate)))
 

@@ -93,7 +93,7 @@
 (allow nspawn_common_container_subject_type self (netlink_kobject_uevent_socket (all))) 
 (allow nspawn_common_container_subject_type self (key (all)))
 
-(allow nspawn_common_container_subject_type self (capability (chown dac_override dac_read_search fowner
+(allow nspawn_common_container_subject_type self (capability (chown dac_override fowner
     ipc_owner fsetid kill linux_immutable net_admin net_broadcast net_raw setgid setfcap setpcap setuid
     sys_admin sys_chroot sys_nice sys_ptrace sys_tty_config sys_resource sys_boot audit_write audit_control)))
 (allow nspawn_common_container_subject_type self (process (setsched)))

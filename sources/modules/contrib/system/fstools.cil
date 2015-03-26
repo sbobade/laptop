@@ -62,8 +62,7 @@
 (context fstools_runtime (system_u object_r fstools_runtime_t (systemlow systemlow)))
 (filecon "/var/run/blkid(/.*)?" any fstools_runtime)
 
-(allow fstools_t self (capability (sys_admin dac_read_search
-    sys_rawio dac_override)))
+(allow fstools_t self (capability (sys_admin sys_rawio dac_override)))
 (allow fstools_t self (process (setfscreate)))
 
 (allow fstools_t fstools_runtime_t manage_dir_perms)

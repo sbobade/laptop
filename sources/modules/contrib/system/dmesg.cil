@@ -10,6 +10,8 @@
 (context dmesg_exec (system_u object_r dmesg_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/dmesg" file dmesg_exec)
 
+(allow dmesg_t self (capability (dac_override)))
+
 (allow dmesg_t self rw_fifo_file_perms)
 
 (call system_read_ring_buffer (dmesg_t))
