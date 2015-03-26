@@ -12,11 +12,3 @@
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
 
 * target crypto-policies
-
-* llmnr make it work:
-
-    To make sure the containers can resolve the host, make sure to enable
-    resolved on both the host and in each container, and that "resolve" is
-    in the NSS configuration line of each. Their hostnames should then be
-    resolvable automatically, due to the wonders of LLMNR. No further
-    setup required.
