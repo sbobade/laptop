@@ -82,6 +82,7 @@
 (call storage_read_scsi_generic (bootloader_t))
 
 (call bootloader_exec (bootloader_t))
+(call bootloader_read_config_files (bootloader_t))
 
 (call fstools_run (bootloader_t bootloader_role))
 
