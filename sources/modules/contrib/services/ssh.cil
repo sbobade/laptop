@@ -185,7 +185,7 @@
 (context ssh_priv_user_login (system_u object_r ssh_priv_user_login_t (systemlow systemlow)))
 (genfscon "selinuxfs" "/booleans/ssh_priv_user_login" ssh_priv_user_login)
 
-(allow sshd_t self (capability (sys_resource kill sys_tty_config fowner)))
+(allow sshd_t self (capability (sys_resource kill sys_tty_config fowner fsetid)))
 (allow sshd_t self rw_fifo_file_perms)
 (allow sshd_t self (key (search link write)))
 (allow sshd_t self (tcp_socket (listen accept)))
