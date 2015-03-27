@@ -104,10 +104,13 @@
 
 (call systemd_dbus_chat (timedatex_t))
 (call systemd_status_system (timedatex_t))
+(call systemd_reload_system (timedatex_t))
 (call systemd_list_unit (timedatex_t))
 (call systemd_read_unit_files (timedatex_t))
 
 (optional timedatex_optional_ntpd
+    (call ntp_start_ntpd_unit (timedatex_t))
+    (call ntp_enable_ntpd_unit (timedatex_t))
     (call ntp_status_ntpd_unit (timedatex_t)))
 
 (optional timedatex_optional_polkit
