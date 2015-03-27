@@ -29,7 +29,7 @@
 (filecon "/usr/bin/rfcomm" file bluetoothctl_exec)
 (filecon "/usr/bin/sdptool" file bluetoothctl_exec)
 
-(allow bluetoothctl_t self (capability (net_raw)))
+(allow bluetoothctl_t self (capability (net_raw net_admin)))
 (allow bluetoothctl_t self create_socket_perms)
 
 (call files_read_config_files (bluetoothctl_t))
