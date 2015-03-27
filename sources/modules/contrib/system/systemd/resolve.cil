@@ -55,6 +55,7 @@
 
 (call system_read_kernel_sysctl (resolved_t))
 
+(call devices_read_urandom (resolved_t))
 (call devices_write_kmsg (resolved_t))
 
 (call filesystems_read_sysfs (resolved_t))
