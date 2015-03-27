@@ -58,6 +58,7 @@
 
 (call system_read_kernel_sysctl (machined_t))
 
+(call devices_read_urandom (machined_t))
 (call devices_write_kmsg (machined_t))
 
 (call filesystems_search_tmpfs (machined_t))
