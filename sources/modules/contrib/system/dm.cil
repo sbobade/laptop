@@ -27,6 +27,8 @@
 (optional dmeventd_optional_systemd
     (call systemd_daemon (dmeventd_t dmeventd_exec_t))
 
+    (call systemd_fifo_file_socket_activated_object_type (dmeventd_runtime_t))
+
     (type dmeventd_unit_t)
     (call systemd_unit_object_type (dmeventd_unit_t))
 

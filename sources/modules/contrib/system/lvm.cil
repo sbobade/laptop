@@ -143,6 +143,8 @@
 (optional lvmetad_optional_systemd
     (call systemd_daemon (lvmetad_t lvmetad_exec_t))
 
+    (call systemd_unix_stream_socket_activated (lvmetad_t lvmetad_runtime_t))
+
     (type lvmetad_unit_t)
     (call systemd_unit_object_type (lvmetad_unit_t))
 
