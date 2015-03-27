@@ -380,7 +380,7 @@
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
 (call systemd_search_config (systemd_systemctl_subject_type))
-(call systemd_getattr_unit_dirs (systemd_systemctl_subject_type))
+(call systemd_search_unit (systemd_systemctl_subject_type))
 (call systemd_control_all_units (systemd_systemctl_subject_type))
 (call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
 (call systemd_stream_connect (systemd_systemctl_subject_type))
