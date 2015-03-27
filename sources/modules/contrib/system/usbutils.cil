@@ -13,7 +13,11 @@
 (filecon "/usr/bin/usb-devices" file usbutils_exec)
 (filecon "/usr/bin/usbhid-dump" file usbutils_exec)
 
+(allow usbutils_t self (capability (dac_override)))
 (allow usbutils_t self rw_fifo_file_perms)
+
+(call commands_mmap_shell (usbutils_t))
+(call commands_exec (usbutils_t))
 
 (call filesystems_list_devtmpfs (usbutils_t))
 (call filesystems_read_sysfs (usbutils_t))
