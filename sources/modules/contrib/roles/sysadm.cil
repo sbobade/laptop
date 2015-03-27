@@ -124,6 +124,7 @@
     (call b43fwcutter_manage_tmp (sysadm_t)))
 
 (optional sysadm_optional_bluetooth
+    (call bluetooth_run_bluetoothctl (sysadm_t sysadm_r))
     (call bluetooth_admin (sysadm_t)))
 
 (optional sysadm_optional_bootloader
