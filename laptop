@@ -138,6 +138,9 @@ gen_contexts () {
 
     local DEFSEUSER=$(/bin/grep ^__default__ "${myseusers}" | /bin/awk -F ":" '{ print $2 }')
 
+    echo "$HOME(/.*)? $DEFSEUSER:object_r:home_dir_t" >> "${PWD}/contexts/files/file_contexts.homedirs"
+    echo "$HOME/.*/.* $DEFSEUSER:object_r:user_home_t" >> "${PWD}/contexts/files/file_contexts.homedirs"
+
     for realuser in ${REALUSERS[*]} ; do
         if [ $(/bin/grep "^${realuser}:" "${myseusers}") ] ; then
             local IFS=$'\n'
