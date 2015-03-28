@@ -300,7 +300,7 @@ get_real_users () {
             local myusershell=$(echo "${myuser}" | /bin/awk -F ":" '{ print $7 }')
 
             if [[ "${myuserhome}" == "${HOME}/${myusername}" ]] && [[ "${myusershell}" == "${SHELL}" ]] ; then
-                REALUSERS+=$(echo "${myusername}")
+                REALUSERS+=$(echo "${myusername} ")
             fi
         fi
     done
