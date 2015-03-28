@@ -367,6 +367,14 @@
     (call plymouth_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_polkit
+    (type sysadm_pkexec_t)
+    (call polkit_role_template_pkexec (sysadm_r sysadm_subject_type sysadm_pkexec_t))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_pkexec_t sysadm_t))
+    (call commands_shell_exec_auto_subject_type_transition (sysadm_pkexec_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_pkexec_t sysadm_t))
+
     (call polkit_admin (sysadm_t))
     (call polkit_run_pklauth (sysadm_subject_type sysadm_r))
     (call polkit_run_pkladm (sysadm_subject_type sysadm_r))
