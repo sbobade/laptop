@@ -139,6 +139,9 @@
 (call usersubject_delete_all_user_home (useradd_t))
 (call usersubject_manage_user_home_files (useradd_t))
 
+(optional useradd_optional_emacs
+    (call emacs_manage_emacs_home_files (useradd_t)))
+
 (optional useradd_optional_journal
     (call journal_client_subject_type (useradd_t)))
 

@@ -305,6 +305,10 @@
     (allow ARG1 home_dir_t relabel_dir_perms)
     (allow ARG1 home_dir_t relabel_lnk_file_perms))
 
+(macro usersubject_add_entry_home_dir ((type ARG1))
+    (call files_search_home (ARG1))
+    (allow ARG1 home_dir_t add_entry_dir_perms))
+
 (macro usersubject_del_entry_home_dir ((type ARG1))
     (call files_search_home (ARG1))
     (allow ARG1 home_dir_t del_entry_dir_perms))

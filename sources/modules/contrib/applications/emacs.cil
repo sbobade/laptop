@@ -168,6 +168,10 @@
     (call usersubject_search_home_dir (ARG1))
     (call read_files_pattern (ARG1 emacs_home_t emacs_home_t)))
 
+(macro emacs_manage_emacs_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (call manage_files_pattern (ARG1 emacs_home_t emacs_home_t)))
+
 (macro emacs_read_emacs_home_lnk_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
     (call read_lnk_files_pattern (ARG1 emacs_home_t emacs_home_t)))
