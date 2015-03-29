@@ -25,6 +25,8 @@
 
 (call commands_read_all_exec_files (journal_journalctl_subject_type))
 
+(call filesystems_getattr_tmpfs_filesystems (journal_journalctl_subject_type))
+
 (call journal_manage_log (journal_journalctl_subject_type))
 (call journal_manage_journald_systemd_lib_files (journal_journalctl_subject_type))
 (call journal_journalctl_client_subject_type (journal_journalctl_subject_type))
@@ -176,7 +178,6 @@
 (call devices_read_urandom (journal_journalctl_client_subject_type))
 
 (call filesystems_getattr_filesystems (journal_journalctl_client_subject_type))
-(call filesystems_getattr_tmpfs_filesystems (journal_journalctl_client_subject_type))
 (call filesystems_read_sysfs_files (journal_journalctl_client_subject_type))
 
 (call journal_read_log (journal_journalctl_client_subject_type))

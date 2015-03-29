@@ -375,6 +375,8 @@
 
 (call system_read_state_files (systemd_systemctl_subject_type))
 
+(call filesystems_getattr_tmpfs_filesystems (systemd_systemctl_subject_type))
+
 (call terminals_use_inherited_console (systemd_systemctl_subject_type))
 
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
@@ -487,7 +489,6 @@
 (call devices_read_urandom (systemd_systemctl_client_subject_type))
 
 (call filesystems_getattr_filesystems (systemd_systemctl_client_subject_type))
-(call filesystems_getattr_tmpfs_filesystems (systemd_systemctl_client_subject_type))
 (call filesystems_read_sysfs_files (systemd_systemctl_client_subject_type))
 (call filesystems_read_cgroup (systemd_systemctl_client_subject_type))
 

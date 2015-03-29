@@ -1,7 +1,6 @@
 (roleattribute machine_machinectl_role)
 
 (typeattribute machine_machinectl_subject_type)
-
 (typeattribute machine_machinectl_client_subject_type)
 
 (type machinectl_t)
@@ -114,11 +113,12 @@
 (call devices_read_urandom (machine_machinectl_client_subject_type))
 
 (call filesystems_getattr_filesystems (machine_machinectl_client_subject_type))
-(call filesystems_getattr_tmpfs_filesystems (machine_machinectl_client_subject_type))
 (call filesystems_read_sysfs_files (machine_machinectl_client_subject_type))
 (call filesystems_read_cgroup (machine_machinectl_client_subject_type))
 
 (call dbus_system_client_subject_type (machine_machinectl_client_subject_type))
+
+(call filesystems_getattr_tmpfs_filesystems (machine_machinectl_subject_type))
 
 (call journal_list_log (machine_machinectl_subject_type))
 (call journal_read_log_files (machine_machinectl_subject_type))
