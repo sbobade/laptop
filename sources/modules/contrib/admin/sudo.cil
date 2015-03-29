@@ -37,6 +37,9 @@
 (type sudo_tmpfs_t)
 (call files_tmpfs_object_type (sudo_tmpfs_t))
 
+(optional sudo_optional_ubac
+    (call ubac_constrained_exempt_object_type (sudo_runtime_t)))
+
 (allow sudo_subject_type self (capability (setuid setgid chown sys_resource fowner dac_override kill)))
 (allow sudo_subject_type self (process (setsched setkeycreate setrlimit setexec)))
 (allow sudo_subject_type self rw_fifo_file_perms)
