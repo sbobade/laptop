@@ -13,7 +13,6 @@
 (type nspawn_t)
 (type nspawn_exec_t)
 (call systemd_daemon (nspawn_t nspawn_exec_t))
-(call applications_app (nspawn_t nspawn_exec_t))
 (roletype nspawn_role nspawn_t)
 
 (roleattributeset nspawn_role system_r)
@@ -244,8 +243,10 @@
 (call subject_system_role_change_exemption (nspawn_t))
 (call subject_change_exemption (nspawn_t))
 (call subject_object_identity_change_exemption (nspawn_t))
+(call subject_use_interactive_fd_subject_type (nspawn_t))
 
 (call terminals_use_console (nspawn_t))
+(call terminals_use_inherited_unallocated_ttys (nspawn_t))
 (call terminals_create_pty (nspawn_t nspawn_pty_dev_t))
 
 (call dbus_system_client_subject_type (nspawn_t))
@@ -272,7 +273,12 @@
 
 (call udev_read_config_files (nspawn_t))
 
+(optional nspawn_optional_sudo
+    (call sudo_send_sigchld (nspawn_t))
+    (call sudo_rw_inherited_fifo_files (nspawn_t)))
+
 (optional nspawn_optional_usersubject
+    (call usersubject_use_inherited_terminals (nspawn_t))
     (call usersubject_search_home_dir (nspawn_t)))
 
 (allow nspawn_admin_subject_type nspawn_subject_type (process (ptrace signal signull sigkill sigstop)))
