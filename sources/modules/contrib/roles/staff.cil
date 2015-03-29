@@ -523,8 +523,14 @@
     (call torrent_home_dir_object_type_transition_rtorrent_home_dirs (staff_t ".rtorrent")))
 
 (optional staff_optional_xserver
+    (type staff_startx_t)
+    (call xserver_role_template_startx (staff_r staff_subject_type staff_startx_t))
+
+    (call xserver_manage_startx_tmpfs_files (staff_t))
+    (call xserver_relabel_startx_tmpfs_files (staff_t))
+
     (type staff_xinit_t)
-    (call xserver_role_template_xinit (staff_r staff_subject_type staff_xinit_t))
+    (call xserver_role_template_xinit (staff_r staff_startx_t staff_xinit_t))
 
     (call commands_exec_auto_subject_type_transition (staff_xinit_t staff_t))
 

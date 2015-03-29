@@ -36,6 +36,8 @@
 (call usersubject_home_dir_object_type_transition_fonts_home_dirs (rp_subject_type))
 (call usersubject_cache_home_object_type_transition_fonts_home_dirs (rp_subject_type))
 
+(call usersubject_getattr_ttys (rp_subject_type))
+
 (call xserver_client_subject_type (rp_subject_type))
 
 (optional rp_subject_type_optional_unconfined

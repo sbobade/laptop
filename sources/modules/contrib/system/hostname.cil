@@ -20,6 +20,8 @@
 
 (call system_read_net_proc (hostname_t))
 
+(call ns_client_subject_type (hostname_t))
+
 (call hostname_read_config_files (hostname_t))
 
 (call miscfiles_read_net_config_files (hostname_t))

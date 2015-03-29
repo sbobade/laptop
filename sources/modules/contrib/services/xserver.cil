@@ -9,6 +9,7 @@
 (typeattribute xserver_tmpfs_client_object_type)
 
 (typeattribute xserver_xinit_subject_type)
+(typeattribute xserver_startx_subject_type)
 
 (type xserver_t)
 (type xserver_exec_t)
@@ -184,6 +185,8 @@
 
 (call devices_rw_dri (xserver_wrap_t))
 
+(call usersubject_getattr_ttys (xserver_wrap_t))
+
 (call xserver_run (xserver_wrap_t xserver_wrap_role))
 (call xserver_read_config_files (xserver_wrap_t))
 
@@ -192,6 +195,37 @@
 
 (context xsession_exec (system_u object_r xsession_exec_t (systemlow systemlow)))
 (filecon "/etc/X11/xinit/Xsession" any xsession_exec)
+
+(type startx_exec_t)
+(call applications_app (xserver_startx_subject_type startx_exec_t))
+
+(context startx_exec (system_u object_r startx_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/startx" file startx_exec)
+
+(type startx_tmpfs_t)
+(call usersubject_tmpfs_object_type (startx_tmpfs_t))
+
+(allow xserver_startx_subject_type startx_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (xserver_startx_subject_type startx_tmpfs_t file "*"))
+
+(allow xserver_startx_subject_type self rw_fifo_file_perms)
+
+(call system_read_net_proc (xserver_startx_subject_type))
+
+(call commands_exec (xserver_startx_subject_type))
+(call commands_mprot_read_shell_exec_files (xserver_startx_subject_type))
+
+(call devices_read_urandom (xserver_startx_subject_type))
+
+(call filesystems_getattr_tmpfs_filesystems (xserver_startx_subject_type))
+
+(call miscfiles_read_locale (xserver_startx_subject_type))
+
+(call usersubject_getattr_ttys (xserver_startx_subject_type))
+(call usersubject_getattr_exec_home_files (xserver_startx_subject_type))
+
+(call xserver_delete_xauth_home_files (xserver_startx_subject_type))
+(call xserver_read_home_files (xserver_startx_subject_type))
 
 (type xinit_exec_t)
 (call applications_app (xserver_xinit_subject_type xinit_exec_t))
@@ -236,7 +270,7 @@
 
 (call ns_client_subject_type (xauth_t))
 
-(call usersubject_read_inherited_tmpfs_files (xauth_t))
+(call xserver_read_startx_tmpfs_files (xauth_t))
 
 (optional xauth_optional_machined
     (call machine_read_machined_systemd_runtime (xauth_t)))
@@ -268,6 +302,9 @@
 
 (macro xserver_exec ((type ARG1))
     (call can_exec (ARG1 xserver_exec_t)))
+
+(macro xserver_exec_startx ((type ARG1))
+    (call can_exec (ARG1 startx_exec_t)))
 
 (macro xserver_exec_wrap ((type ARG1))
     (call can_exec (ARG1 xserver_wrap_exec_t)))
@@ -309,6 +346,19 @@
 (macro xserver_run_wrap ((type ARG1)(role ARG2))
     (call xserver_auto_subject_type_transition_wrap (ARG1))
     (roleattributeset xserver_wrap_role ARG2))
+
+(macro xserver_startx_subject_type ((type ARG1))
+    (typeattributeset xserver_startx_subject_type ARG1))
+
+(macro xserver_role_template_startx ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 startx_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call xserver_startx_subject_type (ARG3))
+    (call xserver_run_xauth (ARG3 ARG1))
+    (optional xserver_role_template_startx_optional_hostname
+        (call hostname_run (ARG3 ARG1))))
 
 (macro xserver_xinit_subject_type ((type ARG1))
     (typeattributeset xserver_xinit_subject_type ARG1))
@@ -433,6 +483,18 @@
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 xserver_tmpfs_t relabel_file_perms))
 
+(macro xserver_read_startx_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 startx_tmpfs_t read_file_perms))
+
+(macro xserver_manage_startx_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 startx_tmpfs_t manage_file_perms))
+
+(macro xserver_relabel_startx_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 startx_tmpfs_t relabel_file_perms))
+
 (macro xserver_read_tmpfs_sock_files ((type ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 xserver_tmpfs_t read_sock_file_perms))
@@ -463,6 +525,10 @@
 (macro xserver_read_xauth_home_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))
     (allow ARG1 xauth_home_t read_file_perms))
+
+(macro xserver_delete_xauth_home_files ((type ARG1))
+    (call usersubject_del_entry_home_dir (ARG1))
+    (allow ARG1 xauth_home_t delete_file_perms))
 
 (macro xserver_manage_xauth_home_files ((type ARG1))
     (call usersubject_rw_home_dir_dirs (ARG1))

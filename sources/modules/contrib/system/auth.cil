@@ -156,6 +156,9 @@
     (call screen_rw_unix_stream_sockets (utempter_t))
     (call screen_read_inherited_home_files (utempter_t)))
 
+(optional utempter_optional_usersubject
+    (call usersubject_getattr_terminals (utempter_t)))
+
 (type faillog_log_t)
 (call files_log_object_type (faillog_log_t))
 
