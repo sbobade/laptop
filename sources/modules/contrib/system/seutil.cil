@@ -145,6 +145,8 @@
 (context getenforce_exec (system_u object_r getenforce_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/getenforce" file getenforce_exec)
 
+(call devices_dontaudit_catchall_subject_type (getenforce_t))
+
 (call selinux_get_enforce_mode (getenforce_t))
 
 (type setenforce_t)
