@@ -128,9 +128,10 @@
 (call miscfiles_read_all_terminfo (usersubject_common_type))
 (call miscfiles_read_locale (usersubject_common_type))
 
-(call usersubject_use_inherited_terminals (usersubject_common_type))
+; (call usersubject_use_inherited_terminals (usersubject_common_type))
+(allow usersubject_common_type user_pty_dev_t (chr_file (read write ioctl append)))
 
-(call utmp_read_utmp_runtime_files (usersubject_common_type))
+; (call utmp_read_utmp_runtime_files (usersubject_common_type))
 
 (allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
 
@@ -1113,7 +1114,8 @@
 
 (macro usersubject_common_login_user_pty_template ((type ARG1))
     (call terminals_user_pty (ARG1 user_pty_dev_t))
-    (call usersubject_use_ptys (ARG1)))
+    (allow ARG1 user_pty_dev_t (chr_file (read write ioctl append))))
+    ; (call usersubject_use_ptys (ARG1)))
 
 (macro usersubject_use_all_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
