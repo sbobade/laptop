@@ -1,37 +1,24 @@
-(typeattribute ubac_constrained_object_type)
 (typeattribute ubac_constrained_subject_type)
 
 (typeattribute ubac_constrained_exempt_object_type)
-(typeattribute ubac_constrained_exempt_subject_type)
-
-(typeattributeset ubac_constrained_exempt_subject_type
-    (and (subject_common_type) (not (ubac_constrained_subject_type))))
 
 (constrain (process (sigchld sigkill sigstop signull signal ptrace
     getsched setsched getsession getpgid setpgid getcap setcap
     share getattr setrlimit))
-    (or (or (or (eq u1 u2)
+    (or (or (eq u1 u2)
         (eq u2 system_u))
-        (neq t1 ubac_constrained_subject_type))
-        (eq t1 ubac_constrained_exempt_subject_type)))
+        (neq t1 ubac_constrained_subject_type)))
 
 (constrain (all_file_objects (manage))
-    (or (or (or (or (or (or (eq u1 u2)
+    (or (or (or (or (or (eq u1 u2)
         (eq u2 system_u))
         (eq u2 staff_u))
         (eq u2 sysadm_u))
         (neq t1 ubac_constrained_subject_type))
-        (eq t2 ubac_constrained_exempt_object_type))
-        (eq t1 ubac_constrained_exempt_subject_type)))
+        (eq t2 ubac_constrained_exempt_object_type)))
 
 (macro ubac_constrained_subject_type ((type ARG1))
     (typeattributeset ubac_constrained_subject_type ARG1))
-
-(macro ubac_constrained_exempt_subject_type ((type ARG1))
-    (typeattributeset ubac_constrained_exempt_subject_type ARG1))
-
-(macro ubac_constrained_object_type ((type ARG1))
-    (typeattributeset ubac_constrained_object_type ARG1))
 
 (macro ubac_constrained_exempt_object_type ((type ARG1))
     (typeattributeset ubac_constrained_exempt_object_type ARG1))
