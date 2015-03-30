@@ -123,7 +123,7 @@
     (call systemduser_subject_type (ARG3))
     (roletype ARG1 ARG3)
     (allow ARG2 ARG3 (process (signal signull sigkill sigstop)))
-    (allow ARG2 ARG3 (unix_stream_socket (read write connectto)))
+    (allow ARG2 ARG3 (unix_stream_socket (getattr read write connectto)))
     (call ps_subject_pattern (ARG2 ARG3))
     (allow ARG3 ARG2 (process (signal signull sigkill sigstop)))
     (allow ARG3 ARG2 (unix_stream_socket (read write)))
