@@ -131,6 +131,9 @@
 (call usersubject_use_inherited_terminals (usersubject_common_type))
 
 (allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
+(allow usersubject_common_login_subject_type self r_netlink_route_socket_perms)
+(allow usersubject_common_login_subject_type self create_tcp_socket_perms)
+(dontaudit usersubject_common_login_subject_type self create_udp_socket_perms)
 
 (call usersubject_exec_home_object_entry_subject (usersubject_common_login_subject_type))
 (call usersubject_common_login_user_object_template (usersubject_common_login_subject_type))
@@ -150,14 +153,18 @@
 
 (call selinux_get_enforce_mode (usersubject_common_login_subject_type))
 
+(call auth_read_passwd_config_files (usersubject_common_login_subject_type))
+
+(call dns_read_resolve_config_files (usersubject_common_login_subject_type))
+
 (call hostname_exec (usersubject_common_login_subject_type))
 
 (call login_send_signull (usersubject_common_login_subject_type))
 
 (call miscfiles_read_man (usersubject_common_login_subject_type))
-(call miscfiles_read_net_config_files (usersubject_common_login_subject_type))
+(call miscfiles_read_net_config (usersubject_common_login_subject_type))
 
-(call ns_client_subject_type (usersubject_common_login_subject_type))
+(call ns_read_config_files (usersubject_common_login_subject_type))
 
 (call seutil_read_default_context_files (usersubject_common_login_subject_type))
 (call seutil_read_selinux_config_files (usersubject_common_login_subject_type))
@@ -193,9 +200,7 @@
             (call selinux_validate_context (usersubject_priv_login_subject_type))
 
             (call usersubject_dontaudit_relabelfrom_ptys (usersubject_priv_login_subject_type))
-            (call usersubject_create_ptys (usersubject_priv_login_subject_type))
-
-            (call miscfiles_read_net_config (usersubject_priv_login_subject_type)))))
+            (call usersubject_create_ptys (usersubject_priv_login_subject_type)))))
 
 (macro usersubject_home_object_type ((type ARG1))
     (call files_object_type (ARG1))
