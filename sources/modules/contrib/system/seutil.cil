@@ -203,6 +203,8 @@
 (filecon "/usr/bin/seinfo" file setools_exec)
 (filecon "/usr/bin/sesearch" file setools_exec)
 
+(call devices_dontaudit_catchall_subject_type (setools_t))
+
 (call selinux_read_policy (setools_t))
 
 (call seutil_read_selinux_config_files (setools_t))
