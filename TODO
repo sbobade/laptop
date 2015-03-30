@@ -12,3 +12,7 @@
 * figure out what /run/systemd/inaccessible is for and associate it with a private type
 
 * target crypto-policies
+
+* Due to a "bug/limitation" in the processing of constraints ubac.cil depends on staff.cil and sysadm.cil which depend on usersubject.cil
+    - Remove that dependency if/when that "bug/limitation" in the processing of constraints is lifted
+    - Fix the tests accordingly
