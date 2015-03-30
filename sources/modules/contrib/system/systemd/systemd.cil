@@ -384,6 +384,7 @@
 (call systemd_search_config (systemd_systemctl_subject_type))
 (call systemd_search_unit (systemd_systemctl_subject_type))
 (call systemd_control_all_units (systemd_systemctl_subject_type))
+(call systemd_getattr_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
 (call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
 (call systemd_stream_connect (systemd_systemctl_subject_type))
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
@@ -990,6 +991,9 @@
     (allow ARG1 systemd_daemon_subject_type read_file_perms)
     (allow ARG1 systemd_daemon_subject_type list_dir_perms)
     (allow ARG1 systemd_daemon_subject_type read_lnk_file_perms))
+
+(macro systemd_getattr_all_systemd_daemon_subjects ((type ARG1))
+    (allow ARG1 systemd_daemon_subject_type (file (getattr))))
 
 (macro systemd_send_signal_all_systemd_daemon_subjects ((type ARG1))
     (allow ARG1 systemd_daemon_subject_type (process (signal))))
