@@ -3,7 +3,7 @@
 modular_base_modules () {
     modular_set_ignore sources.d sources/modules/contrib/admin sources/modules/contrib/applications sources/modules/contrib/roles \
         sources/modules/contrib/services sources/modules/contrib/system sources/modules/base/libraries.cil sources/modules/base/storage.cil \
-        sources/modules/base/unconfined.cil
+        sources/modules/base/unconfined.cil sources/ubac.cil
 
     unset MODULAR_BASE_MODULES
 

@@ -44,6 +44,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/applications/xterm.cil sources/modules/contrib/applications/xutil.cil sources/modules/contrib/applications/cowsay.cil \
         sources/modules/contrib/applications/festival.cil sources/modules/contrib/applications/dbuslaunch.cil sources/modules/contrib/applications/atspi2.cil \
         sources/modules/contrib/applications/xbindkeys.cil sources/modules/contrib/applications/fpaste.cil sources/modules/contrib/applications/resetimg.cil \
+        sources/ubac.cil
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 

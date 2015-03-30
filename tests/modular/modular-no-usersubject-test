@@ -2,7 +2,7 @@
 
 modular_no_usersubject_module () {
     modular_set_ignore sources.d sources/modules/contrib/system/usersubject sources/modules/contrib/system sources/modules/contrib/applications \
-        sources/modules/contrib/admin sources/modules/contrib/roles sources/modules/contrib/system sources/modules/contrib/services
+        sources/modules/contrib/admin sources/modules/contrib/roles sources/modules/contrib/system sources/modules/contrib/services sources/ubac.cil
 
     unset MODULAR_NO_USERSUBJECT_MODULE
 

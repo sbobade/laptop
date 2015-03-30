@@ -2,7 +2,7 @@
 
 modular_base_plus_modules () {
     modular_set_ignore sources.d sources/modules/contrib/admin sources/modules/contrib/applications sources/modules/contrib/roles \
-        sources/modules/contrib/services sources/modules/contrib/system
+        sources/modules/contrib/services sources/modules/contrib/system sources/ubac.cil
 
     unset MODULAR_BASE_PLUS_MODULES
 
