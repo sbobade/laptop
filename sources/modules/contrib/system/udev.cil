@@ -317,7 +317,9 @@
     (call files_search_runtime (ARG1))
     (call stream_connect_pattern (ARG1 udev_runtime_t udev_runtime_t udevd_t)))
 
-(macro udev_admin ((type ARG1))
+(macro udev_admin ((type ARG1)(role ARG2))
     (typeattributeset udev_admin_subject_type ARG1)
+    (optional udev_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional udev_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

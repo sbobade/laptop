@@ -237,6 +237,8 @@
 (macro network_create_networkd_netlink_route_socket ((type ARG1))
     (allow ARG1 networkd_t (netlink_route_socket (create setopt bind))))
 
-(macro network_networkd_admin ((type ARG1))
+(macro network_networkd_admin ((type ARG1)(role ARG2))
     (typeattributeset network_networkd_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional network_networkd_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

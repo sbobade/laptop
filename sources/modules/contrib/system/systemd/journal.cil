@@ -388,6 +388,8 @@
     (call systemd_search_runtime (ARG1))
     (call stream_connect_pattern (ARG1 journald_systemd_runtime_t journald_systemd_runtime_t journald_t)))
 
-(macro journal_admin ((type ARG1))
+(macro journal_admin ((type ARG1)(role ARG2))
     (typeattributeset journal_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional journal_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

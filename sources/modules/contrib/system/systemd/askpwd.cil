@@ -202,6 +202,7 @@
 (macro askpwd_systemd_runtime_object_type_transition_askpwdagent_systemd_runtime_dirs ((type ARG1))
     (call systemd_runtime_object_type_transition (ARG2 askpwdagent_systemd_runtime_t dir "ask-password-block")))
 
-(macro askpwd_admin ((type ARG1))
+(macro askpwd_admin ((type ARG1)(role ARG2))
     (typeattributeset askpwd_admin_subject_type ARG1)
+    (call askpwd_run_askpwdagent (ARG1 ARG2))
     (call systemd_system_service_admin_subject_type (ARG1)))

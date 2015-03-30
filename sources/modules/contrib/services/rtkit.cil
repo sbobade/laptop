@@ -117,7 +117,9 @@
     (allow ARG1 rtkitd_t (dbus (send_msg)))
     (allow rtkitd_t ARG1 (dbus (send_msg))))
 
-(macro rtkit_admin ((type ARG1))
+(macro rtkit_admin ((type ARG1)(role ARG2))
     (typeattributeset rtkit_admin_subject_type ARG1)
+    (optional rtkit_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional rtkit_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

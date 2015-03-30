@@ -1200,8 +1200,10 @@
     (allow ARG1 systemd_t (dbus (send_msg)))
     (allow systemd_t ARG1 (dbus (send_msg))))
 
-(macro systemd_admin ((type ARG1))
-    (typeattributeset systemd_admin_subject_type ARG1))
+(macro systemd_admin ((type ARG1)(role ARG2))
+    (typeattributeset systemd_admin_subject_type ARG1)
+    (optional systemd_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))
 
 (macro systemd_unconfined_subject_type ((type ARG1))
     (typeattributeset systemd_unconfined_subject_type ARG1))

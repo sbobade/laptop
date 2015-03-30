@@ -99,7 +99,9 @@
     (call files_search_runtime (ARG1))
     (allow ARG1 qemuga_runtime_t manage_file_perms))
 
-(macro qemu_admin ((type ARG1))
+(macro qemu_admin ((type ARG1)(role ARG2))
     (typeattributeset qemu_admin_subject_type ARG1)
+    (optional qemu_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional qemu_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

@@ -387,7 +387,9 @@
     (allow ARG1 polkitd_t (dbus (send_msg)))
     (allow polkitd_t ARG1 (dbus (send_msg))))
 
-(macro polkit_admin ((type ARG1))
+(macro polkit_admin ((type ARG1)(role ARG2))
     (typeattributeset polkit_admin_subject_type ARG1)
+    (optional polkit_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional polkit_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

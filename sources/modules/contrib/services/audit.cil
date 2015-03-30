@@ -394,7 +394,9 @@
 (macro audit_use_fd_auditd ((type ARG1))
     (allow ARG1 auditd_t (fd (use))))
 
-(macro audit_admin ((type ARG1))
+(macro audit_admin ((type ARG1)(role ARG2))
     (typeattributeset audit_admin_subject_type ARG1)
+    (optional audit_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional audit_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

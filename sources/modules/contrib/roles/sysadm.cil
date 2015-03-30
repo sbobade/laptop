@@ -69,7 +69,7 @@
 
 (call terminals_use_inherited_unallocated_ttys (sysadm_t))
 
-(call audit_admin (sysadm_t))
+(call audit_admin (sysadm_t sysadm_r))
 (call audit_run_auditctl (sysadm_subject_type sysadm_r))
 (call audit_run_augenrules (sysadm_subject_type sysadm_r))
 (call audit_run_ausearch (sysadm_subject_type sysadm_r))
@@ -114,7 +114,7 @@
 (call usermanage_run_useradd (sysadm_subject_type sysadm_r))
 
 (optional sysadm_optional_alsa
-    (call alsa_admin (sysadm_t)))
+    (call alsa_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_atspi2
     (call atspi2_manage_config (sysadm_t)))
@@ -125,7 +125,7 @@
 
 (optional sysadm_optional_bluetooth
     (call bluetooth_run_bluetoothctl (sysadm_t sysadm_r))
-    (call bluetooth_admin (sysadm_t)))
+    (call bluetooth_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_bootloader
     (call bootloader_run (sysadm_subject_type sysadm_r))
@@ -134,11 +134,11 @@
     (call bootloader_manage_log_files (sysadm_t)))
 
 (optional sysadm_optional_cpupower
-    (call cpupower_admin (sysadm_t))
+    (call cpupower_admin (sysadm_t sysadm_r))
     (call cpupower_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_dbus
-    (call dbus_admin (sysadm_t))
+    (call dbus_admin (sysadm_t sysadm_r))
     (call dbus_manage_all_config (sysadm_t)))
 
 (optional sysadm_optional_dhcp
@@ -147,7 +147,7 @@
     (call dhcp_manage_dhclient_runtime_files (sysadm_t)))
 
 (optional sysadm_optional_dm
-    (call dm_admin (sysadm_t))
+    (call dm_admin (sysadm_t sysadm_r))
     (call dm_run_dmcrypt (sysadm_subject_type sysadm_r))
     (call dm_run_dmsetup (sysadm_subject_type sysadm_r)))
 
@@ -161,10 +161,10 @@
     (call dns_manage_resolve_config_files (sysadm_t)))
 
 (optional sysadm_optional_dnsmasq
-    (call dnsmasq_admin (sysadm_t)))
+    (call dnsmasq_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_dracut
-    (call dracut_admin (sysadm_t)))
+    (call dracut_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_festival
     (call festival_manage_config (sysadm_t)))
@@ -182,7 +182,7 @@
     (call fstools_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_fstrim
-    (call fstrim_admin (sysadm_t))
+    (call fstrim_admin (sysadm_t sysadm_r))
     (call fstrim_run (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_fuse
@@ -191,7 +191,7 @@
     (call fuse_manage_config_files (sysadm_t)))
 
 (optional sysadm_optional_getty
-    (call getty_admin (sysadm_t)))
+    (call getty_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_gpg
     (call gpg_run_dirmngr (sysadm_subject_type sysadm_r))
@@ -275,7 +275,7 @@
     (call hwclock_manage_config_files (sysadm_t)))
 
 (optional sysadm_optional_iptables
-    (call iptables_admin (sysadm_t))
+    (call iptables_admin (sysadm_t sysadm_r))
     (call iptables_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_iptools
@@ -289,39 +289,39 @@
     (call java_manage_config (sysadm_t)))
 
 (optional sysadm_optional_kmod
-    (call kmod_admin (sysadm_t))
+    (call kmod_admin (sysadm_t sysadm_r))
     (call kmod_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_ld
-    (call ld_admin (sysadm_t))
+    (call ld_admin (sysadm_t sysadm_r))
     (call ld_run_ldconfig (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_lirc
-    (call lirc_admin (sysadm_t)))
+    (call lirc_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_loadkeys
     (call loadkeys_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_login
-    (call login_admin (sysadm_t)))
+    (call login_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_logrotate
-    (call logrotate_admin (sysadm_t))
+    (call logrotate_admin (sysadm_t sysadm_r))
     (call logrotate_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_lvm
-    (call lvm_admin (sysadm_t))
+    (call lvm_admin (sysadm_t sysadm_r))
     (call lvm_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_mail
     (call mail_manage_mutt_config_files (sysadm_t)))
 
 (optional sysadm_optional_mandb
-    (call mandb_admin (sysadm_t))
+    (call mandb_admin (sysadm_t sysadm_r))
     (call mandb_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_md
-    (call md_admin (sysadm_t))
+    (call md_admin (sysadm_t sysadm_r))
     (call md_run_mdadm (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_mount
@@ -329,21 +329,21 @@
     (call mount_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_nettools
-    (call nettools_admin (sysadm_t))
+    (call nettools_admin (sysadm_t sysadm_r))
     (call nettools_run_ping (sysadm_subject_type sysadm_r))
     (call nettools_run_arp (sysadm_subject_type sysadm_r))
     (call nettools_run (sysadm_subject_type sysadm_r))
     (call nettools_run_traceroute (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_nm
-    (call nm_admin (sysadm_t))
+    (call nm_admin (sysadm_t sysadm_r))
     (call nm_run_nmcli (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_ns
     (call ns_manage_config_files (sysadm_t)))
 
 (optional sysadm_optional_ntp
-    (call ntp_admin (sysadm_t))
+    (call ntp_admin (sysadm_t sysadm_r))
     (call ntp_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_pa
@@ -354,7 +354,7 @@
     (call pcitools_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_pcsc
-    (call pcsc_admin (sysadm_t)))
+    (call pcsc_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_pinentry
     (call pinentry_run (sysadm_subject_type sysadm_r))
@@ -363,7 +363,7 @@
     (call pinentry_relabel_tmpfs_files (sysadm_t)))
 
 (optional sysadm_optional_plymouth
-    (call plymouth_admin (sysadm_t))
+    (call plymouth_admin (sysadm_t sysadm_r))
     (call plymouth_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_polkit
@@ -375,7 +375,7 @@
 
     (call usersubject_exec_home_auto_subject_type_transition (sysadm_pkexec_t sysadm_t))
 
-    (call polkit_admin (sysadm_t))
+    (call polkit_admin (sysadm_t sysadm_r))
     (call polkit_run_pklauth (sysadm_subject_type sysadm_r))
     (call polkit_run_pkladm (sysadm_subject_type sysadm_r))
     (call polkit_run_pkttyagent (sysadm_subject_type sysadm_r)))
@@ -390,18 +390,18 @@
     (call ppp_manage_pppd_log (sysadm_t)))
 
 (optional sysadm_optional_qemu
-    (call qemu_admin (sysadm_t))
+    (call qemu_admin (sysadm_t sysadm_r))
     (call qemu_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_resetimg
     (call resetimg_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_rpm
-    (call rpm_admin (sysadm_t))
+    (call rpm_admin (sysadm_t sysadm_r))
     (call rpm_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_rtkit
-    (call rtkit_admin (sysadm_t))
+    (call rtkit_admin (sysadm_t sysadm_r))
     (call rtkit_run_rtkitctl (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_screen
@@ -412,7 +412,7 @@
     (call setbacklight_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_ssh
-    (call ssh_admin (sysadm_t))
+    (call ssh_admin (sysadm_t sysadm_r))
     (call ssh_manage_config (sysadm_t))
 
     (call ssh_run_sshkeygen (sysadm_subject_type sysadm_r))
@@ -499,7 +499,7 @@
     (type sysadm_systemctl_t)
     (call systemd_role_template_systemctl (sysadm_r sysadm_subject_type sysadm_systemctl_t))
 
-    (call systemd_admin (sysadm_t))
+    (call systemd_admin (sysadm_t sysadm_r))
     (call systemd_manage_all_config (sysadm_t)))
 
 (optional sysadm_optional_analyze
@@ -507,7 +507,7 @@
     (call analyze_role_template (sysadm_r sysadm_subject_type sysadm_analyze_t)))
 
 (optional sysadm_optional_askpwd
-    (call askpwd_admin (sysadm_t))
+    (call askpwd_admin (sysadm_t sysadm_r))
     (call askpwd_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_autorelabel
@@ -541,7 +541,7 @@
     (call initctl_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_journal
-    (call journal_admin (sysadm_t))
+    (call journal_admin (sysadm_t sysadm_r))
 
     (type sysadm_journalctl_t)
     (call journal_role_template_journalctl (sysadm_r sysadm_subject_type sysadm_journalctl_t)))
@@ -556,7 +556,7 @@
     (call locale_manage_config_files (sysadm_t)))
 
 (optional sysadm_optional_loginctl
-    (call login_logind_admin (sysadm_t))
+    (call login_logind_admin (sysadm_t sysadm_r))
 
     (type sysadm_loginctl_t)
     (call login_role_template_loginctl (sysadm_r sysadm_subject_type sysadm_loginctl_t)))
@@ -570,11 +570,11 @@
     (call machine_manage_machined_systemd_runtime (sysadm_t)))
 
 (optional sysadm_optional_network_networkd
-    (call network_networkd_admin (sysadm_t))
+    (call network_networkd_admin (sysadm_t sysadm_r))
     (call network_run_networkctl (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_nspawn
-    (call nspawn_admin (sysadm_t))
+    (call nspawn_admin (sysadm_t sysadm_r))
     (call nspawn_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_machinectl_optional_ssh
@@ -593,7 +593,7 @@
     (call rfkill_manage_systemd_lib (sysadm_t)))
 
 (optional sysadm_optional_resolve
-    (call resolve_admin (sysadm_t)))
+    (call resolve_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_run
     (type sysadm_run_t)
@@ -607,18 +607,18 @@
     (call usersubject_exec_home_auto_subject_type_transition (sysadm_run_t sysadm_t)))
 
 (optional sysadm_optional_shutdown
-    (call shutdown_admin (sysadm_t)))
+    (call shutdown_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_sleep
     (call sleep_manage_sleep_systemd_config (sysadm_t))
     (call sleep_systemd_config_object_type_transition_sleep_systemd_config (sysadm_t)))
 
 (optional sysadm_optional_sysusers
-    (call sysusers_admin (sysadm_t))
+    (call sysusers_admin (sysadm_t sysadm_r))
     (call sysusers_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_timedatectl
-    (call timedate_admin (sysadm_t))
+    (call timedate_admin (sysadm_t sysadm_r))
 
     (type sysadm_timedatectl_t)
     (call timedate_role_template_timedatectl (sysadm_r sysadm_subject_type sysadm_timedatectl_t)))
@@ -659,10 +659,10 @@
     (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
 
 (optional sysadm_optional_tcs
-    (call tcs_admin (sysadm_t)))
+    (call tcs_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_udev
-    (call udev_admin (sysadm_t))
+    (call udev_admin (sysadm_t sysadm_r))
     (call udev_run_udevadm (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_usbutils
@@ -673,11 +673,11 @@
     (call utmp_manage_utmp_runtime_files (sysadm_t)))
 
 (optional sysadm_optional_wpa
-    (call wpa_admin (sysadm_t))
+    (call wpa_admin (sysadm_t sysadm_r))
     (call wpa_run_wpacli (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_xlock
-    (call xlock_admin (sysadm_t)))
+    (call xlock_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_xpdf
     (call xpdf_manage_config (sysadm_t)))

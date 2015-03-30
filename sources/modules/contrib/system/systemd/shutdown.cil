@@ -215,6 +215,8 @@
     (call systemd_search_runtime (ARG1))
     (call dgram_send_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t shutdownd_t)))
 
-(macro shutdown_admin ((type ARG1))
+(macro shutdown_admin ((type ARG1)(role ARG2))
     (typeattributeset shutdown_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional shutdown_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

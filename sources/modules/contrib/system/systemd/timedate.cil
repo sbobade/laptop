@@ -192,6 +192,8 @@
     (allow ARG1 timedatex_t (dbus (send_msg)))
     (allow timedatex_t ARG1 (dbus (send_msg))))
 
-(macro timedate_admin ((type ARG1))
+(macro timedate_admin ((type ARG1)(role ARG2))
     (typeattributeset timedate_timedated_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional timedate_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

@@ -146,7 +146,9 @@
     (allow ARG1 dracut_lib_t list_dir_perms)
     (allow ARG1 dracut_lib_t read_lnk_file_perms))
 
-(macro dracut_admin ((type ARG1))
+(macro dracut_admin ((type ARG1)(role ARG2))
     (typeattributeset dracut_admin_subject_type ARG1)
+    (optional dracut_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional dracut_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

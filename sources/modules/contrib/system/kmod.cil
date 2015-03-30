@@ -103,7 +103,9 @@
     (allow ARG1 kmod_config_t list_dir_perms)
     (allow ARG1 kmod_config_t read_lnk_file_perms))
 
-(macro kmod_admin ((type ARG1))
+(macro kmod_admin ((type ARG1)(role ARG2))
     (typeattributeset kmod_admin_subject_type ARG1)
+    (optional kmod_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional kmod_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

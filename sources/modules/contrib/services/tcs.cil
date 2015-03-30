@@ -124,7 +124,9 @@
 (macro tcs_tcp_bind_tcs_port ((type ARG1))
     (allow ARG1 tcs_port_t (tcp_socket (name_bind))))
 
-(macro tcs_admin ((type ARG1))
+(macro tcs_admin ((type ARG1)(role ARG2))
     (typeattributeset tcs_admin_subject_type ARG1)
+    (optional tcs_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional tcs_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

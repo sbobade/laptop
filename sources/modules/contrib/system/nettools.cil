@@ -188,7 +188,9 @@
     (call nettools_auto_subject_type_transition_arp (ARG1))
     (roleattributeset arp_role ARG2))
 
-(macro nettools_admin ((type ARG1))
+(macro nettools_admin ((type ARG1)(role ARG2))
     (typeattributeset nettools_admin_subject_type ARG1)
+    (optional nettools_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional nettools_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

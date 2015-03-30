@@ -247,7 +247,9 @@
     (allow ARG1 bluetoothd_t (dbus (send_msg)))
     (allow bluetoothd_t ARG1 (dbus (send_msg))))
 
-(macro bluetooth_admin ((type ARG1))
+(macro bluetooth_admin ((type ARG1)(role ARG2))
     (typeattributeset bluetooth_admin_subject_type ARG1)
+    (optional bluetooth_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional bluetooth_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

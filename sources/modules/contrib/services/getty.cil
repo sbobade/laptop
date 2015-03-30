@@ -72,7 +72,9 @@
     (optional getty_start_unit_optional_systemd
         (call systemd_search_unit (ARG1))))
 
-(macro getty_admin ((type ARG1))
+(macro getty_admin ((type ARG1)(role ARG2))
     (typeattributeset getty_admin_subject_type ARG1)
+    (optional getty_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional getty_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

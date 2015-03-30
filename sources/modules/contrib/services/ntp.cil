@@ -349,7 +349,9 @@
 (macro ntp_status_ntpd_unit ((type ARG1))
     (allow ARG1 ntpd_unit_t (service (status))))
 
-(macro ntp_admin ((type ARG1))
+(macro ntp_admin ((type ARG1)(role ARG2))
     (typeattributeset ntp_admin_subject_type ARG1)
+    (optional ntp_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional ntp_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

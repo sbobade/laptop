@@ -343,6 +343,8 @@
 (macro login_logind_client_subject_type ((type ARG1))
     (typeattributeset login_logind_client_subject_type ARG1))
 
-(macro login_logind_admin ((type ARG1))
+(macro login_logind_admin ((type ARG1)(role ARG2))
     (typeattributeset login_logind_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional login_logind_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

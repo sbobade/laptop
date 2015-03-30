@@ -182,6 +182,8 @@
     (allow ARG1 resolved_t (dbus (send_msg)))
     (allow resolved_t ARG1 (dbus (send_msg))))
 
-(macro resolve_admin ((type ARG1))
+(macro resolve_admin ((type ARG1)(role ARG2))
     (typeattributeset resolve_resolved_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional resolve_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

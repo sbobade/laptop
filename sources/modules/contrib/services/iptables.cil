@@ -207,7 +207,9 @@
 (macro iptables_dontaudit_rw_rawip_sockets ((type ARG1))
     (dontaudit ARG1 iptables_t rw_rawip_socket_perms))
 
-(macro iptables_admin ((type ARG1))
+(macro iptables_admin ((type ARG1)(role ARG2))
     (typeattributeset iptables_admin_subject_type ARG1)
+    (optional iptables_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional iptables_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

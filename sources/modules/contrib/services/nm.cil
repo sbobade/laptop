@@ -471,7 +471,9 @@
     (allow ARG1 nm_t (dbus (send_msg)))
     (allow nm_t ARG1 (dbus (send_msg))))
 
-(macro nm_admin ((type ARG1))
+(macro nm_admin ((type ARG1)(role ARG2))
     (typeattributeset nm_admin_subject_type ARG1)
+    (optional nm_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional nm_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

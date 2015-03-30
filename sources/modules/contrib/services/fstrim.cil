@@ -57,7 +57,9 @@
     (call fstrim_auto_subject_type_transition (ARG1))
     (roleattributeset fstrim_role ARG2))
 
-(macro fstrim_admin ((type ARG1))
+(macro fstrim_admin ((type ARG1)(role ARG2))
     (typeattributeset fstrim_admin_subject_type ARG1)
+    (optional fstrim_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional fstrim_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

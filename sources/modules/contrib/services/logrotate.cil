@@ -133,7 +133,9 @@
     (call files_rw_lib_dirs (ARG1))
     (allow ARG1 logrotate_lib_t manage_file_perms))
 
-(macro logrotate_admin ((type ARG1))
+(macro logrotate_admin ((type ARG1)(role ARG2))
     (typeattributeset logrotate_admin_subject_type ARG1)
+    (optional logrotate_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional logrotate_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

@@ -137,6 +137,8 @@
     (allow ARG1 sysusers_runtime_t manage_dir_perms)
     (allow ARG1 sysusers_runtime_t manage_lnk_file_perms))
 
-(macro sysusers_admin ((type ARG1))
+(macro sysusers_admin ((type ARG1)(role ARG2))
     (typeattributeset sysusers_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional sysusers_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

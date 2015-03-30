@@ -329,7 +329,9 @@
 (macro lvm_rw_lvm_sem ((type ARG1))
     (allow ARG1 lvm_t rw_sem_perms))
 
-(macro lvm_admin ((type ARG1))
+(macro lvm_admin ((type ARG1)(role ARG2))
     (typeattributeset lvm_admin_subject_type ARG1)
+    (optional lvm_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional lvm_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

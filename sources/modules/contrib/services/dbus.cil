@@ -299,8 +299,10 @@
 (macro dbus_system_client_subject_type ((type ARG1))
     (typeattributeset dbus_system_client_subject_type ARG1))
 
-(macro dbus_admin ((type ARG1))
+(macro dbus_admin ((type ARG1)(role ARG2))
     (typeattributeset dbus_admin_subject_type ARG1)
+    (optional dbus_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional dbus_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))
 

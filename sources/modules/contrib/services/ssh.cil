@@ -556,7 +556,9 @@
     (call ssh_use_fd_sshd (ARG1))
     (allow ARG1 sshd_t (unix_dgram_socket (read write))))
 
-(macro ssh_admin ((type ARG1))
+(macro ssh_admin ((type ARG1)(role ARG2))
     (typeattributeset ssh_admin_subject_type ARG1)
+    (optional ssh_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional ssh_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

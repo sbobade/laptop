@@ -117,7 +117,9 @@
     (call files_rw_config_dirs (ARG1))
     (allow ARG1 mandb_config_t manage_file_perms))
 
-(macro mandb_admin ((type ARG1))
+(macro mandb_admin ((type ARG1)(role ARG2))
     (typeattributeset mandb_admin_subject_type ARG1)
+    (optional mandb_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
     (optional mandb_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

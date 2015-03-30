@@ -88,6 +88,8 @@
 (macro mycontainer_stop_unit ((type ARG1))
     (allow ARG1 mycontainer_unit_t (service (stop))))
 
-(macro mycontainer_admin ((type ARG1))
+(macro mycontainer_admin ((type ARG1)(role ARG2))
     (typeattributeset mycontainer_admin_subject_type ARG1)
-    (call systemd_system_service_admin_subject_type (ARG1)))
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional mycontainer_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))
