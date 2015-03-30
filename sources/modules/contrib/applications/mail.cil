@@ -51,6 +51,7 @@
 (call filesystems_tmpfs_object_type_transition (mail_mutt_subject_type mutt_tmpfs_t file "*"))
 (call filesystems_tmpfs_object_type_transition (mail_mutt_subject_type mutt_tmpfs_t dir "*"))
 
+(call devices_dontaudit_catchall_subject_type (mail_mutt_subject_type))
 (call devices_read_urandom (mail_mutt_subject_type))
 
 (call files_read_data_files (mail_mutt_subject_type))
