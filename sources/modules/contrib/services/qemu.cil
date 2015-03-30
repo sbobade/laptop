@@ -100,7 +100,6 @@
     (allow ARG1 qemuga_runtime_t manage_file_perms))
 
 (macro qemu_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset qemu_admin_subject_type ARG1)
     (optional qemu_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

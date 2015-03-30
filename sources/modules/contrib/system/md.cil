@@ -137,7 +137,6 @@
     (allow ARG1 mdadm_runtime_t manage_lnk_file_perms))
 
 (macro md_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset md_admin_subject_type ARG1)
     (optional md_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

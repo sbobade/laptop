@@ -251,7 +251,6 @@
     (allow ARG1 alsautil_tmpfs_t relabel_file_perms))
 
 (macro alsa_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset alsa_admin_subject_type ARG1)
     (optional alsa_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

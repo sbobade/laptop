@@ -557,7 +557,6 @@
     (allow ARG1 sshd_t (unix_dgram_socket (read write))))
 
 (macro ssh_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset ssh_admin_subject_type ARG1)
     (optional ssh_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

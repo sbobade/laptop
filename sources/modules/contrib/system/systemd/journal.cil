@@ -389,6 +389,5 @@
     (call stream_connect_pattern (ARG1 journald_systemd_runtime_t journald_systemd_runtime_t journald_t)))
 
 (macro journal_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset journal_admin_subject_type ARG1)
     (call systemd_system_service_admin_subject_type (ARG1)))

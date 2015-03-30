@@ -388,7 +388,6 @@
     (allow polkitd_t ARG1 (dbus (send_msg))))
 
 (macro polkit_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset polkit_admin_subject_type ARG1)
     (optional polkit_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

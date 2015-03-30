@@ -193,7 +193,6 @@
     (allow ARG1 login_pam_config_t read_file_perms))
 
 (macro login_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset login_admin_subject_type ARG1)
     (optional login_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

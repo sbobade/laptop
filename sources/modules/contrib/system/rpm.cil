@@ -431,7 +431,6 @@
     (allow ARG1 rpm_t rw_inherited_fifo_file_perms))
 
 (macro rpm_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset rpm_admin_subject_type ARG1)
     (optional rpm_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

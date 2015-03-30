@@ -150,7 +150,6 @@
     (allow ARG1 dmcrypt_t rw_sem_perms))
 
 (macro dm_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset dm_admin_subject_type ARG1)
     (optional dm_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

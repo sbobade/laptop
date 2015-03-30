@@ -221,7 +221,6 @@
     (allow wpa_t ARG1 (dbus (send_msg))))
 
 (macro wpa_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset wpa_admin_subject_type ARG1)
     (optional wpa_admin_optional_systemd
-    (call systemd_system_service_admin_subject_type (ARG1))))
+        (call systemd_system_service_admin_subject_type (ARG1))))

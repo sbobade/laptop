@@ -350,7 +350,6 @@
     (allow ARG1 ntpd_unit_t (service (status))))
 
 (macro ntp_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset ntp_admin_subject_type ARG1)
     (optional ntp_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

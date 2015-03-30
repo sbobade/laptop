@@ -118,7 +118,6 @@
     (allow rtkitd_t ARG1 (dbus (send_msg))))
 
 (macro rtkit_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset rtkit_admin_subject_type ARG1)
     (optional rtkit_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

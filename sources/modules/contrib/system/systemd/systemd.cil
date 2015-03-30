@@ -532,6 +532,8 @@
     (call systemduser_control_transient_units (systemd_unconfined_subject_type))
     (call systemduser_control_config_home (systemd_unconfined_subject_type)))
 
+(allow systemd_system_service_admin_subject_type self (capability (kill sys_ptrace sys_resource net_admin)))
+
 (call systemd_exec_systemctl (systemd_system_service_admin_subject_type))
 (call systemd_reload_system (systemd_system_service_admin_subject_type))
 (call systemd_status_system (systemd_system_service_admin_subject_type))
@@ -1196,7 +1198,6 @@
     (allow systemd_t ARG1 (dbus (send_msg))))
 
 (macro systemd_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset systemd_admin_subject_type ARG1))
 
 (macro systemd_unconfined_subject_type ((type ARG1))

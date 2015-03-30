@@ -73,7 +73,6 @@
         (call systemd_search_unit (ARG1))))
 
 (macro getty_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset getty_admin_subject_type ARG1)
     (optional getty_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

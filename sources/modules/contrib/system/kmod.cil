@@ -104,7 +104,6 @@
     (allow ARG1 kmod_config_t read_lnk_file_perms))
 
 (macro kmod_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset kmod_admin_subject_type ARG1)
     (optional kmod_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

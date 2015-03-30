@@ -223,7 +223,6 @@
     (allow ARG1 lirc_runtime_t manage_sock_file_perms))
 
 (macro lirc_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset lirc_admin_subject_type ARG1)
     (optional lirc_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

@@ -330,7 +330,6 @@
     (allow ARG1 lvm_t rw_sem_perms))
 
 (macro lvm_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset lvm_admin_subject_type ARG1)
     (optional lvm_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

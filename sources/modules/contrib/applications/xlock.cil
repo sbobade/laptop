@@ -122,7 +122,6 @@
     (call usersubject_home_dir_object_type_transition (ARG1 xlock_home_t file ".xlockrc")))
 
 (macro xlock_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset xlock_admin_subject_type ARG1)
     (optional xlock_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

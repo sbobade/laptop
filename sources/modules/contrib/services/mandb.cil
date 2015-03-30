@@ -118,7 +118,6 @@
     (allow ARG1 mandb_config_t manage_file_perms))
 
 (macro mandb_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset mandb_admin_subject_type ARG1)
     (optional mandb_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

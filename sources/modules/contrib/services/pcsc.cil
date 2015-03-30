@@ -163,7 +163,6 @@
     (call stream_connect_pattern (ARG1 pcscd_runtime_t pcscd_runtime_t pcscd_t)))
 
 (macro pcsc_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset pcsc_admin_subject_type ARG1)
     (optional pcsc_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

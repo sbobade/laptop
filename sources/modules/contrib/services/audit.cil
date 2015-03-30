@@ -395,7 +395,6 @@
     (allow ARG1 auditd_t (fd (use))))
 
 (macro audit_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset audit_admin_subject_type ARG1)
     (optional audit_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

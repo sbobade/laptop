@@ -344,6 +344,5 @@
     (typeattributeset login_logind_client_subject_type ARG1))
 
 (macro login_logind_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset login_logind_admin_subject_type ARG1)
     (call systemd_system_service_admin_subject_type (ARG1)))

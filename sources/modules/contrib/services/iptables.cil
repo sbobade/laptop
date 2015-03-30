@@ -208,7 +208,6 @@
     (dontaudit ARG1 iptables_t rw_rawip_socket_perms))
 
 (macro iptables_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset iptables_admin_subject_type ARG1)
     (optional iptables_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

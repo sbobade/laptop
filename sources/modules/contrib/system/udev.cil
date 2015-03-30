@@ -318,7 +318,6 @@
     (call stream_connect_pattern (ARG1 udev_runtime_t udev_runtime_t udevd_t)))
 
 (macro udev_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset udev_admin_subject_type ARG1)
     (optional udev_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

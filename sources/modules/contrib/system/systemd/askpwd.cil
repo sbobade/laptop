@@ -203,6 +203,5 @@
     (call systemd_runtime_object_type_transition (ARG2 askpwdagent_systemd_runtime_t dir "ask-password-block")))
 
 (macro askpwd_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset askpwd_admin_subject_type ARG1)
     (call systemd_system_service_admin_subject_type (ARG1)))

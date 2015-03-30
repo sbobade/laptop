@@ -293,7 +293,6 @@
         (ARG1 plymouthd_runtime_t plymouthd_runtime_t plymouthd_t)))
 
 (macro plymouth_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset plymouth_admin_subject_type ARG1)
     (optional plymouth_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

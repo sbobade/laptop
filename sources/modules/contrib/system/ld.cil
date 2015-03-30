@@ -99,7 +99,6 @@
     (allow ARG1 ldconfig_cache_t read_lnk_file_perms))
 
 (macro ld_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset ld_admin_subject_type ARG1)
     (optional ld_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))

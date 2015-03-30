@@ -216,6 +216,5 @@
     (call dgram_send_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t shutdownd_t)))
 
 (macro shutdown_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset shutdown_admin_subject_type ARG1)
     (call systemd_system_service_admin_subject_type (ARG1)))

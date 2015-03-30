@@ -189,7 +189,6 @@
     (roleattributeset arp_role ARG2))
 
 (macro nettools_admin ((type ARG1))
-    (allow ARG1 self (capability (kill sys_ptrace)))
     (typeattributeset nettools_admin_subject_type ARG1)
     (optional nettools_admin_optional_systemd
         (call systemd_system_service_admin_subject_type (ARG1))))
