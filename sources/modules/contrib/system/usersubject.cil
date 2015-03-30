@@ -185,6 +185,12 @@
     (call ssh_rw_inherited_sshd_unix_stream_sockets (usersubject_common_login_subject_type))
     (call ssh_rw_inherited_sshd_unix_dgram_sockets (usersubject_common_login_subject_type)))
 
+(optional usersubject_common_login_subject_type_optional_systemduser
+    (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (usersubject_common_login_subject_type))
+    (call systemduser_tmpfs_object_type_transition_private_tmpfs_sock_files (usersubject_common_login_subject_type))
+    (call systemduser_tmpfs_object_type_transition_systemduser_transient_unit_dirs (usersubject_common_login_subject_type))
+    (call systemduser_config_home_object_type_transition_config_home_dirs (staff_t)))
+
 (optional usersubject_optional_tmpfiles
     (call tmpfiles_object_exception_type (usersubject_home_object_type)))
 

@@ -491,19 +491,15 @@
 
     (call systemduser_manage_tmpfs (staff_t))
     (call systemduser_relabel_tmpfs (staff_t))
-    (call systemduser_tmpfs_object_type_transition_tmpfs_dirs (staff_t))
 
     (call systemduser_manage_private_tmpfs_sock_files (staff_t))
     (call systemduser_relabel_private_tmpfs_sock_files (staff_t))
-    (call systemduser_tmpfs_object_type_transition_private_tmpfs_sock_files (staff_t))
 
     (call systemduser_manage_transient_unit (staff_t))
     (call systemduser_relabel_transient_unit (staff_t))
-    (call systemduser_tmpfs_object_type_transition_systemduser_transient_unit_dirs (staff_t))
 
     (call systemduser_manage_config_home (staff_t))
     (call systemduser_relabel_config_home (staff_t))
-    (call systemduser_config_home_object_type_transition_config_home_dirs (staff_t))
 
     (call systemduser_control_all_units (staff_t)))
 
