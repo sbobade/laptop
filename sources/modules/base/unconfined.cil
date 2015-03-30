@@ -18,6 +18,7 @@
 (call system_unconfined_subject_type (unconfined_subject_type))
 
 (optional unconfined_subject_type_optional_auth
+    (call auth_manage_shadow (unconfined_subject_type))
     (call auth_unconfined_subject_type (unconfined_subject_type)))
 
 (optional unconfined_subject_type_optional_dbus
