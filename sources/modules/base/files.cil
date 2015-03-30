@@ -219,7 +219,7 @@
 
 (call files_execmod_all_except (files_unconfined_subject_type))
 
-(call files_dontaudit_manage_all_except (files_dontaudit_catchall_subject_type))
+(call files_dontaudit_manage_all (files_dontaudit_catchall_subject_type))
 
 (macro files_object_type ((type ARG1))
     (typeattributeset files_object_type ARG1)
@@ -1272,6 +1272,9 @@
 
 (macro files_dontaudit_manage_all_except ((type ARG1))
     (dontaudit ARG1 files_except (all_file_objects (manage))))
+
+(macro files_dontaudit_manage_all ((type ARG1))
+    (dontaudit ARG1 files_object_type (all_file_objects (manage))))
 
 (macro files_getattr_all_files ((type ARG1))
     (call getattr_files_pattern (ARG1 files_object_type files_object_type)))
