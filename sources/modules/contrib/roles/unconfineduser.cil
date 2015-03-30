@@ -1,7 +1,13 @@
 (typeattribute unconfineduser_subject_type)
 
 (call unconfined_subject_type (unconfineduser_subject_type))
+
 (call usersubject_priv_login_subject_type (unconfineduser_subject_type))
+
+(optional unconfineduser_optional_ubac
+    (tunableif enable_ubac
+        (true
+            (call usersubject_common_type_exception_subject_type (unconfineduser_subject_type)))))
 
 (macro unconfineduser_subject_type ((type ARG1))
     (typeattributeset unconfineduser_subject_type ARG1))

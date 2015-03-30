@@ -1,7 +1,5 @@
-(tunable applications_enable_ubac true)
-
-(optional applications_enable_ubac_optional_ubac
-    (tunableif applications_enable_ubac
+(optional applications_optional_ubac
+    (tunableif enable_ubac
         (true
             (call ubac_constrained_subject_type (applications_subject_type)))))
 

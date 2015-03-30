@@ -23,6 +23,11 @@
     (and (usersubject_common_login_subject_type)
     (not (usersubject_priv_login_subject_type))))
 
+(typeattribute usersubject_common_type_except)
+(typeattribute usersubject_common_type_exception_subject_type)
+(typeattributeset usersubject_common_type_except
+    (and (usersubject_common_type) (not (usersubject_common_type_exception_subject_type))))
+
 (type home_dir_t)
 (call files_object_type (home_dir_t))
 
@@ -129,6 +134,11 @@
 (call miscfiles_read_locale (usersubject_common_type))
 
 (call usersubject_use_inherited_terminals (usersubject_common_type))
+
+(optional usersubject_optional_ubac
+    (tunableif enable_ubac
+        (true
+            (call ubac_constrained_subject_type (usersubject_common_type_except)))))
 
 (allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
 (allow usersubject_common_login_subject_type self r_netlink_route_socket_perms)
@@ -1349,3 +1359,6 @@
 
 (macro usersubject_send_signal_all_common_login_subjects ((type ARG1))
     (allow ARG1 usersubject_common_login_subject_type (process (signal))))
+
+(macro usersubject_common_type_exception_subject_type ((type ARG1))
+    (typeattributeset usersubject_common_type_exception_subject_type ARG1))
