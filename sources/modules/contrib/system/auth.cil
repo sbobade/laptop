@@ -528,6 +528,9 @@
 (macro auth_use_login_program_fd ((type ARG1))
     (allow ARG1 auth_login_program_subject_type (fd (use))))
 
+(macro auth_link_login_program_keyring ((type ARG1))
+    (allow ARG1 auth_login_program_subject_type (key (search link))))
+
 (macro auth_pam_client_subject_type ((type ARG1))
     (typeattributeset auth_pam_client_subject_type ARG1))
 

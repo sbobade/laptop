@@ -63,6 +63,8 @@
 
 (call usermanage_read_passwd_pam_config_files (usermanage_passwd_subject_type))
 
+(call usersubject_getattr_terminals (usermanage_passwd_subject_type))
+
 (optional passwd_subject_type_optional_journal
     (call journal_client_subject_type (usermanage_passwd_subject_type)))
 
@@ -132,6 +134,7 @@
 (call seutil_read_selinux_config_files (useradd_t))
 (call seutil_read_file_context_files (useradd_t))
 
+(call usersubject_getattr_terminals (useradd_t))
 (call usersubject_manage_home_dir (useradd_t))
 (call usersubject_manage_mail_spool_files (useradd_t))
 (call usersubject_spool_object_type_transition_mail_spool_files (useradd_t "*"))

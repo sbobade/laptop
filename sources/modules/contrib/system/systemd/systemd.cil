@@ -287,6 +287,9 @@
 (optional systemd_optional_askpwd
     (call askpwd_read_systemd_runtime (systemd_t)))
 
+(optional systemd_optional_auth
+    (call auth_link_login_program_keyring (systemd_t)))
+
 (optional systemd_optional_dbus
     (call dbus_system_service (systemd_t)))
 

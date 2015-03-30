@@ -108,6 +108,8 @@
 (context getsebool_exec (system_u object_r getsebool_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/getsebool" file getsebool_exec)
 
+(call devices_dontaudit_catchall_subject_type (getsebool_t))
+
 (call selinux_list_securityfs (getsebool_t))
 (call selinux_get_all_booleans (getsebool_t))
 
