@@ -5,12 +5,18 @@
 (constrain (process (sigchld sigkill sigstop signull signal ptrace
     getsched setsched getsession getpgid setpgid getcap setcap
     share getattr setrlimit))
-    (or (or (eq u1 u2)
+    (or (or (or (or (or (eq u1 u2)
+        (eq u1 system_u))
+        (eq u1 staff_u))
+        (eq u1 sysadm_u))
         (eq u2 system_u))
         (neq t1 ubac_constrained_subject_type)))
 
 (constrain (all_file_objects (manage))
-    (or (or (or (or (or (eq u1 u2)
+    (or (or (or (or (or (or (or (or (eq u1 u2)
+        (eq u1 system_u))
+        (eq u1 staff_u))
+        (eq u1 sysadm_u))
         (and (eq u2 system_u) (neq t2 subject_common_type)))
         (and (eq u2 staff_u) (neq t2 subject_common_type)))
         (and (eq u2 sysadm_u) (neq t2 subject_common_type)))
