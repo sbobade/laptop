@@ -179,6 +179,7 @@
     (call fpaste_relabel_tmp (sysadm_t)))
 
 (optional sysadm_optional_fstools
+    (call fstools_manage_runtime (sysadm_t))
     (call fstools_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_fstrim
@@ -524,6 +525,9 @@
 (optional sysadm_optional_coredump
     (call coredump_run_coredumpctl (sysadm_subject_type sysadm_r))
     (call coredump_manage_systemd_lib (sysadm_t)))
+
+(optional sysadm_optional_fsck
+    (call fsck_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_hostnamectl
     (type sysadm_hostnamectl_t)
