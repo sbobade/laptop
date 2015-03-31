@@ -155,6 +155,10 @@
     (call files_search_runtime (ARG1))
     (call manage_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
 
+(macro fstools_manage_runtime_dirs ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
+
 (macro fstools_read_runtime_lnk_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (call read_lnk_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))

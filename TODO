@@ -17,8 +17,6 @@
     - Remove that dependency if/when that "bug/limitation" in the processing of constraints is lifted
     - Fix the tests accordingly
 
-* on e145 edit nf(6)?tables.service:  Before=network.target
-
 * dbus/dbususer ~/.local/share/dbus-1/services
 
 * unconfined users currently get all HOME_DIR file contexts specs just like any other user (except root)
