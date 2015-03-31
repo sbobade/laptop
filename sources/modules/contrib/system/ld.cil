@@ -29,7 +29,7 @@
 
 (call files_read_config (ldconfig_t))
 
-(call libraries_create_lnk_files (ldconfig_t))
+(call libraries_manage_lib (ldconfig_t))
 (call libraries_manage_ld_so_cache_files (ldconfig_t))
 (call libraries_config_object_type_transition_ld_so_cache_files (ldconfig_t))
 

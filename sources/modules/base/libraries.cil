@@ -39,6 +39,10 @@
     (call files_search_data (ARG1))
     (call read_files_pattern (ARG1 lib_t lib_t)))
 
+(macro libraries_delete_lib_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call delete_files_pattern (ARG1 lib_t lib_t)))
+
 (macro libraries_read_lnk_files ((type ARG1))
     (call files_search_data (ARG1))
     (call read_lnk_files_pattern (ARG1 lib_t lib_t)))
@@ -60,6 +64,13 @@
 (macro libraries_create_lnk_files ((type ARG1))
     (call files_search_data (ARG1))
     (call create_lnk_files_pattern (ARG1 lib_t lib_t)))
+
+(macro libraries_manage_lib ((type ARG1))
+    (call filesystems_rw_rootfs_dirs (ARG1))
+    (call files_rw_data_dirs (ARG1))
+    (allow ARG1 lib_t manage_file_perms)
+    (allow ARG1 lib_t manage_dir_perms)
+    (allow ARG1 lib_t manage_lnk_file_perms))
 
 (macro libraries_use_ld_so ((type ARG1))
     (call libraries_list (ARG1))
@@ -89,9 +100,3 @@
 
 (macro libraries_manage_lib_files ((type ARG1))
     (call manage_files_pattern (ARG1 lib_t lib_t)))
-
-(macro libraries_manage_lib ((type ARG1))
-    (call filesystems_rw_rootfs_dirs (ARG1))
-    (allow ARG1 lib_t manage_file_perms)
-    (allow ARG1 lib_t manage_dir_perms)
-    (allow ARG1 lib_t manage_lnk_file_perms))
