@@ -213,6 +213,13 @@ gen_listing () {
         MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
     done
 
+    for m in ${MODULES[@]} ; do
+        if [ ! -s $m ] ; then
+            echo "Not processing empty file: $m"
+            MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v ${m}$)
+        fi
+    done
+
     if [ -z "${MODULES}" ] ; then
         echo "No modules to list!"
         return 192
@@ -271,6 +278,13 @@ get_help () {
 get_modules () {
     for i in ${IGNORE[*]} ; do
         MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v $i)
+    done
+
+    for m in ${MODULES[@]} ; do
+        if [ ! -s $m ] ; then
+            echo "Not processing empty file: $m"
+            MODULES=$(printf "%s\n" "${MODULES[*]}" | /bin/grep -v ${m}$)
+        fi
     done
 
     if [ -z "${MODULES}" ] ; then
