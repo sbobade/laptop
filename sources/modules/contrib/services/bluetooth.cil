@@ -79,7 +79,7 @@
 (allow bluetoothd_t bluetoothd_tmpfs_t manage_fifo_file_perms)
 (call filesystems_tmpfs_object_type_transition (bluetoothd_t bluetoothd_tmpfs_t fifo_file "*"))
 
-(allow bluetoothd_t self (capability (net_bind_service)))
+(allow bluetoothd_t self (capability (net_bind_service net_admin)))
 (allow bluetoothd_t self create_socket_perms)
 (allow bluetoothd_t self (socket (listen accept)))
 
