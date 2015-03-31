@@ -420,8 +420,6 @@
     (call ssh_manage_home (sysadm_t))
     (call ssh_relabel_home (sysadm_t))
 
-    (call ssh_home_dir_object_type_transition_ssh_home_dirs (sysadm_t ".ssh"))
-
     (context sysadm_ssh_home (sysadm_u object_r ssh_home_t (systemlow systemlow)))
     (filecon "/root/\.ssh(/.*)?" any sysadm_ssh_home)
 

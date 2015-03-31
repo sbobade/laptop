@@ -436,8 +436,6 @@
     (call ssh_manage_home (staff_t))
     (call ssh_relabel_home (staff_t))
 
-    (call ssh_home_dir_object_type_transition_ssh_home_dirs (staff_t ".ssh"))
-
     (type staff_ssh_t)
     (call ssh_role_template (staff_r staff_subject_type staff_ssh_t))
 

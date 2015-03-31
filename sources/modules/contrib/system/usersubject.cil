@@ -181,6 +181,7 @@
 (call seutil_read_file_context_files (usersubject_common_login_subject_type))
 
 (optional usersubject_common_login_subject_type_optional_ssh
+    (call ssh_home_dir_object_type_transition_ssh_home_dirs (usersubject_common_login_subject_type ".ssh"))
     (call ssh_rw_inherited_sshd_tcp_sockets (usersubject_common_login_subject_type))
     (call ssh_rw_inherited_sshd_unix_stream_sockets (usersubject_common_login_subject_type))
     (call ssh_rw_inherited_sshd_unix_dgram_sockets (usersubject_common_login_subject_type)))
