@@ -31,3 +31,11 @@
 * unconfined.cil: grant access to policy_conf_t, audisp_conf_t, auditd_conf_t, auditd_log_t
 
 * dbus/dbususer ~/.local/share/dbus-1/services
+
+* unconfined users currently get all HOME_DIR file contexts specs just like any other user (except root)
+    should probably find a way to only add specs for those users that apply to them: home_dir_t, user_home_t, config_home_t, cache_home_t, data_home_t, ssh_home_t,
+        systemd_config_home_t
+
+    it does not really matter though since the user is unconfined anyways but it would be a little cleaner
+
+    The problem would be that i would need to add more logic on how to determine which seuser is unconfined and which contexts to add and which not
