@@ -1,4 +1,8 @@
+(roleattribute unconfined_subject_role)
+
 (typeattribute unconfined_subject_type)
+
+(roleattributeset unconfined_subject_role system_r)
 
 (allow unconfined_subject_type self
     all_capability_perms_except_sys_module_and_sys_nice)
@@ -46,7 +50,7 @@
     (call seutil_default_context_object_type_transition_file_context_dirs (unconfined_subject_type)))
 
 (optional unconfined_subject_type_optional_rpm
-    (call rpm_shell_manual_subject_type_transition_rpm_script (unconfined_subject_type)))
+    (call rpm_run_script (unconfined_subject_type unconfined_subject_role)))
 
 (optional unconfined_subject_type_optional_storage
     (call storage_unconfined_subject_type (unconfined_subject_type)))
@@ -56,6 +60,13 @@
 
 (macro unconfined_subject_type ((type ARG1))
     (typeattributeset unconfined_subject_type ARG1))
+
+(macro unconfined_subject_role ((role ARG1))
+    (roleattributeset unconfined_subject_role ARG1))
+
+(macro unconfined_subject ((type ARG1)(role ARG2))
+    (call unconfined_subject_type (ARG1))
+    (call unconfined_subject_role (ARG2)))
 
 (macro unconfined_read_state_all_subjects ((type ARG1))
     (call filesystems_search_proc (ARG1))

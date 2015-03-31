@@ -1,6 +1,7 @@
+(roleattribute unconfineduser_subject_role)
 (typeattribute unconfineduser_subject_type)
 
-(call unconfined_subject_type (unconfineduser_subject_type))
+(call unconfined_subject (unconfineduser_subject_type unconfineduser_subject_role))
 
 (call usersubject_priv_login_subject_type (unconfineduser_subject_type))
 
@@ -12,8 +13,15 @@
 (macro unconfineduser_subject_type ((type ARG1))
     (typeattributeset unconfineduser_subject_type ARG1))
 
+(macro unconfineduser_subject_role ((role ARG1))
+    (roleattributeset unconfineduser_subject_role ARG1))
+
+(macro unconfineduser_subject ((type ARG1)(role ARG2))
+    (call unconfineduser_subject_type (ARG1))
+    (call unconfineduser_subject_role (ARG2)))
+
 (macro unconfineduser_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
-    (call unconfineduser_subject_type (ARG3))
+    (call unconfineduser_subject (ARG3 ARG2))
     (call usersubject_common_login_subject_template (ARG1 ARG2 ARG3)))
 
 (macro unconfineduser_create_keyring_all_subjects ((type ARG1))
