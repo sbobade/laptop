@@ -28,8 +28,6 @@
 
 * on e145 edit nf(6)?tables.service:  Before=network.target
 
-* unconfined.cil: grant access to policy_conf_t, audisp_conf_t, auditd_conf_t, auditd_log_t
-
 * dbus/dbususer ~/.local/share/dbus-1/services
 
 * unconfined users currently get all HOME_DIR file contexts specs just like any other user (except root)
