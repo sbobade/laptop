@@ -108,8 +108,6 @@
 (context getsebool_exec (system_u object_r getsebool_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/getsebool" file getsebool_exec)
 
-(call devices_dontaudit_catchall_subject_type (getsebool_t))
-
 (call selinux_list_securityfs (getsebool_t))
 (call selinux_get_all_booleans (getsebool_t))
 
@@ -146,8 +144,6 @@
 
 (context getenforce_exec (system_u object_r getenforce_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/getenforce" file getenforce_exec)
-
-(call devices_dontaudit_catchall_subject_type (getenforce_t))
 
 (call selinux_get_enforce_mode (getenforce_t))
 
@@ -204,8 +200,6 @@
 (filecon "/usr/bin/sediff" file setools_exec)
 (filecon "/usr/bin/seinfo" file setools_exec)
 (filecon "/usr/bin/sesearch" file setools_exec)
-
-(call devices_dontaudit_catchall_subject_type (setools_t))
 
 (call selinux_read_policy (setools_t))
 

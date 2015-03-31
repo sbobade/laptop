@@ -116,9 +116,6 @@
 
     (allow iptables_admin_subject_type iptables_unit_t (service (all))))
 
-(optional iptables_optional_usersubject
-    (call usersubject_getattr_terminals (iptables_t)))
-
 (allow iptables_admin_subject_type iptables_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (iptables_admin_subject_type iptables_t))
 

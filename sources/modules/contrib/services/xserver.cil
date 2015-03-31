@@ -185,8 +185,6 @@
 
 (call devices_rw_dri (xserver_wrap_t))
 
-(call usersubject_getattr_ttys (xserver_wrap_t))
-
 (call xserver_run (xserver_wrap_t xserver_wrap_role))
 (call xserver_read_config_files (xserver_wrap_t))
 
@@ -221,7 +219,6 @@
 
 (call miscfiles_read_locale (xserver_startx_subject_type))
 
-(call usersubject_getattr_ttys (xserver_startx_subject_type))
 (call usersubject_getattr_exec_home_files (xserver_startx_subject_type))
 
 (call xserver_delete_xauth_home_files (xserver_startx_subject_type))

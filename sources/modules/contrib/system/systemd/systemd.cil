@@ -413,7 +413,6 @@
     (call systemduser_read_config_home (systemd_systemctl_subject_type)))
 
 (optional systemd_systemdctl_subject_type_optional_usersubject
-    (call usersubject_getattr_terminals (systemd_systemctl_subject_type))
     (call usersubject_dontaudit_read_user_home_files (systemd_systemctl_subject_type)))
 
 (type systemd_generic_t)

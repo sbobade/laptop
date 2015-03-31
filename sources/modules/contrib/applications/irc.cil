@@ -25,7 +25,6 @@
 
 (call system_read_crypto_sysctl (irc_irssi_subject_type))
 
-(call devices_dontaudit_catchall_subject_type (irc_irssi_subject_type))
 (call devices_read_random (irc_irssi_subject_type))
 (call devices_read_urandom (irc_irssi_subject_type))
 

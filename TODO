@@ -17,15 +17,6 @@
     - Remove that dependency if/when that "bug/limitation" in the processing of constraints is lifted
     - Fix the tests accordingly
 
-* I should dontaudit attempts to get attributes of user terminals on applications_subject_type level rather than for each individual application subject
-    The problem is that when some app really needs it, it would probably be harder to identify, that is why for now i add these on an individual basis
-
-    not just that but eventually i would probably need to add (devices_dontaudit_catchall_subject_type (applications_subject_type)), and that would
-    hide even more potentially critical access attempts.
-
-    Keep it like this for a while work out on individual basis, once i dont see these attempts any more, and things are still stable, then i can move it to
-        applications.cil
-
 * on e145 edit nf(6)?tables.service:  Before=network.target
 
 * dbus/dbususer ~/.local/share/dbus-1/services

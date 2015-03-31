@@ -96,9 +96,6 @@
 (optional machined_subject_type_optional_polkit
     (call polkit_dbus_chat_polkitd (machined_t)))
 
-(optional machined_optional_usersubject
-    (call usersubject_getattr_terminals (machined_t)))
-
 (allow machine_machinectl_client_subject_type self (capability (ipc_lock)))
 (allow machine_machinectl_client_subject_type self (process (setrlimit)))
 (allow machine_machinectl_client_subject_type self create_unix_dgram_socket_perms)

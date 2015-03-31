@@ -49,9 +49,6 @@
     (call nspawn_list_all_common_container_objects (journal_journalctl_subject_type))
     (call nspawn_read_all_common_container_object_files (journal_journalctl_subject_type)))
 
-(optional journal_journalctl_subject_type_optional_usersubject
-    (call usersubject_getattr_terminals (journal_journalctl_subject_type)))
-
 (type journald_t)
 (type journald_exec_t)
 (call systemd_daemon (journald_t journald_exec_t))

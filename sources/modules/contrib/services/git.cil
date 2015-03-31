@@ -46,7 +46,6 @@
 (allow git_subject_type git_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (git_subject_type git_tmpfs_t file "*"))
 
-(call devices_dontaudit_catchall_subject_type (git_subject_type))
 (call devices_read_urandom (git_subject_type))
 
 (call files_read_data (git_subject_type))
