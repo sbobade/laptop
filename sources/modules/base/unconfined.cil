@@ -45,6 +45,9 @@
     (call seutil_config_object_type_transition_selinux_config_dirs (unconfined_subject_type))
     (call seutil_default_context_object_type_transition_file_context_dirs (unconfined_subject_type)))
 
+(optional unconfined_subject_type_optional_rpm
+    (call rpm_shell_manual_subject_type_transition_rpm_script (unconfined_subject_type)))
+
 (optional unconfined_subject_type_optional_storage
     (call storage_unconfined_subject_type (unconfined_subject_type)))
 
