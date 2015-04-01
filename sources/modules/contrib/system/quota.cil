@@ -108,6 +108,7 @@
 (call files_read_config_files (quotaed_t))
 
 (call filesystems_get_filesystem_quotas (quotaed_t))
+(call filesystems_getattr_filesystems (quotaed_t))
 (call filesystems_modify_filesystem_quotas (quotaed_t))
 (call filesystems_read_devtmpfs_lnk_files (quotaed_t))
 
