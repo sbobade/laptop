@@ -20,6 +20,8 @@
 (context quotaon_exec (system_u object_r quotaon_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/quotaon" file quotaon_exec)
 
+(allow quotaon_t self (capability (sys_admin)))
+
 (call system_read_fs_sysctl (quotaon_t))
 
 (call filesystems_getattr_filesystems (quotaon_t))
@@ -132,6 +134,8 @@
 (call filesystems_get_filesystem_quotas (quota_t))
 
 (call miscfiles_read_locale (quota_t))
+
+(call ns_client_subject_type (quota_t))
 
 (type quota_db_t)
 (call files_object_type (quota_db_t))
