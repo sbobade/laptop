@@ -432,6 +432,9 @@
     (call system_setattr_all_mountpoint_dirs (ARG1))
     (allow ARG1 system_mountpoint_object_type (dir (mounton))))
 
+(macro system_all_mountpoint_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call object_type_transition_pattern (ARG1 system_mountpoint_object_type ARG2 ARG3 ARG4)))
+
 (macro system_rw_unix_dgram_sockets ((type ARG1))
     (allow ARG1 system_t rw_unix_dgram_socket_perms))
 

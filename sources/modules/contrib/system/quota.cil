@@ -20,6 +20,19 @@
 (context quotaon_exec (system_u object_r quotaon_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/quotaon" file quotaon_exec)
 
+(call system_read_fs_sysctl (quotaon_t))
+
+(call filesystems_getattr_filesystems (quotaon_t))
+(call filesystems_read_devtmpfs_lnk_files (quotaon_t))
+(call filesystems_get_filesystem_quotas (quotaon_t))
+(call filesystems_modify_filesystem_quotas (quotaon_t))
+
+(call storage_getattr_fixed_disk (quotaon_t))
+(call storage_getattr_removable (quotaon_t))
+(call storage_getattr_scsi_generic (quotaon_t))
+
+(call miscfiles_read_locale (quotaon_t))
+
 (type quotacheck_t)
 (type quotacheck_exec_t)
 (call applications_app (quotacheck_t quotacheck_exec_t))
@@ -31,6 +44,25 @@
 
 (context quotacheck_exec (system_u object_r quotacheck_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/quotacheck" file quotacheck_exec)
+
+(allow quotacheck_t quota_db_t manage_file_perms)
+(call system_all_mountpoint_object_type_transition (quotacheck_t quota_db_t file "aquota.user"))
+(call system_all_mountpoint_object_type_transition (quotacheck_t quota_db_t file "aquota.user.new"))
+(call system_all_mountpoint_object_type_transition (quotacheck_t quota_db_t file "aquota.group"))
+(call system_all_mountpoint_object_type_transition (quotacheck_t quota_db_t file "aquota.group.new"))
+
+(call files_read_all_except (quotacheck_t))
+
+(call filesystems_get_filesystem_quotas (quotacheck_t))
+
+(call auth_read_shadow (quotacheck_t))
+
+(call seutil_read_policy_config (quotacheck_t))
+
+(optional quotacheck_optional_audit
+    (call audit_read_auditd_config (quotacheck_t))
+    (call audit_read_auditd_log (quotacheck_t))
+    (call audit_read_audispd_config (quotacheck_t)))
 
 (type quotaed_t)
 (type quotaed_exec_t)
@@ -101,6 +133,8 @@
 
     (context quotacheck_systemd_runtime (system_u object_r quotacheck_systemd_runtime_t (systemlow systemlow)))
     (filecon "/var/run/systemd/quotacheck" file quotacheck_systemd_runtime)
+
+    (call journal_client_subject_type (quotacheck_t))
 
     (allow quota_admin_subject_type quota_unit_t (service (all))))
 
