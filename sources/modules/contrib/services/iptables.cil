@@ -87,6 +87,7 @@
 (call kmod_read_config (iptables_t))
 (call kmod_run (iptables_t iptables_role))
 
+(call miscfiles_read_all_terminfo (iptables_t))
 (call miscfiles_read_locale (iptables_t))
 (call miscfiles_read_net_config_files (iptables_t))
 
