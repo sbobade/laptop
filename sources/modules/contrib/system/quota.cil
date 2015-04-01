@@ -136,6 +136,8 @@
 (filecon "/usr/bin/quota" file quota_exec)
 (filecon "/usr/bin/quotasync" file quota_exec)
 
+(call quota_t self (capability (sys_admin)))
+
 (call system_read_fs_sysctl (quota_t))
 
 (call filesystems_read_devtmpfs_lnk_files (quota_t))
