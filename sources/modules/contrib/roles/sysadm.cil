@@ -399,6 +399,7 @@
     (call quota_run_quotaon (sysadm_t sysadm_r))
     (call quota_run_quotacheck (sysadm_t sysadm_r))
     (call quota_run_quotaed (sysadm_t sysadm_r))
+    (call quota_manage_quotaed_tmpfs_files (sysadm_t))
     (call quota_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_resetimg

@@ -91,6 +91,31 @@
 (filecon "/usr/sbin/setquota" file quotaed_exec)
 (filecon "/usr/sbin/xqmstats" file quotaed_exec)
 
+(type quotaed_tmpfs_t)
+(call usersubject_tmpfs_object_type (quotaed_tmpfs_t))
+
+(allow quotaed_t self (capability (setuid setgid dac_override)))
+
+(allow quotaed_t quotaed_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (quotaed_t quotaed_tmpfs_t file "*"))
+
+(call system_read_fs_sysctl (quotaed_t))
+
+(call commands_exec (quotaed_t))
+
+(call files_read_config_files (quotaed_t))
+
+(call filesystems_get_filesystem_quotas (quotaed_t))
+(call filesystems_modify_filesystem_quotas (quotaed_t))
+(call filesystems_read_devtmpfs_lnk_files (quotaed_t))
+
+(call selinux_get_enforce_mode (quotaed_t))
+
+(call miscfiles_read_all_terminfo (quotaed_t))
+(call miscfiles_read_locale (quotaed_t))
+
+(call ns_client_subject_type (quotaed_t))
+
 (type quota_t)
 (type quota_exec_t)
 (call applications_app (quota_t quota_exec_t))
@@ -103,6 +128,8 @@
 (filecon "/usr/bin/quotasync" file quota_exec)
 
 (call system_read_fs_sysctl (quota_t))
+
+(call filesystems_get_filesystem_quotas (quota_t))
 
 (call miscfiles_read_locale (quota_t))
 
@@ -144,6 +171,9 @@
 
     (type quotacheck_systemd_runtime_t)
     (call systemd_runtime_object_type (quotacheck_systemd_runtime_t))
+
+    (allow quotacheck_t quotacheck_systemd_runtime_t manage_file_perms)
+    (call systemd_runtime_object_type_transition (quotacheck_t quotacheck_systemd_runtime_t file "quotacheck"))
 
     (context quotacheck_systemd_runtime (system_u object_r quotacheck_systemd_runtime_t (systemlow systemlow)))
     (filecon "/var/run/systemd/quotacheck" file quotacheck_systemd_runtime)
@@ -229,6 +259,16 @@
 (macro quota_manage_db_files ((type ARG1))
     (call system_rw_all_mountpoint_dirs (ARG1))
     (allow ARG1 quota_db_t manage_file_perms))
+
+(macro quota_read_quotaed_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 quotaed_tmpfs_t read_file_perms))
+
+(macro quota_manage_quotaed_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 quotaed_tmpfs_t manage_file_perms))
 
 (macro quota_admin ((type ARG1)(role ARG2))
     (typeattributeset quota_admin_subject_type ARG1)
