@@ -96,7 +96,7 @@
 (type quotaed_tmpfs_t)
 (call usersubject_tmpfs_object_type (quotaed_tmpfs_t))
 
-(allow quotaed_t self (capability (setuid setgid dac_override)))
+(allow quotaed_t self (capability (setuid setgid dac_override sys_admin)))
 
 (allow quotaed_t quotaed_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (quotaed_t quotaed_tmpfs_t file "*"))
