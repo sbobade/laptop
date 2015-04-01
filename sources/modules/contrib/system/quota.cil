@@ -3,6 +3,8 @@
 (roleattribute quotaed_role)
 (roleattribute quota_role)
 
+(typeattribute quota_client_subject_type)
+
 (typeattribute quota_admin_subject_type)
 (typeattribute quota_subject_type)
 
@@ -173,6 +175,14 @@
 (filecon "/var/spool/a?quota\.(user|group)" file quota_db)
 (filecon "/var/tmp/a?quota\.(user|group)" file quota_db)
 
+(call filesystems_read_devtmpfs_lnk_files (quota_client_subject_type))
+(call filesystems_getattr_filesystems (quota_client_subject_type))
+(call filesystems_get_filesystem_quotas (quota_client_subject_type))
+
+(call storage_getattr_fixed_disk (quota_client_subject_type))
+(call storage_getattr_removable (quota_client_subject_type))
+(call storage_getattr_scsi_generic (quota_client_subject_type))
+
 (optional quota_optional_systemd
     (call systemd_daemon (quotaon_t quotaon_exec_t))
 
@@ -207,7 +217,11 @@
 (allow quota_admin_subject_type quota_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
+(macro quota_client_subject_type ((type ARG1))
+    (typeattributeset quota_client_subject_type ARG1))
+
 (macro quota_exec ((type ARG1))
+    (call quota_client_subject_type (ARG1))
     (call can_exec (ARG1 quota_exec_t)))
 
 (macro quota_exec_quotaon ((type ARG1))

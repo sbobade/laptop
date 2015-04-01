@@ -398,6 +398,9 @@
 (optional staff_optional_power
     (call power_read_exec_files (staff_t)))
 
+(optional staff_optional_quota
+    (call quota_exec (staff_t)))
+
 (optional staff_optional_resetimg
     (call resetimg_read_exec_files (staff_t)))
 
