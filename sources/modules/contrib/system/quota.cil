@@ -142,17 +142,11 @@
 
 (call system_read_fs_sysctl (quota_t))
 
-(call filesystems_read_devtmpfs_lnk_files (quota_t))
-(call filesystems_getattr_filesystems (quota_t))
-(call filesystems_get_filesystem_quotas (quota_t))
-
-(call storage_getattr_fixed_disk (quota_t))
-(call storage_getattr_removable (quota_t))
-(call storage_getattr_scsi_generic (quota_t))
-
 (call miscfiles_read_locale (quota_t))
 
 (call ns_client_subject_type (quota_t))
+
+(call quota_client_subject_type (quota_t))
 
 (type quota_db_t)
 (call files_object_type (quota_db_t))
