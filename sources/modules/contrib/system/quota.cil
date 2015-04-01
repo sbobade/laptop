@@ -123,6 +123,8 @@
 
 (call ns_client_subject_type (quotaed_t))
 
+(call usersubject_list_home_dir (quotaed_t))
+
 (type quota_t)
 (type quota_exec_t)
 (call applications_app (quota_t quota_exec_t))
@@ -136,7 +138,13 @@
 
 (call system_read_fs_sysctl (quota_t))
 
+(call filesystems_read_devtmpfs_lnk_files (quota_t))
+(call filesystems_getattr_filesystems (quota_t))
 (call filesystems_get_filesystem_quotas (quota_t))
+
+(call storage_getattr_fixed_disk (quota_t))
+(call storage_getattr_removable (quota_t))
+(call storage_getattr_scsi_generic (quota_t))
 
 (call miscfiles_read_locale (quota_t))
 
