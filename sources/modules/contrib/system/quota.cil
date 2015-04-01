@@ -48,6 +48,8 @@
 (context quotacheck_exec (system_u object_r quotacheck_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/quotacheck" file quotacheck_exec)
 
+(allow quotacheck_t self (capability (dac_override)))
+
 (allow quotacheck_t quota_db_t manage_file_perms)
 (call system_all_mountpoint_object_type_transition (quotacheck_t quota_db_t file "aquota.user"))
 (call system_all_mountpoint_object_type_transition (quotacheck_t quota_db_t file "aquota.user.new"))
@@ -57,6 +59,11 @@
 (call files_read_all_except (quotacheck_t))
 
 (call filesystems_get_filesystem_quotas (quotacheck_t))
+(call filesystems_getattr_filesystems (quotacheck_t))
+
+(call storage_getattr_fixed_disk (quotacheck_t))
+(call storage_getattr_removable (quotacheck_t))
+(call storage_getattr_scsi_generic (quotacheck_t))
 
 (call auth_read_shadow (quotacheck_t))
 
@@ -94,6 +101,10 @@
 (context quota_exec (system_u object_r quota_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/quota" file quota_exec)
 (filecon "/usr/bin/quotasync" file quota_exec)
+
+(call system_read_fs_sysctl (quota_t))
+
+(call miscfiles_read_locale (quota_t))
 
 (type quota_db_t)
 (call files_object_type (quota_db_t))
