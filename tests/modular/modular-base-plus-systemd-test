@@ -13,7 +13,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/services/tcs.cil sources/modules/contrib/services/tor.cil sources/modules/contrib/services/torrent.cil \
         sources/modules/contrib/services/wpa.cil sources/modules/contrib/services/xserver.cil sources/modules/contrib/system/bootloader.cil \
         sources/modules/contrib/services/qemu.cil sources/modules/contrib/services/lirc.cil sources/modules/contrib/services/ppp.cil \
-        sources/modules/contrib/system/hwclock.cil sources/modules/contrib/services/dbususer.cil \
+        sources/modules/contrib/system/hwclock.cil sources/modules/contrib/services/dbususer.cil sources/modules/contrib/system/quota.cil \
         sources/modules/contrib/system/dm.cil sources/modules/contrib/system/dmesg.cil sources/modules/contrib/system/dmi.cil \
         sources/modules/contrib/system/dracut.cil sources/modules/contrib/system/fuse.cil sources/modules/contrib/system/hostname.cil \
         sources/modules/contrib/system/ld.cil sources/modules/contrib/system/login.cil sources/modules/contrib/system/cpupower.cil \
@@ -30,8 +30,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/system/systemd/sysusers.cil sources/modules/contrib/system/systemd/tmpfiles.cil sources/modules/contrib/system/systemd/updatedone.cil \
         sources/modules/contrib/system/systemd/vconsole.cil sources/modules/contrib/applications/b43fwcutter.cil sources/modules/contrib/applications/bti.cil \
         sources/modules/contrib/system/systemd/network.cil sources/modules/contrib/system/systemd/timesync.cil sources/modules/contrib/system/systemd/resolve.cil \
-        sources/modules/contrib/system/systemd/timedate.cil sources/modules/contrib/system/systemd/quotacheck.cil sources/modules/contrib/system/systemd/analyze.cil \
-        sources/modules/contrib/system/systemd/run.cil \
+        sources/modules/contrib/system/systemd/timedate.cil sources/modules/contrib/system/systemd/analyze.cil sources/modules/contrib/system/systemd/run.cil \
         sources/modules/contrib/system/mycontainer.cil sources/modules/contrib/system/systemd/nspawn.cil sources/modules/contrib/system/systemd/import.cil \
         sources/modules/contrib/applications/emacs.cil sources/modules/contrib/applications/ffmpeg.cil sources/modules/contrib/applications/firefox.cil \
         sources/modules/contrib/applications/fop.cil sources/modules/contrib/applications/gpg.cil sources/modules/contrib/applications/gstreamer.cil \

@@ -416,8 +416,14 @@
 (macro system_setattr_all_mountpoint_dirs ((type ARG1))
     (allow ARG1 system_mountpoint_object_type (dir (setattr))))
 
+(macro system_rw_all_mountpoint_dirs ((type ARG1))
+    (allow ARG1 system_mountpoint_object_type rw_dir_perms))
+
 (macro system_list_mountpoints ((type ARG1))
     (allow ARG1 system_mountpoint_object_type list_dir_perms))
+
+(macro system_search_mountpoints ((type ARG1))
+    (allow ARG1 system_mountpoint_object_type search_dir_perms))
 
 (macro system_mounton_mountpoint_dirs ((type ARG1))
     (call system_dontaudit_audit_access_mountpoint_dirs (ARG1))

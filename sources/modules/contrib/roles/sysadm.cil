@@ -394,6 +394,13 @@
     (call qemu_admin (sysadm_t sysadm_r))
     (call qemu_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_quota
+    (call quota_run (sysadm_t sysadm_r))
+    (call quota_run_quotaon (sysadm_t sysadm_r))
+    (call quota_run_quotacheck (sysadm_t sysadm_r))
+    (call quota_run_quotaed (sysadm_t sysadm_r))
+    (call quota_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_resetimg
     (call resetimg_run (sysadm_subject_type sysadm_r)))
 
@@ -584,9 +591,6 @@
 
 (optional sysadm_optional_notify
     (call notify_exec (sysadm_t)))
-
-(optional sysadm_optional_quotacheck
-    (call quotacheck_manage_systemd_runtime_files (sysadm_t)))
 
 (optional sysadm_optional_randomseed
     (call randomseed_manage_systemd_lib_files (sysadm_t)))

@@ -1,0 +1,187 @@
+(roleattribute quotaon_role)
+(roleattribute quotacheck_role)
+(roleattribute quotaed_role)
+(roleattribute quota_role)
+
+(typeattribute quota_admin_subject_type)
+(typeattribute quota_subject_type)
+
+(typeattribute quota_object_type)
+
+(type quotaon_t)
+(type quotaon_exec_t)
+(call applications_app (quotaon_t quotaon_exec_t))
+(roletype quotaon_role quotaon_t)
+
+(roleattributeset quotaon_role system_r)
+
+(typeattributeset quota_subject_type quotaon_t)
+
+(context quotaon_exec (system_u object_r quotaon_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/quotaon" file quotaon_exec)
+(filecon "/usr/sbin/quotaoff" file quotaon_exec)
+
+(type quotacheck_t)
+(type quotacheck_exec_t)
+(call applications_app (quotacheck_t quotacheck_exec_t))
+(roletype quotacheck_role quotacheck_t)
+
+(roleattributeset quotacheck_role system_r)
+
+(typeattributeset quota_subject_type quotacheck_t)
+
+(context quotacheck_exec (system_u object_r quotacheck_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/quotacheck" file quotacheck_exec)
+
+(type quotaed_t)
+(type quotaed_exec_t)
+(call applications_app (quotaed_t quotaed_exec_t))
+(roletype quotaed_role quotaed_t)
+
+(roleattributeset quotaed_role system_r)
+
+(typeattributeset quota_subject_type quotaed_t)
+
+(context quotaed_exec (system_u object_r quotaed_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/convertquota" file quotaed_exec)
+(filecon "/usr/sbin/edquota" file quotaed_exec)
+(filecon "/usr/sbin/quotastats" file quotaed_exec)
+(filecon "/usr/sbin/requota" file quotaed_exec)
+(filecon "/usr/sbin/setquota" file quotaed_exec)
+(filecon "/usr/sbin/xqmstats" file quotaed_exec)
+
+(type quota_t)
+(type quota_exec_t)
+(call applications_app (quota_t quota_exec_t))
+(roletype quota_role quota_t)
+
+(typeattributeset quota_subject_type quota_t)
+
+(context quota_exec (system_u object_r quota_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/quota" file quota_exec)
+(filecon "/usr/bin/quotasync" file quota_exec)
+
+(type quota_db_t)
+(call files_object_type (quota_db_t))
+
+(typeattributeset quota_object_type quota_db_t)
+
+(context quota_db (system_u object_r quota_db_t (systemlow systemlow)))
+(filecon "/a?quota\.(user|group)" file quota_db)
+(filecon "/boot/a?quota\.(user|group)" file quota_db)
+(filecon "/etc/a?quota\.(user|group)" file quota_db)
+(filecon "/home/a?quota\.(user|group)" file quota_db)
+(filecon "/opt/a?quota\.(user|group)" file quota_db)
+(filecon "/srv/a?quota\.(user|group)" file quota_db)
+(filecon "/usr/a?quota\.(user|group)" file quota_db)
+(filecon "/var/a?quota\.(user|group)" file quota_db)
+(filecon "/var/cache/a?quota\.(user|group)" file quota_db)
+(filecon "/var/lib/a?quota\.(user|group)" file quota_db)
+(filecon "/var/log/a?quota\.(user|group)" file quota_db)
+(filecon "/var/log/audit/a?quota\.(user|group)" file quota_db)
+(filecon "/var/spool/a?quota\.(user|group)" file quota_db)
+(filecon "/var/tmp/a?quota\.(user|group)" file quota_db)
+
+(optional quota_optional_systemd
+    (call systemd_daemon (quotaon_t quotaon_exec_t))
+
+    (type quota_unit_t)
+    (call systemd_unit_object_type (quota_unit_t))
+
+    (typeattributeset quota_object_type quota_unit_t)
+
+    (context quota_unit (system_u object_r quota_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*quotaon.*" file quota_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*systemd-quotackeck.*" file quota_unit)
+
+    (call systemd_daemon (quotacheck_t quotacheck_exec_t))
+    (filecon "/usr/lib/systemd/systemd-quotacheck" file quotacheck_exec)
+
+    (type quotacheck_systemd_runtime_t)
+    (call systemd_runtime_object_type (quotacheck_systemd_runtime_t))
+
+    (context quotacheck_systemd_runtime (system_u object_r quotacheck_systemd_runtime_t (systemlow systemlow)))
+    (filecon "/var/run/systemd/quotacheck" file quotacheck_systemd_runtime)
+
+    (allow quota_admin_subject_type quota_unit_t (service (all))))
+
+(allow quota_admin_subject_type quota_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (quota_admin_subject_type quota_subject_type))
+
+(allow quota_admin_subject_type quota_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro quota_exec ((type ARG1))
+    (call can_exec (ARG1 quota_exec_t)))
+
+(macro quota_exec_quotaon ((type ARG1))
+    (call can_exec (ARG1 quotaon_exec_t)))
+
+(macro quota_exec_quotacheck ((type ARG1))
+    (call can_exec (ARG1 quotacheck_exec_t)))
+
+(macro quota_exec_quotaed ((type ARG1))
+    (call can_exec (ARG1 quotaed_exec_t)))
+
+(macro quota_auto_subject_type_transition_quotaon ((type ARG1))
+    (call quota_send_signal_quotaon (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 quotaon_exec_t quotaon_t)))
+
+(macro quota_send_signal_quotaon ((type ARG1))
+    (allow ARG1 quotaon_t (process (signal))))
+
+(macro quota_run_quotaon ((type ARG1)(role ARG2))
+    (call quota_auto_subject_type_transition_quotaon (ARG1))
+    (roleattributeset quotaon_role ARG2))
+
+(macro quota_auto_subject_type_transition_quotacheck ((type ARG1))
+    (call quota_send_signal_quotacheck (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 quotacheck_exec_t quotacheck_t)))
+
+(macro quota_send_signal_quotacheck ((type ARG1))
+    (allow ARG1 quotacheck_t (process (signal))))
+
+(macro quota_run_quotacheck ((type ARG1)(role ARG2))
+    (call quota_auto_subject_type_transition_quotacheck (ARG1))
+    (roleattributeset quotacheck_role ARG2))
+
+(macro quota_auto_subject_type_transition_quotaed ((type ARG1))
+    (call quota_send_signal_quotaed (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 quotaed_exec_t quotaed_t)))
+
+(macro quota_send_signal_quotaed ((type ARG1))
+    (allow ARG1 quotaed_t (process (signal))))
+
+(macro quota_run_quotaed ((type ARG1)(role ARG2))
+    (call quota_auto_subject_type_transition_quotaed (ARG1))
+    (roleattributeset quotaed_role ARG2))
+
+(macro quota_auto_subject_type_transition ((type ARG1))
+    (call quota_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 quota_exec_t quota_t)))
+
+(macro quota_send_signal ((type ARG1))
+    (allow ARG1 quota_t (process (signal))))
+
+(macro quota_run ((type ARG1)(role ARG2))
+    (call quota_auto_subject_type_transition (ARG1))
+    (roleattributeset quota_role ARG2))
+
+(macro quota_read_db_files ((type ARG1))
+    (call system_search_mountpoints (ARG1))
+    (allow ARG1 quota_db_t read_file_perms))
+
+(macro quota_manage_db_files ((type ARG1))
+    (call system_rw_all_mountpoint_dirs (ARG1))
+    (allow ARG1 quota_db_t manage_file_perms))
+
+(macro quota_admin ((type ARG1)(role ARG2))
+    (typeattributeset quota_admin_subject_type ARG1)
+    (optional quota_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional quota_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
