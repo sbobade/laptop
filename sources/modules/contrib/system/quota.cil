@@ -19,7 +19,6 @@
 
 (context quotaon_exec (system_u object_r quotaon_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/quotaon" file quotaon_exec)
-(filecon "/usr/sbin/quotaoff" file quotaon_exec)
 
 (type quotacheck_t)
 (type quotacheck_exec_t)
