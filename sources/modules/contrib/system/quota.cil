@@ -114,6 +114,10 @@
 
 (call selinux_get_enforce_mode (quotaed_t))
 
+(call storage_getattr_fixed_disk (quotaed_t))
+(call storage_getattr_removable (quotaed_t))
+(call storage_getattr_scsi_generic (quotaed_t))
+
 (call miscfiles_read_all_terminfo (quotaed_t))
 (call miscfiles_read_locale (quotaed_t))
 
