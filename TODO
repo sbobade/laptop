@@ -26,3 +26,5 @@
     it does not really matter though since the user is unconfined anyways but it would be a little cleaner
 
     The problem would be that i would need to add more logic on how to determine which seuser is unconfined and which contexts to add and which not
+
+* e145: remove audit=1 from /etc/default/grub
