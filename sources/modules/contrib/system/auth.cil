@@ -48,6 +48,48 @@
 (context authconfig_lib (system_u object_r authconfig_lib_t (systemlow systemlow)))
 (filecon "/var/lib/authconfig(/.*)?" any authconfig_lib)
 
+(type authconfig_data_t)
+(call files_data_object_type (authconfig_data_t))
+
+(typeattributeset auth_object_type authconfig_data_t)
+
+(context authconfig_data (system_u object_r authconfig_data_t (systemlow systemlow)))
+(filecon "/usr/share/authconfig(/.*)?" any authconfig_data)
+
+(allow authconfig_t self rw_fifo_file_perms)
+
+(allow authconfig_t authconfig_lib_t manage_dir_perms)
+(allow authconfig_t authconfig_lib_t manage_file_perms)
+(call files_lib_object_type_transition (authconfig_t authconfig_lib_t dir "authconfig"))
+
+(allow authconfig_t authconfig_data_t manage_dir_perms)
+(allow authconfig_t authconfig_data_t manage_file_perms)
+
+(call commands_getattr_exec_files (authconfig_t))
+(call commands_mprot_read_exec_files (authconfig_t))
+(call commands_exec_shell (authconfig_t))
+
+(call files_manage_config_files (authconfig_t))
+(call files_read_data (authconfig_t))
+
+(call devices_read_urandom (authconfig_t))
+
+(call auth_getattr_shadow (authconfig_t))
+(call auth_manage_all_pam_config (authconfig_t))
+(call auth_read_authconfig_config_files (authconfig_t))
+
+(call miscfiles_read_locale (authconfig_t))
+(call miscfiles_read_net_config_files (authconfig_t))
+
+(call ns_manage_config_files (authconfig_t))
+(call ns_client_subject_type (authconfig_t))
+
+(call seutil_run_setfiles (authconfig_t authconfig_role))
+(call seutil_run_getsebool (authconfig_t authconfig_role))
+
+(optional authconfig_optional_systemd
+    (call systemd_run_systemctl (authconfig_t authconfig_role)))
+
 (type chkpwd_t)
 (type chkpwd_exec_t)
 (call applications_app (chkpwd_t chkpwd_exec_t))
@@ -497,6 +539,10 @@
     (typeattributeset can_read_shadow_passwords ARG1)
     (typeattributeset can_write_shadow_passwords ARG1))
 
+(macro auth_getattr_shadow ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 shadow_t (file (getattr))))
+
 (macro auth_dontaudit_read_shadow ((type ARG1))
     (dontaudit ARG1 shadow_t read_file_perms))
 
@@ -518,6 +564,38 @@
     (call files_search_config (ARG1))
     (allow ARG1 shadow_t relabel_file_perms)
     (typeattributeset can_relabelto_shadow_passwords ARG1))
+
+(macro auth_search_authconfig_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 authconfig_data_t search_dir_perms))
+
+(macro auth_list_authconfig_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 authconfig_data_t list_dir_perms))
+
+(macro auth_read_authconfig_data_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 authconfig_data_t authconfig_data_t)))
+
+(macro auth_read_authconfig_data_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 authconfig_data_t authconfig_data_t)))
+
+(macro auth_read_authconfig_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 authconfig_data_t read_file_perms)
+    (allow ARG1 authconfig_data_t list_dir_perms)
+    (allow ARG1 authconfig_data_t read_lnk_file_perms))
+
+(macro auth_manage_authconfig_data ((type ARG1))
+    (call files_rw_data_dirs (ARG1))
+    (allow ARG1 authconfig_data_t manage_file_perms)
+    (allow ARG1 authconfig_data_t manage_dir_perms)
+    (allow ARG1 authconfig_data_t manage_lnk_file_perms))
+
+(macro auth_read_authconfig_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 authconfig_config_t read_file_perms))
 
 (macro auth_login_program_subject_type ((type ARG1))
     (typeattributeset auth_login_program_subject_type ARG1))
