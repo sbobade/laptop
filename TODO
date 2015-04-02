@@ -1,4 +1,4 @@
-* vlock
+* vlock runuser su
 
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
     the ones that have a ctl app as well as a service unit
