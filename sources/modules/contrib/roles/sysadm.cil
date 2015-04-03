@@ -39,8 +39,8 @@
 (context sysadm_mail_spool (sysadm_u object_r user_mail_spool_t (systemlow mls_systemhigh)))
 (filecon "/var/spool/mail/root" file sysadm_mail_spool)
 
-(allow sysadm_t self (capability (dac_override chown fowner fsetid sys_admin)))
-(allow sysadm_t self (process (ptrace setfscreate)))
+(allow sysadm_t self (capability (dac_override chown fowner fsetid setfcap)))
+(allow sysadm_t self (process (getcap setcap ptrace setfscreate)))
 
 (call system_read_all_proc (sysadm_t))
 (call system_read_all_sysctls (sysadm_t))
