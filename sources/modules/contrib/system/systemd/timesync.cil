@@ -45,6 +45,9 @@
 
 (call timesync_read_timesyncd_systemd_config_files (timesyncd_t))
 
+(optional timesync_optional_dbus
+    (call dbus_system_client_subject_type (timesyncd_t)))
+
 (optional timesync_optional_machine
     (call machine_read_machined_systemd_runtime_files (timesyncd_t)))
 
