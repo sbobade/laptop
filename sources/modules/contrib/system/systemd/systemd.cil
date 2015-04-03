@@ -394,6 +394,10 @@
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_control_system (systemd_systemctl_subject_type))
 
+(optional systemd_systemctl_subject_type_applications
+    (call applications_getattr_all_subjects (systemd_systemctl_subject_type))
+    (call applications_read_state_all_subjects (systemd_systemctl_subject_type)))
+
 (optional systemd_systemctl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (systemd_systemctl_subject_type systemd_systemctl_role)))
 
@@ -599,6 +603,7 @@
     (roleattributeset systemd_systemctl_role ARG1)
     (allow ARG2 ARG3 (process (noatsecure)))
     (allow ARG3 ARG2 (process (signal)))
+    (call ps_subject_pattern (ARG3 ARG2))
     (call systemd_systemctl_subject_type (ARG3)))
 
 (macro systemd_run_systemctl ((type ARG1)(role ARG2))
