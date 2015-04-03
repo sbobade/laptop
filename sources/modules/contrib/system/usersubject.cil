@@ -141,9 +141,6 @@
             (call ubac_constrained_subject_type (usersubject_common_type_except)))))
 
 (allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
-(allow usersubject_common_login_subject_type self r_netlink_route_socket_perms)
-(allow usersubject_common_login_subject_type self create_tcp_socket_perms)
-(dontaudit usersubject_common_login_subject_type self create_udp_socket_perms)
 
 (call usersubject_exec_home_object_entry_subject (usersubject_common_login_subject_type))
 (call usersubject_common_login_user_object_template (usersubject_common_login_subject_type))
@@ -165,16 +162,9 @@
 
 (call auth_read_passwd_config_files (usersubject_common_login_subject_type))
 
-(call dns_read_resolve_config_files (usersubject_common_login_subject_type))
-
-(call hostname_exec (usersubject_common_login_subject_type))
-
 (call login_send_signull (usersubject_common_login_subject_type))
 
 (call miscfiles_read_man (usersubject_common_login_subject_type))
-(call miscfiles_read_net_config (usersubject_common_login_subject_type))
-
-(call ns_read_config_files (usersubject_common_login_subject_type))
 
 (call seutil_read_default_context_files (usersubject_common_login_subject_type))
 (call seutil_read_selinux_config_files (usersubject_common_login_subject_type))
@@ -1288,7 +1278,8 @@
 (macro usersubject_common_login_subject_template ((user ARG1)(role ARG2)(type ARG3))
     (call usersubject_base_common_login_subject_template (ARG1 ARG2 ARG3))
     (call usersubject_common_login_subject_type (ARG3))
-    (call usersubject_mls_template (ARG1 systemlow systemlow systemhigh)))
+    (call usersubject_mls_template (ARG1 systemlow systemlow systemhigh))
+    (call hostname_run (ARG3 ARG2)))
 
 (macro usersubject_common_login_subject_type ((type ARG1))
     (typeattributeset usersubject_common_login_subject_type ARG1))
