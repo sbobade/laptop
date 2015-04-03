@@ -81,6 +81,7 @@
 
 (call miscfiles_read_all_certs (firefox_t))
 (call miscfiles_read_all_fonts (firefox_t))
+(call miscfiles_read_net_config (firefox_t))
 (call miscfiles_read_locale (firefox_t))
 
 (call ns_client_subject_type (firefox_t))
