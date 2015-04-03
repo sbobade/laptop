@@ -101,9 +101,6 @@
 
 (call utmp_read_utmp_runtime_files (sudo_subject_type))
 
-(optional sudo_optional_dbus
-    (call dbus_system_client_subject_type (sudo_subject_type)))
-
 (optional sudo_subject_type_optional_initctl
     (call initctl_getattr_runtime_fifo_files (sudo_subject_type)))
 

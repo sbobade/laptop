@@ -21,6 +21,9 @@
 (type ld_so_cache_t)
 (call files_object_type (ld_so_cache_t))
 
+(optional libraries_optional_ubac
+    (call ubac_constrained_exempt_object_type (ld_so_cache_t)))
+
 (context ld_so_cache (system_u object_r ld_so_cache_t (systemlow systemlow)))
 (filecon "/etc/ld\.so\.cache.*" file ld_so_cache)
 (filecon "/etc/ld\.so\.preload.*" file ld_so_cache)
