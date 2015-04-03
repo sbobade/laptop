@@ -217,7 +217,9 @@
             (call selinux_validate_context (usersubject_priv_login_subject_type))
 
             (call usersubject_dontaudit_relabelfrom_ptys (usersubject_priv_login_subject_type))
-            (call usersubject_create_ptys (usersubject_priv_login_subject_type)))))
+            (call usersubject_create_ptys (usersubject_priv_login_subject_type))))
+            (call usersubject_use_ptys (usersubject_priv_login_subject_type))
+            (call usersubject_setattr_ptys (usersubject_priv_login_subject_type)))
 
 (macro usersubject_home_object_type ((type ARG1))
     (call files_object_type (ARG1))
