@@ -397,9 +397,6 @@
     (call screen_relabel_home_files (staff_t))
     (call screen_home_dir_object_type_transition_home_files (staff_t ".screenrc"))
 
-    (call screen_manage_runtime (staff_t))
-    (call screen_relabel_runtime (staff_t))
-
     (call screen_manage_tmpfs_files (staff_t))
     (call screen_relabel_tmpfs_files (staff_t)))
 
