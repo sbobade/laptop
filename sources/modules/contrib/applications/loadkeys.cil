@@ -26,8 +26,6 @@
 (call terminals_use_console (loadkeys_t))
 (call terminals_use_unallocated_ttys (loadkeys_t))
 
-(call auth_read_passwd_config_files (loadkeys_t))
-
 (call miscfiles_read_locale (loadkeys_t))
 
 (call ns_client_subject_type (loadkeys_t))

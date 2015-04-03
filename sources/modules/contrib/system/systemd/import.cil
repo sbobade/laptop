@@ -25,14 +25,13 @@
 
 (call terminals_use_console (importd_t))
 
-(call dbus_system_service (importd_t))
+(call dbus_acquire_system_service (importd_t))
 
 (call journal_client_subject_type (importd_t))
 
 (call machine_manage_lib_files (importd_t))
 
 (call miscfiles_read_locale (importd_t))
-(call miscfiles_read_net_config (importd_t))
 
 (call ns_client_subject_type (importd_t))
 

@@ -81,7 +81,6 @@
 
 (call miscfiles_read_all_certs (firefox_t))
 (call miscfiles_read_all_fonts (firefox_t))
-(call miscfiles_read_net_config (firefox_t))
 (call miscfiles_read_locale (firefox_t))
 
 (call ns_client_subject_type (firefox_t))
@@ -101,9 +100,6 @@
 
 (call xserver_tmpfs_client_template (firefox_t firefox_tmpfs_t))
 
-(optional firefox_optional_dbus
-    (call dbus_system_client_subject_type (firefox_t)))
-
 (optional firefox_optional_hostnamed
     (call hostname_dbus_chat_hostnamed (firefox_t)))
 
@@ -112,9 +108,6 @@
 
 (optional firefox_optional_nm
     (call nm_dbus_chat (firefox_t)))
-
-(optional firefox_optional_resolve
-    (call resolve_dbus_chat_resolved (firefox_t)))
 
 (optional firefox_optional_tor
     (call tor_tcp_connect_tor_port (firefox_t)))

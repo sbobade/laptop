@@ -82,7 +82,7 @@
 
 (call terminals_use_console (networkd_t))
 
-(call dbus_system_service (networkd_t))
+(call dbus_acquire_system_service (networkd_t))
 
 (call dhcp_udp_bind_dhcp_port (networkd_t))
 (call dhcp_udp_bind_dhcpv6_client_port (networkd_t))
@@ -108,7 +108,7 @@
 (call udev_client_subject_type (networkctl_t))
 
 (optional networkctl_optional_usersubject
-    (call usersubject_dontaudit_read_user_home_files (networkctl_t)))
+    (call usersubject_read_user_home_files (networkctl_t)))
 
 (allow network_networkctl_client_subject_type self rw_fifo_file_perms)
 (allow network_networkctl_client_subject_type self create_udp_socket_perms)

@@ -77,7 +77,7 @@
 
 (call subject_read_all_common_subjects_state (polkitd_t))
 
-(call dbus_system_service (polkitd_t))
+(call dbus_acquire_system_service (polkitd_t))
 
 (call miscfiles_read_locale (polkitd_t))
 
@@ -95,9 +95,6 @@
 
 (optional polkitd_optional_login_logind
     (call login_read_logind_systemd_runtime (polkitd_t)))
-
-(optional polkitd_optional_machine
-    (call machine_read_machined_systemd_runtime (polkitd_t)))
 
 (optional polkitd_optional_systemd
     (call systemd_daemon (polkitd_t polkitd_exec_t))
@@ -150,8 +147,6 @@
 (call auth_read_pam_config_files (pkagent_t))
 (call auth_run_chkpwd (pkagent_t polkit_pkagent_role))
 
-(call dbus_system_client_subject_type (pkagent_t))
-
 (call miscfiles_read_locale (pkagent_t))
 
 (call ns_client_subject_type (pkagent_t))
@@ -172,8 +167,6 @@
 (call system_audit_set_params (polkit_pkexec_client_subject_type))
 (call system_link_keyring (polkit_pkexec_client_subject_type))
 (call system_read_kernel_sysctl (polkit_pkexec_client_subject_type))
-
-(call dbus_system_client_subject_type (polkit_pkexec_client_subject_type))
 
 (call miscfiles_read_locale (polkit_pkexec_client_subject_type))
 
@@ -212,8 +205,6 @@
 (allow pkttyagent_t polkit_pkttyagent_client_subject_type read_file_perms)
 (allow pkttyagent_t polkit_pkttyagent_client_subject_type list_dir_perms)
 (allow pkttyagent_t polkit_pkttyagent_client_subject_type read_lnk_file_perms)
-
-(call dbus_system_client_subject_type (pkttyagent_t))
 
 (call ns_client_subject_type (pkttyagent_t))
 

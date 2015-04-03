@@ -135,7 +135,7 @@
 
 (call auth_read_state_all_login_program_subjects (logind_t))
 
-(call dbus_system_service (logind_t))
+(call dbus_acquire_system_service (logind_t))
 
 (call getty_start_units (logind_t))
 
@@ -169,9 +169,6 @@
 (call usersubject_use_terminals (logind_t))
 
 (call udev_client_subject_type (logind_t))
-
-(optional logind_optional_resolve
-    (call resolve_dbus_chat_resolved (logind_t)))
 
 (optional logind_optional_network_networkd
     (call network_dbus_chat_networkd (logind_t)))

@@ -58,9 +58,6 @@
 
 (call xserver_client_subject_type (xlock_t))
 
-(optional xlock_optional_dbus
-    (call dbus_system_client_subject_type (xlock_t)))
-
 (optional xlock_optional_journal
     (call journal_client_subject_type (xlock_t)))
 

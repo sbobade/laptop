@@ -35,8 +35,6 @@
 
 (call journal_client_subject_type (timesyncd_t))
 
-(call miscfiles_read_net_config (timesyncd_t))
-
 (call network_read_networkd_systemd_runtime (timesyncd_t))
 
 (call ns_client_subject_type (timesyncd_t))
@@ -44,12 +42,6 @@
 (call systemd_notify_system_subject_type (timesyncd_t))
 
 (call timesync_read_timesyncd_systemd_config_files (timesyncd_t))
-
-(optional timesync_optional_dbus
-    (call dbus_system_client_subject_type (timesyncd_t)))
-
-(optional timesync_optional_machine
-    (call machine_read_machined_systemd_runtime_files (timesyncd_t)))
 
 (macro timesync_exec_timesyncd ((type ARG1))
     (call can_exec (ARG1 timesyncd_exec_t)))

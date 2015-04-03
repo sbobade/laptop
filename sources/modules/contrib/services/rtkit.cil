@@ -35,7 +35,7 @@
 (allow rtkitd_t self (capability (sys_nice sys_chroot setuid setgid sys_ptrace)))
 (allow rtkitd_t self (process (setsched setcap setrlimit)))
 
-(call dbus_system_service (rtkitd_t))
+(call dbus_acquire_system_service (rtkitd_t))
 
 (call ns_client_subject_type (rtkitd_t))
 

@@ -62,7 +62,6 @@
 (call git_read_config_home (git_subject_type))
 
 (call miscfiles_read_all_certs (git_subject_type))
-(call miscfiles_read_net_config (git_subject_type))
 (call miscfiles_read_all_terminfo (git_subject_type))
 (call miscfiles_read_locale (git_subject_type))
 

@@ -89,7 +89,6 @@
 
 (call miscfiles_read_all_terminfo (iptables_t))
 (call miscfiles_read_locale (iptables_t))
-(call miscfiles_read_net_config_files (iptables_t))
 
 (call ns_client_subject_type (iptables_t))
 

@@ -79,7 +79,6 @@
 (call auth_read_authconfig_config_files (authconfig_t))
 
 (call miscfiles_read_locale (authconfig_t))
-(call miscfiles_read_net_config_files (authconfig_t))
 
 (call ns_manage_config_files (authconfig_t))
 (call ns_client_subject_type (authconfig_t))

@@ -118,7 +118,6 @@
 (call kmod_auto_subject_type_transition (udevd_t))
 
 (call miscfiles_read_modules (udevd_t))
-(call miscfiles_read_net_config_files (udevd_t))
 (call miscfiles_read_locale (udevd_t))
 
 (call ns_client_subject_type (udevd_t))

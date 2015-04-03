@@ -45,6 +45,18 @@
 
 (call dns_read_resolve_config_files (dns_resolve_client_subject_type))
 
+(call miscfiles_read_net_config_files (dns_resolve_client_subject_type))
+
+(optional dns_resolve_client_subject_type_optional_dbus
+    (call dbus_system_client_subject_type (dns_resolve_client_subject_type)))
+
+(optional dns_resolve_client_subject_type_optional_resolve
+    (call resolve_dbus_chat_resolved (dns_resolve_client_subject_type)))
+
+(optional dns_resolve_client_subject_type_optional_machine
+    (call machine_dbus_chat_machined (dns_resolve_client_subject_type))
+    (call machine_read_machined_systemd_runtime (dns_resolve_client_subject_type)))
+
 (macro dns_resolve_client_subject_type ((type ARG1))
     (typeattributeset dns_resolve_client_subject_type ARG1))
 

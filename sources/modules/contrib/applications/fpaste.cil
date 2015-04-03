@@ -55,7 +55,6 @@
 (call http_tcp_connect_http_port (fpaste_t))
 
 (call miscfiles_read_locale (fpaste_t))
-(call miscfiles_read_net_config_files (fpaste_t))
 (call miscfiles_read_hwdata (fpaste_t))
 
 (call ns_client_subject_type (fpaste_t))

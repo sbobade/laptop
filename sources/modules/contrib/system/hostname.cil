@@ -24,8 +24,6 @@
 
 (call hostname_read_config_files (hostname_t))
 
-(call miscfiles_read_net_config_files (hostname_t))
-
 (optional hostname_optional_systemd
     (call systemd_daemon (hostname_t hostname_exec_t)))
 

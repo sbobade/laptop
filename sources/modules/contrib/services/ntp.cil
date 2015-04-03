@@ -145,7 +145,6 @@
 (call devices_read_urandom (ntpd_t))
 
 (call miscfiles_read_locale (ntpd_t))
-(call miscfiles_read_net_config_files (ntpd_t))
 
 (call ns_client_subject_type (ntpd_t))
 
@@ -163,9 +162,6 @@
 
 (optional ntpd_optional_logrotate
     (call logrotate_log_object_type (ntpd_log_t)))
-
-(optional ntpd_optional_machine
-    (call machine_read_machined_systemd_runtime_files (ntpd_t)))
 
 (optional ntpd_optional_systemd
     (call systemd_daemon (ntpd_t ntpd_exec_t))

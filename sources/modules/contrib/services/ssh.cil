@@ -51,7 +51,6 @@
 (call miscfiles_read_all_terminfo (ssh_subject_type))
 (call miscfiles_read_all_certs (ssh_subject_type))
 (call miscfiles_read_locale (ssh_subject_type))
-(call miscfiles_read_net_config_files (ssh_subject_type))
 
 (call ns_client_subject_type (ssh_subject_type))
 
@@ -65,15 +64,8 @@
 (call usersubject_manage_tmpfs_files (ssh_subject_type))
 (call usersubject_tmpfs_object_type_transition_user_tmpfs (ssh_subject_type file "*"))
 
-(optional ssh_subject_type_optional_dbus
-    (call dbus_system_client_subject_type (ssh_subject_type)))
-
 (optional ssh_subject_type_optional_gpg
     (call gpg_search_home (ssh_subject_type)))
-
-(optional ssh_subject_type_optional_machine
-    (call machine_dbus_chat_machined (ssh_subject_type))
-    (call machine_read_machined_systemd_runtime_files (ssh_subject_type)))
 
 (type sshagent_exec_t)
 (call applications_app (ssh_sshagent_subject_type sshagent_exec_t))
@@ -208,7 +200,6 @@
 
 (call auth_login_program_subject_type (sshd_t))
 
-(call miscfiles_read_net_config_files (sshd_t))
 (call miscfiles_read_cert (sshd_t))
 
 (call ssh_exec_sshd (sshd_t))
@@ -234,9 +225,6 @@
     (false
         (call usersubject_dynamic_subject_type_transition_all_unpriv_login_subjects (sshd_t))
         (call usersubject_shell_exec_manual_subject_type_transition_all_unpriv_login_subjects (sshd_t))))
-
-(optional sshd_optional_dbus
-    (call dbus_system_client_subject_type (sshd_t)))
 
 (optional sshd_optional_systemd
     (call systemd_daemon (sshd_t sshd_exec_t))

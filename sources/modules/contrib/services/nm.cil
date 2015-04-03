@@ -92,7 +92,7 @@
 (call files_manage_config_lnk_files (nm_t))
 (call files_read_data (nm_t))
 
-(call dbus_system_service (nm_t))
+(call dbus_acquire_system_service (nm_t))
 
 (call dns_manage_resolve_config_files (nm_t))
 (call dns_config_object_type_transition_resolve_config_files (nm_t))
@@ -136,9 +136,6 @@
 (optional nm_optional_login_logind
     (call login_logind_client_subject_type (nm_t))
     (call login_read_logind_systemd_runtime (nm_t)))
-
-(optional nm_optional_machine
-    (call machine_read_machined_systemd_runtime (nm_t)))
 
 (optional nm_optinal_polkit
     (call polkit_dbus_chat_polkitd (nm_t)))
@@ -190,7 +187,6 @@
 (call iptools_read_config_files (nmdisp_t))
 
 (call miscfiles_read_locale (nmdisp_t))
-(call miscfiles_read_net_config_files (nmdisp_t))
 
 (call mount_exec (nmdisp_t))
 
@@ -259,10 +255,6 @@
 
 (call filesystems_list_tmpfs (nmcli_t))
 (call filesystems_read_sysfs_files (nmcli_t))
-
-(call auth_read_passwd_config_files (nmcli_t))
-
-(call dbus_system_client_subject_type (nmcli_t))
 
 (call miscfiles_read_all_terminfo (nmcli_t))
 (call miscfiles_read_locale (nmcli_t))

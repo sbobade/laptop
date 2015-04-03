@@ -64,9 +64,7 @@
 
 (call terminals_use_console (resolved_t))
 
-(call dbus_system_service (resolved_t))
-
-(call dns_tcp_connect_llmnr_port (resolved_t))
+(call dbus_acquire_system_service (resolved_t))
 
 (call journal_client_subject_type (resolved_t))
 

@@ -45,9 +45,6 @@
 (call usersubject_manage_user_home_files (irc_irssi_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (irc_irssi_subject_type file "*"))
 
-(optional irc_irssi_subject_type_optional_systemd
-    (call systemd_search_runtime (irc_irssi_subject_type))) ; FIXME
-
 (macro irc_exec_irssi ((type ARG1))
     (call can_exec (ARG1 irssi_exec_t)))
 

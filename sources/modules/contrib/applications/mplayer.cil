@@ -56,9 +56,6 @@
 (optional mplayer_optional_lirc
     (call lirc_search_runtime (mplayer_t)))
 
-(optional mplayer_optional_machine
-    (call machine_read_machined_systemd_runtime_files (mplayer_t)))
-
 (optional mplayer_optional_xserver
     (call xserver_tmpfs_client_template (mplayer_t mplayer_tmpfs_t)))
 

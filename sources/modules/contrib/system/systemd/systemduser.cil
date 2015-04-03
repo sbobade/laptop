@@ -111,9 +111,6 @@
 (call usersubject_create_config_home_dirs (systemduser_subject_type))
 (call usersubject_home_dir_object_type_transition_config_home_dirs (systemduser_subject_type))
 
-(optional systemduser_subject_type_optional_dbus
-    (call dbus_system_client_subject_type (systemduser_subject_type)))
-
 (optional systemduser_subject_type_optional_run
     (call run_getattr_all_subjects (systemduser_subject_type)))
 

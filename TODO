@@ -29,9 +29,4 @@
 
 * e145: remove audit=1 from /etc/default/grub
 
-* revisit: dns_resolve_client_subject_type
-    - miscfiles_read_net_config (dns_resolve_client_subject_type) for /etc/hosts
-    - dbus_system_client_subject_type (dns_resolve_client_subject_type) for dbus chat with resolved
-    - resolve_dbus_chat_resolved (dns_resolve_client_subject_type) for nss: hosts: resolve
-    - hostname_dbus_chat_hostnamed (dns_resolve_client_subject_type) for nss: hosts: myhostname
-    - machine_read_config_files (dns_resolve_client_subject_type for nss: mymachines
+* rw_fifo_file_perms should probably be part of ns_client_subject_type

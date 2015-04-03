@@ -32,7 +32,7 @@
 
 (call ns_client_subject_type (coredumpctl_t))
 
-(call usersubject_dontaudit_read_user_home_files (coredumpctl_t))
+(call usersubject_read_user_home_files (coredumpctl_t))
 
 (type coredump_t)
 (type coredump_exec_t)
