@@ -36,6 +36,11 @@
     (call nspawn_read_all_common_container_object_lnk_files (analyze_subject_type))
     (call nspawn_read_all_common_container_object_files (analyze_subject_type)))
 
+(optional analyze_subject_type_optional_usersubject
+    (call usersubject_search_exec_home (analyze_subject_type))
+    (call usersubject_read_exec_home_lnk_files (analyze_subject_type))
+    (call usersubject_read_user_home_files (analyze_subject_type)))
+
 (allow analyze_client_subject_type self rw_fifo_file_perms)
 
 (call commands_exec (analyze_client_subject_type))
@@ -49,9 +54,6 @@
 
 (optional analyze_client_subject_type_optional_machine
     (call machine_read_config_files (analyze_client_subject_type)))
-
-(optional analyze_client_subject_type_optional_usersubject
-    (call usersubject_dontaudit_read_user_home_files (analyze_client_subject_type)))
 
 (macro analyze_exec ((type ARG1))
     (call analyze_client_subject_type (ARG1))
@@ -78,6 +80,9 @@
     (roleattributeset analyze_role ARG1)
     (allow ARG3 ARG2 (process (signal)))
     (call analyze_subject_type (ARG3)))
+
+(macro analyze_rw_analyze_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 analyze_subject_type (unix_stream_socket (read write ioctl))))
 
 (macro analyze_run ((type ARG1)(role ARG2))
     (call analyze_auto_subject_type_transition (ARG1))

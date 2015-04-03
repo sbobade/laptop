@@ -192,7 +192,9 @@
     (call askpwd_run_askpwdagent (login_loginctl_subject_type login_loginctl_role)))
 
 (optional login_loginctl_subject_type_optional_usersubject
-    (call usersubject_dontaudit_read_user_home_files (login_loginctl_client_subject_type)))
+    (call usersubject_search_exec_home (login_loginctl_subject_type))
+    (call usersubject_read_exec_home_lnk_files (login_loginctl_subject_type))
+    (call usersubject_read_user_home_files (login_loginctl_subject_type)))
 
 (allow login_loginctl_client_subject_type self rw_fifo_file_perms)
 
@@ -342,6 +344,9 @@
 
 (macro login_logind_client_subject_type ((type ARG1))
     (typeattributeset login_logind_client_subject_type ARG1))
+
+(macro login_rw_loginctl_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 login_loginctl_subject_type (unix_stream_socket (read write ioctl))))
 
 (macro login_logind_admin ((type ARG1)(role ARG2))
     (typeattributeset login_logind_admin_subject_type ARG1)

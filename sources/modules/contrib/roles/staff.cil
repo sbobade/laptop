@@ -20,9 +20,6 @@
     (call alsa_manage_alsautil_tmpfs_files (staff_t))
     (call alsa_relabel_alsautil_tmpfs_files (staff_t)))
 
-(optional staff_optional_analyze
-    (call analyze_exec (staff_t)))
-
 (optional staff_optional_askpwd
     (call askpwd_run_askpwdagent (staff_subject_type staff_r)))
 
@@ -282,12 +279,6 @@
 (optional staff_optional_login_logind
     (call login_logind_client_subject_type (staff_t)))
 
-(optional staff_optional_journal
-    (call journal_exec_journalctl (staff_t)))
-
-(optional staff_optional_machine
-    (call machine_exec_machinectl (staff_t)))
-
 (optional staff_optional_mail
     (type staff_mutt_t)
     (call mail_role_template_mutt (staff_r staff_subject_type staff_mutt_t))
@@ -319,14 +310,6 @@
 
 (optional staff_nb_optional_mutt
     (call mail_role_template_mutt (staff_r staff_nb_t staff_mutt_t)))
-
-(optional staff_optional_mycontainer
-    (call mycontainer_getattr_subject (staff_t))
-    (call mycontainer_read_state (staff_t))
-    (call mycontainer_status_unit (staff_t))
-    (call mycontainer_start_unit (staff_t))
-    (call mycontainer_stop_unit (staff_t))
-    (call mycontainer_rw_inherited_container_object_chr_files (staff_t)))
 
 (optional staff_optional_nb
     (type staff_nb_t)
@@ -404,9 +387,6 @@
 (optional staff_optional_resetimg
     (call resetimg_read_exec_files (staff_t)))
 
-(optional staff_optional_run
-    (call run_exec (staff_t)))
-
 (optional staff_optional_screen
     (type staff_screen_t)
     (call screen_role_template (staff_r staff_subject_type staff_screen_t))
@@ -478,6 +458,69 @@
     (call sysadm_userrole (staff_u))
     (call sysadm_roleallow (staff_r))
     (call sysadm_send_signal (staff_subject_type)))
+
+(optional staff_optional_analyze
+    (type staff_analyze_t)
+    (call analyze_role_template (staff_r staff_subject_type staff_analyze_t)))
+
+(optional staff_analyze_optional_ssh
+    (call analyze_rw_analyze_subject_unix_stream_sockets (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_analyze_t staff_ssh_t)))
+
+(optional staff_optional_hostnamectl
+    (type staff_hostnamectl_t)
+    (call hostname_role_template_hostnamectl (staff_r staff_subject_type staff_hostnamectl_t)))
+
+(optional staff_hostnamectl_optional_ssh
+    (call hostname_rw_hostnamectl_subject_unix_stream_sockets (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_hostnamectl_t staff_ssh_t)))
+
+(optional staff_optional_journal
+    (type staff_journalctl_t)
+    (call journal_role_template_journalctl (staff_r staff_subject_type staff_journalctl_t)))
+
+(optional staff_optional_locale
+    (type staff_localectl_t)
+    (call locale_role_template_localectl (staff_r staff_subject_type staff_localectl_t)))
+
+(optional staff_localectl_optional_ssh
+    (call locale_rw_localectl_subject_unix_stream_sockets (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_localectl_t staff_ssh_t)))
+
+(optional staff_loginctl_optional_ssh
+    (call login_rw_loginctl_subject_unix_stream_sockets (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_loginctl_t staff_ssh_t)))
+
+(optional staff_optional_loginctl
+    (type staff_loginctl_t)
+    (call login_role_template_loginctl (staff_r staff_subject_type staff_loginctl_t)))
+
+(optional staff_optional_machine
+    (type staff_machinectl_t)
+    (call machine_role_template_machinectl (staff_r staff_subject_type staff_machinectl_t)))
+
+(optional staff_machinectl_optional_ssh
+    (call machine_rw_machinectl_subject_unix_stream_sockets (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_machinectl_t staff_ssh_t)))
+
+(optional staff_optional_run
+    (call run_exec (staff_t)))
+
+(optional staff_optional_timedatectl
+    (type staff_timedatectl_t)
+    (call timedate_role_template_timedatectl (staff_r staff_subject_type staff_timedatectl_t)))
+
+(optional staff_timedatectl_optional_ssh
+    (call timedate_rw_timedatectl_subject_unix_stream_sockets (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_timedatectl_t staff_ssh_t)))
+
+(optional staff_optional_systemd
+    (type staff_systemctl_t)
+    (call systemd_role_template_systemctl (staff_r staff_subject_type staff_systemctl_t)))
+
+(optional staff_systemctl_optional_ssh
+    (call systemd_rw_systemctl_subject_unix_stream_sockets (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_systemctl_t staff_ssh_t)))
 
 (optional staff_optional_systemduser
     (type staff_systemduser_t)

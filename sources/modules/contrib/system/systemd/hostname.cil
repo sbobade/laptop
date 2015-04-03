@@ -24,6 +24,11 @@
 
 (call hostname_hostnamectl_client_subject_type (hostname_hostnamectl_subject_type))
 
+(optional hostname_hostnamectl_subject_type_optional_usersubject
+    (call usersubject_search_exec_home (hostname_hostnamectl_subject_type))
+    (call usersubject_read_exec_home_lnk_files (hostname_hostnamectl_subject_type))
+    (call usersubject_read_user_home_files (hostname_hostnamectl_subject_type)))
+
 (call dbus_system_client_subject_type (hostname_hostnamectl_client_subject_type))
 
 (call commands_exec (hostname_hostnamectl_client_subject_type))
@@ -129,6 +134,9 @@
 (macro hostname_manage_hostnamed_dbus_config_files ((type ARG1))
     (call dbus_rw_config_dirs (ARG1))
     (allow ARG1 hostnamed_dbus_config_t manage_file_perms))
+
+(macro hostname_rw_hostnamectl_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 hostname_hostnamectl_subject_type (unix_stream_socket (read write ioctl))))
 
 (macro hostname_dbus_chat_hostnamed ((type ARG1))
     (allow ARG1 hostnamed_t (dbus (send_msg)))

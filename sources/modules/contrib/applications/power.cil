@@ -27,7 +27,7 @@
 
 (call miscfiles_read_locale (power_t))
 
-(call usersubject_read_user_home_lnk_files (power_t))
+(call usersubject_read_exec_home_lnk_files (power_t))
 (call usersubject_search_exec_home (power_t))
 
 (macro power_exec ((type ARG1))

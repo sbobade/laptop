@@ -82,15 +82,17 @@
     (call nspawn_stream_connect_all_common_containers (timedate_timedatectl_subject_type))
     (call nspawn_read_all_common_container_object_files (timedate_timedatectl_subject_type)))
 
+(optional timedate_timedatectl_subject_type_optional_usersubject
+    (call usersubject_search_exec_home (timedate_timedatectl_subject_type))
+    (call usersubject_read_exec_home_lnk_files (timedate_timedatectl_subject_type))
+    (call usersubject_read_user_home_files (timedate_timedatectl_subject_type)))
+
 (allow timedate_timedatectl_client_subject_type self rw_fifo_file_perms)
 
 (call commands_exec (timedate_timedatectl_client_subject_type))
 
 (call miscfiles_read_locale (timedate_timedatectl_client_subject_type))
 (call miscfiles_read_all_terminfo (timedate_timedatectl_client_subject_type))
-
-(optional timedate_timedatectl_client_subject_type_optional_usersubject
-    (call usersubject_dontaudit_read_user_home_files (timedate_timedatectl_client_subject_type)))
 
 (call devices_read_clock (timedatex_t))
 
@@ -191,6 +193,9 @@
 (macro timedate_dbus_chat_timedatex ((type ARG1))
     (allow ARG1 timedatex_t (dbus (send_msg)))
     (allow timedatex_t ARG1 (dbus (send_msg))))
+
+(macro timedate_rw_timedatectl_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 timedate_timedatectl_subject_type (unix_stream_socket (read write ioctl))))
 
 (macro timedate_admin ((type ARG1)(role ARG2))
     (typeattributeset timedate_timedated_admin_subject_type ARG1)

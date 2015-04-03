@@ -588,6 +588,7 @@
     (call nspawn_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_machinectl_optional_ssh
+    (call machine_rw_machinectl_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_machinectl_t sysadm_ssh_t)))
 
 (optional sysadm_optional_notify
@@ -642,27 +643,31 @@
     (call vconsole_manage_config_files (sysadm_t)))
 
 (optional sysadm_analyze_optional_ssh
+    (call analyze_rw_analyze_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_analyze_t sysadm_ssh_t)))
 
 (optional sysadm_hostnamectl_optional_ssh
+    (call hostname_rw_hostnamectl_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_hostnamectl_t sysadm_ssh_t)))
 
-(optional sysadm_journalctl_optional_ssh
-    (call ssh_role_template (sysadm_r sysadm_journalctl_t sysadm_ssh_t)))
-
 (optional sysadm_localectl_optional_ssh
+    (call locale_rw_localectl_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_localectl_t sysadm_ssh_t)))
 
 (optional sysadm_loginctl_optional_ssh
+    (call login_rw_loginctl_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_loginctl_t sysadm_ssh_t)))
 
 (optional sysadm_run_optional_ssh
+    (call run_rw_run_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_run_t sysadm_ssh_t)))
 
 (optional sysadm_timedatectl_optional_ssh
+    (call timedate_rw_timedatectl_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_timedatectl_t sysadm_ssh_t)))
 
 (optional sysadm_systemctl_optional_ssh
+    (call systemd_rw_systemctl_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
 
 (optional sysadm_optional_tcs

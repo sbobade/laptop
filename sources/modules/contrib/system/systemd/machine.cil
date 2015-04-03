@@ -290,6 +290,9 @@
 (macro machine_lib_object_type_transition_machine_lib_dirs ((type ARG1))
     (call files_lib_object_type_transition (ARG1 machine_lib_t dir "machines")))
 
+(macro machine_rw_machinectl_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 machine_machinectl_subject_type (unix_stream_socket (read write ioctl))))
+
 (macro machine_dbus_chat_machined ((type ARG1))
     (allow ARG1 machined_t (dbus (send_msg)))
     (allow machined_t ARG1 (dbus (send_msg))))

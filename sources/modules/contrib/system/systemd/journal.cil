@@ -49,6 +49,9 @@
     (call nspawn_list_all_common_container_objects (journal_journalctl_subject_type))
     (call nspawn_read_all_common_container_object_files (journal_journalctl_subject_type)))
 
+(optional journal_journalctl_subject_type_optional_usersubject
+    (call usersubject_read_user_home_files (journal_journalctl_subject_type)))
+
 (type journald_t)
 (type journald_exec_t)
 (call systemd_daemon (journald_t journald_exec_t))
@@ -191,9 +194,6 @@
 
 (optional journal_journalctl_client_subject_type_optional_machine
     (call machine_read_config_files (journal_journalctl_client_subject_type)))
-
-(optional journal_journalctl_client_subject_type_optional_usersubject
-    (call usersubject_dontaudit_read_user_home_files (journal_journalctl_client_subject_type)))
 
 (dontaudit journal_client_subject_type self (capability (net_admin))) ; FIXME
 (allow journal_client_subject_type self create_unix_stream_socket_perms)

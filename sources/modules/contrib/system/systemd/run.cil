@@ -68,5 +68,8 @@
     (call run_auto_subject_type_transition (ARG1))
     (roleattributeset run_role ARG2))
 
+(macro run_rw_run_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 run_subject_type (unix_stream_socket (read write ioctl))))
+
 (macro run_getattr_all_subjects ((type ARG1))
     (allow ARG1 run_subject_type (process (getattr))))
