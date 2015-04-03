@@ -50,6 +50,8 @@
     (call nspawn_read_all_common_container_object_files (journal_journalctl_subject_type)))
 
 (optional journal_journalctl_subject_type_optional_usersubject
+    (call usersubject_search_exec_home (journal_journalctl_subject_type))
+    (call usersubject_read_exec_home_lnk_files (journal_journalctl_subject_type))
     (call usersubject_read_user_home_files (journal_journalctl_subject_type)))
 
 (type journald_t)
