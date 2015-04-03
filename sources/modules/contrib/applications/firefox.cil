@@ -112,6 +112,9 @@
 (optional firefox_optional_nm
     (call nm_dbus_chat (firefox_t)))
 
+(optional firefox_optional_resolve
+    (call resolve_dbus_chat_resolved (firefox_t)))
+
 (optional firefox_optional_tor
     (call tor_tcp_connect_tor_port (firefox_t)))
 
