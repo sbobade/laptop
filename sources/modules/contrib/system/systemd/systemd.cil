@@ -410,6 +410,7 @@
 (optional systemd_systemctl_subject_type_optional_systemduser
     (call systemduser_control_config_home (systemd_systemctl_subject_type))
     (call systemduser_control_transient_units (systemd_systemctl_subject_type))
+    (call systemduser_stream_connect_all_subjects (systemd_systemctl_subject_type))
     (call systemduser_read_config_home (systemd_systemctl_subject_type)))
 
 (optional systemd_systemdctl_subject_type_optional_usersubject
@@ -594,6 +595,7 @@
         (ARG2 systemctl_exec_t ARG3))
     (roletype ARG1 ARG3)
     (roleattributeset systemd_systemctl_role ARG1)
+    (allow ARG2 ARG3 (process (noatsecure)))
     (allow ARG3 ARG2 (process (signal)))
     (call systemd_systemctl_subject_type (ARG3)))
 
@@ -921,6 +923,9 @@
 
 (macro systemd_rw_systemctl_subject_unix_stream_sockets ((type ARG1))
     (allow ARG1 systemd_systemctl_subject_type (unix_stream_socket (read write ioctl))))
+
+(macro systemd_getattr_systemtl_subjects ((type ARG1))
+    (allow ARG1 systemd_systemctl_subject_type (process (getattr))))
 
 (macro systemd_read_unit ((type ARG1))
     (call libraries_search (ARG1))
