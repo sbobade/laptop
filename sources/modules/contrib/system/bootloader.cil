@@ -109,6 +109,9 @@
     (call rpm_rw_inherited_tmpfs_files (bootloader_t))
     (call rpm_rw_inherited_fifo_files (bootloader_t)))
 
+(optional bootloader_optional_usersubject
+    (call usersubject_list_home_dir (bootloader_t)))
+
 (macro bootloader_exec ((type ARG1))
     (call can_exec (ARG1 bootloader_exec_t)))
 
