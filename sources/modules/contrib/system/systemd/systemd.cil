@@ -403,6 +403,7 @@
 
 (optional systemd_systemctl_subject_type_optional_login_logind
     (call login_list_logind_systemd_runtime (systemd_systemctl_subject_type))
+    (call login_read_logind_systemd_runtime_files (systemd_systemctl_subject_type))
     (call login_logind_client_subject_type (systemd_systemctl_subject_type)))
 
 (optional systemd_systemctl_subject_type_optional_machine
