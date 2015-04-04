@@ -45,8 +45,6 @@
 
 (call dns_read_resolve_config_files (dns_resolve_client_subject_type))
 
-(call miscfiles_read_net_config_files (dns_resolve_client_subject_type))
-
 (optional dns_resolve_client_subject_type_optional_dbus
     (call dbus_system_client_subject_type (dns_resolve_client_subject_type)))
 
