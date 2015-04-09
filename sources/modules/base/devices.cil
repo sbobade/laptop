@@ -334,6 +334,10 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 dri_dev_t (chr_file (getattr))))
 
+(macro devices_getattr_kvm ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 kvm_dev_t (chr_file (getattr))))
+
 (macro devices_getattr_random ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 random_dev_t (chr_file (getattr))))
@@ -525,6 +529,10 @@
 (macro devices_setattr_dri ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 dri_dev_t (chr_file (setattr))))
+
+(macro devices_setattr_kvm ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 kvm_dev_t (chr_file (setattr))))
 
 (macro devices_setattr_sound ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))

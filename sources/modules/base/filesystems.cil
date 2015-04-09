@@ -104,6 +104,7 @@
 (fsuse task "sockfs" fs)
 
 (fsuse xattr "ext4" fs)
+(fsuse xattr "xfs" fs)
 
 (type fuse_fs_t)
 (call filesystems_object_type (fuse_fs_t))
