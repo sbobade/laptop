@@ -28,3 +28,8 @@
     The problem would be that i would need to add more logic on how to determine which seuser is unconfined and which contexts to add and which not
 
 * rw_fifo_file_perms should probably be part of ns_client_subject_type
+
+* e145: fix /etc/hosts: d30 -> 192.168.1.100
+* e145: fix ~/.rpmmacros: s/joe/kcinimod
+* e145: clean ~/.ssh/known_hosts
+* d30: rpmfusion: mplayer .. deps
