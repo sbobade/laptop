@@ -81,6 +81,8 @@
 (call auth_run_chkpwd (sysadm_subject_type sysadm_r))
 (call auth_run_utempter (sysadm_subject_type sysadm_r))
 
+(call miscfiles_read_cert_files (sysadm_t))
+
 (call seutil_manage_policy_config (sysadm_t))
 (call seutil_config_object_type_transition_policy_config_dirs (sysadm_t))
 
