@@ -203,6 +203,7 @@
 (call miscfiles_read_cert (sshd_t))
 
 (call ssh_exec_sshd (sshd_t))
+(call ssh_read_home_files (sshd_t))
 (call ssh_read_sshd_pam_config_files (sshd_t))
 (call ssh_read_sshd_config_files (sshd_t))
 (call ssh_read_sshd_key_files (sshd_t))
