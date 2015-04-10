@@ -1,22 +1,16 @@
-(roleattribute qemu_role)
-
 (typeattribute qemu_admin_subject_type)
 
 (typeattribute qemu_object_type)
 
 (type qemu_t)
 (type qemu_exec_t)
-(call applications_app (qemu_t qemu_exec_t))
-(roletype qemu_role qemu_t)
-
-(roleattributeset qemu_role system_r)
+(call applications_exec_object_type (qemu_exec_t))
 
 (context qemu_exec (system_u object_r qemu_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/qemu-img" file qemu_exec)
 (filecon "/usr/bin/qemu-io" file qemu_exec)
 (filecon "/usr/bin/qemu-kvm" file qemu_exec)
 (filecon "/usr/bin/qemu-nbd" file qemu_exec)
-(filecon "/usr/bin/qemu-system-i386" file qemu_exec)
 (filecon "/usr/bin/qemu-system-x86_64" file qemu_exec)
 
 (type qemuga_t)
@@ -70,18 +64,6 @@
 
 (macro qemu_exec_qemuga ((type ARG1))
     (call can_exec (ARG1 qemuga_exec_t)))
-
-(macro qemu_auto_subject_type_transition ((type ARG1))
-    (call qemu_send_signal (ARG1))
-    (call auto_subject_type_transition_pattern
-        (ARG1 qemu_exec_t qemu_t)))
-
-(macro qemu_send_signal ((type ARG1))
-    (allow ARG1 qemu_t (process (signal))))
-
-(macro qemu_run ((type ARG1)(role ARG2))
-    (call qemu_auto_subject_type_transition (ARG1))
-    (roleattributeset qemu_role ARG2))
 
 (macro qemu_auto_subject_type_transition_qemuga ((type ARG1))
     (call qemu_send_signal_qemuga (ARG1))

@@ -393,8 +393,7 @@
     (call ppp_manage_pppd_log (sysadm_t)))
 
 (optional sysadm_optional_qemu
-    (call qemu_admin (sysadm_t sysadm_r))
-    (call qemu_run (sysadm_subject_type sysadm_r)))
+    (call qemu_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_quota
     (call quota_run (sysadm_t sysadm_r))
