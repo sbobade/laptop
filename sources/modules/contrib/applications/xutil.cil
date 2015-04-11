@@ -7,6 +7,7 @@
 
 (context xutil_exec (system_u object_r xutil_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/xbacklight" file xutil_exec)
+(filecon "/usr/bin/xinput" file xutil_exec)
 (filecon "/usr/bin/xhost" file xutil_exec)
 (filecon "/usr/bin/xloadimage" file xutil_exec)
 (filecon "/usr/bin/xmodmap" file xutil_exec)
