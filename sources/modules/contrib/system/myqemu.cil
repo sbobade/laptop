@@ -10,6 +10,8 @@
 
 (call myqemu_virt_subject_type (virt_subject_t))
 
+(call qemu_exec_entry_object_type (myqemu_virt_subject_type))
+
 (type virt_object_t)
 (call files_object_type (myqemu_virt_object_type))
 
@@ -23,7 +25,11 @@
 (context myqemu_runner_exec (system_u object_r myqemu_runner_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/myqemu_runner" file myqemu_runner_exec)
 
+(allow myqemu_runner_t self (process (setexec)))
+
 (call commands_mprot_read_shell_exec_files (myqemu_runner_t))
+
+(call selinux_validate_context (myqemu_runner_t))
 
 (call miscfiles_read_locale (myqemu_runner_t))
 

@@ -73,6 +73,9 @@
 (macro qemu_send_signal_qemuga ((type ARG1))
     (allow ARG1 qemuga_t (process (signal))))
 
+(macro qemu_exec_entry_object_type ((type ARG1))
+    (allow ARG1 qemu_exec_t (file (entrypoint))))
+
 (macro qemu_read_qemuga_runtime_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (allow ARG1 qemuga_runtime_t read_file_perms))
