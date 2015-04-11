@@ -350,7 +350,15 @@
     (call ntp_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_openssl
-    (call openssl_run (sysadm_subject_type sysadm_r)))
+    (call openssl_run (sysadm_subject_type sysadm_r))
+
+    (context sysadm_openssl_home (sysadm_u object_r openssl_home_t (systemlow systemlow)))
+    (filecon "/root/\.rnd(/.*)?" any sysadm_openssl_home)
+
+    (call openssl_home_dir_object_type_transition_home (sysadm_t dir ".rnd"))
+
+    (call openssl_manage_home (sysadm_t))
+    (call openssl_relabel_home (sysadm_t)))
 
 (optional sysadm_optional_pa
     (call pa_manage_config (sysadm_t))

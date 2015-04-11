@@ -326,6 +326,14 @@
 (optional staff_optional_notify
     (call notify_exec (staff_t)))
 
+(optional staff_optional_openssl
+    (call openssl_exec (staff_t))
+
+    (call openssl_home_dir_object_type_transition_home (staff_t dir ".rnd"))
+
+    (call openssl_manage_home (staff_t))
+    (call openssl_relabel_home (staff_t)))
+
 (optional staff_optional_pa
     (call pa_run (staff_subject_type staff_r))
     (call pa_run_pactl (staff_subject_type staff_r))

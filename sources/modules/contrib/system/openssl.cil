@@ -10,6 +10,19 @@
 (context openssl_exec (system_u object_r openssl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/openssl" file openssl_exec)
 
+(type openssl_home_t)
+(call usersubject_home_object_type (openssl_home_t))
+
+(filecon "HOME_DIR/\.rnd(/.*)?" any (system_u object_r openssl_home_t (systemlow systemlow)))
+
+(allow openssl_t openssl_home_t manage_dir_perms)
+(allow openssl_t openssl_home_t manage_file_perms)
+(call openssl_home_dir_object_type_transition_home (openssl_t dir ".rnd"))
+
+(call devices_read_urandom (openssl_t))
+
+(call miscfiles_manage_all_certs (openssl_t))
+
 (macro openssl_exec ((type ARG1))
     (call can_exec (ARG1 openssl_exec_t)))
 
@@ -24,3 +37,40 @@
 (macro openssl_run ((type ARG1)(role ARG2))
     (call openssl_auto_subject_type_transition (ARG1))
     (roleattributeset openssl_role ARG2))
+
+(macro openssl_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 openssl_home_t search_dir_perms))
+
+(macro openssl_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 openssl_home_t list_dir_perms))
+
+(macro openssl_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 openssl_home_t openssl_home_t)))
+
+(macro openssl_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 openssl_home_t openssl_home_t)))
+
+(macro openssl_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 openssl_home_t read_file_perms)
+    (allow ARG1 openssl_home_t list_dir_perms)
+    (allow ARG1 openssl_home_t read_lnk_file_perms))
+
+(macro openssl_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 openssl_home_t manage_file_perms)
+    (allow ARG1 openssl_home_t manage_dir_perms)
+    (allow ARG1 openssl_home_t manage_lnk_file_perms))
+
+(macro openssl_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 openssl_home_t relabel_file_perms)
+    (allow ARG1 openssl_home_t relabel_dir_perms)
+    (allow ARG1 openssl_home_t relabel_lnk_file_perms))
+
+(macro openssl_home_dir_object_type_transition_home ((type ARG1)(class ARG2)(name ARG3))
+    (call usersubject_home_dir_object_type_transition (ARG1 openssl_home_t ARG2 ARG3)))
