@@ -1,0 +1,38 @@
+(roleattribute myqemu_installer_role)
+
+(type myqemu_installer_t)
+(type myqemu_installer_exec_t)
+(call applications_app (myqemu_installer_t myqemu_installer_exec_t))
+(roletype myqemu_installer_role myqemu_installer_t)
+
+(context myqemu_installer_exec (system_u object_r myqemu_installer_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/myqemu_installer" file myqemu_installer_exec)
+
+(call commands_exec (myqemu_installer_t))
+
+(call http_tcp_connect_http_port (myqemu_installer_t))
+
+(call ns_client_subject_type (myqemu_installer_t))
+
+(call openssl_run (myqemu_installer_t myqemu_installer_role))
+
+(call qemu_exec (myqemu_installer_t))
+
+(macro myqemu_exec_installer ((type ARG1))
+    (call can_exec (ARG1 myqemu_installer_exec_t)))
+
+(macro myqemu_auto_subject_type_transition_installer ((type ARG1))
+    (call myqemu_send_signal_installer (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 myqemu_installer_exec_t myqemu_installer_t)))
+
+(macro myqemu_send_signal_installer ((type ARG1))
+    (allow ARG1 myqemu_installer_t (process (signal))))
+
+(macro myqemu_run_installer ((type ARG1)(role ARG2))
+    (call myqemu_auto_subject_type_transition_installer (ARG1))
+    (roleattributeset myqemu_installer_role ARG2))
+
+(macro myqemu_read_installer_exec_files ((type ARG1))
+    (call commands_search (ARG1))
+    (allow ARG1 myqemu_installer_exec_t read_file_perms))
