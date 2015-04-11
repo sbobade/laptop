@@ -58,7 +58,8 @@
 (call filesystems_getattr_devpts_chr_files (sysadm_t))
 
 (call filesystems_read_cgroup_files (sysadm_t))
-(call filesystems_read_sysfs_files (sysadm_t))
+
+(call filesystems_read_sysfs (sysadm_t))
 
 (call storage_write_fixed_disk (sysadm_t))
 (call storage_write_removable (sysadm_t))
