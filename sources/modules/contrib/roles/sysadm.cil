@@ -349,6 +349,9 @@
     (call ntp_admin (sysadm_t sysadm_r))
     (call ntp_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_openssl
+    (call openssl_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_pa
     (call pa_manage_config (sysadm_t))
     (call pa_manage_lib (sysadm_t)))

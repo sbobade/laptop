@@ -1,0 +1,26 @@
+(roleattribute openssl_role)
+
+(type openssl_t)
+(type openssl_exec_t)
+(call applications_app (openssl_t openssl_exec_t))
+(roletype openssl_role openssl_t)
+
+(roleattributeset openssl_role system_r)
+
+(context openssl_exec (system_u object_r openssl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/openssl" file openssl_exec)
+
+(macro openssl_exec ((type ARG1))
+    (call can_exec (ARG1 openssl_exec_t)))
+
+(macro openssl_auto_subject_type_transition ((type ARG1))
+    (call openssl_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 openssl_exec_t openssl_t)))
+
+(macro openssl_send_signal ((type ARG1))
+    (allow ARG1 openssl_t (process (signal))))
+
+(macro openssl_run ((type ARG1)(role ARG2))
+    (call openssl_auto_subject_type_transition (ARG1))
+    (roleattributeset openssl_role ARG2))
