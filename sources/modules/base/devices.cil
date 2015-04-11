@@ -475,6 +475,10 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 kmsg_dev_t rw_chr_file_perms))
 
+(macro devices_rw_kvm ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 kvm_dev_t rw_chr_file_perms))
+
 (macro devices_rw_loop_control ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 loop_control_dev_t rw_chr_file_perms))
