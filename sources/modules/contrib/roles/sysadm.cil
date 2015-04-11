@@ -332,6 +332,7 @@
     (call mount_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_myqemu
+    (call myqemu_run_runner (sysadm_subject_type sysadm_r))
     (call myqemu_run_installer (sysadm_subject_type sysadm_r))
 
     (call myqemu_manage_installer_tmpfs_files (sysadm_t))
