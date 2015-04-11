@@ -48,6 +48,9 @@
 
 (call usersubject_use_inherited_terminals (myqemu_virt_subject_type))
 
+(optional myqemu_virt_subject_type_optional_machine
+    (call machine_search_lib (myqemu_virt_subject_type)))
+
 (type myqemu_runner_t)
 (type myqemu_runner_exec_t)
 (call applications_app (myqemu_runner_t myqemu_runner_exec_t))
@@ -74,6 +77,8 @@
 (call myqemu_relabel_all_virt_object_files (myqemu_runner_t))
 
 (call qemu_mmap_qemu_exec_files (myqemu_runner_t))
+
+(call usersubject_search_home_dir (myqemu_runner_t))
 
 (optional myqemu_runner_optional_machine
     (call machine_relabelfrom_lib_files (myqemu_runner_t)))
