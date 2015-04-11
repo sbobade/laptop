@@ -275,6 +275,10 @@
 (macro machine_mprot_read_lib_files ((type ARG1))
     (allow ARG1 machine_lib_t (file (read))))
 
+(macro machine_relabelfrom_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call relabelfrom_files_pattern (ARG1 machine_lib_t machine_lib_t)))
+
 (macro machine_manage_lib_files ((type ARG1))
     (call files_search_lib (ARG1))
     (call manage_files_pattern (ARG1 machine_lib_t machine_lib_t)))

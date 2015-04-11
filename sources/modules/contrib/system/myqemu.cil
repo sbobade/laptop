@@ -5,17 +5,40 @@
 (typeattribute myqemu_virt_object_type)
 
 (type virt_subject_t)
-(call subject_common_type (myqemu_virt_subject_type))
-(roletype myqemu_runner_role myqemu_virt_subject_type)
+(type virt_object_t)
+(call myqemu_virt_template (virt_subject_t virt_object_t))
 
-(call myqemu_virt_subject_type (virt_subject_t))
+(call subject_common_type (myqemu_virt_subject_type))
+(call files_object_type (myqemu_virt_object_type))
+
+(roletype myqemu_runner_role myqemu_virt_subject_type)
 
 (call qemu_exec_entry_object_type (myqemu_virt_subject_type))
 
-(type virt_object_t)
-(call files_object_type (myqemu_virt_object_type))
+(allow myqemu_virt_subject_type self (capability (setuid setgid)))
+(allow myqemu_virt_subject_type self (process (getsched)))
+(allow myqemu_virt_subject_type self rw_fifo_file_perms)
 
-(call myqemu_virt_object_type (virt_object_t))
+(allow myqemu_virt_subject_type myqemu_runner_t (process (sigchld)))
+(allow myqemu_virt_subject_type myqemu_runner_t (fd (use)))
+
+(call system_read_kernel_sysctl (myqemu_virt_subject_type))
+(call system_read_net_proc (myqemu_virt_subject_type))
+
+(call devices_read_urandom (myqemu_virt_subject_type))
+(call devices_rw_kvm (myqemu_virt_subject_type))
+
+(call files_read_data (myqemu_virt_subject_type))
+(call files_read_config_files (myqemu_virt_subject_type))
+
+(call filesystems_getattr_filesystems (myqemu_virt_subject_type))
+(call filesystems_read_sysfs (myqemu_virt_subject_type))
+
+(call subject_use_interactive_fd_subject_type (myqemu_virt_subject_type))
+
+(call miscfiles_read_locale (myqemu_virt_subject_type))
+
+(call ns_client_subject_type (myqemu_virt_subject_type))
 
 (type myqemu_runner_t)
 (type myqemu_runner_exec_t)
@@ -26,12 +49,23 @@
 (filecon "/usr/sbin/myqemu_runner" file myqemu_runner_exec)
 
 (allow myqemu_runner_t self (process (setexec)))
+(allow myqemu_runner_t self rw_fifo_file_perms)
+
+(dontaudit myqemu_runner_t myqemu_virt_subject_type (process (rlimitinh siginh noatsecure)))
+(allow myqemu_runner_t myqemu_virt_subject_type (process (transition)))
 
 (call commands_mprot_read_shell_exec_files (myqemu_runner_t))
 
 (call selinux_validate_context (myqemu_runner_t))
 
 (call miscfiles_read_locale (myqemu_runner_t))
+
+(call myqemu_relabel_all_virt_object_files (myqemu_runner_t))
+
+(call qemu_mmap_qemu_exec_files (myqemu_runner_t))
+
+(optional myqemu_runner_optional_machine
+    (call machine_relabelfrom_lib_files (myqemu_runner_t)))
 
 (type myqemu_installer_t)
 (type myqemu_installer_exec_t)
@@ -71,8 +105,6 @@
 
 (call http_tcp_connect_http_port (myqemu_installer_t))
 
-(call machine_manage_lib_files (myqemu_installer_t))
-
 (call miscfiles_read_cert (myqemu_installer_t))
 (call miscfiles_read_locale (myqemu_installer_t))
 
@@ -85,6 +117,14 @@
 (call qemu_exec (myqemu_installer_t))
 
 (call usersubject_manage_user_home_files (myqemu_installer_t))
+
+(optional myqemu_installer_optional_machine
+    (call machine_manage_lib_files (myqemu_installer_t)))
+
+(macro myqemu_virt_template ((type ARG1)(type ARG2))
+    (call myqemu_virt_subject_type (ARG1))
+    (call myqemu_virt_object_type (ARG2))
+    (allow ARG1 ARG2 rw_fifo_file_perms))
 
 (macro myqemu_virt_subject_type ((type ARG1))
     (typeattributeset myqemu_virt_subject_type ARG1))
@@ -144,3 +184,6 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 myqemu_installer_tmpfs_t relabel_file_perms))
+
+(macro myqemu_relabel_all_virt_object_files ((type ARG1))
+    (allow ARG1 myqemu_virt_object_type relabel_file_perms))
