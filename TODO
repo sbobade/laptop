@@ -33,5 +33,4 @@
 * e145: fix ~/.rpmmacros: s/joe/kcinimod
 * e145: clean ~/.ssh/known_hosts
 * d30: rpmfusion: mplayer .. deps
-
-* target openssl and /bin/openssl in particular for my qemu_setup script
+* EXCLUDE.local e145: sources/modules/contrib/system/myqemu.cil

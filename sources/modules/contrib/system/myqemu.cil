@@ -128,7 +128,7 @@
 
 (call openssl_exec (myqemu_installer_t))
 (call openssl_manage_home (myqemu_installer_t))
-(call openssl_home_dir_object_type_transition_home_dir (myqemu_installer_t))
+(call openssl_home_dir_object_type_transition_home_files (myqemu_installer_t))
 
 (call qemu_exec (myqemu_installer_t))
 

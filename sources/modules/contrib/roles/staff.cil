@@ -332,10 +332,10 @@
 (optional staff_optional_openssl
     (call openssl_exec (staff_t))
 
-    (call openssl_home_dir_object_type_transition_home (staff_t dir ".rnd"))
+    (call openssl_home_dir_object_type_transition_home_files (staff_t))
 
-    (call openssl_manage_home (staff_t))
-    (call openssl_relabel_home (staff_t)))
+    (call openssl_manage_home_files (staff_t))
+    (call openssl_relabel_home_files (staff_t)))
 
 (optional staff_optional_pa
     (call pa_run (staff_subject_type staff_r))
