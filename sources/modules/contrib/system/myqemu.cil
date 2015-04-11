@@ -18,6 +18,7 @@
 (allow myqemu_virt_subject_type self (capability (setuid setgid)))
 (allow myqemu_virt_subject_type self (process (getsched)))
 (allow myqemu_virt_subject_type self rw_fifo_file_perms)
+(allow myqemu_virt_subject_type self (tcp_socket (listen accept)))
 
 (allow myqemu_virt_subject_type myqemu_runner_t (process (sigchld)))
 (allow myqemu_virt_subject_type myqemu_runner_t (fd (use)))
@@ -36,9 +37,16 @@
 
 (call subject_use_interactive_fd_subject_type (myqemu_virt_subject_type))
 
+(call network_tcp_bind_generic_node (myqemu_virt_subject_type))
+(call network_udp_bind_generic_node (myqemu_virt_subject_type))
+
 (call miscfiles_read_locale (myqemu_virt_subject_type))
 
 (call ns_client_subject_type (myqemu_virt_subject_type))
+
+(call qemu_mprot_read_qemu_exec_files (myqemu_virt_subject_type))
+
+(call usersubject_use_inherited_terminals (myqemu_virt_subject_type))
 
 (type myqemu_runner_t)
 (type myqemu_runner_exec_t)
@@ -54,9 +62,12 @@
 (dontaudit myqemu_runner_t myqemu_virt_subject_type (process (rlimitinh siginh noatsecure)))
 (allow myqemu_runner_t myqemu_virt_subject_type (process (transition)))
 
+(call commands_exec (myqemu_runner_t))
 (call commands_mprot_read_shell_exec_files (myqemu_runner_t))
 
 (call selinux_validate_context (myqemu_runner_t))
+
+(call subject_object_identity_change_exemption (myqemu_runner_t))
 
 (call miscfiles_read_locale (myqemu_runner_t))
 
@@ -124,7 +135,7 @@
 (macro myqemu_virt_template ((type ARG1)(type ARG2))
     (call myqemu_virt_subject_type (ARG1))
     (call myqemu_virt_object_type (ARG2))
-    (allow ARG1 ARG2 rw_fifo_file_perms))
+    (allow ARG1 ARG2 rw_file_perms))
 
 (macro myqemu_virt_subject_type ((type ARG1))
     (typeattributeset myqemu_virt_subject_type ARG1))

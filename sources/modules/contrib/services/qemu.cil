@@ -65,6 +65,9 @@
 (macro qemu_mmap_qemu_exec_files ((type ARG1))
     (allow ARG1 qemu_exec_t mmap_file_perms))
 
+(macro qemu_mprot_read_qemu_exec_files ((type ARG1))
+    (allow ARG1 qemu_exec_t (file (read))))
+
 (macro qemu_exec_qemuga ((type ARG1))
     (call can_exec (ARG1 qemuga_exec_t)))
 
