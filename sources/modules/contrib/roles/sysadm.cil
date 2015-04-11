@@ -335,6 +335,8 @@
     (call myqemu_run_runner (sysadm_subject_type sysadm_r))
     (call myqemu_run_installer (sysadm_subject_type sysadm_r))
 
+    (call myqemu_send_signal_all_virt_subjects (sysadm_t))
+
     (call myqemu_manage_installer_tmpfs_files (sysadm_t))
     (call myqemu_relabel_installer_tmpfs_files (sysadm_t)))
 
