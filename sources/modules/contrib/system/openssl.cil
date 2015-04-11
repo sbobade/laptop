@@ -74,3 +74,6 @@
 
 (macro openssl_home_dir_object_type_transition_home ((type ARG1)(class ARG2)(name ARG3))
     (call usersubject_home_dir_object_type_transition (ARG1 openssl_home_t ARG2 ARG3)))
+
+(macro openssl_home_dir_object_type_transition_home_dir ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 openssl_home_t dir ".rnd")))

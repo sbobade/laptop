@@ -23,6 +23,10 @@
 (context myqemu_runner_exec (system_u object_r myqemu_runner_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/myqemu_runner" file myqemu_runner_exec)
 
+(call commands_mprot_read_shell_exec_files (myqemu_runner_t))
+
+(call miscfiles_read_locale (myqemu_runner_t))
+
 (type myqemu_installer_t)
 (type myqemu_installer_exec_t)
 (call applications_app (myqemu_installer_t myqemu_installer_exec_t))
@@ -37,7 +41,7 @@
 (allow myqemu_installer_t myqemu_installer_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (myqemu_installer_t myqemu_installer_tmpfs_t file "*"))
 
-(allow myqemu_installer_t self (capability (net_admin)))
+(allow myqemu_installer_t self (capability (net_admin dac_override)))
 (allow myqemu_installer_t self (process (getsched)))
 (allow myqemu_installer_t self rw_fifo_file_perms)
 
@@ -69,6 +73,8 @@
 (call ns_client_subject_type (myqemu_installer_t))
 
 (call openssl_exec (myqemu_installer_t))
+(call openssl_manage_home (myqemu_installer_t))
+(call openssl_home_dir_object_type_transition_home_dir (myqemu_installer_t))
 
 (call qemu_exec (myqemu_installer_t))
 
