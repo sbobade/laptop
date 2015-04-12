@@ -1,0 +1,36 @@
+(roleattribute stdiobridge_role)
+
+(type stdiobridge_t)
+(type stdiobridge_exec_t)
+(call applications_app (stdiobridge_t stdiobridge_exec_t))
+(roletype stdiobridge_role stdiobridge_t)
+
+(context stdiobridge_exec (system_u object_r stdiobridge_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/systemd-stdio-bridge" file stdiobridge_exec)
+
+(call dbus_system_client_subject_type (stdiobridge_t))
+
+(call hostname_dbus_chat_hostnamed (stdiobridge_t))
+
+(call locale_dbus_chat_localed (stdiobridge_t))
+
+(call login_dbus_chat_logind (stdiobridge_t))
+
+(call machine_dbus_chat_machined (stdiobridge_t))
+
+(call timedate_dbus_chat_timedated (stdiobridge_t))
+
+(macro stdiobridge_exec ((type ARG1))
+    (call can_exec (ARG1 stdiobridge_exec_t)))
+
+(macro stdiobridge_auto_subject_type_transition ((type ARG1))
+    (call stdiobridge_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 stdiobridge_exec_t stdiobridge_t)))
+
+(macro stdiobridge_send_signal ((type ARG1))
+    (allow ARG1 stdiobridge_t (process (signal))))
+
+(macro stdiobridge_run ((type ARG1)(role ARG2))
+    (call stdiobridge_auto_subject_type_transition (ARG1))
+    (roleattributeset stdiobridge_role ARG2))

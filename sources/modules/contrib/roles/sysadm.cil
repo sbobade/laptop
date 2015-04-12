@@ -539,6 +539,9 @@
     (call askpwd_admin (sysadm_t sysadm_r))
     (call askpwd_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_stdiobridge
+    (call stdiobridge_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_autorelabel
     (call autorelabel_manage_flag_files (sysadm_t)))
 
@@ -611,7 +614,6 @@
 
 (optional sysadm_machinectl_optional_ssh
     (call machine_rw_machinectl_subject_unix_stream_sockets (sysadm_ssh_t))
-    (call machine_dbus_chat_machined (sysadm_t))
     (call ssh_role_template (sysadm_r sysadm_machinectl_t sysadm_ssh_t)))
 
 (optional sysadm_optional_notify
@@ -671,17 +673,14 @@
 
 (optional sysadm_hostnamectl_optional_ssh
     (call hostname_rw_hostnamectl_subject_unix_stream_sockets (sysadm_ssh_t))
-    (call hostname_dbus_chat_hostnamed (sysadm_t))
     (call ssh_role_template (sysadm_r sysadm_hostnamectl_t sysadm_ssh_t)))
 
 (optional sysadm_localectl_optional_ssh
     (call locale_rw_localectl_subject_unix_stream_sockets (sysadm_ssh_t))
-    (call locale_dbus_chat_localed (sysadm_t))
     (call ssh_role_template (sysadm_r sysadm_localectl_t sysadm_ssh_t)))
 
 (optional sysadm_loginctl_optional_ssh
     (call login_rw_loginctl_subject_unix_stream_sockets (sysadm_ssh_t))
-    (call login_dbus_chat_logind (sysadm_t))
     (call ssh_role_template (sysadm_r sysadm_loginctl_t sysadm_ssh_t)))
 
 (optional sysadm_run_optional_ssh
@@ -690,12 +689,10 @@
 
 (optional sysadm_timedatectl_optional_ssh
     (call timedate_rw_timedatectl_subject_unix_stream_sockets (sysadm_ssh_t))
-    (call timedate_dbus_chat_timedated (sysadm_t))
     (call ssh_role_template (sysadm_r sysadm_timedatectl_t sysadm_ssh_t)))
 
 (optional sysadm_systemctl_optional_ssh
     (call systemd_rw_systemctl_subject_unix_stream_sockets (sysadm_ssh_t))
-    (call systemd_dbus_chat (sysadm_t))
     (call ssh_role_template (sysadm_r sysadm_systemctl_t sysadm_ssh_t)))
 
 (optional sysadm_optional_tcs

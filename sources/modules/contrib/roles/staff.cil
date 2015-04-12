@@ -465,6 +465,9 @@
     (call sysadm_roleallow (staff_r))
     (call sysadm_send_signal (staff_subject_type)))
 
+(optional staff_optional_stdiobridge
+    (call stdiobridge_run (staff_subject_type staff_r)))
+
 (optional staff_optional_analyze
     (type staff_analyze_t)
     (call analyze_role_template (staff_r staff_subject_type staff_analyze_t)))
@@ -479,7 +482,6 @@
 
 (optional staff_hostnamectl_optional_ssh
     (call hostname_rw_hostnamectl_subject_unix_stream_sockets (staff_ssh_t))
-    (call hostname_dbus_chat_hostnamed (staff_t))
     (call ssh_role_template (staff_r staff_hostnamectl_t staff_ssh_t)))
 
 (optional staff_optional_journal
@@ -492,12 +494,10 @@
 
 (optional staff_localectl_optional_ssh
     (call locale_rw_localectl_subject_unix_stream_sockets (staff_ssh_t))
-    (call locale_dbus_chat_localed (staff_t))
     (call ssh_role_template (staff_r staff_localectl_t staff_ssh_t)))
 
 (optional staff_loginctl_optional_ssh
     (call login_rw_loginctl_subject_unix_stream_sockets (staff_ssh_t))
-    (call login_dbus_chat_logind (staff_t))
     (call ssh_role_template (staff_r staff_loginctl_t staff_ssh_t)))
 
 (optional staff_optional_loginctl
@@ -510,7 +510,6 @@
 
 (optional staff_machinectl_optional_ssh
     (call machine_rw_machinectl_subject_unix_stream_sockets (staff_ssh_t))
-    (call machine_dbus_chat_machined (staff_t)) 
     (call ssh_role_template (staff_r staff_machinectl_t staff_ssh_t)))
 
 (optional staff_optional_run
@@ -522,7 +521,6 @@
 
 (optional staff_timedatectl_optional_ssh
     (call timedate_rw_timedatectl_subject_unix_stream_sockets (staff_ssh_t))
-    (call timedate_dbus_chat_timedated (staff_t))
     (call ssh_role_template (staff_r staff_timedatectl_t staff_ssh_t)))
 
 (optional staff_optional_systemd
@@ -531,7 +529,6 @@
 
 (optional staff_systemctl_optional_ssh
     (call systemd_rw_systemctl_subject_unix_stream_sockets (staff_ssh_t))
-    (call systemd_dbus_chat (staff_t))
     (call ssh_role_template (staff_r staff_systemctl_t staff_ssh_t)))
 
 (optional staff_optional_systemduser

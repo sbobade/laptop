@@ -1,7 +1,8 @@
 #!/bin/bash
 
 modular_no_systemduser_module () {
-    modular_set_ignore sources.d sources/modules/contrib/system/systemd/systemduser.cil sources/modules/contrib/system/systemd/login.cil
+    modular_set_ignore sources.d sources/modules/contrib/system/systemd/systemduser.cil sources/modules/contrib/system/systemd/login.cil \
+    sources/modules/contrib/system/systemd/stdiobridge.cil
 
     unset MODULAR_NO_SYSTEMDUSER_MODULE
 
