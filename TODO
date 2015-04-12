@@ -30,3 +30,5 @@
 * rw_fifo_file_perms should probably be part of ns_client_subject_type
 
 * d30: rpmfusion: mplayer .. deps
+
+* e145: hostnamectl set-hostname --pretty e145, set-hostname --static localhost, set-location "Dordrecht, Netherlands", set-deployment production
