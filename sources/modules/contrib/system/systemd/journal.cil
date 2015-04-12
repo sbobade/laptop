@@ -25,6 +25,8 @@
 
 (call commands_read_all_exec_files (journal_journalctl_subject_type))
 
+(call devices_read_random (journal_journalctl_subject_type))
+
 (call filesystems_getattr_tmpfs_filesystems (journal_journalctl_subject_type))
 
 (call journal_manage_log (journal_journalctl_subject_type))

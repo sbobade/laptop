@@ -30,4 +30,3 @@
 * rw_fifo_file_perms should probably be part of ns_client_subject_type
 
 * d30: rpmfusion: mplayer .. deps
-* x131e: keep an eye on ~/.gnupg/scdaemon.conf and if it works commit elsewhere
