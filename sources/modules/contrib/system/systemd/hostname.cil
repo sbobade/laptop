@@ -55,6 +55,7 @@
 (context hostnamed_dbus_config (system_u object_r hostnamed_dbus_config_t (systemlow systemlow)))
 (filecon "/etc/dbus-1/system\.d/org\.freedesktop\.hostname1\.conf" file hostnamed_dbus_config)
 
+(allow hostnamed_t self (capability (sys_admin)))
 (allow hostnamed_t self (process (setfscreate)))
 
 (call system_read_kernel_sysctl (hostnamed_t))
