@@ -53,12 +53,10 @@
 (call devices_read_urandom (firefox_t))
 (call devices_rw_dri (firefox_t))
 
-(call filesystems_dontaudit_catchall_subject_type (firefox_t))
 (call filesystems_getattr_filesystems (firefox_t))
 (call filesystems_read_devtmpfs_lnk_files (firefox_t))
 (call filesystems_read_sysfs (firefox_t))
 
-(call files_dontaudit_catchall_subject_type (firefox_t))
 (call files_read_config (firefox_t))
 (call files_read_data (firefox_t))
 (call files_list_mnt (firefox_t))
@@ -70,7 +68,6 @@
 (call storage_getattr_fixed_disk (firefox_t))
 (call storage_getattr_removable (firefox_t))
 
-(call subject_dontaudit_catchall_subject_type (firefox_t))
 (call subject_execmem_uncond (firefox_t))
 
 (call firefox_exec (firefox_t))
