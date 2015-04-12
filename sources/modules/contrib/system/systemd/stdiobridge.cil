@@ -22,6 +22,8 @@
 
 (call systemd_dbus_chat (stdiobridge_t))
 (call systemd_read_state (stdiobridge_t))
+(call systemd_control_all_units (stdiobridge_t))
+(call systemd_control_system (stdiobridge_t))
 
 (call timedate_dbus_chat_timedated (stdiobridge_t))
 
