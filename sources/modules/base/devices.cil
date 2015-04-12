@@ -23,6 +23,7 @@
 
 (context clock_dev (system_u object_r clock_dev_t (systemlow systemlow)))
 (filecon "/dev/hpet" char clock_dev)
+(filecon "/dev/ptp([0-9]+)?" char clock_dev)
 (filecon "/dev/rtc([0-9]+)?" char clock_dev)
 
 (type cpu_dev_t)
