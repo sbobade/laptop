@@ -31,4 +31,4 @@
 
 * d30: rpmfusion: mplayer .. deps
 
-* e145: hostnamectl set-hostname --pretty e145, set-hostname --static localhost, set-location "Dordrecht, Netherlands", set-deployment production
+* e145: hostnamectl set-hostname --pretty e145, set-hostname --static e145, set-location "Dordrecht, Netherlands", set-deployment production

@@ -19,6 +19,8 @@
 (call filesystems_tmpfs_object_type_transition (emacs_subject_type emacs_tmpfs_t dir "*"))
 (call filesystems_tmpfs_object_type_transition (emacs_subject_type emacs_tmpfs_t sock_file "server"))
 
+(call system_read_net_proc (emacs_subject_type))
+
 (call devices_read_urandom (emacs_subject_type))
 (call devices_rw_ptmx (emacs_subject_type))
 
