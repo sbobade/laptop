@@ -20,6 +20,9 @@
 
 (call machine_dbus_chat_machined (stdiobridge_t))
 
+(call systemd_dbus_chat (stdiobridge_t))
+(call systemd_read_state (stdiobridge_t))
+
 (call timedate_dbus_chat_timedated (stdiobridge_t))
 
 (macro stdiobridge_exec ((type ARG1))
