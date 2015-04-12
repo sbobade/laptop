@@ -241,9 +241,11 @@
     (call gpg_relabel_gpgagent_home (sysadm_t))
 
     (context sysadm_scd_home (sysadm_u object_r scd_home_t (systemlow systemlow)))
-    (filecon "/root/\.gnupg/reader.*.status" file sysadm_scd_home)
+    (filecon "/root/\.gnupg/reader.*\.status" file sysadm_scd_home)
+    (filecon "/root/\.gnupg/scdaemon\.conf" file sysadm_scd_home)
     (filecon "/root/\.gnupg/S\.scdaemon" socket sysadm_scd_home)
 
+    (call gpg_home_object_type_transition_scd_home (sysadm_t file "scdaemon.conf"))
     (call gpg_home_object_type_transition_scd_home (sysadm_t sock_file "S.scdaemon"))
 
     (context sysadm_dirmngr_home (sysadm_u object_r dirmngr_home_t (systemlow systemlow)))

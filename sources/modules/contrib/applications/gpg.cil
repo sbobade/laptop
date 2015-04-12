@@ -168,7 +168,8 @@
 (type scd_home_t)
 (call usersubject_home_object_type (scd_home_t))
 
-(filecon "HOME_DIR/\.gnupg/reader.*.status" file (system_u object_r scd_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/reader.*\.status" file (system_u object_r scd_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.gnupg/scdaemon\.conf" file (system_u object_r scd_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.gnupg/S\.scdaemon" socket (system_u object_r scd_home_t (systemlow systemlow)))
 
 (type scd_tmpfs_t)

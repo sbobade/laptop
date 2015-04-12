@@ -199,6 +199,7 @@
     (call gpg_manage_gpgagent_home (staff_t))
     (call gpg_relabel_gpgagent_home (staff_t))
 
+    (call gpg_home_object_type_transition_scd_home (staff_t file "scdaemon.conf"))
     (call gpg_home_object_type_transition_scd_home (staff_t sock_file "S.scdaemon"))
 
     (call gpg_manage_dirmngr_home (staff_t))
