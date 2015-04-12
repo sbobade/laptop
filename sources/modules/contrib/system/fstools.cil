@@ -164,7 +164,8 @@
     (call read_lnk_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
 
 (macro fstools_runtime_object_type_transition_runtime_dirs ((type ARG1))
-    (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "blkid")))
+    (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "blkid"))
+    (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "fsck")))
 
 (macro fstools_use_fd ((type ARG1))
     (allow ARG1 fstools_t (fd (use))))
