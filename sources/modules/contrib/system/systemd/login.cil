@@ -197,10 +197,20 @@
 
 (allow login_loginctl_client_subject_type self rw_fifo_file_perms)
 
+(call system_read_crypto_sysctl (login_loginctl_client_subject_type))
+(call system_read_kernel_sysctl (login_loginctl_client_subject_type))
+
 (call commands_exec (login_loginctl_client_subject_type))
+
+(call filesystems_getattr_filesystems (login_loginctl_client_subject_type))
+
+(call journal_read_log (login_loginctl_client_subject_type))
 
 (call miscfiles_read_locale (login_loginctl_client_subject_type))
 (call miscfiles_read_all_terminfo (login_loginctl_client_subject_type))
+
+(optional login_loginctl_client_subject_type_optional_machine
+    (call machine_read_config_files (login_loginctl_client_subject_type)))
 
 (allow login_logind_admin_subject_type logind_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (login_logind_admin_subject_type logind_t))
