@@ -46,6 +46,7 @@
 
 (type machine_lib_t)
 (call files_lib_object_type (machine_lib_t))
+(call system_mountpoint_object_type (machine_lib_t))
 
 (context machine_lib (system_u object_r machine_lib_t (systemlow systemlow)))
 (filecon "/var/lib/machines" dir machine_lib)
