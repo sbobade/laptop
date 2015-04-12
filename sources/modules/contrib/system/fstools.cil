@@ -61,6 +61,7 @@
 
 (context fstools_runtime (system_u object_r fstools_runtime_t (systemlow systemlow)))
 (filecon "/var/run/blkid(/.*)?" any fstools_runtime)
+(filecon "/var/run/fsck(/.*)?" any fstools_runtime)
 
 (allow fstools_t self (capability (sys_admin sys_rawio dac_override)))
 (allow fstools_t self (process (setfscreate)))
