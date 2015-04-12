@@ -104,6 +104,7 @@
 
 (call miscfiles_read_locale (timedatex_t))
 
+(call systemd_search_config (timedatex_t))
 (call systemd_dbus_chat (timedatex_t))
 (call systemd_status_system (timedatex_t))
 (call systemd_reload_system (timedatex_t))
