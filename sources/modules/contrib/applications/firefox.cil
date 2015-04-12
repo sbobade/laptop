@@ -100,6 +100,9 @@
 
 (call xserver_tmpfs_client_template (firefox_t firefox_tmpfs_t))
 
+(optional firefox_optional_dbus
+    (call dbususer_client_subject_type (firefox_t)))
+
 (optional firefox_optional_hostnamed
     (call hostname_dbus_chat_hostnamed (firefox_t)))
 
