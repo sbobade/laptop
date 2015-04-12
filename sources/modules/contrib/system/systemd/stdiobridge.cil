@@ -12,6 +12,8 @@
 
 (call hostname_dbus_chat_hostnamed (stdiobridge_t))
 
+(call journal_client_subject_type (stdiobridge_t))
+
 (call locale_dbus_chat_localed (stdiobridge_t))
 
 (call login_dbus_chat_logind (stdiobridge_t))
