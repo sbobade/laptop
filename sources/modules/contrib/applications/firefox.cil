@@ -60,7 +60,7 @@
 (call files_read_config (firefox_t))
 (call files_read_data (firefox_t))
 (call files_list_mnt (firefox_t))
-(call files_search_tmp (firefox_t))
+(call files_list_tmp (firefox_t))
 
 (call network_dontaudit_catchall_subject_type (firefox_t))
 (call network_udp_bind_generic_node (firefox_t))

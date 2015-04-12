@@ -6,6 +6,8 @@
 (type dbususer_tmpfs_t)
 (call usersubject_tmpfs_object_type (dbususer_tmpfs_t))
 
+(allow dbususer_subject_type self rw_fifo_file_perms)
+
 (allow dbususer_subject_type dbususer_tmpfs_t manage_dir_perms)
 (allow dbususer_subject_type dbususer_tmpfs_t manage_sock_file_perms)
 (call dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs (dbususer_subject_type))
