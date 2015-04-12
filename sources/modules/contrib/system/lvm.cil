@@ -79,6 +79,8 @@
 (call storage_manage_removable (lvm_t))
 (call storage_manage_scsi_generic (lvm_t))
 
+(call bootloader_read_state (lvm_t))
+
 (call lvm_read_config (lvm_t))
 (call lvm_manage_metadata (lvm_t))
 (call lvm_stream_connect_lvmetad (lvm_t))

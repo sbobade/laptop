@@ -34,7 +34,7 @@
 (context bootloader_system_map (system_u object_r bootloader_system_map_t (systemlow systemlow)))
 (filecon "/boot/System\.map.*" file bootloader_system_map)
 
-(allow bootloader_t self (capability (dac_override)))
+(allow bootloader_t self (capability (dac_override sys_admin)))
 (allow bootloader_t self (process (getsched)))
 (allow bootloader_t self rw_fifo_file_perms)
 
@@ -51,6 +51,7 @@
 (call filesystems_tmpfs_object_type_transition (bootloader_t bootloader_tmpfs_t file "*"))
 
 (call system_read_mdstat_proc (bootloader_t))
+(call system_list_mountpoints (bootloader_t))
 
 (call commands_list (bootloader_t))
 (call commands_exec (bootloader_t))
@@ -209,3 +210,9 @@
 (macro bootloader_manage_system_map_files ((type ARG1))
     (call files_rw_boot_dirs (ARG1))
     (allow ARG1 bootloader_system_map_t manage_file_perms))
+
+(macro bootloader_read_state ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 bootloader_t read_file_perms)
+    (allow ARG1 bootloader_t list_dir_perms)
+    (allow ARG1 bootloader_t read_lnk_file_perms))
