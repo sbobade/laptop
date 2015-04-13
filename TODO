@@ -30,7 +30,3 @@
 * rw_fifo_file_perms should probably be part of ns_client_subject_type
 
 * d30: rpmfusion: mplayer .. deps
-
-* e145: hostnamectl set-hostname --pretty e145, set-hostname --static e145, set-location "Dordrecht, Netherlands", set-deployment production
-* e145: fix nf(6)?tables config: also add LLMNR support like on other systems
-* e145: check how screen is called from ratpoision "z" macro
