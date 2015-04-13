@@ -164,6 +164,7 @@
 (filecon "/var/a?quota\.(user|group)" file quota_db)
 (filecon "/var/cache/a?quota\.(user|group)" file quota_db)
 (filecon "/var/lib/a?quota\.(user|group)" file quota_db)
+(filecon "/var/lib/machines/a?quota\.(user|group)" file quota_db)
 (filecon "/var/log/a?quota\.(user|group)" file quota_db)
 (filecon "/var/log/audit/a?quota\.(user|group)" file quota_db)
 (filecon "/var/spool/a?quota\.(user|group)" file quota_db)

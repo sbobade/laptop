@@ -100,6 +100,9 @@
 (filecon "/var/lib/\.journal" any ())
 (filecon "/var/lib/lost\+found/.*" any ())
 (filecon "/var/lib/lost\+found" dir lf)
+(filecon "/var/lib/machines/\.journal" any ())
+(filecon "/var/lib/machines/lost\+found/.*" any ())
+(filecon "/var/lib/machines/lost\+found" dir lf)
 (filecon "/var/log/\.journal" any ())
 (filecon "/var/log/lost\+found/.*" any ())
 (filecon "/var/log/lost\+found" dir lf)
@@ -1244,6 +1247,23 @@
 (macro files_rw_user_runtime_dirs ((type ARG1))
     (call files_search_runtime (ARG1))
     (allow ARG1 user_runtime_t rw_dir_perms))
+
+(macro files_manage_lf_files ((type ARG1))
+    (call system_search_mountpoints (ARG1))
+    (call manage_files_pattern (ARG1 lf_t lf_t)))
+
+(macro files_manage_lf_dirs ((type ARG1))
+    (call system_rw_all_mountpoint_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 lf_t lf_t)))
+
+(macro files_manage_lf ((type ARG1))
+    (call system_rw_all_mountpoint_dirs (ARG1))
+    (allow ARG1 lf_t manage_file_perms)
+    (allow ARG1 lf_t manage_dir_perms)
+    (allow ARG1 lf_t manage_lnk_file_perms))
+
+(macro files_all_mountpoint_object_type_transition_lf_dirs ((type ARG1))
+    (call system_all_mountpoint_object_type_transition (ARG1 lf_t dir "lost+found")))
 
 (macro files_getattr_all ((type ARG1))
     (allow ARG1 files_object_type (all_file_objects (getattr))))
