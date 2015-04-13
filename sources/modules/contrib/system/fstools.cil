@@ -55,6 +55,7 @@
 (filecon "/usr/sbin/swapoff" file fstools_exec)
 (filecon "/usr/sbin/swapon.*" file fstools_exec)
 (filecon "/usr/sbin/tune2fs" file fstools_exec)
+(filecon "/usr/sbin/xfs_.*" file fstools_exec)
 
 (type fstools_runtime_t)
 (call files_runtime_object_type (fstools_runtime_t))

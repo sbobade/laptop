@@ -93,6 +93,7 @@
 (filecon "/usr/sbin/quotastats" file quotaed_exec)
 (filecon "/usr/sbin/requota" file quotaed_exec)
 (filecon "/usr/sbin/setquota" file quotaed_exec)
+(filecon "/usr/sbin/xfs_quota" file quotaed_exec)
 (filecon "/usr/sbin/xqmstats" file quotaed_exec)
 
 (type quotaed_tmpfs_t)
