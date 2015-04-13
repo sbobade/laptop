@@ -232,9 +232,6 @@
 
 (call files_read_data_files (system_t))
 
-(call files_manage_lf (system_t))
-(call files_all_mountpoint_object_type_transition_lf_dirs (system_t))
-
 (call filesystems_list_debugfs (system_t))
 (call filesystems_list_proc (system_t))
 
