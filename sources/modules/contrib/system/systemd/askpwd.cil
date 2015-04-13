@@ -64,6 +64,7 @@
 (call subject_use_interactive_fd_subject_type (askpwdagent_t))
 
 (call terminals_use_console (askpwdagent_t))
+(call terminals_use_inherited_unallocated_ttys (askpwdagent_t))
 
 (call askpwd_manage_systemd_runtime (askpwdagent_t))
 

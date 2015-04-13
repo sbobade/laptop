@@ -206,10 +206,17 @@
 (allow pkttyagent_t polkit_pkttyagent_client_subject_type list_dir_perms)
 (allow pkttyagent_t polkit_pkttyagent_client_subject_type read_lnk_file_perms)
 
+(call terminals_use_inherited_console (pkttyagent_t))
+
 (call ns_client_subject_type (pkttyagent_t))
 
 (call polkit_run_pkagent (pkttyagent_t polkit_pkttyagent_role))
 (call polkit_dbus_chat_polkitd (pkttyagent_t))
+
+(call systemd_use_fd (pkttyagent_t))
+
+(optional pkttyagent_optional_plymouth
+    (call plymouth_use_fd_plymouthd (pkttyagent_t)))
 
 (context pkttyagent_exec (system_u object_r pkttyagent_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pkttyagent" file pkttyagent_exec)

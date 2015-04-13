@@ -224,12 +224,14 @@
 (call files_log_object_type_transition (system_t system_log_t file "*"))
 
 (call system_request_load_module (system_t))
+(call system_manage_invalid_files (system_t))
 
 (call devices_manage_all (system_t))
 
 (call devices_devtmpfs_object_type_transition_usb_dev (system_t))
 (call devices_devtmpfs_object_type_transition_watchdog_dev (system_t))
 
+(call files_read_config_files (system_t))
 (call files_read_data_files (system_t))
 
 (call filesystems_list_debugfs (system_t))
@@ -278,6 +280,7 @@
     (call nspawn_use_fd (system_t)))
 
 (optional system_optional_plymouth
+    (call plymouth_read_config (system_t))
     (call plymouth_manage_plymouthd_runtime_files (system_t))
     (call plymouth_manage_plymouthd_lib_files (system_t)))
 
@@ -850,6 +853,9 @@
 
 (macro system_relabelfrom_invalid ((type ARG1))
     (allow ARG1 invalid_t (all_file_objects (relabelfrom))))
+
+(macro system_relabelfrom_invalid_dirs ((type ARG1))
+    (call relabelfrom_dirs_pattern (ARG1 invalid_t invalid_t)))
 
 (macro system_read_invalid_files ((type ARG1))
     (call read_files_pattern (ARG1 invalid_t invalid_t)))

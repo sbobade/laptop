@@ -109,7 +109,7 @@
 
 (call ns_client_subject_type (plymouthd_t))
 
-(call plymouth_read_config_files (plymouthd_t))
+(call plymouth_read_config (plymouthd_t))
 
 (optional plymouthd_optional_systemd
     (call systemd_daemon (plymouthd_t plymouthd_exec_t))

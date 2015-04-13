@@ -40,6 +40,7 @@
 
 (call system_read_kernel_sysctl (tmpfiles_t))
 (call system_read_net_proc (tmpfiles_t))
+(call system_relabelfrom_invalid_dirs (tmpfiles_t))
 
 (call selinux_set_check_req_prot (tmpfiles_t))
 

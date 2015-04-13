@@ -379,6 +379,7 @@
 (call system_read_state_files (systemd_systemctl_subject_type))
 
 (call filesystems_getattr_tmpfs_filesystems (systemd_systemctl_subject_type))
+(call filesystems_write_inherited_devpts_chr_files (systemd_systemctl_subject_type))
 
 (call terminals_use_inherited_console (systemd_systemctl_subject_type))
 
@@ -415,6 +416,9 @@
     (call nspawn_stream_connect_all_common_containers (systemd_systemctl_subject_type))
     (call nspawn_read_state_all_common_container_subjects (systemd_systemctl_subject_type)))
 
+(optional systemd_systemctl_subject_type_optional_plymouth
+    (call plymouth_use_fd_plymouthd (systemd_systemctl_subject_type)))
+
 (optional systemd_systemctl_subject_type_optional_systemduser
     (call systemduser_control_config_home (systemd_systemctl_subject_type))
     (call systemduser_control_transient_units (systemd_systemctl_subject_type))
@@ -437,6 +441,10 @@
 
 (call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
 (call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
+
+(call terminals_use_inherited_console (systemd_generic_t))
+
+(call miscfiles_read_locale (systemd_generic_t))
 
 (call systemd_send_signal (systemd_generic_t))
 (call systemd_send_signal_all_systemd_daemon_subjects (systemd_generic_t))
