@@ -143,6 +143,7 @@
 (allow quota_t self (capability (sys_admin)))
 
 (call system_read_fs_sysctl (quota_t))
+(call system_list_mountpoints (quota_t))
 
 (call miscfiles_read_locale (quota_t))
 
