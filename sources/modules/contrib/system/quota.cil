@@ -105,6 +105,7 @@
 (call filesystems_tmpfs_object_type_transition (quotaed_t quotaed_tmpfs_t file "*"))
 
 (call system_read_fs_sysctl (quotaed_t))
+(call system_list_mountpoints (quotaed_t))
 
 (call commands_exec (quotaed_t))
 
