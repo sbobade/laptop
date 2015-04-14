@@ -182,7 +182,7 @@
 (allow sshd_t self (key (search link write)))
 (allow sshd_t self (tcp_socket (listen accept)))
 
-(allow sshd_t sshd_net_t (process (sigkill)))
+(allow sshd_t sshd_net_t (process (signal sigkill)))
 (call dynamic_subject_type_transition_pattern (sshd_t sshd_net_t))
 
 (call system_link_keyring (sshd_t))
