@@ -21,6 +21,7 @@
 
 (allow journal_journalctl_subject_type self (capability (dac_override net_admin sys_resource
     sys_chroot setgid setuid sys_admin)))
+(allow journal_journalctl_subject_type self (unix_dgram_socket (sendto)))
 (allow journal_journalctl_subject_type self create_unix_dgram_socket_perms)
 
 (call commands_read_all_exec_files (journal_journalctl_subject_type))
