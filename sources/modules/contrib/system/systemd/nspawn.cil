@@ -347,6 +347,10 @@
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 nspawn_pty_dev_t (chr_file (setattr))))
 
+(macro nspawn_getattr_terminals ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 nspawn_pty_dev_t (chr_file (getattr))))
+
 (macro nspawn_use_terminals ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 nspawn_pty_dev_t rw_term_perms))

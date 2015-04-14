@@ -72,6 +72,7 @@
 
 (call machine_manage_lib (machined_t))
 
+(call nspawn_getattr_terminals (machined_t))
 (call nspawn_read_state (machined_t))
 (call nspawn_list_all_common_container_objects (machined_t))
 (call nspawn_read_all_common_container_object_lnk_files (machined_t))
