@@ -35,6 +35,8 @@
 (call journal_read_journald_systemd_runtime (journal_journalctl_subject_type))
 (call journal_stop_journald_units (journal_journalctl_subject_type))
 
+(call ns_client_subject_type (journal_journalctl_subject_type))
+
 (call systemd_stream_connect (journal_journalctl_subject_type))
 
 (optional journal_journalctl_subject_type_optional_askpwd

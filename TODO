@@ -30,3 +30,8 @@
 * rw_fifo_file_perms should probably be part of ns_client_subject_type
 
 * d30: rpmfusion: mplayer .. deps
+
+* e145: add IPForward=yes to ve-mycontainer.network/$EXTERNAL_NETWORK_IF.network (forwarding needs to be enabled for those networks)
+* e145: fix ipfwd_by_mac: see ipfwd_by_mac for x131e
+* e145: fix /etc/nftables/ipv4-filter: see /etc/nftables/ipv4-filter for x131e
+* e145: fix ~/bin/refptod30/refptod30: see ~/bin/refptod30/refptod30 for x131e
