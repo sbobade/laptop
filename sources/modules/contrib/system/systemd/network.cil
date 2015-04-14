@@ -121,6 +121,7 @@
 (call miscfiles_read_all_terminfo (network_networkctl_client_subject_type))
 (call miscfiles_read_locale (network_networkctl_client_subject_type))
 
+(call network_read_networkd_systemd_config (network_networkctl_client_subject_type))
 (call network_read_networkd_systemd_runtime_files (network_networkctl_client_subject_type))
 
 (allow network_networkd_admin_subject_type networkd_t (process (ptrace signal signull sigkill sigstop)))
