@@ -84,6 +84,7 @@
 (call filesystems_read_devtmpfs_lnk_files (fstools_t))
 (call filesystems_read_sysfs (fstools_t))
 
+(call files_read_data_files (fstools_t))
 (call files_read_config (fstools_t))
 
 (call files_manage_lf (fstools_t))
