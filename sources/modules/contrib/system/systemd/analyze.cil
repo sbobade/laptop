@@ -18,6 +18,7 @@
 
 (call analyze_client_subject_type (analyze_subject_type))
 
+(call systemd_read_state (analyze_subject_type))
 (call systemd_stream_connect (analyze_subject_type))
 (call systemd_status_system (analyze_subject_type))
 (call systemd_status_all_units (analyze_subject_type))
