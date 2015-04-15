@@ -105,3 +105,6 @@
 
 (macro irc_send_sigchld_all_irssi ((type ARG1))
     (allow ARG1 irc_irssi_subject_type (process (sigchld))))
+
+(macro irc_use_fd_all_irssi ((type ARG1))
+    (allow ARG1 irc_irssi_subject_type (fd (use))))
