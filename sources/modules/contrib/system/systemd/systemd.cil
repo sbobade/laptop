@@ -302,6 +302,9 @@
 (optional systemd_optional_fsck
     (call fsck_read_runtime (systemd_t)))
 
+(optional systemd_optional_fstools
+    (call fstools_list_runtime (systemd_t)))
+
 (optional systemd_optional_http
     (call http_tcp_connect_http_port (systemd_t)))
 
