@@ -102,3 +102,6 @@
 
 (macro irc_home_dir_object_type_transition_irssi_home ((type ARG1)(class ARG2)(name ARG3))
     (call usersubject_home_dir_object_type_transition (ARG1 irssi_home_t ARG2 ARG3)))
+
+(macro irc_send_sigchld_all_irssi ((type ARG1))
+    (allow ARG1 irc_irssi_subject_type (process (sigchld))))

@@ -10,6 +10,9 @@
 
 (call terminals_use_inherited_unallocated_ttys (applications_subject_type))
 
+(optional applications_optional_irc
+    (call irc_send_sigchld_all_irssi (applications_subject_type)))
+
 (optional applications_optional_sudo
     (call sudo_send_sigchld (applications_subject_type))
     (call sudo_rw_inherited_fifo_files (applications_subject_type)))
