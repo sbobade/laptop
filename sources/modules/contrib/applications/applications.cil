@@ -12,6 +12,7 @@
 
 (optional applications_optional_irc
     (call irc_use_fd_all_irssi (applications_subject_type))
+    (call irc_rw_inherited_fifo_files (applications_subject_type))
     (call irc_send_sigchld_all_irssi (applications_subject_type)))
 
 (optional applications_optional_sudo
