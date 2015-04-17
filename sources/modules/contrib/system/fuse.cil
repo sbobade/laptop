@@ -1,15 +1,28 @@
-(roleattribute fusermount_role)
-(roleattribute ulockmgr_role)
+(roleattribute fuse_role)
+
+(typeattribute fuse_sshfs_subject_type)
 
 (type fusermount_t)
 (type fusermount_exec_t)
 (call applications_app (fusermount_t fusermount_exec_t))
-(roletype fusermount_role fusermount_t)
-
-(roleattributeset fusermount_role system_r)
+(roletype fuse_role fusermount_t)
 
 (context fusermount_exec (system_u object_r fusermount_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/fusermount" file fusermount_exec)
+
+(type sshfs_exec_t)
+(call applications_app (fuse_sshfs_subject_type sshfs_exec_t))
+
+(context sshfs_exec (system_u object_r sshfs_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/sshfs" file sshfs_exec)
+
+(type ulockmgr_t)
+(type ulockmgr_exec_t)
+(call applications_app (ulockmgr_t ulockmgr_exec_t))
+(roletype fuse_role ulockmgr_t)
+
+(context ulockmgr_exec (system_u object_r ulockmgr_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/ulockmgr_server" file ulockmgr_exec)
 
 (type fuse_config_t)
 (call files_config_object_type (fuse_config_t))
@@ -17,33 +30,38 @@
 (context fuse_config (system_u object_r fuse_config_t (systemlow systemlow)))
 (filecon "/etc/fuse\.conf" file fuse_config)
 
-(allow fusermount_t self (capability (dac_override)))
+(allow fusermount_t self (capability (dac_override sys_admin)))
 
-(call files_read_config (fusermount_t))
+(call files_read_config_files (fusermount_t))
 
 (call filesystems_list_debugfs (fusermount_t))
 (call filesystems_mount_fuse (fusermount_t))
-(call filesystems_search_tmpfs (fusermount_t))
 (call filesystems_unmount_fuse (fusermount_t))
 
 (call storage_rw_fuse (fusermount_t))
 
 (call ns_client_subject_type (fusermount_t))
 
-(type ulockmgr_t)
-(type ulockmgr_exec_t)
-(call applications_app (ulockmgr_t ulockmgr_exec_t))
-(roletype ulockmgr_role ulockmgr_t)
+(call fuse_read_config_files (fusermount_t))
+(call fuse_rw_unix_stream_sockets_all_sshfs_subjects (fusermount_t))
 
-(roleattributeset ulockmgr_role system_r)
+(call usersubject_mounton_user_home_dirs (fusermount_t))
 
-(context ulockmgr_exec (system_u object_r ulockmgr_exec_t (systemlow systemlow)))
-(filecon "/usr/bin/ulockmgr_server" file ulockmgr_exec)
+(allow fuse_sshfs_subject_type self create_unix_stream_socket_perms)
+
+(call storage_rw_fuse (fuse_sshfs_subject_type))
+
+(call fuse_use_fd_fusermount (fuse_sshfs_subject_type))
+
+(call usersubject_mounton_user_home_dirs (fuse_sshfs_subject_type))
 
 (macro fuse_exec_fusermount ((type ARG1))
     (call can_exec (ARG1 fusermount_exec_t)))
 
-(macro fuse_exec_ulockmgr ((type ARG2))
+(macro fuse_exec_sshfs ((type ARG1))
+    (call can_exec (ARG1 sshfs_exec_t)))
+
+(macro fuse_exec_ulockmgr ((type ARG1))
     (call can_exec (ARG1 ulockmgr_exec_t)))
 
 (macro fuse_auto_subject_type_transition_fusermount ((type ARG1))
@@ -56,7 +74,7 @@
 
 (macro fuse_run_fusermount ((type ARG1)(role ARG2))
     (call fuse_auto_subject_type_transition_fusermount (ARG1))
-    (roleattributeset fusermount_role ARG2))
+    (roleattributeset fuse_role (ARG2)))
 
 (macro fuse_auto_subject_type_transition_ulockmgr ((type ARG1))
     (call fuse_send_signal_ulockmgr (ARG1))
@@ -68,7 +86,18 @@
 
 (macro fuse_run_ulockmgr ((type ARG1)(role ARG2))
     (call fuse_auto_subject_type_transition_ulockmgr (ARG1))
-    (roleattributeset ulockmgr_role ARG2))
+    (roleattributeset fuse_role (ARG2)))
+
+(macro fuse_sshfs_subject_type ((type ARG1))
+    (typeattributeset fuse_sshfs_subject_type ARG1))
+
+(macro fuse_role_template_sshfs ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 sshfs_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call fuse_sshfs_subject_type (ARG3))
+    (call fuse_run_fusermount (fuse_sshfs_subject_type ARG1)))
 
 (macro fuse_read_config_files ((type ARG1))
     (call files_search_config (ARG1))
@@ -77,3 +106,9 @@
 (macro fuse_manage_config_files ((type ARG1))
     (call files_rw_config_dirs (ARG1))
     (allow ARG1 fuse_config_t manage_file_perms))
+
+(macro fuse_use_fd_fusermount ((type ARG1))
+    (allow ARG1 fusermount_t (fd (use))))
+
+(macro fuse_rw_unix_stream_sockets_all_sshfs_subjects ((type ARG1))
+    (allow ARG1 fuse_sshfs_subject_type rw_unix_stream_socket_perms))

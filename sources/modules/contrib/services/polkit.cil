@@ -213,10 +213,11 @@
 (call polkit_run_pkagent (pkttyagent_t polkit_pkttyagent_role))
 (call polkit_dbus_chat_polkitd (pkttyagent_t))
 
-(call systemd_use_fd (pkttyagent_t))
-
 (optional pkttyagent_optional_plymouth
     (call plymouth_use_fd_plymouthd (pkttyagent_t)))
+
+(optional pkttyagent_optional_systemd
+    (call systemd_use_fd (pkttyagent_t)))
 
 (context pkttyagent_exec (system_u object_r pkttyagent_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pkttyagent" file pkttyagent_exec)

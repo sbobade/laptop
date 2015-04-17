@@ -30,3 +30,4 @@
 * rw_fifo_file_perms should probably be part of ns_client_subject_type
 
 * d30: rpmfusion: mplayer .. deps
+* e145 install srm

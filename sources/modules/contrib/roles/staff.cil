@@ -123,6 +123,19 @@
     (call fpaste_manage_tmp (staff_t))
     (call fpaste_relabel_tmp (staff_t)))
 
+(optional staff_optional_fuse
+    (type staff_sshfs_t)
+    (call fuse_role_template_sshfs (staff_r staff_subject_type staff_sshfs_t))
+
+    (call filesystems_manage_fuse_dirs (staff_t))
+    (call filesystems_manage_fuse_files (staff_t))
+    (call filesystems_manage_fuse_lnk_files (staff_t))
+
+    (call fuse_run_fusermount (staff_subject_type staff_r)))
+
+(optional staff_ssh_optional_staff_fuse
+    (call ssh_role_template (staff_r staff_sshfs_t staff_ssh_t)))
+
 (optional staff_optional_git
     (type staff_git_t)
     (call git_role_template (staff_r staff_subject_type staff_git_t))

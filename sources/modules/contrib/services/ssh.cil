@@ -64,6 +64,9 @@
 (call usersubject_manage_tmpfs_files (ssh_subject_type))
 (call usersubject_tmpfs_object_type_transition_user_tmpfs (ssh_subject_type file "*"))
 
+(optional ssh_subject_type_optional_fuse
+    (call fuse_rw_unix_stream_sockets_all_sshfs_subjects (ssh_subject_type)))
+
 (optional ssh_subject_type_optional_gpg
     (call gpg_search_home (ssh_subject_type)))
 
