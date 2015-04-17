@@ -1,0 +1,28 @@
+(roleattribute tty_role)
+
+(type tty_t)
+(type tty_exec_t)
+(call applications_app (tty_t tty_exec_t))
+(roletype tty_role tty_t)
+
+(context tty_exec (system_u object_r tty_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/tty" file tty_exec)
+
+(call miscfiles_read_locale (tty_t))
+
+(call usersubject_getattr_terminals (tty_t))
+
+(macro tty_exec ((type ARG1))
+    (call can_exec (ARG1 tty_exec_t)))
+
+(macro tty_auto_subject_type_transition ((type ARG1))
+    (call tty_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 tty_exec_t tty_t)))
+
+(macro tty_send_signal ((type ARG1))
+    (allow ARG1 tty_t (process (signal))))
+
+(macro tty_run ((type ARG1)(role ARG2))
+    (call tty_auto_subject_type_transition (ARG1))
+    (roleattributeset tty_role ARG2))

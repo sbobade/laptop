@@ -1291,7 +1291,9 @@
     (call usersubject_base_common_login_subject_template (ARG1 ARG2 ARG3))
     (call usersubject_common_login_subject_type (ARG3))
     (call usersubject_mls_template (ARG1 systemlow systemlow systemhigh))
-    (call hostname_run (ARG3 ARG2)))
+    (call hostname_run (ARG3 ARG2))
+    (optional usersubject_common_login_subject_optional_tty
+        (call tty_run (ARG3 ARG2))))
 
 (macro usersubject_common_login_subject_type ((type ARG1))
     (typeattributeset usersubject_common_login_subject_type ARG1))
