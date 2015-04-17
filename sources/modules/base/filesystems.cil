@@ -491,7 +491,7 @@
 (macro filesystems_manage_fuse_lnk_files ((type ARG1))
     (allow ARG1 fuse_fs_t manage_lnk_file_perms))
 
-(macro filesystems_list_fuse_dirs ((type ARG1))
+(macro filesystems_list_fuse ((type ARG1))
     (allow ARG1 fuse_fs_t list_dir_perms))
 
 (macro filesystems_read_fuse_files ((type ARG1))
