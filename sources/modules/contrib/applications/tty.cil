@@ -1,5 +1,18 @@
 (roleattribute tty_role)
 
+(type mesg_t)
+(type mesg_exec_t)
+(call applications_app (mesg_t mesg_exec_t))
+(roletype tty_role mesg_t)
+
+(context mesg_exec (system_u object_r mesg_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/mesg" file mesg_exec)
+
+(call miscfiles_read_locale (mesg_t))
+
+(call usersubject_getattr_terminals (mesg_t))
+(call usersubject_setattr_terminals (mesg_t))
+
 (type tty_t)
 (type tty_exec_t)
 (call applications_app (tty_t tty_exec_t))
@@ -12,8 +25,51 @@
 
 (call usersubject_getattr_terminals (tty_t))
 
+(type wall_t)
+(type wall_exec_t)
+(call applications_app (wall_t wall_exec_t))
+(roletype tty_role wall_t)
+
+(context wall_exec (system_u object_r wall_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/wall" file wall_exec)
+(filecon "/usr/bin/write" file wall_exec)
+
+(type wall_tmpfs_t)
+(call usersubject_tmpfs_object_type (wall_tmpfs_t))
+
+(allow wall_t wall_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (wall_t wall_tmpfs_t file "*"))
+
+(allow wall_t self (capability (dac_override)))
+
+(call ns_client_subject_type (wall_t))
+
+(call miscfiles_read_locale (wall_t))
+
+(call usersubject_use_terminals (wall_t))
+
+(call utmp_read_utmp_runtime_files (wall_t))
+
+(macro tty_exec_mesg ((type ARG1))
+    (call can_exec (ARG1 mesg_exec_t)))
+
 (macro tty_exec ((type ARG1))
     (call can_exec (ARG1 tty_exec_t)))
+
+(macro tty_exec_wall ((type ARG1))
+    (call can_exec (ARG1 wall_exec_t)))
+
+(macro tty_auto_subject_type_transition_mesg ((type ARG1))
+    (call tty_send_signal_mesg (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 mesg_exec_t mesg_t)))
+
+(macro tty_send_signal_mesg ((type ARG1))
+    (allow ARG1 mesg_t (process (signal))))
+
+(macro tty_run_mesg ((type ARG1)(role ARG2))
+    (call tty_auto_subject_type_transition_mesg (ARG1))
+    (roleattributeset tty_role ARG2))
 
 (macro tty_auto_subject_type_transition ((type ARG1))
     (call tty_send_signal (ARG1))
@@ -26,3 +82,30 @@
 (macro tty_run ((type ARG1)(role ARG2))
     (call tty_auto_subject_type_transition (ARG1))
     (roleattributeset tty_role ARG2))
+
+(macro tty_auto_subject_type_transition_wall ((type ARG1))
+    (call tty_send_signal_wall (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 wall_exec_t wall_t)))
+
+(macro tty_send_signal_wall ((type ARG1))
+    (allow ARG1 wall_t (process (signal))))
+
+(macro tty_run_wall ((type ARG1)(role ARG2))
+    (call tty_auto_subject_type_transition_wall (ARG1))
+    (roleattributeset tty_role ARG2))
+
+(macro tty_read_wall_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 wall_tmpfs_t read_file_perms))
+
+(macro tty_manage_wall_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 wall_tmpfs_t manage_file_perms))
+
+(macro tty_relabel_wall_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 wall_tmpfs_t relabel_file_perms))

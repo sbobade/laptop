@@ -33,3 +33,4 @@
 * e145 install srm, fuse-sshfs
 * e145 copy ~/bin/mysshfsmount from x131e to e145
 * e145 dnf install *iberation*
+* e145 restorecon -v /usr/bin/tty /usr/bin/wall /usr/bin/write /usr/bin/mesg

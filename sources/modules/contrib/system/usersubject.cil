@@ -1293,7 +1293,11 @@
     (call usersubject_mls_template (ARG1 systemlow systemlow systemhigh))
     (call hostname_run (ARG3 ARG2))
     (optional usersubject_common_login_subject_optional_tty
-        (call tty_run (ARG3 ARG2))))
+        (call tty_run_mesg (ARG3 ARG2))
+        (call tty_run (ARG3 ARG2))
+        (call tty_run_wall (ARG3 ARG2)))
+        (call tty_manage_wall_tmpfs_files (ARG3))
+        (call tty_relabel_wall_tmpfs_files (ARG3)))
 
 (macro usersubject_common_login_subject_type ((type ARG1))
     (typeattributeset usersubject_common_login_subject_type ARG1))
