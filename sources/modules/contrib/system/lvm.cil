@@ -79,8 +79,6 @@
 (call storage_manage_removable (lvm_t))
 (call storage_manage_scsi_generic (lvm_t))
 
-(call bootloader_read_state (lvm_t))
-
 (call lvm_read_config (lvm_t))
 (call lvm_manage_metadata (lvm_t))
 (call lvm_stream_connect_lvmetad (lvm_t))
@@ -173,6 +171,9 @@
 
 (macro lvm_auto_subject_type_transition ((type ARG1))
     (call lvm_send_signal (ARG1))
+    (allow lvm_t ARG1 read_file_perms)
+    (allow lvm_t ARG1 list_dir_perms)
+    (allow lvm_t ARG1 read_lnk_file_perms)
     (call auto_subject_type_transition_pattern
         (ARG1 lvm_exec_t lvm_t)))
 
