@@ -486,19 +486,19 @@
     (allow ARG1 fuse_fs_t manage_dir_perms))
 
 (macro filesystems_manage_fuse_files ((type ARG1))
-    (allow ARG1 fuse_fs_t manage_file_perms))
+    (call manage_files_pattern (ARG1 fuse_fs_t fuse_fs_t)))
 
 (macro filesystems_manage_fuse_lnk_files ((type ARG1))
-    (allow ARG1 fuse_fs_t manage_lnk_file_perms))
+    (call manage_lnk_files_pattern (ARG1 fuse_fs_t fuse_fs_t)))
 
 (macro filesystems_list_fuse ((type ARG1))
     (allow ARG1 fuse_fs_t list_dir_perms))
 
 (macro filesystems_read_fuse_files ((type ARG1))
-    (allow ARG1 fuse_fs_t read_file_perms))
+    (call read_files_pattern (ARG1 fuse_fs_t fuse_fs_t)))
 
 (macro filesystems_read_fuse_lnk_files ((type ARG1))
-    (allow ARG1 fuse_fs_t read_lnk_file_perms))
+    (call read_lnk_files_pattern (ARG1 fuse_fs_t fuse_fs_t)))
 
 (macro filesystems_unmount_fuse ((type ARG1))
     (allow ARG1 fuse_fs_t (filesystem (unmount))))

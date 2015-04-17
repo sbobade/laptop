@@ -57,6 +57,10 @@
 (call filesystems_read_devtmpfs_lnk_files (firefox_t))
 (call filesystems_read_sysfs (firefox_t))
 
+(call filesystems_list_fuse (firefox_t))
+(call filesystems_manage_fuse_files (firefox_t))
+(call filesystems_read_fuse_lnk_files (firefox_t))
+
 (call files_read_config (firefox_t))
 (call files_read_data (firefox_t))
 (call files_list_mnt (firefox_t))

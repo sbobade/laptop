@@ -58,6 +58,10 @@
 (call ssh_read_config_files (ssh_subject_type))
 (call ssh_tcp_connect_ssh_port (ssh_subject_type))
 
+(call filesystems_list_fuse (ssh_subject_type))
+(call filesystems_manage_fuse_files (ssh_subject_type))
+(call filesystems_read_fuse_lnk_files (ssh_subject_type))
+
 (call usersubject_manage_user_home_files (ssh_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (ssh_subject_type file "*"))
 

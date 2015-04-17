@@ -26,6 +26,10 @@
 
 (call miscfiles_read_locale (ffmpeg_t))
 
+(call filesystems_list_fuse (ffmpeg_t))
+(call filesystems_manage_fuse_files (ffmpeg_t))
+(call filesystems_read_fuse_lnk_files (ffmpeg_t))
+
 (call usersubject_manage_user_home_files (ffmpeg_t))
 (call usersubject_home_dir_object_type_transition_user_home (ffmpeg_t file "*"))
 
