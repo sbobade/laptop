@@ -45,6 +45,8 @@
 (call system_read_all_proc (sysadm_t))
 (call system_read_all_sysctls (sysadm_t))
 
+(call commands_list (sysadm_t))
+
 (call devices_getattr_all (sysadm_t))
 
 (call files_manage_boot (sysadm_t))
