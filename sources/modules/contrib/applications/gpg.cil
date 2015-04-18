@@ -10,7 +10,7 @@
 (call applications_app (gpg_subject_type gpg_exec_t))
 
 (context gpg_exec (system_u object_r gpg_exec_t (systemlow systemlow)))
-(filecon "/usr/bin/gpg2" file gpg_exec)
+(filecon "/usr/bin/gpg.*" file gpg_exec)
 
 (type gpg_config_t)
 (call files_config_object_type (gpg_config_t))
