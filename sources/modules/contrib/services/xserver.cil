@@ -221,6 +221,9 @@
 (call xserver_delete_xauth_home_files (xserver_startx_subject_type))
 (call xserver_read_home_files (xserver_startx_subject_type))
 
+(optional xserver_startx_subject_type_optional_tty
+    (call tty_exec (xserver_startx_subject_type)))
+
 (type xinit_exec_t)
 (call applications_app (xserver_xinit_subject_type xinit_exec_t))
 
