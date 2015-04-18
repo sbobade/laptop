@@ -8,6 +8,7 @@
 (filecon "/usr/bin/emacs-.*" file emacs_exec)
 
 (allow emacs_subject_type self rw_fifo_file_perms)
+(allow emacs_subject_type self create_unix_dgram_socket_perms)
 (allow emacs_subject_type self (unix_stream_socket (listen accept)))
 
 (allow emacs_subject_type emacs_home_t manage_dir_perms)
