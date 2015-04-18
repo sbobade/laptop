@@ -110,3 +110,6 @@
 
 (macro dns_udp_bind_mdns_port ((type ARG1))
     (allow ARG1 mdns_port_t (udp_socket (name_bind))))
+
+(macro dns_udp_bind_llmnr_port ((type ARG1))
+    (allow ARG1 llmnr_port_t (udp_socket (name_bind))))
