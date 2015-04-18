@@ -66,6 +66,10 @@
 (optional mount_optional_systemd
     (call systemd_daemon (mount_t mount_exec_t)))
 
+(optional mount_optional_usersubject
+    (call usersubject_dontaudit_audit_access_user_home_dir (mount_t))
+    (call usersubject_setattr_user_home_dir (mount_t)))
+
 (macro mount_exec ((type ARG1))
     (call can_exec (ARG1 mount_exec_t)))
 

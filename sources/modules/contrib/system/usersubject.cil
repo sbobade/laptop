@@ -357,8 +357,15 @@
     (call usersubject_rw_home_dir_dirs (ARG1))
     (call manage_lnk_files_pattern (ARG1 user_home_t user_home_t)))
 
+(macro usersubject_dontaudit_audit_access_user_home_dir ((type ARG1))
+    (dontaudit ARG1 user_home_t (dir (audit_access))))
+
 (macro usersubject_mprot_write_user_home_dir ((type ARG1))
     (allow ARG1 user_home_t (dir (write))))
+
+(macro usersubject_setattr_user_home_dir ((type ARG1))
+    (call usersubject_search_user_home (ARG1))
+    (allow ARG1 user_home_t (dir (setattr))))
 
 (macro usersubject_mounton_user_home_dirs ((type ARG1))
     (call usersubject_list_user_home (ARG1))
