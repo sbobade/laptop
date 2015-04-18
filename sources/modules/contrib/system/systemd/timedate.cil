@@ -50,6 +50,7 @@
 
 (call system_read_kernel_sysctl (timedated_t))
 
+(call devices_read_clock (timedated_t))
 (call devices_rw_kmsg (timedated_t))
 
 (call terminals_use_console (timedated_t))
@@ -60,6 +61,8 @@
 
 (call journal_client_subject_type (timedated_t))
 
+(call miscfiles_read_locale (timedated_t))
+
 (call systemd_dbus_chat (timedated_t))
 (call systemd_status_system (timedated_t))
 
@@ -68,6 +71,7 @@
 (call dbus_system_client_subject_type (timedate_timedatectl_subject_type))
 
 (call timedate_dbus_chat_timedatex (timedate_timedatectl_subject_type))
+(call timedate_dbus_chat_timedated (timedate_timedatectl_subject_type))
 (call timedate_timedatectl_client_subject_type (timedate_timedatectl_subject_type))
 
 (optional timedate_timedatectl_subject_type_optional_askpwd
