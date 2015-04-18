@@ -49,6 +49,8 @@
 
 (allow fuse_sshfs_subject_type self create_unix_stream_socket_perms)
 
+(call filesystems_read_sysfs_files (fuse_sshfs_subject_type))
+
 (call storage_rw_fuse (fuse_sshfs_subject_type))
 
 (call fuse_use_fd_fusermount (fuse_sshfs_subject_type))
