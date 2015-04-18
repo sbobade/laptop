@@ -228,6 +228,7 @@
 
 (call devices_manage_all (system_t))
 
+(call devices_devtmpfs_object_type_transition_event_dev (system_t))
 (call devices_devtmpfs_object_type_transition_usb_dev (system_t))
 (call devices_devtmpfs_object_type_transition_watchdog_dev (system_t))
 
