@@ -30,7 +30,3 @@
 * rw_fifo_file_perms should probably be part of ns_client_subject_type
 
 * d30: rpmfusion: mplayer .. deps
-* e145 install srm, fuse-sshfs
-* e145 copy ~/bin/mysshfsmount from x131e to e145
-* e145 dnf install *iberation*
-* e145 restorecon -v /usr/bin/tty /usr/bin/wall /usr/bin/write /usr/bin/mesg
