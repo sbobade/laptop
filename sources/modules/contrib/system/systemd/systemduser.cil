@@ -24,6 +24,11 @@
 
 (filecon "HOME_DIR/\.config/systemd(/.*)?" any (system_u object_r systemduser_config_home_t (systemlow systemlow)))
 
+(type systemduser_data_home_t)
+(call usersubject_data_home_object_type (systemduser_data_home_t))
+
+(filecon "HOME_DIR/\.local/share/systemd(/.*)?" any (system_u object_r systemduser_data_home_t (systemlow systemlow)))
+
 (type systemduser_transient_unit_t)
 (call usersubject_tmpfs_object_type (systemduser_transient_unit_t))
 
@@ -66,6 +71,12 @@
 
 (allow systemduser_subject_type systemduser_unix_stream_socket_activated_subject_type create_unix_stream_stream_socket_perms)
 (allow systemduser_subject_type systemduser_unix_dgram_socket_activated_subject_type create_unix_dgram_stream_socket_perms)
+
+(allow systemduser_subject_type systemduser_data_home_t manage_dir_perms)
+(allow systemduser_subject_type systemduser_data_home_t manage_file_perms)
+(allow systemduser_subject_type systemduser_data_home_t manage_lnk_file_perms)
+
+(call systemduser_data_home_object_type_transition_data_home_dirs (systemduser_subject_type))
 
 (call devices_getattr_all (systemduser_subject_type))
 
@@ -110,6 +121,9 @@
 
 (call usersubject_create_config_home_dirs (systemduser_subject_type))
 (call usersubject_home_dir_object_type_transition_config_home_dirs (systemduser_subject_type))
+
+(call usersubject_create_data_home_dirs (systemduser_subject_type))
+(call usersubject_home_dir_object_type_transition_data_home_dirs (systemduser_subject_type))
 
 (optional systemduser_subject_type_optional_run
     (call run_getattr_all_subjects (systemduser_subject_type)))
@@ -224,6 +238,59 @@
 
 (macro systemduser_config_home_object_type_transition_config_home_dirs ((type ARG1))
     (call usersubject_config_home_object_type_transition (ARG1 systemduser_config_home_t dir "systemd")))
+
+(macro systemduser_search_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 systemduser_data_home_t search_dir_perms))
+
+(macro systemduser_list_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 systemduser_data_home_t list_dir_perms))
+
+(macro systemduser_read_data_home_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call read_files_pattern (ARG1 systemduser_data_home_t systemduser_data_home_t)))
+
+(macro systemduser_manage_data_home_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call manage_files_pattern (ARG1 systemduser_data_home_t systemduser_data_home_t)))
+
+(macro systemduser_rw_data_home_dirs ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 systemduser_data_home_t rw_dir_perms))
+
+(macro systemduser_manage_data_home_dirs ((type ARG1))
+    (call usersubject_rw_data_home_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 systemduser_data_home_t systemduser_data_home_t)))
+
+(macro systemduser_read_data_home_lnk_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemduser_data_home_t systemduser_data_home_t)))
+
+(macro systemduser_manage_data_home_lnk_files ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (call manage_lnk_files_pattern (ARG1 systemduser_data_home_t systemduser_data_home_t)))
+
+(macro systemduser_read_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 systemduser_data_home_t read_file_perms)
+    (allow ARG1 systemduser_data_home_t list_dir_perms)
+    (allow ARG1 systemduser_data_home_t read_lnk_file_perms))
+
+(macro systemduser_manage_data_home ((type ARG1))
+    (call usersubject_rw_data_home_dirs (ARG1))
+    (allow ARG1 systemduser_data_home_t manage_file_perms)
+    (allow ARG1 systemduser_data_home_t manage_dir_perms)
+    (allow ARG1 systemduser_data_home_t manage_lnk_file_perms))
+
+(macro systemduser_relabel_data_home ((type ARG1))
+    (call usersubject_search_data_home (ARG1))
+    (allow ARG1 systemduser_data_home_t relabel_file_perms)
+    (allow ARG1 systemduser_data_home_t relabel_dir_perms)
+    (allow ARG1 systemduser_data_home_t relabel_lnk_file_perms))
+
+(macro systemduser_data_home_object_type_transition_data_home_dirs ((type ARG1))
+    (call usersubject_data_home_object_type_transition (ARG1 systemduser_data_home_t dir "systemd")))
 
 (macro systemduser_search_tmpfs ((type ARG1))
     (call files_search_user_runtime (ARG1))

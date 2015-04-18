@@ -524,7 +524,13 @@
     (call systemduser_relabel_config_home (sysadm_t))
 
     (context sysadm_systemduser_config_home (sysadm_u object_r systemduser_config_home_t (systemlow systemlow)))
-    (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemduser_config_home))
+    (filecon "/root/\.config/systemd(/.*)?" any sysadm_systemduser_config_home)
+
+    (call systemduser_manage_data_home (sysadm_t))
+    (call systemduser_relabel_data_home (sysadm_t))
+
+    (context sysadm_systemduser_data_home (sysadm_u object_r systemduser_data_home_t (systemlow systemlow)))
+    (filecon "/root/\.local/share/systemd(/.*)?" any sysadm_systemduser_data_home))
 
 (optional sysadm_optional_systemd
     (type sysadm_systemctl_t)

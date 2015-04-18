@@ -568,6 +568,9 @@
     (call systemduser_manage_config_home (staff_t))
     (call systemduser_relabel_config_home (staff_t))
 
+    (call systemduser_manage_data_home (staff_t))
+    (call systemduser_relabel_data_home (staff_t))
+
     (call systemduser_control_all_units (staff_t)))
 
 (optional staff_optional_temps
