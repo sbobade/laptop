@@ -28,6 +28,8 @@
 (type timedated_exec_t)
 (call systemd_daemon (timedated_t timedated_exec_t))
 
+(call systemd_notify_system_subject_type (timedated_t))
+
 (context timedated_exec (system_u object_r timedated_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/systemd-timedated" file timedated_exec)
 
