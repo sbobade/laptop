@@ -31,12 +31,4 @@
 
 * d30: rpmfusion: mplayer .. deps
 
-* e145: implement /root/bin/dobackup as on x131e (requires /home/kcinimod/Backups)
-
-* d30/e145: distribute refpolicy@30 container root/kcinimod passwords (pass)
-
-* d30/e145/x131e: review firewall rules (try to make sense of the llmnr traffic)
-
-* e145/x131e: give container-networks and containers static mac, use iifname/oifname instead of iif/oif for container nic in nft
 * e145/x131e: reset container passwords
-* e145: timedatectl set-ntp on --> confirm with timedatectl status that ntp is set to yes
