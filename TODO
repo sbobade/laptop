@@ -32,3 +32,5 @@
 * d30: rpmfusion: mplayer .. deps
 
 * e145/x131e: reset container passwords
+* e145: set DHCP=ipv4 for /etc/systemd/network/wl* and synchronize nf(6)?tables with x131e again
+    keep the ipv6 rules even though we disabled it
