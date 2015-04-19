@@ -442,6 +442,8 @@
     (type staff_ssh_t)
     (call ssh_role_template (staff_r staff_subject_type staff_ssh_t))
 
+    (call commands_shell_exec_auto_subject_type_transition (staff_ssh_t staff_t))
+
     (type staff_sshagent_t)
     (call ssh_role_template_sshagent (staff_r staff_subject_type staff_sshagent_t))
 
