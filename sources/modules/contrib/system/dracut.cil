@@ -51,8 +51,6 @@
 (call files_read_config (dracut_t))
 (call files_read_data (dracut_t))
 (call files_manage_boot_files (dracut_t))
-(call files_list_runtime (dracut_t))
-(call files_search_user_runtime (dracut_t))
 
 (call filesystems_search_tmpfs (dracut_t))
 (call filesystems_list_devtmpfs (dracut_t))
@@ -141,7 +139,6 @@
     (call udev_exec_udevadm (dracut_t)))
 
 (optional dracut_optional_usersubject
-    (call usersubject_list_home_dir (dracut_t))
     (call usersubject_list_user_home (dracut_t)))
 
 (optional dracut_optional_vconsole
