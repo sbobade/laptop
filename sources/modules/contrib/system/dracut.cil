@@ -64,6 +64,10 @@
 (call selinux_get_enforce_mode (dracut_t))
 
 (call storage_read_fixed_disk (dracut_t))
+(call storage_read_removable (dracut_t))
+(call storage_read_scsi_generic (dracut_t))
+
+(call subject_object_identity_change_exemption (dracut_t))
 
 (call auth_read_passwd_config_files (dracut_t))
 
