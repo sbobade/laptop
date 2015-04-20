@@ -740,6 +740,9 @@
 (macro filesystems_getattr_all_files ((type ARG1))
     (call getattr_files_pattern (ARG1 filesystems_object_type filesystems_object_type)))
 
+(macro filesystems_getattr_all_dirs ((type ARG1))
+    (call getattr_dirs_pattern (ARG1 filesystems_object_type filesystems_object_type)))
+
 (macro filesystems_getattr_all_lnk_files ((type ARG1))
     (call getattr_lnk_files_pattern (ARG1 filesystems_object_type filesystems_object_type)))
 

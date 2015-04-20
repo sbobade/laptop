@@ -382,6 +382,9 @@
 (macro journal_stop_journald_units ((type ARG1))
     (allow ARG1 journald_unit_t (service (stop))))
 
+(macro journal_status_journald_units ((type ARG1))
+    (allow ARG1 journald_unit_t (service (status))))
+
 (macro journal_client_subject_type ((type ARG1))
     (typeattributeset journal_client_subject_type ARG1))
 

@@ -165,6 +165,7 @@
     (call dnsmasq_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_dracut
+    (call dracut_run (sysadm_subject_type sysadm_r))
     (call dracut_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_festival

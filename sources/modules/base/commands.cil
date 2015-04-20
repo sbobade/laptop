@@ -89,6 +89,9 @@
 (macro commands_exec_all ((type ARG1))
     (call exec_files_pattern (ARG1 exec_t commands_exec_object_type)))
 
+(macro commands_mmap_all ((type ARG1))
+    (call mmap_files_pattern (ARG1 exec_t commands_exec_object_type)))
+
 (macro commands_read_all_exec_files ((type ARG1))
     (call read_files_pattern (ARG1 exec_t commands_exec_object_type)))
 
