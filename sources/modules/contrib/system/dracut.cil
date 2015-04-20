@@ -29,7 +29,7 @@
 (typeattributeset dracut_object_type dracut_tmp_t)
 
 (allow dracut_t self (capability (dac_override mknod sys_chroot sys_resource)))
-(allow dracut_t self (process (getsched)))
+(allow dracut_t self (process (getsched setfscreate)))
 (allow dracut_t self rw_fifo_file_perms)
 
 (allow dracut_t dracut_tmp_t manage_dir_perms)
@@ -39,6 +39,8 @@
 (allow dracut_t dracut_tmp_t mmap_file_perms)
 (allow dracut_t dracut_tmp_t manage_file_perms)
 (call files_tmp_object_type_transition (dracut_t dracut_tmp_t dir "*"))
+
+(call system_list_mountpoints (dracut_t))
 
 (call commands_exec (dracut_t))
 (call commands_exec_shell (dracut_t))
@@ -52,13 +54,14 @@
 (call files_list_runtime (dracut_t))
 (call files_search_user_runtime (dracut_t))
 
-(call filesystems_getattr_all_dirs (dracut_t))
 (call filesystems_search_tmpfs (dracut_t))
 (call filesystems_list_devtmpfs (dracut_t))
 (call filesystems_read_devtmpfs_lnk_files (dracut_t))
 (call filesystems_read_sysfs (dracut_t))
 
 (call libraries_exec_ld_so_files (dracut_t))
+
+(call selinux_get_enforce_mode (dracut_t))
 
 (call storage_read_fixed_disk (dracut_t))
 
@@ -88,10 +91,17 @@
 (call seutil_read_selinux_config_files (dracut_t))
 (call seutil_read_file_context (dracut_t))
 
+(optional dracut_optional_dm
+    (call dm_exec_dmsetup (dracut_t)))
+
 (optional dracut_optional_journal
     (call journal_read_journald_systemd_config_files (dracut_t))
     (call journal_status_journald_units (dracut_t))
     (call journal_client_subject_type (dracut_t)))
+
+(optional dracut_optional_lvm
+    (call lvm_read_config (dracut_t))
+    (call lvm_exec (dracut_t)))
 
 (optional dracut_optional_machine
     (call machine_read_config_files (dracut_t)))
