@@ -31,7 +31,7 @@
 (allow mount_t mount_runtime_t manage_file_perms)
 (call files_runtime_object_type_transition (mount_t mount_runtime_t dir "*"))
 
-(allow mount_t self (capability (dac_override sys_admin)))
+(allow mount_t self (capability (dac_override sys_admin fowner)))
 
 (call system_mounton_mountpoint_dirs (mount_t))
 (call system_request_load_module (mount_t))
