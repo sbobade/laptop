@@ -1,0 +1,26 @@
+(roleattribute tunctl_role)
+
+(type tunctl_t)
+(type tunctl_exec_t)
+(call applications_app (tunctl_t tunctl_exec_t))
+(roletype tunctl_role tunctl_t)
+
+(roleattributeset tunctl_role system_r)
+
+(context tunctl_exec (system_u object_r tunctl_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/tunctl" file tunctl_exec)
+
+(macro tunctl_exec ((type ARG1))
+    (call can_exec (ARG1 tunctl_exec_t)))
+
+(macro tunctl_auto_subject_type_transition ((type ARG1))
+    (call tunctl_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 tunctl_exec_t tunctl_t)))
+
+(macro tunctl_run ((type ARG1)(role ARG2))
+    (call tunctl_auto_subject_type_transition (ARG1))
+    (roleattributeset tunctl_role (ARG2)))
+
+(macro tunctl_send_signal ((type ARG1))
+    (allow ARG1 tunctl_t (process (signal))))
