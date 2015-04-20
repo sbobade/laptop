@@ -100,14 +100,17 @@
     (call journal_client_subject_type (dracut_t)))
 
 (optional dracut_optional_lvm
+    (call lvm_manage_lock_files (dracut_t))
     (call lvm_read_config (dracut_t))
+    (call lvm_read_metadata (dracut_t))
+    (call lvm_read_lvmetad_runtime (dracut_t))
     (call lvm_exec (dracut_t)))
-
-(optional dracut_optional_machine
-    (call machine_read_config_files (dracut_t)))
 
 (optional dracut_optional_loadmodules
     (call loadmodules_read_config (dracut_t)))
+
+(optional dracut_optional_machine
+    (call machine_read_config_files (dracut_t)))
 
 (optional dracut_optional_network
     (call network_read_networkd_systemd_config (dracut_t)))
@@ -133,7 +136,8 @@
     (call udev_exec_udevadm (dracut_t)))
 
 (optional dracut_optional_usersubject
-    (call usersubject_list_home_dir (dracut_t)))
+    (call usersubject_list_home_dir (dracut_t))
+    (call usersubject_list_user_home (dracut_t)))
 
 (optional dracut_optional_vconsole
     (call vconsole_read_config_files (dracut_t)))

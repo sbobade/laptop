@@ -272,6 +272,10 @@
     (call files_search_lock (ARG1))
     (call read_files_pattern (ARG1 lvm_lock_t lvm_lock_t)))
 
+(macro lvm_manage_lock_files ((type ARG1))
+    (call files_search_lock (ARG1))
+    (call manage_files_pattern (ARG1 lvm_lock_t lvm_lock_t)))
+
 (macro lvm_read_lock_lnk_files ((type ARG1))
     (call files_search_lock (ARG1))
     (call read_lnk_files_pattern (ARG1 lvm_lock_t lvm_lock_t)))
@@ -281,6 +285,12 @@
     (allow ARG1 lvm_lock_t read_file_perms)
     (allow ARG1 lvm_lock_t list_dir_perms)
     (allow ARG1 lvm_lock_t read_lnk_file_perms))
+
+(macro lvm_manage_lock ((type ARG1))
+    (call files_rw_lock_dirs (ARG1))
+    (allow ARG1 lvm_lock_t manage_file_perms)
+    (allow ARG1 lvm_lock_t manage_dir_perms)
+    (allow ARG1 lvm_lock_t manage_lnk_file_perms))
 
 (macro lvm_search_lvmetad_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
@@ -312,17 +322,17 @@
 
 (macro lvm_read_lvmetad_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
-    (allow ARG1 lvm_runtime_t read_file_perms)
-    (allow ARG1 lvm_runtime_t list_dir_perms)
-    (allow ARG1 lvm_runtime_t read_lnk_file_perms)
-    (allow ARG1 lvm_runtime_t read_sock_file_perms))
+    (allow ARG1 lvmetad_runtime_t read_file_perms)
+    (allow ARG1 lvmetad_runtime_t list_dir_perms)
+    (allow ARG1 lvmetad_runtime_t read_lnk_file_perms)
+    (allow ARG1 lvmetad_runtime_t read_sock_file_perms))
 
 (macro lvm_manage_lvmetad_runtime ((type ARG1))
     (call files_rw_runtime_dirs (ARG1))
-    (allow ARG1 lvm_runtime_t manage_file_perms)
-    (allow ARG1 lvm_runtime_t manage_dir_perms)
-    (allow ARG1 lvm_runtime_t manage_lnk_file_perms)
-    (allow ARG1 lvm_runtime_t manage_sock_file_perms))
+    (allow ARG1 lvmetad_runtime_t manage_file_perms)
+    (allow ARG1 lvmetad_runtime_t manage_dir_perms)
+    (allow ARG1 lvmetad_runtime_t manage_lnk_file_perms)
+    (allow ARG1 lvmetad_runtime_t manage_sock_file_perms))
 
 (macro lvm_stream_connect_lvmetad ((type ARG1))
     (call files_search_runtime (ARG1))

@@ -135,6 +135,7 @@
 
 (type pstore_fs_t)
 (call filesystems_object_type (pstore_fs_t))
+(call system_mountpoint_object_type (pstore_fs_t))
 
 (context pstore_fs (system_u object_r pstore_fs_t (systemlow systemlow)))
 (genfscon "pstore" "/" pstore_fs)
