@@ -194,6 +194,7 @@
 
 (call system_link_keyring (sshd_t))
 (call system_read_kernel_sysctl (sshd_t))
+(call system_read_net_proc (sshd_t))
 
 (call commands_getattr_shell_exec_files (sshd_t))
 
