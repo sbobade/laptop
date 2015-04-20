@@ -104,6 +104,7 @@
     (call lvm_read_config (dracut_t))
     (call lvm_read_metadata (dracut_t))
     (call lvm_read_lvmetad_runtime (dracut_t))
+    (call lvm_stream_connect_lvmetad (dracut_t))
     (call lvm_exec (dracut_t)))
 
 (optional dracut_optional_loadmodules
