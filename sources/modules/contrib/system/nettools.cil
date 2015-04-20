@@ -87,7 +87,10 @@
 
 (call devices_read_urandom (traceroute_t))
 
+(call files_read_config_files (traceroute_t))
 (call files_read_data_files (traceroute_t))
+
+(call filesystems_read_sysfs (traceroute_t))
 
 (call network_udp_bind_generic_node (traceroute_t))
 

@@ -32,3 +32,5 @@
 * d30: rpmfusion: mplayer .. deps
 
 * e145/x131e: reset container passwords
+
+* e145: once again sync /etc/nft/ipv4-filter with x131e
