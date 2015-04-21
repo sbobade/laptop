@@ -22,6 +22,9 @@
 
 (call ns_client_subject_type (tunctl_t))
 
+(optional tunctl_optional_myqemu
+    (call myqemu_relabelfrom_all_virt_subjects_tun_socket (tunctl_t)))
+
 (optional tunctl_optional_systemd
     (call systemd_daemon (tunctl_t tunctl_exec_t))
 
