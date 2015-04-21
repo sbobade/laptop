@@ -10,6 +10,16 @@
 (context tunctl_exec (system_u object_r tunctl_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/tunctl" file tunctl_exec)
 
+(allow tunctl_t self (capability (net_admin)))
+(allow tunctl_t self create_tun_socket_perms)
+(allow tunctl_t self (tun_socket (relabelto relabelfrom)))
+
+(call system_request_load_module (tunctl_t))
+
+(call devices_rw_tun_tap (tunctl_t))
+
+(call ns_client_subject_type (tunctl_t))
+
 (macro tunctl_exec ((type ARG1))
     (call can_exec (ARG1 tunctl_exec_t)))
 

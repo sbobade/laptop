@@ -508,6 +508,10 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 tpm_dev_t rw_chr_file_perms))
 
+(macro devices_rw_tun_tap ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 tun_tap_dev_t rw_chr_file_perms))
+
 (macro devices_rw_urandom ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 urandom_dev_t rw_chr_file_perms))
