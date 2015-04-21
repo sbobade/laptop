@@ -5,8 +5,8 @@
 (typeattribute myqemu_virt_object_type)
 (typeattribute myqemu_virt_runtime_object_type)
 
-(typeattributeset myqemu_object_type)
-(typeattributeset myqemu_subject_type)
+(typeattribute myqemu_object_type)
+(typeattribute myqemu_subject_type)
 
 (typeattribute myqemu_admin_subject_type)
 
