@@ -183,6 +183,12 @@
 (context myqemu_shutdown_exec (system_u object_r myqemu_shutdown_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/myqemu_shutdown" file myqemu_shutdown_exec)
 
+(allow myqemu_shutdown_t self rw_fifo_file_perms)
+
+(call commands_exec (myqemu_shutdown_t))
+
+(call miscfiles_read_locale (myqemu_shutdown_t))
+
 (call myqemu_stream_connect_all_virt_subjects (myqemu_shutdown_t))
 (call myqemu_manage_all_virt_runtime_object_sock_files (myqemu_shutdown_t))
 
