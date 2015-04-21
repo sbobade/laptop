@@ -217,7 +217,7 @@
 (call ps_subject_pattern (myqemu_admin_subject_type myqemu_subject_type))
 
 (allow myqemu_admin_subject_type myqemu_object_type (all_file_objects
-    (not_mounton_entrypoint_and_execmod))))
+    (not_mounton_entrypoint_and_execmod)))
 
 (macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3))
     (call myqemu_virt_subject_type (ARG1))
