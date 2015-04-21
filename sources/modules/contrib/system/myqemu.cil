@@ -28,8 +28,7 @@
 (allow myqemu_virt_subject_type self rw_fifo_file_perms)
 (allow myqemu_virt_subject_type self create_unix_stream_stream_socket_perms)
 (allow myqemu_virt_subject_type self (tcp_socket (listen accept)))
-;(allow myqemu_virt_subject_type self create_tun_socket_perms)
-;(allow myqemu_virt_subject_type self (tun_socket (relabelto relabelfrom)))
+(allow myqemu_virt_subject_type self (tun_socket (relabelto)))
 
 (allow myqemu_virt_subject_type myqemu_runner_t (process (sigchld)))
 (allow myqemu_virt_subject_type myqemu_runner_t (fd (use)))
