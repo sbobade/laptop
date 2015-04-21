@@ -77,7 +77,7 @@
 (filecon "/usr/bin/tcptraceroute" file traceroute_exec)
 (filecon "/usr/bin/nmap" file traceroute_exec)
 
-(allow traceroute_t self (capability (dac_override net_raw)))
+(allow traceroute_t self (capability (dac_override net_raw net_admin)))
 (allow traceroute_t self (capability2 (block_suspend)))
 (allow traceroute_t self create_packet_socket_perms)
 (allow traceroute_t self create_rawip_socket_perms)
