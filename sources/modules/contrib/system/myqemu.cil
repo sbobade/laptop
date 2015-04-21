@@ -168,7 +168,7 @@
 (allow myqemu_admin_subject_type myqemu_runner_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (myqemu_admin_subject_type myqemu_runner_t))
 
-(macro myqemu_virt_template ((type ARG1)(type ARG2))
+(macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3))
     (call myqemu_virt_subject_type (ARG1))
     (call myqemu_virt_object_type (ARG2))
     (allow ARG1 ARG2 rw_file_perms)
