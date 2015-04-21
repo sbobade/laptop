@@ -337,6 +337,7 @@
 (optional sysadm_optional_myqemu
     (call myqemu_admin (sysadm_t sysadm_r))
     (call myqemu_run_runner (sysadm_subject_type sysadm_r))
+    (call myqemu_run_shutdown (sysadm_subject_type sysadm_r))
     (call myqemu_run_installer (sysadm_subject_type sysadm_r))
 
     (call myqemu_send_signal_all_virt_subjects (sysadm_t))

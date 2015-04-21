@@ -5,6 +5,9 @@
 (typeattribute myqemu_virt_object_type)
 (typeattribute myqemu_virt_runtime_object_type)
 
+(typeattributeset myqemu_object_type)
+(typeattributeset myqemu_subject_type)
+
 (typeattribute myqemu_admin_subject_type)
 
 (type virt_subject_t)
@@ -67,6 +70,8 @@
 (call applications_app (myqemu_runner_t myqemu_runner_exec_t))
 (roletype myqemu_runner_role myqemu_runner_t)
 
+(typeattributeset myqemu_subject_type myqemu_runner_t)
+
 (roleattributeset myqemu_runner_role system_r)
 
 (context myqemu_runner_exec (system_u object_r myqemu_runner_exec_t (systemlow systemlow)))
@@ -116,11 +121,15 @@
 (call applications_app (myqemu_installer_t myqemu_installer_exec_t))
 (roletype myqemu_installer_role myqemu_installer_t)
 
+(typeattributeset myqemu_subject_type myqemu_installer_t)
+
 (context myqemu_installer_exec (system_u object_r myqemu_installer_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/myqemu_installer" file myqemu_installer_exec)
 
 (type myqemu_installer_tmpfs_t)
 (call usersubject_tmpfs_object_type (myqemu_installer_tmpfs_t))
+
+(typeattributeset myqemu_object_type myqemu_installer_tmpfs_t)
 
 (allow myqemu_installer_t myqemu_installer_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (myqemu_installer_t myqemu_installer_tmpfs_t file "*"))
@@ -166,8 +175,22 @@
 (optional myqemu_installer_optional_machine
     (call machine_manage_lib_files (myqemu_installer_t)))
 
-(allow myqemu_admin_subject_type myqemu_runner_t (process (ptrace signal signull sigkill sigstop)))
-(call ps_subject_pattern (myqemu_admin_subject_type myqemu_runner_t))
+(type myqemu_shutdown_t)
+(type myqemu_shutdown_exec_t)
+(call applications_app (myqemu_shutdown_t myqemu_shutdown_exec_t))
+(roletype myqemu_runner_role myqemu_shutdown_t)
+
+(context myqemu_shutdown_exec (system_u object_r myqemu_shutdown_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/myqemu_shutdown" file myqemu_shutdown_exec)
+
+(call myqemu_stream_connect_all_virt_subjects ((type ARG1))
+(call myqemu_manage_all_virt_runtime_object_sock_files ((type ARG1))
+
+(optional myqemu_shutdown_optional_systemd
+    (call systemd_daemon (myqemu_shutdown_t myqemu_shutdown_exec_t)))
+
+(allow myqemu_admin_subject_type myqemu_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (myqemu_admin_subject_type myqemu_subject_type))
 
 (macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3))
     (call myqemu_virt_subject_type (ARG1))
@@ -191,6 +214,21 @@
 
 (macro myqemu_exec_runner ((type ARG1))
     (call can_exec (ARG1 myqemu_runner_exec_t)))
+
+(macro myqemu_exec_shutdown ((type ARG1))
+    (call can_exec (ARG1 myqemu_shutdown_exec_t)))
+
+(macro myqemu_auto_subject_type_transition_shutdown ((type ARG1))
+    (call myqemu_send_signal_shutdown (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 myqemu_shutdown_exec_t myqemu_shutdown_t)))
+
+(macro myqemu_send_signal_shutdown ((type ARG1))
+    (allow ARG1 myqemu_shutdown_t (process (signal))))
+
+(macro myqemu_run_shutdown ((type ARG1)(role ARG2))
+    (call myqemu_auto_subject_type_transition_shutdown (ARG1))
+    (roleattributeset myqemu_runner_role ARG2))
 
 (macro myqemu_auto_subject_type_transition_runner ((type ARG1))
     (call myqemu_send_signal_runner (ARG1))
@@ -238,6 +276,24 @@
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
     (allow ARG1 myqemu_installer_tmpfs_t relabel_file_perms))
+
+(macro myqemu_stream_connect_virt_subject ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 virt_runtime_object_t virt_runtime_object_t
+        virt_subject_t)))
+
+(macro myqemu_stream_connect_all_virt_subjects ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 myqemu_virt_runtime_object_type
+        myqemu_virt_runtime_object_type myqemu_virt_subject_type)))
+
+(macro myqemu_manage_virt_runtime_object_sock_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 virt_runtime_object_t manage_sock_file_perms))
+
+(macro myqemu_manage_all_virt_runtime_object_sock_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 myqemu_virt_runtime_object_type manage_sock_file_perms))
 
 (macro myqemu_send_signal_all_virt_subjects ((type ARG1))
     (allow ARG1 myqemu_virt_subject_type (process (signal))))
