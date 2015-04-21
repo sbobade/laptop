@@ -31,7 +31,10 @@
     (context tunctl_unit (system_u object_r tunctl_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*tunctl.*" file tunctl_unit)
 
-    (allow tunctl_admin_subject_type tunctl_unit_t (service (all))))
+    (allow tunctl_admin_subject_type tunctl_unit_t (service (all)))
+
+    (allow tunctl_admin_subject_type tunctl_unit_t (all_file_objects
+        (not_mounton_entrypoint_and_execmod))))
 
 (allow tunctl_admin_subject_type tunctl_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (tunctl_admin_subject_type tunctl_t))

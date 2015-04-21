@@ -99,7 +99,10 @@
     (context myqemu_runner_unit (system_u object_r myqemu_runner_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*myqemu_runner.*" file myqemu_runner_unit)
 
-    (allow myqemu_admin_subject_type myqemu_runner_unit_t (service (all))))
+    (allow myqemu_admin_subject_type myqemu_runner_unit_t (service (all)))
+
+    (allow myqemu_admin_subject_type myqemu_runner_unit_t (all_file_objects
+        (not_mounton_entrypoint_and_execmod))))
 
 (type myqemu_installer_t)
 (type myqemu_installer_exec_t)
