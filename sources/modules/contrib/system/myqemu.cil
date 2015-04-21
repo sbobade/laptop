@@ -3,6 +3,7 @@
 
 (typeattribute myqemu_virt_subject_type)
 (typeattribute myqemu_virt_object_type)
+(typeattribute myqemu_virt_runtime_object_type)
 
 (typeattribute myqemu_admin_subject_type)
 
