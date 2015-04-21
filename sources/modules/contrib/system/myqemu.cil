@@ -28,6 +28,7 @@
 (allow myqemu_virt_subject_type self rw_fifo_file_perms)
 (allow myqemu_virt_subject_type self create_unix_stream_stream_socket_perms)
 (allow myqemu_virt_subject_type self (tcp_socket (listen accept)))
+(allow myqemu_virt_subject_type self create_tun_socket_perms))
 (allow myqemu_virt_subject_type self (tun_socket (relabelto relabelfrom)))
 
 (allow myqemu_virt_subject_type myqemu_runner_t (process (sigchld)))
@@ -65,6 +66,10 @@
 (optional myqemu_virt_subject_type_optional_tunctl
     (call tunctl_relabelfrom_tun_sockets (myqemu_virt_subject_type)))
 
+(optional myqemu_virt_subject_type_optional_systemd
+    (call systemd_use_fd (myqemu_virt_subject_type))
+    (call systemd_rw_systemctl_subject_unix_stream_sockets (myqemu_virt_subject_type)))
+
 (type myqemu_runner_t)
 (type myqemu_runner_exec_t)
 (call applications_app (myqemu_runner_t myqemu_runner_exec_t))
@@ -94,6 +99,8 @@
 (call miscfiles_read_locale (myqemu_runner_t))
 
 (call myqemu_relabel_all_virt_object_files (myqemu_runner_t))
+
+(call ns_client_subject_type (myqemu_runner_t))
 
 (call qemu_mmap_qemu_exec_files (myqemu_runner_t))
 
