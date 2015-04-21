@@ -8,10 +8,11 @@
 
 (type virt_subject_t)
 (type virt_object_t)
-(call myqemu_virt_template (virt_subject_t virt_object_t))
+(call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t))
 
 (call subject_common_type (myqemu_virt_subject_type))
 (call files_object_type (myqemu_virt_object_type))
+(call files_runtime_object_type (myqemu_virt_runtime_object_type))
 
 (roletype myqemu_runner_role myqemu_virt_subject_type)
 
@@ -20,6 +21,7 @@
 (allow myqemu_virt_subject_type self (capability (setuid setgid net_admin)))
 (allow myqemu_virt_subject_type self (process (getsched)))
 (allow myqemu_virt_subject_type self rw_fifo_file_perms)
+(allow myqemu_virt_subject_type self create_unix_stream_stream_socket_perms)
 (allow myqemu_virt_subject_type self (tcp_socket (listen accept)))
 (allow myqemu_virt_subject_type self (tun_socket (relabelto relabelfrom)))
 
@@ -54,6 +56,9 @@
 
 (optional myqemu_virt_subject_type_optional_machine
     (call machine_search_lib (myqemu_virt_subject_type)))
+
+(optional myqemu_virt_subject_type_optional_tunctl
+    (call tunctl_relabelfrom_tun_sockets (myqemu_virt_subject_type)))
 
 (type myqemu_runner_t)
 (type myqemu_runner_exec_t)
@@ -165,13 +170,19 @@
 (macro myqemu_virt_template ((type ARG1)(type ARG2))
     (call myqemu_virt_subject_type (ARG1))
     (call myqemu_virt_object_type (ARG2))
-    (allow ARG1 ARG2 rw_file_perms))
+    (allow ARG1 ARG2 rw_file_perms)
+    (call myqemu_virt_runtime_object_type (ARG3))
+    (allow ARG1 ARG3 manage_sock_file_perms)
+    (call files_runtime_object_type_transition (ARG1 ARG3 sock_file "*")))
 
 (macro myqemu_virt_subject_type ((type ARG1))
     (typeattributeset myqemu_virt_subject_type ARG1))
 
 (macro myqemu_virt_object_type ((type ARG1))
     (typeattributeset myqemu_virt_object_type ARG1))
+
+(macro myqemu_virt_runtime_object_type ((type ARG1))
+    (typeattributeset myqemu_virt_runtime_object_type ARG1))
 
 (macro myqemu_exec_installer ((type ARG1))
     (call can_exec (ARG1 myqemu_installer_exec_t)))

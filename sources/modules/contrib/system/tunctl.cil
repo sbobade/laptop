@@ -54,6 +54,9 @@
 (macro tunctl_send_signal ((type ARG1))
     (allow ARG1 tunctl_t (process (signal))))
 
+(macro tunctl_relabelfrom_tun_sockets ((type ARG1))
+    (allow ARG1 tunctl_t (tun_socket (relabelfrom))))
+
 (macro tunctl_admin ((type ARG1)(role ARG2))
     (typeattributeset tunctl_admin_subject_type ARG1)
     (optional tunctl_admin_optional_askpwd
