@@ -193,6 +193,7 @@
 (allow myqemu_shutdown_t self rw_fifo_file_perms)
 
 (call commands_exec (myqemu_shutdown_t))
+(call commands_mprot_read_shell_exec_files (myqemu_shutdown_t))
 
 (call miscfiles_read_locale (myqemu_shutdown_t))
 
