@@ -289,6 +289,10 @@
     (call commands_search (ARG1))
     (allow ARG1 myqemu_runner_exec_t read_file_perms))
 
+(macro myqemu_read_shutdown_exec_files ((type ARG1))
+    (call commands_search (ARG1))
+    (allow ARG1 myqemu_shutdown_exec_t read_file_perms))
+
 (macro myqemu_read_installer_tmpfs_files ((type ARG1))
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
