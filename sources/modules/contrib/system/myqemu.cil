@@ -15,10 +15,11 @@
 
 (call qemu_exec_entry_object_type (myqemu_virt_subject_type))
 
-(allow myqemu_virt_subject_type self (capability (setuid setgid)))
+(allow myqemu_virt_subject_type self (capability (setuid setgid net_admin)))
 (allow myqemu_virt_subject_type self (process (getsched)))
 (allow myqemu_virt_subject_type self rw_fifo_file_perms)
 (allow myqemu_virt_subject_type self (tcp_socket (listen accept)))
+(allow myqemu_virt_subject_type self (tun_socket (relabelto relabelfrom)))
 
 (allow myqemu_virt_subject_type myqemu_runner_t (process (sigchld)))
 (allow myqemu_virt_subject_type myqemu_runner_t (fd (use)))
@@ -28,6 +29,7 @@
 
 (call devices_read_urandom (myqemu_virt_subject_type))
 (call devices_rw_kvm (myqemu_virt_subject_type))
+(call devices_rw_tun_tap (myqemu_virt_subject_type))
 
 (call files_read_data (myqemu_virt_subject_type))
 (call files_read_config_files (myqemu_virt_subject_type))
