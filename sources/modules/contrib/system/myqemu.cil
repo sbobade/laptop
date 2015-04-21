@@ -16,8 +16,16 @@
 (call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t))
 
 (call subject_common_type (myqemu_virt_subject_type))
+
+(typeattributeset myqemu_subject_type myqemu_virt_subject_type)
+
 (call files_object_type (myqemu_virt_object_type))
+
+(typeattributeset myqemu_object_type myqemu_virt_object_type)
+
 (call files_runtime_object_type (myqemu_virt_runtime_object_type))
+
+(typeattributeset myqemu_object_type myqemu_virt_runtime_object_type)
 
 (roletype myqemu_runner_role myqemu_virt_subject_type)
 
