@@ -199,6 +199,8 @@
 (call myqemu_stream_connect_all_virt_subjects (myqemu_shutdown_t))
 (call myqemu_manage_all_virt_runtime_object_sock_files (myqemu_shutdown_t))
 
+(call ns_client_subject_type (myqemu_shutdown_t))
+
 (optional myqemu_shutdown_optional_systemd
     (call systemd_daemon (myqemu_shutdown_t myqemu_shutdown_exec_t)))
 
