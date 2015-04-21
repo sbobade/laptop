@@ -4,6 +4,8 @@
 (typeattribute myqemu_virt_subject_type)
 (typeattribute myqemu_virt_object_type)
 
+(typeattribute myqemu_admin_subject_type)
+
 (type virt_subject_t)
 (type virt_object_t)
 (call myqemu_virt_template (virt_subject_t virt_object_t))
@@ -58,6 +60,8 @@
 (call applications_app (myqemu_runner_t myqemu_runner_exec_t))
 (roletype myqemu_runner_role myqemu_runner_t)
 
+(roleattributeset myqemu_runner_role system_r)
+
 (context myqemu_runner_exec (system_u object_r myqemu_runner_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/myqemu_runner" file myqemu_runner_exec)
 (filecon "/usr/sbin/myqemu_runner_tap" file myqemu_runner_exec)
@@ -85,6 +89,17 @@
 
 (optional myqemu_runner_optional_machine
     (call machine_relabelfrom_lib_files (myqemu_runner_t)))
+
+(optional myqemu_runner_optional_systemd
+    (call systemd_daemon (myqemu_runner_t myqemu_runner_exec_t))
+
+    (type myqemu_runner_unit_t)
+    (call systemd_unit_object_type (myqemu_runner_unit_t))
+
+    (context myqemu_runner_unit (system_u object_r myqemu_runner_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*myqemu_runner.*" file myqemu_runner_unit)
+
+    (allow myqemu_admin_subject_type myqemu_runner_unit_t (service (all))))
 
 (type myqemu_installer_t)
 (type myqemu_installer_exec_t)
@@ -140,6 +155,9 @@
 
 (optional myqemu_installer_optional_machine
     (call machine_manage_lib_files (myqemu_installer_t)))
+
+(allow myqemu_admin_subject_type myqemu_runner_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (myqemu_admin_subject_type myqemu_runner_t))
 
 (macro myqemu_virt_template ((type ARG1)(type ARG2))
     (call myqemu_virt_subject_type (ARG1))
@@ -213,3 +231,10 @@
 
 (macro myqemu_relabel_all_virt_object_files ((type ARG1))
     (allow ARG1 myqemu_virt_object_type relabel_file_perms))
+
+(macro myqemu_admin ((type ARG1)(role ARG2))
+    (typeattributeset myqemu_admin_subject_type ARG1)
+    (optional myqemu_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional myqemu_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

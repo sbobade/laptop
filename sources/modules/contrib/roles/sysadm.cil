@@ -334,6 +334,7 @@
     (call mount_manage_runtime (sysadm_t)))
 
 (optional sysadm_optional_myqemu
+    (call myqemu_admin (sysadm_t sysadm_r))
     (call myqemu_run_runner (sysadm_subject_type sysadm_r))
     (call myqemu_run_installer (sysadm_subject_type sysadm_r))
 
@@ -710,6 +711,7 @@
     (call tcs_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_tunctl
+    (call tunctl_admin (sysadm_t sysadm_r))
     (call tunctl_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_udev

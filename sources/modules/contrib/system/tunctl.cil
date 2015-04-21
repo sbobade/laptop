@@ -1,5 +1,7 @@
 (roleattribute tunctl_role)
 
+(typeattribute tunctl_admin_subject_type)
+
 (type tunctl_t)
 (type tunctl_exec_t)
 (call applications_app (tunctl_t tunctl_exec_t))
@@ -20,6 +22,20 @@
 
 (call ns_client_subject_type (tunctl_t))
 
+(optional tunctl_optional_systemd
+    (call systemd_daemon (tunctl_t tunctl_exec_t))
+
+    (type tunctl_unit_t)
+    (call systemd_unit_object_type (tunctl_unit_t))
+
+    (context tunctl_unit (system_u object_r tunctl_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*tunctl.*" file tunctl_unit)
+
+    (allow tunctl_admin_subject_type tunctl_unit_t (service (all))))
+
+(allow tunctl_admin_subject_type tunctl_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (tunctl_admin_subject_type tunctl_t))
+
 (macro tunctl_exec ((type ARG1))
     (call can_exec (ARG1 tunctl_exec_t)))
 
@@ -34,3 +50,10 @@
 
 (macro tunctl_send_signal ((type ARG1))
     (allow ARG1 tunctl_t (process (signal))))
+
+(macro tunctl_admin ((type ARG1)(role ARG2))
+    (typeattributeset tunctl_admin_subject_type ARG1)
+    (optional tunctl_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional tunctl_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
