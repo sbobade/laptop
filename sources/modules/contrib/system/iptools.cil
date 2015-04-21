@@ -51,7 +51,7 @@
     (typeattributeset iptools_object_type iptools_unit_t)
 
     (context iptools_unit (system_u object_r iptools_unit_t (systemlow systemlow)))
-    (filecon "/usr/lib/systemd/system/[^/]*iptools.*" file kmod_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*iptools.*" file iptools_unit)
 
     (allow iptools_admin_subject_type iptools_unit_t (service (all))))
 
