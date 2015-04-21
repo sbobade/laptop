@@ -61,7 +61,10 @@
 (call filesystems_read_sysfs (resolved_t))
 
 (call network_tcp_bind_generic_node (resolved_t))
+
 (call network_udp_bind_generic_node (resolved_t))
+(call network_udp_bind_unreserved_port (resolved_t))
+
 (call network_read_networkd_systemd_runtime (resolved_t))
 
 (call selinux_get_enforce_mode (resolved_t))

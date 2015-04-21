@@ -32,4 +32,3 @@
 * d30: rpmfusion: mplayer .. deps
 
 * e145/x131e: reset container passwords
-* e145: get rid of dhcp on wl* , its not reliable .. fix nftables accordingly
