@@ -8,6 +8,7 @@
 
 (type virt_subject_t)
 (type virt_object_t)
+(type virt_runtime_object_t)
 (call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t))
 
 (call subject_common_type (myqemu_virt_subject_type))
