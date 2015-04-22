@@ -18,6 +18,7 @@
 (call files_read_config_files (qiv_t))
 (call files_search_mnt (qiv_t))
 
+(call filesystems_getattr_filesystems (qiv_t))
 (call filesystems_read_fuse_files (qiv_t))
 
 (call usersubject_read_user_home_files (qiv_t))

@@ -26,6 +26,9 @@
 (optional analyze_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (analyze_subject_type analyze_role)))
 
+(optional analyze_subject_type_optional_hostname
+    (call hostname_dbus_chat_hostnamed (analyze_subject_type)))
+
 (optional analyze_subject_type_optional_machine
     (call machine_list_machined_systemd_runtime (analyze_subject_type))
     (call machine_read_machined_systemd_runtime_files (analyze_subject_type)))
@@ -40,7 +43,8 @@
 (optional analyze_subject_type_optional_usersubject
     (call usersubject_search_exec_home (analyze_subject_type))
     (call usersubject_read_exec_home_lnk_files (analyze_subject_type))
-    (call usersubject_read_user_home_files (analyze_subject_type)))
+    (call usersubject_manage_user_home_files (analyze_subject_type))
+    (call usersubject_home_dir_object_type_transition_user_home (analyze_subject_type file "*")))
 
 (allow analyze_client_subject_type self rw_fifo_file_perms)
 
