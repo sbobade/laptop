@@ -32,7 +32,8 @@
 
 (call ns_client_subject_type (coredumpctl_t))
 
-(call usersubject_read_user_home_files (coredumpctl_t))
+(optional coredumpctl_optional_usersubject
+    (call usersubject_read_user_home_files (coredumpctl_t)))
 
 (type coredump_t)
 (type coredump_exec_t)
@@ -68,6 +69,8 @@
 
 (call devices_read_urandom (coredump_t))
 (call devices_write_kmsg (coredump_t))
+
+(call files_dontaudit_catchall_subject_type (coredump_t))
 
 (call subject_read_all_common_subjects_state (coredump_t))
 
