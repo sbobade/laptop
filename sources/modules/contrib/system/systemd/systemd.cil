@@ -1132,6 +1132,9 @@
 (macro systemd_status_system_units ((type ARG1))
     (allow ARG1 systemd_unit_t (service (status))))
 
+(macro systemd_status_power_units ((type ARG1))
+    (allow ARG1 systemd_power_unit_t (service (status))))
+
 (macro systemd_status_transient_units ((type ARG1))
     (allow ARG1 systemd_transient_unit_t (service (status))))
 
