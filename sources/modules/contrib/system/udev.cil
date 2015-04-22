@@ -17,17 +17,39 @@
 (context udevadm_exec (system_u object_r udevadm_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/udevadm" file udevadm_exec)
 
+(allow udevadm_t self (capability (dac_override)))
 (allow udevadm_t self create_netlink_kobject_uevent_socket_perms)
 
-(call devices_read_urandom (udevadm_t))
+(call devices_rw_all (udevadm_t))
+(call devices_relabel_all (udevadm_t))
+(call devices_setattr_all (udevadm_t))
+
+(call filesystems_manage_devtmpfs_dirs (udevadm_t))
+(call filesystems_manage_devtmpfs_files (udevadm_t))
+(call filesystems_manage_devtmpfs_lnk_files (udevadm_t))
+(call filesystems_manage_devtmpfs_blk_files (udevadm_t))
+(call filesystems_manage_devtmpfs_chr_files (udevadm_t))
+
+(call filesystems_relabelfrom_devtmpfs_chr_files (udevadm_t))
+(call filesystems_relabelfrom_devtmpfs_blk_files (udevadm_t))
 
 (call filesystems_list_sysfs (udevadm_t))
 (call filesystems_rw_sysfs_files (udevadm_t))
 (call filesystems_read_sysfs_lnk_files (udevadm_t))
 
+(call selinux_get_enforce_mode (udevadm_t))
+
 (call storage_read_fixed_disk (udevadm_t))
 (call storage_read_removable (udevadm_t))
 (call storage_read_scsi_generic (udevadm_t))
+
+(call auth_read_passwd_config_files (udevadm_t))
+
+(call kmod_read_config (udevadm_t))
+
+(call miscfiles_read_modules (udevadm_t))
+
+(call ns_read_config_files (udevadm_t))
 
 (call seutil_read_selinux_config_files (udevadm_t))
 (call seutil_read_file_context_files (udevadm_t))
@@ -35,6 +57,9 @@
 (call udev_manage_config (udevadm_t))
 (call udev_manage_runtime (udevadm_t))
 (call udev_stream_connect_udevd (udevadm_t))
+
+(optional udevadm_optional_network_networkd
+    (call network_read_networkd_systemd_config (udevadm_t)))
 
 (optional udevadm_optional_systemd
     (call systemd_daemon (udevadm_t udevadm_exec_t))
