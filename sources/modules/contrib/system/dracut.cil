@@ -122,6 +122,10 @@
     (call plymouth_read_config_files (dracut_t))
     (call plymouth_exec (dracut_t)))
 
+(optional dracut_optional_rpm
+    (call rpm_rw_inherited_fifo_files (dracut_t))
+    (call rpm_rw_inherited_tmpfs_files (dracut_t)))
+
 (optional dracut_optional_sysctl
     (call sysctl_read_config (dracut_t)))
 

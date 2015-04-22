@@ -168,6 +168,9 @@
 (optional rpm_subject_optional_dbus
     (call dbus_unconfined_subject_type (rpm_subject_type)))
 
+(optional rpm_subject_optional_dracut
+    (call dracut_run (rpm_script_t rpm_role)))
+
 (optional rpm_script_optional_fstools
     (call fstools_run (rpm_script_t rpm_role)))
 

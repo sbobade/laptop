@@ -89,6 +89,7 @@
 
 (type efivarfs_fs_t)
 (call filesystems_object_type (efivarfs_fs_t))
+(call system_mountpoint_object_type (efivarfs_fs_t))
 
 (context efivarfs_fs (system_u object_r efivarfs_fs_t (systemlow systemlow)))
 (genfscon "efivarfs" "/" efivarfs_fs)
