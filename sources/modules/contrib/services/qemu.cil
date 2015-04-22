@@ -40,8 +40,16 @@
 
 (call miscfiles_read_locale (qemuga_t))
 
-(optional qemu_optional_systemd
+(optional qemuga_optional_journal
+    (call journal_client_subject_type (qemuga_t)))
+
+(optional qemuga_optional_shutdown
+    (call shutdown_dgram_send_shutdownd (qemuga_t)))
+
+(optional qemuga_optional_systemd
     (call systemd_daemon (qemuga_t qemuga_exec_t))
+
+    (call systemd_notify_system_subject_type (qemuga_t))
 
     (type qemuga_unit_t)
     (call systemd_unit_object_type (qemuga_unit_t))
@@ -51,7 +59,11 @@
     (context qemuga_unit (system_u object_r qemuga_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*qemu-guest-agent.*" file qemuga_unit)
 
-    (allow qemu_admin_subject_type qemuga_unit_t (service (all))))
+    (allow qemu_admin_subject_type qemuga_unit_t (service (all)))
+
+    (call systemd_exec_systemctl (qemuga_t))
+
+    (call systemd_stream_connect (qemuga_t)))
 
 (allow qemu_admin_subject_type qemuga_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (qemu_admin_subject_type qemuga_t))
