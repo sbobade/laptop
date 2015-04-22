@@ -138,6 +138,7 @@
 
 (call systemd_exec_systemctl (shutdownd_t))
 (call systemd_stream_connect (shutdownd_t))
+(call systemd_start_power_units (shutdownd_t))
 
 (call utmp_read_utmp_runtime_files (shutdownd_t))
 
