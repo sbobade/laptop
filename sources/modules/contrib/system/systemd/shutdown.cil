@@ -95,6 +95,8 @@
 (type shutdownd_exec_t)
 (call systemd_daemon (shutdownd_t shutdownd_exec_t))
 
+(call systemd_notify_system_subject_type (shutdownd_t))
+
 (call systemd_unix_dgram_socket_activated (shutdownd_t shutdownd_systemd_runtime_t))
 
 (context shutdownd_exec (system_u object_r shutdownd_exec_t (systemlow systemlow)))
@@ -135,6 +137,7 @@
 (call miscfiles_read_locale (shutdownd_t))
 
 (call systemd_exec_systemctl (shutdownd_t))
+(call systemd_stream_connect (shutdownd_t))
 
 (call utmp_read_utmp_runtime_files (shutdownd_t))
 

@@ -49,8 +49,6 @@
 (optional qemuga_optional_systemd
     (call systemd_daemon (qemuga_t qemuga_exec_t))
 
-    (call systemd_notify_system_subject_type (qemuga_t))
-
     (type qemuga_unit_t)
     (call systemd_unit_object_type (qemuga_unit_t))
 
