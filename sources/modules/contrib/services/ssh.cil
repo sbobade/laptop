@@ -83,6 +83,16 @@
 (context sftpserver_exec (system_u object_r sftpserver_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/openssh/sftp-server" file sftpserver_exec)
 
+(call files_dontaudit_catchall_subject_type (sftpserver_t))
+
+(call miscfiles_read_locale (sftpserver_t))
+
+(call ns_client_subject_type (sftpserver_t)) 
+
+(call usersubject_manage_user_home_dirs (sftpserver_t))
+(call usersubject_manage_user_home_files (sftpserver_t))
+(call usersubject_manage_user_home_lnk_files (sftpserver_t))
+
 (type sshagent_exec_t)
 (call applications_app (ssh_sshagent_subject_type sshagent_exec_t))
 
