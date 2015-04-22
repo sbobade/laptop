@@ -33,4 +33,4 @@
 
 * e145/x131e: reset container passwords
 
-* route command
+* route command * /usr/libexec/openssh/sftp-server (this is used by sshfs) * work on fedoratest1 qemu guest

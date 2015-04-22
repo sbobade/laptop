@@ -436,6 +436,7 @@
 
 (optional staff_optional_ssh
     (call ssh_run_sshkeygen (staff_subject_type staff_r))
+    (call ssh_run_sftpserver (staff_subject_type staff_r))
 
     (call ssh_manage_home (staff_t))
     (call ssh_relabel_home (staff_t))

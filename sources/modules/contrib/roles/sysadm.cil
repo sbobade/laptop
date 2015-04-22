@@ -446,6 +446,7 @@
     (call ssh_manage_config (sysadm_t))
 
     (call ssh_run_sshkeygen (sysadm_subject_type sysadm_r))
+    (call ssh_run_sftpserver (sysadm_subject_type sysadm_r))
 
     (call ssh_manage_home (sysadm_t))
     (call ssh_relabel_home (sysadm_t))

@@ -1,6 +1,7 @@
 (boolean ssh_priv_user_login false)
 
 (roleattribute ssh_sshkeygen_role)
+(roleattribute ssh_sftpserver_role)
 
 (typeattribute ssh_admin_subject_type)
 (typeattribute ssh_subject_type)
@@ -73,6 +74,14 @@
 
 (optional ssh_subject_type_optional_gpg
     (call gpg_search_home (ssh_subject_type)))
+
+(type sftpserver_t)
+(type sftpserver_exec_t)
+(call applications_app (sftpserver_t sftpserver_exec_t))
+(roletype ssh_sftpserver_role sftpserver_t)
+
+(context sftpserver_exec (system_u object_r sftpserver_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/openssh/sftp-server" file sftpserver_exec)
 
 (type sshagent_exec_t)
 (call applications_app (ssh_sshagent_subject_type sshagent_exec_t))
@@ -318,6 +327,9 @@
 (macro ssh_exec ((type ARG1))
     (call can_exec (ARG1 ssh_exec_t)))
 
+(macro ssh_exec_sftpserver ((type ARG1))
+    (call can_exec (ARG1 sftpserver_exec_t)))
+
 (macro ssh_exec_sshagent ((type ARG1))
     (call can_exec (ARG1 sshagent_exec_t)))
 
@@ -332,6 +344,18 @@
 
 (macro ssh_exec_sshd_keygen ((type ARG1))
     (call can_exec (ARG1 sshd_keygen_exec_t)))
+
+(macro ssh_auto_subject_type_transition_sftpserver ((type ARG1))
+    (call ssh_send_signal_sftpserver (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 sftpserver_exec_t sftpserver_t)))
+
+(macro ssh_send_signal_sftpserver ((type ARG1))
+    (allow ARG1 sftpserver_t (process (signal))))
+
+(macro ssh_run_sftpserver ((type ARG1)(role ARG2))
+    (call ssh_auto_subject_type_transition_sftpserver (ARG1))
+    (roleattributeset ssh_sftpserver_role ARG2))
 
 (macro ssh_auto_subject_type_transition_sshd ((type ARG1))
     (call ssh_send_signal_sshd (ARG1))
