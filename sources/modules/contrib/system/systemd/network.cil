@@ -68,6 +68,7 @@
 (allow networkd_t self create_packet_socket_perms)
 (allow networkd_t self create_rawip_socket_perms)
 (allow networkd_t self create_tun_socket_perms)
+(allow networkd_t self (tun_socket (relabelto relabelfrom)))
 (allow networkd_t self (netlink_route_socket (nlmsg_write)))
 
 (call system_request_load_module (networkd_t))
