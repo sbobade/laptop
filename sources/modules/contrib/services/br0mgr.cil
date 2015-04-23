@@ -50,6 +50,10 @@
     (call br0mgr_auto_subject_type_transition (ARG1))
     (roleattributeset br0mgr_role ARG2))
 
+(macro br0mgr_read_exec_files ((type ARG1))
+    (call commands_search (ARG1))
+    (allow ARG1 br0mgr_exec_t read_file_perms))
+
 (macro br0mgr_admin ((type ARG1)(role ARG2))
     (typeattributeset br0mgr_admin_subject_type ARG1)
     (optional br0mgr_admin_optional_askpwd
