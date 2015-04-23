@@ -20,6 +20,8 @@
 
 (call miscfiles_read_locale (br0mgr_t))
 
+(call ns_client_subject_type (br0mgr_t))
+
 (call tunctl_run (br0mgr_t br0mgr_role))
 
 (optional br0mgr_optional_systemd
