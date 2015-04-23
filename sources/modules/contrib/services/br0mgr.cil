@@ -18,6 +18,8 @@
 
 (call iptools_run (br0mgr_t br0mgr_role))
 
+(call kmod_run (br0mgr_t br0mgr_role))
+
 (call miscfiles_read_locale (br0mgr_t))
 
 (call ns_client_subject_type (br0mgr_t))
