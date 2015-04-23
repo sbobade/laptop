@@ -104,6 +104,9 @@
 
 (call udev_client_subject_type (networkd_t))
 
+(optional networkd_optional_myqemu
+    (call myqemu_relabelfrom_all_virt_subjects_tun_socket (networkd_t)))
+
 (allow networkctl_t self (capability (dac_override)))
 
 (call systemd_search_config (networkctl_t))
