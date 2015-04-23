@@ -345,7 +345,6 @@
     (call nettools_run_ping (sysadm_subject_type sysadm_r))
     (call nettools_run_arp (sysadm_subject_type sysadm_r))
     (call nettools_run (sysadm_subject_type sysadm_r))
-    (call nettools_run_route (sysadm_subject_type sysadm_r))
     (call nettools_run_traceroute (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_nm

@@ -2,7 +2,6 @@
 (roleattribute nettools_role)
 (roleattribute nettools_ping_role)
 (roleattribute nettools_traceroute_role)
-(roleattribute nettools_route_role)
 
 (typeattribute nettools_admin_subject_type)
 
@@ -99,27 +98,6 @@
 
 (call ns_client_subject_type (traceroute_t))
 
-(type route_t)
-(type route_exec_t)
-(call applications_app (route_t route_exec_t))
-(roletype nettools_route_role route_t)
-
-(roleattributeset nettools_route_role system_r)
-
-(context route_exec (system_u object_r route_exec_t (systemlow systemlow)))
-(filecon "/usr/sbin/route" file route_exec)
-
-(allow route_t self create_netlink_route_socket_perms)
-
-(call system_read_net_proc (route_t))
-
-(call files_read_config_files (route_t))
-
-(call miscfiles_read_locale (route_t))
-(call miscfiles_read_net_config (route_t))
-
-(call ns_client_subject_type (route_t))
-
 (type arp_t)
 (type arp_exec_t)
 (call subject_common_type (arp_t))
@@ -159,22 +137,6 @@
 
 (macro nettools_exec_arp ((type ARG1))
     (call can_exec (ARG1 arp_exec_t)))
-
-(macro nettools_exec_route ((type ARG1))
-    (call can_exec (ARG1 route_exec_t)))
-
-(macro nettools_auto_subject_type_transition_route ((type ARG1))
-    (call nettools_send_signal_route (ARG1))
-    (call ps_subject_pattern (route_t ARG1))
-    (call auto_subject_type_transition_pattern
-        (ARG1 route_exec_t route_t)))
-
-(macro nettools_send_signal_route ((type ARG1))
-    (allow ARG1 route_t (process (signal))))
-
-(macro nettools_run_route ((type ARG1)(role ARG2))
-    (call nettools_auto_subject_type_transition_route (ARG1))
-    (roleattributeset nettools_route_role ARG2))
 
 (macro nettools_auto_subject_type_transition ((type ARG1))
     (call nettools_send_signal (ARG1))

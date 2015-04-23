@@ -17,6 +17,7 @@
 (filecon "/usr/sbin/iw" file iptools_exec)
 (filecon "/usr/sbin/iwconfig" file iptools_exec)
 (filecon "/usr/sbin/iwpriv" file iptools_exec)
+(filecon "/usr/sbin/route" file iptools_exec)
 (filecon "/usr/sbin/tc" file iptools_exec)
 
 (type iptools_config_t)
