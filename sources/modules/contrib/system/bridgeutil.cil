@@ -23,7 +23,7 @@
 (call filesystems_read_sysfs_lnk_files (bridgeutil_t))
 
 (optional bridgeutil_optional_systemd
-    (call systemd_rw_inherited_unix_stream_sockets (bridgeutil_t)))
+    (call systemd_daemon_forked_subject_type (bridgeutil_t)))
 
 (macro bridgeutil_exec ((type ARG1))
     (call can_exec (ARG1 bridgeutil_exec_t)))

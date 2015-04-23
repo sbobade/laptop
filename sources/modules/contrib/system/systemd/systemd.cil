@@ -10,6 +10,7 @@
 (typeattribute systemd_admin_subject_type)
 (typeattribute systemd_subject_type)
 (typeattribute systemd_daemon_subject_type)
+(typeattribute systemd_daemon_forked_subject_type)
 (typeattribute systemd_system_service_admin_subject_type)
 
 (typeattribute systemd_notify_system_subject_type)
@@ -379,6 +380,11 @@
     sys_resource setgid setuid sys_admin)))
 (allow systemd_systemctl_subject_type self (process (setfscreate)))
 
+(allow systemd_systemctl_subject_type systemd_daemon_forked_subject_type (process (getattr)))
+(allow systemd_systemctl_subject_type systemd_daemon_forked_subject_type read_file_perms)
+(allow systemd_systemctl_subject_type systemd_daemon_forked_subject_type list_dir_perms)
+(allow systemd_systemctl_subject_type systemd_daemon_forked_subject_type read_lnk_file_perms)
+
 (call system_read_state_files (systemd_systemctl_subject_type))
 
 (call filesystems_getattr_tmpfs_filesystems (systemd_systemctl_subject_type))
@@ -499,6 +505,8 @@
 (allow systemd_notify_system_subject_type self (unix_dgram_socket (sendto)))
 (allow systemd_notify_system_subject_type systemd_t (unix_dgram_socket (sendto)))
 (call systemd_write_systemd_runtime_sock_files (systemd_notify_system_subject_type))
+
+(call systemd_rw_inherited_unix_stream_sockets (systemd_daemon_forked_subject_type))
 
 (call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
 (call systemd_read_state (systemd_daemon_subject_type))
@@ -629,6 +637,9 @@
 
 (macro systemd_daemon_subject_type ((type ARG1))
     (typeattributeset systemd_daemon_subject_type ARG1))
+
+(macro systemd_daemon_forked_subject_type ((type ARG1))
+    (typeattributeset systemd_daemon_forked_subject_type ARG1))
 
 (macro systemd_bounded_subject_type ((type ARG1))
     (typebounds systemd_t ARG1))

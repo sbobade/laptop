@@ -74,8 +74,7 @@
     (call tunctl_relabelfrom_tun_sockets (myqemu_virt_subject_type)))
 
 (optional myqemu_virt_subject_type_optional_systemd
-    (call systemd_use_fd (myqemu_virt_subject_type))
-    (call systemd_rw_unix_stream_sockets (myqemu_virt_subject_type)))
+    (call systemd_daemon_forked_subject_type (myqemu_virt_subject_type)))
 
 (type myqemu_runner_t)
 (type myqemu_runner_exec_t)

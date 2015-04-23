@@ -26,7 +26,7 @@
     (call myqemu_relabelfrom_all_virt_subjects_tun_socket (tunctl_t)))
 
 (optional tunctl_optional_systemd
-    (call systemd_rw_inherited_unix_stream_sockets (tunctl_t)))
+    (call systemd_daemon_forked_subject_type (tunctl_t)))
 
 (macro tunctl_exec ((type ARG1))
     (call can_exec (ARG1 tunctl_exec_t)))
