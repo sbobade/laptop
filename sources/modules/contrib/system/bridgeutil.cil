@@ -12,6 +12,13 @@
 
 (allow bridgeutil_t self (capability (net_admin)))
 (allow bridgeutil_t self create_unix_stream_socket_perms)
+(allow bridgeutil_t self create_unix_dgram_socket_perms)
+
+(call system_read_net_proc (bridgeutil_t))
+
+(call filesystems_list_sysfs (bridgeutil_t))
+(call filesystems_rw_sysfs_files (bridgeutil_t))
+(call filesystems_read_sysfs_lnk_files (bridgeutil_t))
 
 (macro bridgeutil_exec ((type ARG1))
     (call can_exec (ARG1 bridgeutil_exec_t)))
