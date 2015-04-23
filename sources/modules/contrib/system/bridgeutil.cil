@@ -10,6 +10,9 @@
 (context bridgeutil_exec (system_u object_r bridgeutil_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/brctl" file bridgeutil_exec)
 
+(allow bridgeutil_t self (capability (net_admin)))
+(allow bridgeutil_t self create_unix_stream_socket_perms)
+
 (macro bridgeutil_exec ((type ARG1))
     (call can_exec (ARG1 bridgeutil_exec_t)))
 

@@ -12,9 +12,13 @@
 (context br0mgr_exec (system_u object_r br0mgr_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/br0mgr" file br0mgr_exec)
 
+(call commands_mprot_read_shell_exec_files (br0mgr_t))
+
 (call bridgeutil_run (br0mgr_t br0mgr_role))
 
 (call iptools_run (br0mgr_t br0mgr_role))
+
+(call miscfile_read_locale (br0mgr_t))
 
 (call tunctl_run (br0mgr_t br0mgr_role))
 

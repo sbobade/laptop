@@ -18,6 +18,8 @@
 
 (call devices_rw_tun_tap (tunctl_t))
 
+(call subject_identity_change_exemption (tunctl_t))
+
 (call ns_client_subject_type (tunctl_t))
 
 (optional tunctl_optional_myqemu
