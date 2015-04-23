@@ -38,6 +38,9 @@
 
 (call miscfiles_read_locale (iptools_t))
 
+(optional iptools_optional_systemd
+    (call systemd_rw_inherited_unix_stream_sockets (iptools_t)))
+
 (macro iptools_exec ((type ARG1))
     (call can_exec (ARG1 iptools_exec_t)))
 

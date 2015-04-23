@@ -1013,6 +1013,10 @@
 (macro systemd_rw_unix_stream_sockets ((type ARG1))
     (allow ARG1 systemd_t rw_unix_stream_socket_perms))
 
+(macro systemd_rw_inherited_unix_stream_sockets ((type ARG1))
+    (call systemd_use_fd (ARG1))
+    (allow ARG1 systemd_t (unix_stream_socket (read write))))
+
 (macro systemd_getpgid ((type ARG1))
     (allow ARG1 systemd_t (process (getpgid))))
 
