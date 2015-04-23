@@ -134,6 +134,10 @@
     (call bootloader_manage_system_map_files (sysadm_t))
     (call bootloader_manage_log_files (sysadm_t)))
 
+(optional sysadm_optional_br0mgr
+    (call br0mgr_run (sysadm_subject_type sysadm_r))
+    (call br0mgr_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_bridgeutil
     (call bridgeutil_run (sysadm_subject_type sysadm_r)))
 
