@@ -95,8 +95,7 @@
 (call seutil_relabel_policy_config (setfiles_t))
 
 (optional setfiles_optional_systemd
-    (call systemd_use_fd (setfiles_t))
-    (call systemd_rw_unix_stream_sockets (setfiles_t)))
+    (call systemd_daemon_forked_subject_type (setfiles_t)))
 
 (type getsebool_t)
 (type getsebool_exec_t)
