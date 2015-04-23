@@ -67,6 +67,7 @@
 (allow networkd_t self (process (setfscreate getcap setcap)))
 (allow networkd_t self create_packet_socket_perms)
 (allow networkd_t self create_rawip_socket_perms)
+(allow networkd_t self create_tun_socket_perms)
 (allow networkd_t self (netlink_route_socket (nlmsg_write)))
 
 (call system_request_load_module (networkd_t))
@@ -78,6 +79,7 @@
 (call network_udp_bind_generic_node (networkd_t))
 
 (call devices_read_urandom (networkd_t))
+(call devices_rw_tun_tap (networkd_t))
 (call devices_write_kmsg (networkd_t))
 
 (call terminals_use_console (networkd_t))
