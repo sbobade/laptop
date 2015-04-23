@@ -1,8 +1,5 @@
 (roleattribute iptools_role)
 
-(typeattribute iptools_admin_subject_type)
-(typeattribute iptools_object_type)
-
 (type iptools_t)
 (type iptools_exec_t)
 (call applications_app (iptools_t iptools_exec_t))
@@ -23,8 +20,6 @@
 (type iptools_config_t)
 (call files_config_object_type (iptools_config_t))
 
-(typeattributeset iptools_object_type iptools_config_t)
-
 (context iptools_config (system_u object_r iptools_config_t (systemlow systemlow)))
 (filecon "/etc/iproute2(/.*)?" any iptools_config)
 
@@ -42,25 +37,6 @@
 (call iptools_read_config (iptools_t))
 
 (call miscfiles_read_locale (iptools_t))
-
-(optional iptools_optional_systemd
-    (call systemd_daemon (iptools_t iptools_exec_t))
-
-    (type iptools_unit_t)
-    (call systemd_unit_object_type (iptools_unit_t))
-
-    (typeattributeset iptools_object_type iptools_unit_t)
-
-    (context iptools_unit (system_u object_r iptools_unit_t (systemlow systemlow)))
-    (filecon "/usr/lib/systemd/system/[^/]*iptools.*" file iptools_unit)
-
-    (allow iptools_admin_subject_type iptools_unit_t (service (all))))
-
-(allow iptools_admin_subject_type iptools_t (process (ptrace signal signull sigkill sigstop)))
-(call ps_subject_pattern (iptools_admin_subject_type iptools_t))
-
-(allow iptools_admin_subject_type iptools_object_type (all_file_objects
-    (not_mounton_entrypoint_and_execmod)))
 
 (macro iptools_exec ((type ARG1))
     (call can_exec (ARG1 iptools_exec_t)))
@@ -104,10 +80,3 @@
     (allow ARG1 iptools_config_t manage_file_perms)
     (allow ARG1 iptools_config_t manage_dir_perms)
     (allow ARG1 iptools_config_t manage_lnk_file_perms))
-
-(macro iptools_admin ((type ARG1)(role ARG2))
-    (typeattributeset iptools_admin_subject_type ARG1)
-    (optional iptools_admin_optional_askpwd
-        (call askpwd_run_askpwdagent (ARG1 ARG2)))
-    (optional iptools_admin_optional_systemd
-        (call systemd_system_service_admin_subject_type (ARG1))))

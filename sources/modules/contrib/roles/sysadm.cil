@@ -134,6 +134,9 @@
     (call bootloader_manage_system_map_files (sysadm_t))
     (call bootloader_manage_log_files (sysadm_t)))
 
+(optional sysadm_optional_bridgeutil
+    (call bridgeutil_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_cpupower
     (call cpupower_admin (sysadm_t sysadm_r))
     (call cpupower_run (sysadm_subject_type sysadm_r)))
@@ -284,7 +287,6 @@
     (call iptables_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_iptools
-    (call iptools_admin (sysadm_t sysadm_r))
     (call iptools_run (sysadm_subject_type sysadm_r))
     (call iptools_manage_config (sysadm_t)))
 
@@ -707,7 +709,6 @@
     (call tcs_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_tunctl
-    (call tunctl_admin (sysadm_t sysadm_r))
     (call tunctl_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_udev

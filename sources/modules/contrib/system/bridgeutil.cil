@@ -1,0 +1,26 @@
+(roleattribute bridgeutil_role)
+
+(type bridgeutil_t)
+(type bridgeutil_exec_t)
+(call applications_app (bridgeutil_t bridgeutil_exec_t))
+(roletype bridgeutil_role bridgeutil_t)
+
+(roleattributeset bridgeutil_role system_r)
+
+(context bridgeutil_exec (system_u object_r bridgeutil_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/brctl" file bridgeutil_exec)
+
+(macro bridgeutil_exec ((type ARG1))
+    (call can_exec (ARG1 bridgeutil_exec_t)))
+
+(macro bridgeutil_auto_subject_type_transition ((type ARG1))
+    (call bridgeutil_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 bridgeutil_exec_t bridgeutil_t)))
+
+(macro bridgeutil_run ((type ARG1)(role ARG2))
+    (call bridgeutil_auto_subject_type_transition (ARG1))
+    (roleattributeset bridgeutil_role (ARG2)))
+
+(macro bridgeutil_send_signal ((type ARG1))
+    (allow ARG1 bridgeutil_t (process (signal))))
