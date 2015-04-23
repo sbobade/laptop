@@ -244,6 +244,9 @@
 (macro network_create_networkd_netlink_route_socket ((type ARG1))
     (allow ARG1 networkd_t (netlink_route_socket (create setopt bind))))
 
+(macro network_relabelfrom_networkd_tun_socket ((type ARG1))
+    (allow ARG1 networkd_t (tun_socket (relabelfrom))))
+
 (macro network_networkd_admin ((type ARG1)(role ARG2))
     (typeattributeset network_networkd_admin_subject_type ARG1)
     (call systemd_system_service_admin_subject_type (ARG1))
