@@ -34,9 +34,13 @@
 (call system_read_net_proc (iptools_t))
 (call system_request_load_module (iptools_t))
 
+(call files_read_config_files (iptools_t))
+
 (call iptools_read_config (iptools_t))
 
 (call miscfiles_read_locale (iptools_t))
+
+(call ns_client_subject_type (iptools_t))
 
 (optional iptools_optional_systemd
     (call systemd_rw_inherited_unix_stream_sockets (iptools_t)))
