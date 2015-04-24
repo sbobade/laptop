@@ -15,6 +15,9 @@
 (type virt_runtime_object_t)
 (call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t))
 
+(context virt_runtime_object (system_u object_r virt_runtime_object_t (systemlow systemlow)))
+(filecon "/var/run/.*\.qga\.sock" socket virt_runtime_object)
+
 (call subject_common_type (myqemu_virt_subject_type))
 
 (typeattributeset myqemu_subject_type myqemu_virt_subject_type)
