@@ -43,6 +43,8 @@
 (allow myqemu_virt_subject_type self (tcp_socket (listen accept)))
 (allow myqemu_virt_subject_type self (tun_socket (relabelto relabelfrom)))
 
+(allow myqemu_virt_subject_type virt_subject_t (tun_socket (relabelfrom)))
+
 (allow myqemu_virt_subject_type myqemu_runner_t (process (sigchld)))
 (allow myqemu_virt_subject_type myqemu_runner_t (fd (use)))
 
