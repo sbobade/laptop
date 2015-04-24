@@ -31,9 +31,6 @@
 
     (call dbususer_service (staff_obexd_t staff_dbususer_t)))
 
-(optional staff_optional_br0mgr
-    (call br0mgr_read_exec_files (staff_t)))
-
 (optional staff_optional_bti
     (call bti_run (staff_subject_type staff_r))
 
