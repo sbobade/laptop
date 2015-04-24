@@ -10,6 +10,8 @@
 
 (typeattribute myqemu_admin_subject_type)
 
+(typeattribute myqemu_runner_systemd_unit_object_type)
+
 (type virt_subject_t)
 (type virt_object_t)
 (type virt_runtime_object_t)
@@ -70,6 +72,8 @@
 
 (call usersubject_use_inherited_terminals (myqemu_virt_subject_type))
 
+(call systemd_daemon_forked_subject_type (myqemu_virt_subject_type))
+
 (optional myqemu_virt_subject_type_optional_machine
     (call machine_search_lib (myqemu_virt_subject_type)))
 
@@ -79,21 +83,28 @@
 (optional myqemu_virt_subject_type_optional_tunctl
     (call tunctl_relabelfrom_tun_sockets (myqemu_virt_subject_type)))
 
-(optional myqemu_virt_subject_type_optional_systemd
-    (call systemd_daemon_forked_subject_type (myqemu_virt_subject_type)))
-
 (type myqemu_runner_t)
 (type myqemu_runner_exec_t)
 (call applications_app (myqemu_runner_t myqemu_runner_exec_t))
 (roletype myqemu_runner_role myqemu_runner_t)
 
-(typeattributeset myqemu_subject_type myqemu_runner_t)
-
 (roleattributeset myqemu_runner_role system_r)
+
+(call systemd_daemon (myqemu_runner_t myqemu_runner_exec_t))
+
+(typeattributeset myqemu_subject_type myqemu_runner_t)
 
 (context myqemu_runner_exec (system_u object_r myqemu_runner_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/myqemu_runner" file myqemu_runner_exec)
 (filecon "/usr/sbin/myqemu_runner_tap" file myqemu_runner_exec)
+
+(type myqemu_runner_unit_t)
+(call myqemu_runner_systemd_unit_object_type (myqemu_runner_unit_t))
+
+(typeattributeset myqemu_object_type myqemu_runner_systemd_unit_object_type)
+
+(context myqemu_runner_systemd_unit (system_u object_r myqemu_runner_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*myqemu_runner.*" file myqemu_runner_systemd_unit)
 
 (allow myqemu_runner_t self (process (setexec)))
 (allow myqemu_runner_t self rw_fifo_file_perms)
@@ -120,19 +131,6 @@
 
 (optional myqemu_runner_optional_machine
     (call machine_relabelfrom_lib_files (myqemu_runner_t)))
-
-(optional myqemu_runner_optional_systemd
-    (call systemd_daemon (myqemu_runner_t myqemu_runner_exec_t))
-
-    (type myqemu_runner_unit_t)
-    (call systemd_unit_object_type (myqemu_runner_unit_t))
-
-    (typeattributeset myqemu_object_type myqemu_runner_unit_t)
-
-    (context myqemu_runner_unit (system_u object_r myqemu_runner_unit_t (systemlow systemlow)))
-    (filecon "/usr/lib/systemd/system/[^/]*myqemu_runner.*" file myqemu_runner_unit)
-
-    (allow myqemu_admin_subject_type myqemu_runner_unit_t (service (all))))
 
 (type myqemu_installer_t)
 (type myqemu_installer_exec_t)
@@ -215,14 +213,19 @@
 
 (call ns_client_subject_type (myqemu_shutdown_t))
 
-(optional myqemu_shutdown_optional_systemd
-    (call systemd_daemon (myqemu_shutdown_t myqemu_shutdown_exec_t)))
+(call systemd_daemon (myqemu_shutdown_t myqemu_shutdown_exec_t))
 
 (allow myqemu_admin_subject_type myqemu_subject_type (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (myqemu_admin_subject_type myqemu_subject_type))
 
+(allow myqemu_admin_subject_type myqemu_runner_systemd_unit_object_type (service (all)))
+
 (allow myqemu_admin_subject_type myqemu_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
+
+(macro myqemu_runner_systemd_unit_object_type ((type ARG1))
+    (call systemd_unit_object_type (ARG1))
+    (typeattributeset myqemu_runner_systemd_unit_object_type ARG1))
 
 (macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3))
     (call myqemu_virt_subject_type (ARG1))
