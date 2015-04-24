@@ -1050,7 +1050,8 @@
     (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t fifo_file "*"))
     (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t sock_file "*"))
     (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t blk_file "*"))
-    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t chr_file "*")))
+    (call filesystems_tmpfs_object_type_transition (ARG1 user_tmpfs_t chr_file "*"))
+    (call filesystems_getattr_tmpfs_filesystems (ARG1)))
 
 (macro usersubject_search_all_tmpfs ((type ARG1))
     (call files_search_user_runtime (ARG1))
