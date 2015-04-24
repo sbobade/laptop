@@ -32,3 +32,4 @@
 * d30: rpmfusion: mplayer .. deps
 
 * e145/x131e: reset container passwords
+* e145: doublecheck the iptable_nat is blacklisted in /etc/modprobe.d
