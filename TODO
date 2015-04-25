@@ -32,3 +32,4 @@
 * d30: rpmfusion: mplayer .. deps
 
 * e145/x131e: reset container passwords
+* e145/FedoraTest{1,2} : exclude.local : nethog.cil, iotop.cil
