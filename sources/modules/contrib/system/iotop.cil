@@ -1,0 +1,47 @@
+(roleattribute iotop_role)
+
+(type iotop_t)
+(type iotop_exec_t)
+(call applications_app (iotop_t iotop_exec_t))
+(roletype iotop_role iotop_t)
+
+(context iotop_exec (system_u object_r iotop_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/iotop" file iotop_exec)
+
+(allow iotop_t self (capability (net_admin)))
+(allow iotop_t self rw_fifo_file_perms)
+(allow iotop_t self create_netlink_socket_perms)
+
+(call system_read_kernel_sysctl (iotop_t))
+
+(call commands_exec (iotop_t))
+
+(call files_read_config_files (iotop_t))
+(call files_read_data_files (iotop_t))
+
+(call filesystems_list_proc (iotop_t))
+
+(call subject_getsched_all_common_subjects (iotop_t))
+(call subject_read_all_common_subjects_state (iotop_t))
+
+(call miscfiles_read_all_terminfo (iotop_t))
+(call miscfiles_read_locale (iotop_t))
+
+(call ns_client_subject_type (iotop_t))
+
+(call usersubject_search_data_home (iotop_t))
+
+(macro iotop_exec ((type ARG1))
+    (call can_exec (ARG1 iotop_exec_t)))
+
+(macro iotop_auto_subject_type_transition ((type ARG1))
+    (call iotop_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 iotop_exec_t iotop_t)))
+
+(macro iotop_run ((type ARG1)(role ARG2))
+    (call iotop_auto_subject_type_transition (ARG1))
+    (roleattributeset iotop_role (ARG2)))
+
+(macro iotop_send_signal ((type ARG1))
+    (allow ARG1 iotop_t (process (signal))))

@@ -275,6 +275,9 @@
 (macro subject_getpgid_all_common_subjects ((type ARG1))
     (allow ARG1 subject_common_type (process (getpgid))))
 
+(macro subject_getsched_all_common_subjects ((type ARG1))
+    (allow ARG1 subject_common_type (process (getsched))))
+
 (macro subject_send_sigkill_all_subjects ((type ARG1))
     (allow ARG1 subject_type (process (sigkill))))
 

@@ -282,6 +282,9 @@
     (call hwclock_run (sysadm_subject_type sysadm_r))
     (call hwclock_manage_config_files (sysadm_t)))
 
+(optional sysadm_optional_iotop
+    (call iotop_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_iptables
     (call iptables_admin (sysadm_t sysadm_r))
     (call iptables_run (sysadm_subject_type sysadm_r)))
