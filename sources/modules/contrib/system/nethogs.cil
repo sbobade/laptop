@@ -1,0 +1,41 @@
+(roleattribute nethogs_role)
+
+(type nethogs_t)
+(type nethogs_exec_t)
+(call applications_app (nethogs_t nethogs_exec_t))
+(roletype nethogs_role nethogs_t)
+
+(context nethogs_exec (system_u object_r nethogs_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/nethogs" file nethogs_exec)
+
+(allow nethogs_t self (capability (net_raw sys_ptrace dac_override)))
+(allow nethogs_t self create_packet_socket_perms)
+(allow nethogs_t self create_rawip_socket_perms)
+
+(call system_load_kernel_module (nethogs_t))
+(call system_read_net_proc (nethogs_t))
+(call system_request_load_module (nethogs_t))
+
+(call filesystems_list_proc (nethogs_t))
+(call filesystems_read_sysfs (nethogs_t))
+
+(call subject_read_all_common_subjects_state (nethogs_t))
+
+(call miscfiles_read_all_terminfo (nethogs_t))
+
+(call ns_client_subject_type (nethogs_t))
+
+(macro nethogs_exec ((type ARG1))
+    (call can_exec (ARG1 nethogs_exec_t)))
+
+(macro nethogs_auto_subject_type_transition ((type ARG1))
+    (call nethogs_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nethogs_exec_t nethogs_t)))
+
+(macro nethogs_run ((type ARG1)(role ARG2))
+    (call nethogs_auto_subject_type_transition (ARG1))
+    (roleattributeset nethogs_role (ARG2)))
+
+(macro nethogs_send_signal ((type ARG1))
+    (allow ARG1 nethogs_t (process (signal))))

@@ -345,6 +345,9 @@
     (call myqemu_run_shutdown (sysadm_subject_type sysadm_r))
     (call myqemu_run_installer (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_nethogs
+    (call nethogs_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_nettools
     (call nettools_admin (sysadm_t sysadm_r))
     (call nettools_run_ping (sysadm_subject_type sysadm_r))
