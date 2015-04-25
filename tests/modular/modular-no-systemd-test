@@ -2,7 +2,7 @@
 
 modular_no_systemd_modules () {
     modular_set_ignore sources.d sources/modules/contrib/system/systemd sources/modules/contrib/system/mycontainer.cil \
-    sources/modules/contrib/applications/resetimg.cil
+    sources/modules/contrib/applications/resetimg.cil sources/modules/contrib/system/myqemu.cil
 
     unset MODULAR_NO_SYSTEMD_MODULES
 
