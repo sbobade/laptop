@@ -21,12 +21,19 @@
 (call usersubject_home_object_type (curl_home_t))
 
 (filecon "HOME_DIR/\.wgetrc" file (system_u object_r curl_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.curlrc" file (system_u object_r curl_home_t (systemlow systemlow)))
 
 (allow curl_t curl_home_t read_file_perms)
 
-(call http_tcp_connect_http_port (curl_t))
+(call filesystems_getattr_filesystems (curl_t))
 
 (call curl_read_config_files (curl_t))
+
+(call http_tcp_connect_http_port (curl_t))
+
+(call miscfiles_read_locale (curl_t))
+
+(call ns_client_subject_type (curl_t))
 
 (call usersubject_manage_user_home_dirs (curl_t))
 (call usersubject_manage_user_home_files (curl_t))
@@ -69,4 +76,5 @@
     (allow ARG1 curl_home_t relabel_file_perms))
 
 (macro curl_home_dir_object_type_transition_home_files ((type ARG1))
-    (call usersubject_home_dir_object_type_transition (ARG1 curl_home_t file ".wgetrc")))
+    (call usersubject_home_dir_object_type_transition (ARG1 curl_home_t file ".wgetrc"))
+    (call usersubject_home_dir_object_type_transition (ARG1 curl_home_t file ".curlrc")))
