@@ -1,0 +1,115 @@
+(typeattribute lynx_subject_type)
+
+(type lynx_exec_t)
+(call applications_app (lynx_subject_type lynx_exec_t))
+
+(context lynx_exec (system_u object_r lynx_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/lynx" file lynx_exec)
+
+(type lynx_config_t)
+(call files_config_object_type (lynx_config_t))
+
+(context lynx_config (system_u object_r lynx_config_t (systemlow systemlow)))
+(filecon "/etc/lynx-site\.cfg" file lynx_config)
+(filecon "/etc/lynx\.cfg" file lynx_config)
+(filecon "/etc/lynx\.lss" file lynx_config)
+
+(type lynx_home_t)
+(call usersubject_home_object_type (lynx_home_t))
+
+(filecon "HOME_DIR/\.lynxrc" file (system_u object_r lynx_home_t (systemlow systemlow)))
+
+(type lynx_tmpfs_t)
+(call usersubject_tmpfs_object_type (lynx_tmpfs_t))
+
+(allow lynx_subject_type self (process (getsched setsched)))
+(allow lynx_subject_type self (unix_stream_socket (listen accept connectto)))
+(allow lynx_subject_type self rw_fifo_file_perms)
+
+(allow lynx_subject_type lynx_home_t manage_file_perms)
+(call lynx_home_dir_object_type_transition_home_files (lynx_subject_type))
+
+(allow lynx_subject_type lynx_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (lynx_subject_type lynx_tmpfs_t file "*"))
+
+(call devices_read_urandom (lynx_subject_type))
+
+(call files_search_mnt (lynx_subject_type))
+(call files_read_config_files (lynx_subject_type))
+(call files_read_data (lynx_subject_type))
+
+(call filesystems_list_tmpfs (lynx_subject_type))
+(call filesystems_list_devtmpfs (lynx_subject_type))
+(call filesystems_read_devtmpfs_lnk_files (lynx_subject_type))
+
+(call http_tcp_connect_http_port (lynx_subject_type))
+(call lynx_read_config_files (lynx_subject_type))
+
+(call miscfiles_read_all_terminfo (lynx_subject_type))
+(call miscfiles_read_all_certs (lynx_subject_type))
+(call miscfiles_read_locale (lynx_subject_type))
+
+(call ns_client_subject_type (lynx_subject_type))
+
+(call usersubject_manage_user_home_files (lynx_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (lynx_subject_type file "*"))
+
+(call usersubject_use_terminals (lynx_subject_type))
+
+(call utmp_read_utmp_runtime_files (lynx_subject_type))
+
+(optional lynx_subject_type_optional_nb
+    (call nb_rw_inherited_home_files (lynx_subject_type)))
+
+(macro lynx_exec ((type ARG1))
+    (call can_exec (ARG1 lynx_exec_t)))
+
+(macro lynx_subject_type ((type ARG1))
+    (typeattributeset lynx_subject_type ARG1))
+
+(macro lynx_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 lynx_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call lynx_subject_type (ARG3))
+    (optional lynx_role_template_optional_rtorrent
+        (call torrent_run_rtorrent (ARG3 ARG1))))
+
+(macro lynx_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 lynx_config_t read_file_perms))
+
+(macro lynx_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 lynx_config_t manage_file_perms))
+
+(macro lynx_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 lynx_home_t read_file_perms))
+
+(macro lynx_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 lynx_home_t manage_file_perms))
+
+(macro lynx_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 lynx_home_t relabel_file_perms))
+
+(macro lynx_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 lynx_home_t file ".lynxrc")))
+
+(macro lynx_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 lynx_tmpfs_t read_file_perms))
+
+(macro lynx_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 lynx_tmpfs_t manage_file_perms))
+
+(macro lynx_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 lynx_tmpfs_t relabel_file_perms))

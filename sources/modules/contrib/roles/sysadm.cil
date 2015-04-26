@@ -141,6 +141,9 @@
     (call cpupower_admin (sysadm_t sysadm_r))
     (call cpupower_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_curl
+    (call curl_manage_config_files (sysadm_t)))
+
 (optional sysadm_optional_dbus
     (call dbus_admin (sysadm_t sysadm_r))
     (call dbus_manage_all_config (sysadm_t)))
@@ -275,8 +278,8 @@
     (call hostname_run (sysadm_subject_type sysadm_r))
     (call hostname_manage_config_files (sysadm_t)))
 
-(optional sysadm_optional_http
-    (call http_manage_lynx_config_files (sysadm_t)))
+(optional sysadm_optional_lynx
+    (call lynx_manage_config_files (sysadm_t)))
 
 (optional sysadm_optional_hwclock
     (call hwclock_run (sysadm_subject_type sysadm_r))

@@ -46,6 +46,13 @@
     (call cowsay_manage_tmpfs_files (staff_t))
     (call cowsay_relabel_tmpfs_files (staff_t)))
 
+(optional staff_optional_curl
+    (call curl_run (staff_subject_type staff_r))
+
+    (call curl_manage_home_files (staff_t))
+    (call curl_relabel_home_files (staff_t))
+    (call curl_home_dir_object_type_transition_home_files (staff_t)))
+
 (optional staff_optional_staff_dbususer
     (type staff_dbususer_t)
     (call dbususer_role_template (staff_r staff_subject_type staff_dbususer_t))
@@ -245,24 +252,24 @@
     (call gpg_role_template (staff_r staff_muttpgp_t staff_gpg_t))
     (call gpg_role_template (staff_r staff_mutt_t staff_gpg_t)))
 
-(optional staff_optional_http
+(optional staff_optional_lynx
     (type staff_lynx_t)
-    (call http_role_template_lynx (staff_r staff_subject_type staff_lynx_t))
+    (call lynx_role_template (staff_r staff_subject_type staff_lynx_t))
 
     (call commands_exec_auto_subject_type_transition (staff_lynx_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_lynx_t staff_t))
 
     (call usersubject_exec_home_auto_subject_type_transition (staff_lynx_t staff_t))
 
-    (call http_manage_lynx_home_files (staff_t))
-    (call http_relabel_lynx_home_files (staff_t))
-    (call http_home_dir_object_type_transition_lynx_home_files (staff_t))
+    (call lynx_manage_home_files (staff_t))
+    (call lynx_relabel_home_files (staff_t))
+    (call lynx_home_dir_object_type_transition_home_files (staff_t))
 
-    (call http_manage_lynx_tmpfs_files (staff_t))
-    (call http_relabel_lynx_tmpfs_files (staff_t)))
+    (call lynx_manage_tmpfs_files (staff_t))
+    (call lynx_relabel_tmpfs_files (staff_t)))
 
 (optional staff_nb_optional_staff_lynx
-    (call http_role_template_lynx (staff_r staff_nb_t staff_lynx_t)))
+    (call lynx_role_template (staff_r staff_nb_t staff_lynx_t)))
 
 (optional staff_optional_irc
     (type staff_irssi_t)

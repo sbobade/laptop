@@ -1,0 +1,72 @@
+(roleattribute curl_role)
+
+(type curl_t)
+(type curl_exec_t)
+(call applications_app (curl_t curl_exec_t))
+(roletype curl_role curl_t)
+
+(roleattributeset curl_role system_r)
+
+(context curl_exec (system_u object_r curl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/curl" file curl_exec)
+(filecon "/usr/bin/wget" file curl_exec)
+
+(type curl_config_t)
+(call files_config_object_type (curl_config_t))
+
+(context curl_config (system_u object_r curl_config_t (systemlow systemlow)))
+(filecon "/etc/wgetrc" file curl_config)
+
+(type curl_home_t)
+(call usersubject_home_object_type (curl_home_t))
+
+(filecon "HOME_DIR/\.wgetrc" file (system_u object_r curl_home_t (systemlow systemlow)))
+
+(allow curl_t curl_home_t read_file_perms)
+
+(call http_tcp_connect_http_port (curl_t))
+
+(call curl_read_config_files (curl_t))
+
+(call usersubject_manage_user_home_dirs (curl_t))
+(call usersubject_manage_user_home_files (curl_t))
+(call usersubject_home_dir_object_type_transition_user_home (curl_t dir "*"))
+(call usersubject_home_dir_object_type_transition_user_home (curl_t file "*"))
+
+(macro curl_exec ((type ARG1))
+    (call can_exec (ARG1 curl_exec_t)))
+
+(macro curl_auto_subject_type_transition ((type ARG1))
+    (call curl_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 curl_exec_t curl_t)))
+
+(macro curl_send_signal ((type ARG1))
+    (allow ARG1 curl_t (process (signal))))
+
+(macro curl_run ((type ARG1)(role ARG2))
+    (call curl_auto_subject_type_transition (ARG1))
+    (roleattributeset curl_role ARG2))
+
+(macro curl_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 curl_config_t read_file_perms))
+
+(macro curl_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 curl_config_t manage_file_perms))
+
+(macro curl_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 curl_home_t read_file_perms))
+
+(macro curl_manage_home_files ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 curl_home_t manage_file_perms))
+
+(macro curl_relabel_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 curl_home_t relabel_file_perms))
+
+(macro curl_home_dir_object_type_transition_home_files ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 curl_home_t file ".wgetrc")))

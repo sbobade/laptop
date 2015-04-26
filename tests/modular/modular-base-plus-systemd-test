@@ -34,7 +34,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/system/mycontainer.cil sources/modules/contrib/system/systemd/nspawn.cil sources/modules/contrib/system/systemd/import.cil \
         sources/modules/contrib/applications/emacs.cil sources/modules/contrib/applications/ffmpeg.cil sources/modules/contrib/applications/firefox.cil \
         sources/modules/contrib/applications/fop.cil sources/modules/contrib/applications/gpg.cil sources/modules/contrib/applications/gstreamer.cil \
-        sources/modules/contrib/applications/http.cil sources/modules/contrib/applications/irc.cil sources/modules/contrib/applications/java.cil \
+        sources/modules/contrib/applications/lynx.cil sources/modules/contrib/applications/irc.cil sources/modules/contrib/applications/java.cil \
         sources/modules/contrib/applications/loadkeys.cil sources/modules/contrib/applications/mail.cil sources/modules/contrib/applications/mplayer.cil \
         sources/modules/contrib/applications/nb.cil sources/modules/contrib/applications/pass.cil sources/modules/contrib/applications/pinentry.cil \
         sources/modules/contrib/applications/power.cil sources/modules/contrib/applications/qiv.cil sources/modules/contrib/applications/rp.cil \
@@ -45,7 +45,8 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/applications/xbindkeys.cil sources/modules/contrib/applications/fpaste.cil sources/modules/contrib/applications/resetimg.cil \
         sources/ubac.cil sources/modules/contrib/system/openssl.cil sources/modules/contrib/system/myqemu.cil sources/modules/contrib/system/systemd/stdiobridge.cil \
         sources/modules/contrib/system/fuse.cil sources/modules/contrib/applications/tty.cil sources/modules/contrib/system/tunctl.cil \
-        sources/modules/contrib/system/bridgeutil.cil sources/modules/contrib/system/iotop.cil sources/modules/contrib/system/nethogs.cil
+        sources/modules/contrib/system/bridgeutil.cil sources/modules/contrib/system/iotop.cil sources/modules/contrib/system/nethogs.cil \
+        sources/modules/contrib/applications/curl.cil
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 
