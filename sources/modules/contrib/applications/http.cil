@@ -5,6 +5,8 @@
 
 (context lynx_exec (system_u object_r lynx_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/lynx" file lynx_exec)
+(filecon "/usr/bin/curl" file lynx_exec)
+(filecon "/usr/bin/wget" file lynx_exec)
 
 (type lynx_config_t)
 (call files_config_object_type (lynx_config_t))
@@ -13,6 +15,7 @@
 (filecon "/etc/lynx-site\.cfg" file lynx_config)
 (filecon "/etc/lynx\.cfg" file lynx_config)
 (filecon "/etc/lynx\.lss" file lynx_config)
+(filecon "/etc/wgetrc" file lynx_config)
 
 (type lynx_home_t)
 (call usersubject_home_object_type (lynx_home_t))
