@@ -21,6 +21,7 @@
 (call usersubject_home_object_type (lynx_home_t))
 
 (filecon "HOME_DIR/\.lynxrc" file (system_u object_r lynx_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.wgetrc" file (system_u object_r lynx_home_t (systemlow systemlow)))
 
 (type lynx_tmpfs_t)
 (call usersubject_tmpfs_object_type (lynx_tmpfs_t))
@@ -100,7 +101,8 @@
     (allow ARG1 lynx_home_t relabel_file_perms))
 
 (macro http_home_dir_object_type_transition_lynx_home_files ((type ARG1))
-    (call usersubject_home_dir_object_type_transition (ARG1 lynx_home_t file ".lynxrc")))
+    (call usersubject_home_dir_object_type_transition (ARG1 lynx_home_t file ".lynxrc"))
+    (call usersubject_home_dir_object_type_transition (ARG1 lynx_home_t file ".wgetrc")))
 
 (macro http_read_lynx_tmpfs_files ((type ARG1))
     (call files_search_user_runtime (ARG1))
