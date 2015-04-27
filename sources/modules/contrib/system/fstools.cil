@@ -122,6 +122,9 @@
 (optional fstools_optional_machine
     (call machine_rw_lib_files (fstools_t)))
 
+(optional fstools_optional_myqemu
+    (call myqemu_rw_all_virt_object_files (fstools_t)))
+
 (optional fstools_optional_rpm
     (call rpm_rw_inherited_fifo_files (fstools_t))
     (call rpm_rw_inherited_tmp_fifo_files (fstools_t))

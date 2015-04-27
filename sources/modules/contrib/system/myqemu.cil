@@ -348,6 +348,9 @@
 (macro myqemu_manage_all_virt_object_files ((type ARG1))
     (allow ARG1 myqemu_virt_object_type manage_file_perms))
 
+(macro myqemu_rw_all_virt_object_files ((type ARG1))
+    (allow ARG1 myqemu_virt_object_type rw_file_perms))
+
 (macro myqemu_relabel_all_virt_object_files ((type ARG1))
     (allow ARG1 myqemu_virt_object_type relabel_file_perms))
 
