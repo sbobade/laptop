@@ -35,8 +35,8 @@
 
 * test lynx again by downloading .ZIP file
 
-* test curl.cil (curl/wget)
-
 * d30 : nftables : bridge-filter
-* fedoratest1/2: /etc/pam.d/access.conf -- authconfig
-    setup : nsswith.conf -->>> resolv
+
+e145: .muttrc (requires urlview): macro pager \cb 'urlview' 'Follow links with urlview'
+
+
