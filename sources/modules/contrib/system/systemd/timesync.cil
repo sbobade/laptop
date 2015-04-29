@@ -24,7 +24,7 @@
 (typeattributeset timesync_object_type timesyncd_unit_t)
 
 (context timesyncd_unit (system_u object_r timesyncd_unit_t (systemlow systemlow)))
-(filecon "/usr/lib/systemd/system/[^/]*systemd-timesyncd.*" file logind_unit)
+(filecon "/usr/lib/systemd/system/[^/]*systemd-timesyncd.*" file timesyncd_unit)
 
 (type timesyncd_systemd_lib_t)
 (call systemd_lib_object_type (timesyncd_systemd_lib_t))
