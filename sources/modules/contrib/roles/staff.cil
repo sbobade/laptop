@@ -436,9 +436,6 @@
     (call screen_manage_tmpfs_files (staff_t))
     (call screen_relabel_tmpfs_files (staff_t)))
 
-(optional myqemu_optional_staff_screen
-    (call myqemu_use_all_virt_ptys (staff_screen_t)))
-
 (optional staff_optional_setbacklight
     (call setbacklight_read_exec_files (staff_t)))
 
