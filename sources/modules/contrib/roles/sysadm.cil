@@ -57,10 +57,9 @@
 (call files_rw_lock_dirs (sysadm_t))
 
 (call filesystems_getattr_all_filesystems (sysadm_t))
+(call filesystems_list_devpts (sysadm_t))
 (call filesystems_getattr_devpts_chr_files (sysadm_t))
-
 (call filesystems_read_cgroup_files (sysadm_t))
-
 (call filesystems_read_sysfs (sysadm_t))
 
 (call subject_getattr_all_common_subjects (sysadm_t))
