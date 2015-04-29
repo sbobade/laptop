@@ -1,3 +1,7 @@
+(typeattribute timesync_admin_subject_type)
+
+(typeattribute timesync_object_type)
+
 (type timesyncd_t)
 (type timesyncd_exec_t)
 (call systemd_daemon (timesyncd_t timesyncd_exec_t))
@@ -8,11 +12,24 @@
 (type timesyncd_systemd_config_t)
 (call systemd_config_object_type (timesyncd_systemd_config_t))
 
+(typeattributeset timesync_object_type timesyncd_systemd_config_t)
+
 (context timesyncd_systemd_config (system_u object_r timesyncd_systemd_config_t (systemlow systemlow)))
 (filecon "/etc/systemd/timesyncd\.conf" file timesyncd_systemd_config)
+(filecon "/etc/systemd/timesyncd\.conf\.d(/.*)?" any timesyncd_systemd_config)
+
+(type timesyncd_unit_t)
+(call systemd_unit_object_type (timesyncd_unit_t))
+
+(typeattributeset timesync_object_type timesyncd_unit_t)
+
+(context timesyncd_unit (system_u object_r timesyncd_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*systemd-timesyncd.*" file logind_unit)
 
 (type timesyncd_systemd_lib_t)
 (call systemd_lib_object_type (timesyncd_systemd_lib_t))
+
+(typeattributeset timesync_object_type timesyncd_systemd_lib_t)
 
 (context timesyncd_systemd_lib (system_u object_r timesyncd_systemd_lib_t (systemlow systemlow)))
 (filecon "/var/lib/systemd/clock" file timesyncd_systemd_lib)
@@ -41,7 +58,15 @@
 
 (call systemd_notify_system_subject_type (timesyncd_t))
 
-(call timesync_read_timesyncd_systemd_config_files (timesyncd_t))
+(call timesync_read_timesyncd_systemd_config (timesyncd_t))
+
+(allow timesync_admin_subject_type timesyncd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (timesync_admin_subject_type timesyncd_t))
+
+(allow timesync_admin_subject_type timesyncd_unit_t (service (all)))
+
+(allow timesync_admin_subject_type timesync_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
 
 (macro timesync_exec_timesyncd ((type ARG1))
     (call can_exec (ARG1 timesyncd_exec_t)))
@@ -54,13 +79,33 @@
 (macro timesync_send_signal_timesyncd ((type ARG1))
     (allow ARG1 timesyncd_t (process (signal))))
 
+(macro timesync_search_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 timesyncd_systemd_config_t search_dir_perms))
+
+(macro timesync_list_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 timesyncd_systemd_config_t list_dir_perms))
+
 (macro timesync_read_timesyncd_systemd_config_files ((type ARG1))
     (call systemd_search_config (ARG1))
-    (allow ARG1 timesyncd_systemd_config_t read_file_perms))
+    (call read_files_pattern (ARG1 timesyncd_systemd_config_t timesyncd_systemd_config_t)))
 
 (macro timesync_manage_timesyncd_systemd_config_files ((type ARG1))
     (call systemd_rw_config_dirs (ARG1))
-    (allow ARG1 coredump_systemd_config_t manage_file_perms))
+    (call manage_files_pattern (ARG1 timesyncd_systemd_config_t timesyncd_systemd_config_t)))
+
+(macro timesync_read_timesyncd_systemd_config ((type ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 timesyncd_systemd_config_t read_file_perms)
+    (allow ARG1 timesyncd_systemd_config_t list_dir_perms)
+    (allow ARG1 timesyncd_systemd_config_t read_lnk_file_perms))
+
+(macro timesync_manage_timesyncd_systemd_config ((type ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 timesyncd_systemd_config_t manage_file_perms)
+    (allow ARG1 timesyncd_systemd_config_t manage_dir_perms)
+    (allow ARG1 timesyncd_systemd_config_t manage_lnk_file_perms))
 
 (macro timesync_read_timesyncd_systemd_lib_files ((type ARG1))
     (call systemd_search_lib (ARG1))
@@ -69,3 +114,9 @@
 (macro timesync_manage_timesyncd_systemd_lib_files ((type ARG1))
     (call systemd_rw_lib_dirs (ARG1))
     (allow ARG1 timesyncd_systemd_lib_t manage_file_perms))
+
+(macro timesync_admin ((type ARG1)(role ARG2))
+    (typeattributeset timesync_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional timesync_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))

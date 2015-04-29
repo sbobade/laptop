@@ -695,7 +695,7 @@
     (call timedate_role_template_timedatectl (sysadm_r sysadm_subject_type sysadm_timedatectl_t)))
 
 (optional sysadm_optional_timesync
-    (call timesync_manage_timesyncd_systemd_lib_files (sysadm_t)))
+    (call timesync_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_tmpfiles
     (call tmpfiles_run (sysadm_subject_type sysadm_r))
