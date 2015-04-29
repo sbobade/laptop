@@ -193,6 +193,9 @@
 (call utmp_rw_utmp_runtime_files (utempter_t))
 (call utmp_write_wtmp_log_files (utempter_t))
 
+(optional utempter_optional_myqemu
+    (call myqemu_use_all_inherited_virt_ptys (utempter_t)))
+
 (optional utempter_optional_screen
     (call screen_rw_unix_stream_sockets (utempter_t))
     (call screen_read_inherited_home_files (utempter_t)))

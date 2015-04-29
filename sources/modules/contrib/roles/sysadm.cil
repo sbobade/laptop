@@ -446,8 +446,28 @@
     (call rtkit_run_rtkitctl (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_screen
+    (type sysadm_screen_t)
+    (call screen_role_template (sysadm_r sysadm_subject_type sysadm_screen_t))
+
+    (allow sysadm_screen_t self (capability (setuid setgid)))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_screen_t sysadm_t))
+    (call commands_shell_exec_auto_subject_type_transition (sysadm_screen_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_screen_t sysadm_t))
+
+    (call screen_manage_home_files (sysadm_t))
+    (call screen_relabel_home_files (sysadm_t))
+    (call screen_home_dir_object_type_transition_home_files (sysadm_t ".screenrc"))
+
+    (call screen_manage_tmpfs_files (sysadm_t))
+    (call screen_relabel_tmpfs_files (sysadm_t))
+
     (call screen_manage_config_files (sysadm_t))
     (call screen_manage_runtime (sysadm_t)))
+
+(optional myqemu_optional_sysadm_screen
+    (call myqemu_use_all_virt_ptys (sysadm_screen_t)))
 
 (optional sysadm_optional_setbacklight
     (call setbacklight_run (sysadm_subject_type sysadm_r)))

@@ -388,6 +388,10 @@
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 myqemu_virt_pty_object_type rw_term_perms))
 
+(macro myqemu_use_all_inherited_virt_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 myqemu_virt_pty_object_type rw_inherited_term_perms))
+
 (macro myqemu_admin ((type ARG1)(role ARG2))
     (typeattributeset myqemu_admin_subject_type ARG1)
     (optional myqemu_admin_optional_askpwd
