@@ -192,6 +192,8 @@
 (call miscfiles_read_cert (myqemu_installer_t))
 (call miscfiles_read_locale (myqemu_installer_t))
 
+(call myqemu_use_installer_ptys (myqemu_installer_t))
+
 (call ns_client_subject_type (myqemu_installer_t))
 
 (call openssl_exec (myqemu_installer_t))
@@ -250,7 +252,8 @@
     (allow ARG1 ARG3 manage_sock_file_perms)
     (call files_runtime_object_type_transition (ARG1 ARG3 sock_file "*"))
     (call myqemu_virt_pty_object_type (ARG4))
-    (call terminals_create_pty (ARG1 ARG4)))
+    (call terminals_create_pty (ARG1 ARG4))
+    (allow ARG1 ARG4 rw_term_perms))
 
 (macro myqemu_virt_pty_object_type ((type ARG1))
     (call terminals_pty_object_type (ARG1))
@@ -372,6 +375,18 @@
 
 (macro myqemu_relabel_all_virt_object_files ((type ARG1))
     (allow ARG1 myqemu_virt_object_type relabel_file_perms))
+
+(macro myqemu_use_installer_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 myqemu_installer_pty_object_t rw_term_perms))
+
+(macro myqemu_use_virt_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 myqemu_virt_pty_object_t rw_term_perms))
+
+(macro myqemu_use_all_virt_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 myqemu_virt_pty_object_type rw_term_perms))
 
 (macro myqemu_admin ((type ARG1)(role ARG2))
     (typeattributeset myqemu_admin_subject_type ARG1)
