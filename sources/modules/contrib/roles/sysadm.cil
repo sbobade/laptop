@@ -449,7 +449,7 @@
     (type sysadm_screen_t)
     (call screen_role_template (sysadm_r sysadm_subject_type sysadm_screen_t))
 
-    (allow sysadm_screen_t self (capability (setuid setgid fsetid dac_override)))
+    (allow sysadm_screen_t self (capability (setuid setgid fsetid dac_override sys_admin)))
 
     (call commands_exec_auto_subject_type_transition (sysadm_screen_t sysadm_t))
     (call commands_shell_exec_auto_subject_type_transition (sysadm_screen_t sysadm_t))
