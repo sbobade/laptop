@@ -172,6 +172,8 @@
 (call filesystems_getattr_filesystems (myqemu_installer_t))
 (call filesystems_getattr_tmpfs_filesystems (myqemu_installer_t))
 
+(call curl_exec (myqemu_installer_t))
+
 (call fpaste_exec (myqemu_installer_t))
 
 (call http_tcp_connect_http_port (myqemu_installer_t))
