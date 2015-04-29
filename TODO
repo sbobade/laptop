@@ -38,5 +38,3 @@
 * d30 : nftables : bridge-filter
 
 e145: .muttrc (requires urlview): macro pager \cb 'urlview' 'Follow links with urlview'
-
-

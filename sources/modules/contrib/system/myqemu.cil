@@ -4,8 +4,10 @@
 (typeattribute myqemu_virt_subject_type)
 (typeattribute myqemu_virt_object_type)
 (typeattribute myqemu_virt_runtime_object_type)
+(typeattribute myqemu_virt_pty_object_type)
 
 (typeattribute myqemu_object_type)
+
 (typeattribute myqemu_subject_type)
 
 (typeattribute myqemu_admin_subject_type)
@@ -15,7 +17,9 @@
 (type virt_subject_t)
 (type virt_object_t)
 (type virt_runtime_object_t)
-(call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t))
+(type virt_pty_object_t)
+
+(call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t virt_pty_object_t))
 
 (context virt_runtime_object (system_u object_r virt_runtime_object_t (systemlow systemlow)))
 (filecon "/var/run/.*\.qga\.sock" socket virt_runtime_object)
@@ -31,6 +35,7 @@
 (call files_runtime_object_type (myqemu_virt_runtime_object_type))
 
 (typeattributeset myqemu_object_type myqemu_virt_runtime_object_type)
+(typeattributeset myqemu_object_type myqemu_virt_pty_object_type)
 
 (roletype myqemu_runner_role myqemu_virt_subject_type)
 
@@ -144,6 +149,9 @@
 (context myqemu_installer_exec (system_u object_r myqemu_installer_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/myqemu_installer" file myqemu_installer_exec)
 
+(type myqemu_installer_pty_object_t)
+(call myqemu_virt_pty_object_type (myqemu_installer_pty_object_t))
+
 (type myqemu_installer_tmpfs_t)
 (call usersubject_tmpfs_object_type (myqemu_installer_tmpfs_t))
 
@@ -172,7 +180,10 @@
 (call filesystems_getattr_filesystems (myqemu_installer_t))
 (call filesystems_getattr_tmpfs_filesystems (myqemu_installer_t))
 
+(call terminals_create_pty (myqemu_installer_t myqemu_installer_pty_object_t))
+
 (call curl_exec (myqemu_installer_t))
+(call curl_read_config_files (myqemu_installer_t))
 
 (call fpaste_exec (myqemu_installer_t))
 
@@ -231,13 +242,19 @@
     (call systemd_unit_object_type (ARG1))
     (typeattributeset myqemu_runner_systemd_unit_object_type ARG1))
 
-(macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3))
+(macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3)(type ARG4))
     (call myqemu_virt_subject_type (ARG1))
     (call myqemu_virt_object_type (ARG2))
     (allow ARG1 ARG2 rw_file_perms)
     (call myqemu_virt_runtime_object_type (ARG3))
     (allow ARG1 ARG3 manage_sock_file_perms)
-    (call files_runtime_object_type_transition (ARG1 ARG3 sock_file "*")))
+    (call files_runtime_object_type_transition (ARG1 ARG3 sock_file "*"))
+    (call myqemu_virt_pty_object_type (ARG4))
+    (call terminals_create_pty (ARG1 ARG4)))
+
+(macro myqemu_virt_pty_object_type ((type ARG1))
+    (call terminals_pty_object_type (ARG1))
+    (typeattributeset myqemu_virt_pty_object_type ARG1))
 
 (macro myqemu_virt_subject_type ((type ARG1))
     (typeattributeset myqemu_virt_subject_type ARG1))
