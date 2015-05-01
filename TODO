@@ -34,5 +34,3 @@
 * e145/x131e: reset container passwords
 
 * test lynx again by downloading .ZIP file
-
-* e145: .muttrc (requires urlview): macro pager \cb 'urlview' 'Follow links with urlview'

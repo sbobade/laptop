@@ -520,6 +520,10 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 usb_dev_t rw_chr_file_perms))
 
+(macro devices_rw_v4l ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 v4l_dev_t rw_chr_file_perms))
+
 (macro devices_rw_wireless ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 wireless_dev_t rw_chr_file_perms))

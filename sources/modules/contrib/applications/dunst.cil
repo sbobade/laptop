@@ -1,0 +1,26 @@
+(roleattribute dunst_role)
+
+(type dunst_t)
+(type dunst_exec_t)
+(call applications_app (dunst_t dunst_exec_t))
+(roletype dunst_role dunst_t)
+
+(context dunst_exec (system_u object_r dunst_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dunst" file dunst_exec)
+
+(call dbususer_service_all_busses (dunst_t))
+
+(macro dunst_exec ((type ARG1))
+    (call can_exec (ARG1 dunst_exec_t)))
+
+(macro dunst_auto_subject_type_transition ((type ARG1))
+    (call dunst_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dunst_exec_t dunst_t)))
+
+(macro dunst_send_signal ((type ARG1))
+    (allow ARG1 dunst_t (process (signal))))
+
+(macro dunst_run ((type ARG1)(role ARG2))
+    (call dunst_auto_subject_type_transition (ARG1))
+    (roleattributeset dunst_role ARG2))

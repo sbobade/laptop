@@ -52,6 +52,7 @@
 
 (call devices_read_urandom (firefox_t))
 (call devices_rw_dri (firefox_t))
+(call devices_rw_v4l (firefox_t))
 
 (call filesystems_getattr_filesystems (firefox_t))
 (call filesystems_read_devtmpfs_lnk_files (firefox_t))
@@ -66,8 +67,8 @@
 (call files_list_mnt (firefox_t))
 (call files_list_tmp (firefox_t))
 
-(call network_dontaudit_catchall_subject_type (firefox_t))
 (call network_udp_bind_generic_node (firefox_t))
+(call network_tcp_bind_generic_node (firefox_t))
 
 (call storage_getattr_fixed_disk (firefox_t))
 (call storage_getattr_removable (firefox_t))

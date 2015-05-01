@@ -78,6 +78,9 @@
     (call dbususer_manage_tmpfs (staff_systemduser_t))
     (call dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs (staff_systemduser_t)))
 
+(optional staff_optional_dunst
+    (call dunst_run (staff_subject_type staff_r)))
+
 (optional staff_xinit_optional_dbuslaunch
     (call dbuslaunch_role_template (staff_r staff_xinit_t staff_dbuslaunch_t)))
 
