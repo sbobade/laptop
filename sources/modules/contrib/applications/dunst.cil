@@ -16,6 +16,10 @@
 (type dunst_tmpfs_t)
 (call usersubject_tmpfs_object_type (dunst_tmpfs_t))
 
+(call files_read_data (dunst_t))
+
+(call filesystems_getattr_filesystems (dunst_t))
+
 (call dbususer_service_all_busses (dunst_t dunst_exec_t))
 
 (call dunst_read_config_home (dunst_t))
