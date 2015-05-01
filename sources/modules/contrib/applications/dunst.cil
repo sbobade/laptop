@@ -16,6 +16,7 @@
 (type dunst_tmpfs_t)
 (call usersubject_tmpfs_object_type (dunst_tmpfs_t))
 
+(call files_dontaudit_catchall_subject_type (dunst_t))
 (call files_read_data (dunst_t))
 
 (call filesystems_getattr_filesystems (dunst_t))
