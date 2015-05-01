@@ -8,7 +8,24 @@
 (context dunst_exec (system_u object_r dunst_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/dunst" file dunst_exec)
 
+(type dunst_config_home_t)
+(call usersubject_config_home_object_type (dunst_config_home_t))
+
+(filecon "HOME_DIR/\.config/dunst(/.*)?" any (system_u object_r dunst_config_home_t (systemlow systemlow)))
+
+(type dunst_tmpfs_t)
+(call usersubject_tmpfs_object_type (dunst_tmpfs_t))
+
 (call dbususer_service_all_busses (dunst_t dunst_exec_t))
+
+(call dunst_read_config_home (dunst_t))
+
+(call miscfiles_read_locale (dunst_t))
+(call miscfiles_read_all_fonts_cache (dunst_t))
+(call miscfiles_read_fonts_config (dunst_t))
+(call miscfiles_read_fonts_data (dunst_t))
+
+(call xserver_tmpfs_client_template (dunst_t dunst_tmpfs_t))
 
 (macro dunst_exec ((type ARG1))
     (call can_exec (ARG1 dunst_exec_t)))
@@ -24,3 +41,59 @@
 (macro dunst_run ((type ARG1)(role ARG2))
     (call dunst_auto_subject_type_transition (ARG1))
     (roleattributeset dunst_role ARG2))
+
+(macro dunst_search_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 dunst_config_home_t search_dir_perms))
+
+(macro dunst_list_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 dunst_config_home_t list_dir_perms))
+
+(macro dunst_read_config_home_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_files_pattern (ARG1 dunst_config_home_t dunst_config_home_t)))
+
+(macro dunst_read_config_home_lnk_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (call read_lnk_files_pattern (ARG1 dunst_config_home_t dunst_config_home_t)))
+
+(macro dunst_read_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 dunst_config_home_t read_file_perms)
+    (allow ARG1 dunst_config_home_t list_dir_perms)
+    (allow ARG1 dunst_config_home_t read_lnk_file_perms))
+
+(macro dunst_manage_config_home ((type ARG1))
+    (call usersubject_rw_config_home_dirs (ARG1))
+    (allow ARG1 dunst_config_home_t manage_file_perms)
+    (allow ARG1 dunst_config_home_t manage_dir_perms)
+    (allow ARG1 dunst_config_home_t manage_lnk_file_perms))
+
+(macro dunst_relabel_config_home ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 dunst_config_home_t relabel_file_perms)
+    (allow ARG1 dunst_config_home_t relabel_dir_perms)
+    (allow ARG1 dunst_config_home_t relabel_lnk_file_perms))
+
+(macro dunst_config_home_object_type_transition_config_home_dirs ((type ARG1))
+    (call usersubject_config_home_object_type_transition (ARG1 dunst_config_home_t dir "dunst")))
+
+(macro dunst_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 dunst_tmpfs_t read_file_perms))
+
+(macro dunst_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 dunst_tmpfs_t manage_file_perms))
+
+(macro dunst_relabel_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 dunst_tmpfs_t relabel_file_perms))
+
+(macro dunst_dbus_chat ((type ARG1))
+    (allow ARG1 dunst_t (dbus (send_msg)))
+    (allow dunst_t ARG1 (dbus (send_msg))))

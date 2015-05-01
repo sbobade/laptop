@@ -1,0 +1,29 @@
+(roleattribute libnotify_role)
+
+(type libnotify_t)
+(type libnotify_exec_t)
+(call applications_app (libnotify_t libnotify_exec_t))
+(roletype libnotify_role libnotify_t)
+
+(context libnotify_exec (system_u object_r libnotify_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/notify-send" file libnotify_exec)
+
+(call dbususer_client_subject_type (libnotify_t))
+
+(optional libnotify_optional_dunst
+    (call dunst_dbus_chat (libnotify_t)))
+
+(macro libnotify_exec ((type ARG1))
+    (call can_exec (ARG1 libnotify_exec_t)))
+
+(macro libnotify_auto_subject_type_transition ((type ARG1))
+    (call libnotify_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 libnotify_exec_t libnotify_t)))
+
+(macro libnotify_send_signal ((type ARG1))
+    (allow ARG1 libnotify_t (process (signal))))
+
+(macro libnotify_run ((type ARG1)(role ARG2))
+    (call libnotify_auto_subject_type_transition (ARG1))
+    (roleattributeset libnotify_role ARG2))
