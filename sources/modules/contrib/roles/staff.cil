@@ -31,7 +31,8 @@
     (type staff_obexd_t)
     (call bluetooth_role_template_obexd (staff_r staff_subject_type staff_obexd_t))
 
-    (call dbususer_service (staff_obexd_t staff_dbususer_t)))
+    (call dbususer_client_subject_type (staff_obexd_t))
+    (call dbususer_acquire_service (staff_obexd_t staff_dbususer_t)))
 
 (optional staff_optional_bti
     (call bti_run (staff_subject_type staff_r))

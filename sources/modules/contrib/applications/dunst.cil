@@ -8,7 +8,7 @@
 (context dunst_exec (system_u object_r dunst_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/dunst" file dunst_exec)
 
-(call dbususer_service_all_busses (dunst_t))
+(call dbususer_service_all_busses (dunst_t dunst_exec_t))
 
 (macro dunst_exec ((type ARG1))
     (call can_exec (ARG1 dunst_exec_t)))

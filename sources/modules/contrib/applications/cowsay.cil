@@ -30,7 +30,8 @@
 (call miscfiles_read_locale (cowsay_t))
 
 (optional cowsay_optional_dbususer
-    (call dbususer_service_all_busses (cowsay_t)))
+    (call dbususer_client_subject_type (cowsay_t))
+    (call dbususer_acquire_service_all_busses (cowsay_t)))
 
 (optional cowsay_optional_machine
     (call machine_read_config_files (cowsay_t)))

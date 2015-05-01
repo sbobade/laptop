@@ -54,13 +54,15 @@
 (macro dbususer_acquire_service_all_busses ((type ARG1))
     (allow ARG1 dbususer_subject_type (dbus (acquire_svc))))
 
-(macro dbususer_service ((type ARG1)(type ARG2))
+(macro dbususer_service ((type ARG1)(type ARG2)(type ARG3))
     (call dbususer_client_subject_type (ARG1))
-    (call dbususer_acquire_service (ARG1 ARG2)))
+    (call dbususer_acquire_service (ARG1 ARG2))
+    (call auto_subject_type_transition_pattern (ARG2 ARG1 ARG3)))
 
-(macro dbususer_service_all_busses ((type ARG1))
+(macro dbususer_service_all_busses ((type ARG1)(type ARG2))
     (call dbususer_client_subject_type (ARG1))
-    (call dbususer_acquire_service_all_busses (ARG1)))
+    (call dbususer_acquire_service_all_busses (ARG1))
+    (call auto_subject_type_transition_pattern (dbususer_subject_type ARG2 ARG1)))
 
 (macro dbususer_read_state_all_client_subjects ((type ARG1))
     (call filesystems_search_proc (ARG1))
