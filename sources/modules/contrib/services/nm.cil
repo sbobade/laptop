@@ -181,7 +181,8 @@
 
 (call files_read_config (nmdisp_t))
 
-(call dbus_system_service (nmdisp_t))
+(call dbus_acquire_system_service (nmdisp_t))
+(call dbus_system_client_subject_type (nmdisp_t))
 
 (call iptools_exec (nmdisp_t))
 (call iptools_read_config_files (nmdisp_t))

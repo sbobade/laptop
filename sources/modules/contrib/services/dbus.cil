@@ -167,9 +167,12 @@
 (macro dbus_acquire_system_service ((type ARG1))
     (allow ARG1 dbusd_t (dbus (acquire_svc))))
 
-(macro dbus_system_service ((type ARG1))
+(macro dbus_system_service ((type ARG1)(type ARG2))
     (call dbus_acquire_system_service (ARG1))
-    (call dbus_system_client_subject_type (ARG1)))
+    (call dbus_system_client_subject_type (ARG1))
+    (call auto_subject_type_transition_pattern
+        (dbusd_t ARG1 ARG2))
+    (roletype system_r ARG1))
 
 (macro dbus_search_config ((type ARG1))
     (call files_search_config (ARG1))

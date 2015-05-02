@@ -71,7 +71,8 @@
 
 (call selinux_get_enforce_mode (hostnamed_t))
 
-(call dbus_system_service (hostnamed_t))
+(call dbus_acquire_system_service (hostnamed_t))
+(call dbus_system_client_subject_type (hostnamed_t))
 
 (call hostname_manage_config_files (hostnamed_t))
 

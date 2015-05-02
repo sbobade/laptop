@@ -41,7 +41,8 @@
 
 (call terminals_use_console (localed_t))
 
-(call dbus_system_service (localed_t))
+(call dbus_acquire_system_service (localed_t))
+(call dbus_system_client_subject_type (localed_t))
 
 (call journal_client_subject_type (localed_t))
 

@@ -57,7 +57,8 @@
 
 (call terminals_use_console (timedated_t))
 
-(call dbus_system_service (timedated_t))
+(call dbus_acquire_system_service (timedated_t))
+(call dbus_system_client_subject_type (timedated_t))
 
 (call hwclock_read_config_files (timedated_t))
 
@@ -104,7 +105,8 @@
 
 (call filesystems_read_devtmpfs_lnk_files (timedatex_t))
 
-(call dbus_system_service (timedatex_t))
+(call dbus_acquire_system_service (timedatex_t))
+(call dbus_system_client_subject_type (timedatex_t))
 
 (call hwclock_read_config_files (timedatex_t))
 
