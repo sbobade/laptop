@@ -64,7 +64,7 @@ do_install () {
         /bin/sudo /bin/cp -r ${PWD}/contexts /etc/selinux/laptop/ && \
         /bin/sudo /bin/cp -r ${PWD}/contexts/files /etc/selinux/laptop/contexts/ && \
         /bin/sudo /bin/cp -r ${PWD}/contexts/users /etc/selinux/laptop/contexts/ && \
-        /bin/sudo /bin/cp -r ${PWD}/policy/policy* /etc/selinux/laptop/policy/ || exit 192
+        /bin/sudo /bin/cp ${PWD}/policy/policy.${VERSION} /etc/selinux/laptop/policy/ || exit 192
 
         if [ -e "${PWD}/seusers.local" -a -s "${PWD}/seusers.local" ] ; then
             /bin/sudo /bin/cp ${PWD}/seusers.local /etc/selinux/laptop/seusers || exit 192
@@ -85,7 +85,7 @@ do_install () {
         /bin/sudo \cp -rf ${PWD}/contexts /etc/selinux/laptop/ && \
         /bin/sudo \cp -rf ${PWD}/contexts/files /etc/selinux/laptop/contexts/ && \
         /bin/sudo \cp -rf ${PWD}/contexts/users /etc/selinux/laptop/contexts/ && \
-        /bin/sudo \cp -rf ${PWD}/policy/ /etc/selinux/laptop/ || exit 192
+        /bin/sudo \cp -f ${PWD}/policy/policy.${VERSION} /etc/selinux/laptop/policy/ || exit 192
 
         /bin/sudo /bin/chmod 0700 /etc/selinux/laptop/policy || exit 192
 
