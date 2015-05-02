@@ -5,6 +5,9 @@
 (type staff_t)
 (call usersubject_common_login_subject_template (staff_u staff_r staff_t))
 
+(call usersubject_exec_home_object_entry_subject (staff_t))
+(call usersubject_common_login_user_object_template (staff_t))
+
 (call staff_subject_type (staff_t))
 
 (call seutil_exec_setfiles (staff_t))
