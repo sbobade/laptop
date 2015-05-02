@@ -11,6 +11,8 @@
 (roleattribute getenforce_role)
 (roleattribute setenforce_role)
 
+(typeattribute seutil_setsebool_client_subject_type)
+
 (type load_policy_t)
 (type load_policy_exec_t)
 (call applications_app (load_policy_t load_policy_exec_t))
@@ -122,17 +124,19 @@
 (context setsebool_exec (system_u object_r setsebool_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/setsebool" file setsebool_exec)
 
-(call selinux_list_securityfs (setsebool_t))
+(call selinux_list_securityfs (seutil_setsebool_client_subject_type))
 (call selinux_set_all_booleans (setsebool_t))
 
-(call seutil_read_selinux_config_files (setsebool_t))
+(call seutil_read_selinux_config_files (seutil_setsebool_client_subject_type))
 
-(call miscfiles_read_locale (setsebool_t))
+(call miscfiles_read_locale (seutil_setsebool_client_subject_type))
 
-(call ns_client_subject_type (setsebool_t))
+(call ns_client_subject_type (seutil_setsebool_client_subject_type))
+
+(call seutil_setsebool_client_subject_type (setsebool_t))
 
 (optional setsebool_optional_journal
-    (call journal_client_subject_type (setsebool_t)))
+    (call journal_client_subject_type (seutil_setsebool_client_subject_type)))
 
 (type getenforce_t)
 (type getenforce_exec_t)
@@ -265,7 +269,11 @@
 (macro seutil_exec_getsebool ((type ARG1))
     (call can_exec (ARG1 getsebool_exec_t)))
 
+(macro seutil_setsebool_client_subject_type ((type ARG1))
+    (typeattributeset seutil_setsebool_client_subject_type ARG1))
+
 (macro seutil_exec_setsebool ((type ARG1))
+    (call seutil_setsebool_client_subject_type (ARG1))
     (call can_exec (ARG1 setsebool_exec_t)))
 
 (macro seutil_exec_getenforce ((type ARG1))

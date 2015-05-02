@@ -192,6 +192,10 @@
     (call auth_search_pam_config (ARG1))
     (allow ARG1 login_pam_config_t read_file_perms))
 
+(macro login_set_priv_user_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 login_priv_user_t)))
+
 (macro login_admin ((type ARG1)(role ARG2))
     (typeattributeset login_admin_subject_type ARG1)
     (optional login_admin_optional_askpwd

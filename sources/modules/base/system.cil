@@ -882,5 +882,9 @@
 (macro system_recv_unlabeled_peers ((type ARG1))
     (allow ARG1 unlabeled_t (peer (recv))))
 
+(macro system_set_load_kernel_module_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 system_load_kernel_module_t)))
+
 (macro system_unconfined_subject_type ((type ARG1))
     (typeattributeset system_unconfined_subject_type ARG1))

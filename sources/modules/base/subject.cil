@@ -354,5 +354,25 @@
     (allow ARG1 self (capability (sys_ptrace)))
     (allow ARG1 subject_type (process (ptrace))))
 
+(macro subject_set_execheap_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 subject_execheap_t)))
+
+(macro subject_set_execmem_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 subject_execmem_t)))
+
+(macro subject_set_execstack_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 subject_execstack_t)))
+
+(macro subject_set_mmap_low_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 subject_mmap_low_t)))
+
+(macro subject_set_ptrace_all_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 subject_ptrace_all_t)))
+
 (macro subject_unconfined_subject_type ((type ARG1))
     (typeattributeset subject_unconfined_subject_type ARG1))

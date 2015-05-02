@@ -587,6 +587,10 @@
     (call ssh_use_fd_sshd (ARG1))
     (allow ARG1 sshd_t (unix_dgram_socket (read write))))
 
+(macro ssh_set_priv_user_login_boolean ((type ARG1))
+    (call seutil_exec_setsebool (ARG1))
+    (call selinux_set_spec_boolean (ARG1 ssh_priv_user_login_t)))
+
 (macro ssh_admin ((type ARG1)(role ARG2))
     (typeattributeset ssh_admin_subject_type ARG1)
     (optional ssh_admin_optional_askpwd
