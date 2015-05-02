@@ -5,9 +5,6 @@
 (type sysadm_t)
 (call usersubject_priv_login_subject_template (sysadm_u sysadm_r sysadm_t))
 
-(call usersubject_exec_home_object_entry_subject (sysadm_t))
-(call usersubject_common_login_user_object_template (sysadm_t))
-
 (call sysadm_subject_type (sysadm_t))
 
 (context sysadm_home_dir (sysadm_u object_r home_dir_t (systemlow mls_systemhigh)))

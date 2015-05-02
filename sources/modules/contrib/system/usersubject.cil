@@ -142,6 +142,9 @@
 
 (allow usersubject_common_login_subject_type self create_unix_dgram_socket_perms)
 
+(call usersubject_exec_home_object_entry_subject (usersubject_common_login_subject_type))
+(call usersubject_common_login_user_object_template (usersubject_common_login_subject_type))
+
 (call system_read_net_proc (usersubject_common_login_subject_type))
 
 (call devices_rw_inherited_ptmx (usersubject_common_login_subject_type))
