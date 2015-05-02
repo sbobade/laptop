@@ -152,10 +152,7 @@
 (allow login_admin_subject_type login_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
-(call selinux_set_spec_boolean (login_admin_subject_type login_priv_user_t))
-
-(optional login_admin_subject_type_optional_seutil
-    (call seutil_exec_setsebool (login_admin_subject_type)))
+(call login_set_priv_user_boolean (login_admin_subject_type))
 
 (macro login_exec ((type ARG1))
     (call can_exec (ARG1 login_exec_t)))
@@ -193,8 +190,9 @@
     (allow ARG1 login_pam_config_t read_file_perms))
 
 (macro login_set_priv_user_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 login_priv_user_t)))
+    (call selinux_set_spec_boolean (ARG1 login_priv_user_t))
+    (optional login_set_priv_user_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro login_admin ((type ARG1)(role ARG2))
     (typeattributeset login_admin_subject_type ARG1)

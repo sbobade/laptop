@@ -129,5 +129,6 @@
     (allow ARG1 mount_runtime_t manage_lnk_file_perms))
 
 (macro mount_set_mount_any_file_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 mount_any_file_t)))
+    (call selinux_set_spec_boolean (ARG1 mount_any_file_t))
+    (optional mount_set_mount_any_file_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))

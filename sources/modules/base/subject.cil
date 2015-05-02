@@ -355,24 +355,29 @@
     (allow ARG1 subject_type (process (ptrace))))
 
 (macro subject_set_execheap_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 subject_execheap_t)))
+    (call selinux_set_spec_boolean (ARG1 subject_execheap_t))
+    (optional subject_set_execheap_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro subject_set_execmem_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 subject_execmem_t)))
+    (call selinux_set_spec_boolean (ARG1 subject_execmem_t))
+    (optional subject_set_execmem_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro subject_set_execstack_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 subject_execstack_t)))
+    (call selinux_set_spec_boolean (ARG1 subject_execstack_t))
+    (optional subject_set_execstack_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro subject_set_mmap_low_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 subject_mmap_low_t)))
+    (call selinux_set_spec_boolean (ARG1 subject_mmap_low_t))
+    (optional subject_set_mmap_low_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro subject_set_ptrace_all_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 subject_ptrace_all_t)))
+    (call selinux_set_spec_boolean (ARG1 subject_ptrace_all_t))
+    (optional subject_set_ptrace_all_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro subject_unconfined_subject_type ((type ARG1))
     (typeattributeset subject_unconfined_subject_type ARG1))

@@ -329,10 +329,7 @@
 (allow ssh_admin_subject_type ssh_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
 
-(call selinux_set_spec_boolean (ssh_admin_subject_type ssh_priv_user_login_t))
-
-(optional ssh_admin_subject_type_optional_seutil
-    (call seutil_exec_setsebool (ssh_admin_subject_type)))
+(call ssh_set_priv_user_login_boolean (ssh_admin_subject_type))
 
 (macro ssh_exec ((type ARG1))
     (call can_exec (ARG1 ssh_exec_t)))
@@ -588,8 +585,9 @@
     (allow ARG1 sshd_t (unix_dgram_socket (read write))))
 
 (macro ssh_set_priv_user_login_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 ssh_priv_user_login_t)))
+    (call selinux_set_spec_boolean (ARG1 ssh_priv_user_login_t))
+    (optional ssh_set_priv_user_login_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro ssh_admin ((type ARG1)(role ARG2))
     (typeattributeset ssh_admin_subject_type ARG1)

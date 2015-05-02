@@ -341,5 +341,6 @@
     (allow ARG1 firefox_plugs_tmpfs_t relabel_file_perms))
 
 (macro firefox_set_use_webcam_boolean ((type ARG1))
-    (call seutil_exec_setsebool (ARG1))
-    (call selinux_set_spec_boolean (ARG1 firefox_use_webcam_t)))
+    (call selinux_set_spec_boolean (ARG1 firefox_use_webcam_t))
+    (optional firefox_set_use_webcam_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
