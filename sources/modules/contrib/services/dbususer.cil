@@ -57,7 +57,7 @@
 (macro dbususer_service ((type ARG1)(type ARG2)(type ARG3))
     (call dbususer_client_subject_type (ARG1))
     (call dbususer_acquire_service (ARG1 ARG2))
-    (call auto_subject_type_transition_pattern (ARG2 ARG1 ARG3)))
+    (call auto_subject_type_transition_pattern (ARG2 ARG3 ARG1)))
 
 (macro dbususer_service_all_busses ((type ARG1)(type ARG2))
     (call dbususer_client_subject_type (ARG1))
