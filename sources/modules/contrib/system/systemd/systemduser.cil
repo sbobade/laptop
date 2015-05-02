@@ -140,12 +140,14 @@
     (allow ARG3 ARG2 (process (signal signull sigkill sigstop)))
     (allow ARG3 ARG2 (unix_stream_socket (read write)))
     (call ps_subject_pattern (ARG3 ARG2))
-    (call systemd_exec_systemctl (ARG2))
-    (call systemd_read_state_lnk_files (ARG2))
     (call systemduser_control_system (ARG2 ARG3))
-    (call systemduser_control_config_home (ARG2))
-    (call systemduser_control_transient_units (ARG2))
-    (call systemduser_control_units (ARG2)))
+    (call commands_exec_auto_subject_type_transition (ARG3 ARG2)))
+
+(macro systemduser_control_template ((type ARG1))
+    (call systemd_exec_systemctl (ARG1))
+    (call systemduser_control_config_home (ARG1))
+    (call systemduser_control_transient_units (ARG1))
+    (call systemduser_control_all_units (ARG1)))
 
 (macro systemduser_tcp_socket_activated_subject_type ((type ARG1))
     (typeattributeset systemduser_tcp_socket_activated_subject_type ARG1))
@@ -177,6 +179,10 @@
 (macro systemduser_unit_object_type ((type ARG1))
     (call systemd_unit_object_type (ARG1))
     (typeattributeset systemduser_unit_object_type ARG1))
+
+(macro systemduser_read_all_unit_files ((type ARG1))
+    (call usersubject_search_config_home (ARG1))
+    (allow ARG1 systemduser_unit_object_type read_file_perms))
 
 (macro systemduser_read_pam_config_files ((type ARG1))
     (call auth_search_pam_config (ARG1))

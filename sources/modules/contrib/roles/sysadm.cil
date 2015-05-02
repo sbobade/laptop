@@ -537,7 +537,6 @@
 
     (call sysadm_subject_type (sysadm_systemduser_t))
 
-    (call commands_exec_auto_subject_type_transition (sysadm_systemduser_t sysadm_t))
     (call commands_shell_exec_auto_subject_type_transition (sysadm_systemduser_t sysadm_t))
 
     (call usersubject_exec_home_auto_subject_type_transition (sysadm_systemduser_t sysadm_t))

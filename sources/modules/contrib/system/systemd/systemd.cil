@@ -431,6 +431,7 @@
 (optional systemd_systemctl_subject_type_optional_systemduser
     (call systemduser_control_all_system (systemd_systemctl_subject_type))
     (call systemduser_control_config_home (systemd_systemctl_subject_type))
+    (call systemduser_control_all_units (systemd_systemctl_subject_type))
     (call systemduser_control_transient_units (systemd_systemctl_subject_type))
     (call systemduser_stream_connect_all_subjects (systemd_systemctl_subject_type))
     (call systemduser_read_config_home (systemd_systemctl_subject_type)))
