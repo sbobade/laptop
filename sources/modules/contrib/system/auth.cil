@@ -132,6 +132,8 @@
 (type pam_config_t)
 (call auth_pam_config_object_type (pam_config_t))
 
+(typeattributeset auth_object_type auth_pam_config_object_type)
+
 (context pam_config (system_u object_r pam_config_t (systemlow systemlow)))
 (filecon "/etc/pam\.d(/.*)?" any pam_config)
 (filecon "/etc/security(/.*)?" any pam_config)
