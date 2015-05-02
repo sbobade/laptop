@@ -104,7 +104,7 @@
 (allow xserver_t xserver_tmpfs_client_subject_type (fd (use)))
 (allow xserver_t xserver_tmpfs_client_object_type (file (read write)))
 
-(call filesystems_rw_inherited_tmpfs_files (xserver_tmpfs_client_subject_type))
+(call filesystems_rw_inherited_tmpfs_files (xserver_tmpfs_client_subject_type)) ; FIXME
 
 (call system_write_mtrr_proc (xserver_t))
 
