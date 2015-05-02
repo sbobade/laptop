@@ -94,6 +94,9 @@
 (macro askpwd_exec_askpwdagent ((type ARG1))
     (call can_exec (ARG1 askpwdagent_exec_t)))
 
+(macro askpwd_dontaudit_exec_askpwdagent ((type ARG1))
+    (dontaudit ARG1 askpwdagent_exec_t exec_file_perms))
+
 (macro askpwd_auto_subject_type_transition ((type ARG1))
     (call askpwd_send_signal (ARG1))
     (call auto_subject_type_transition_pattern
