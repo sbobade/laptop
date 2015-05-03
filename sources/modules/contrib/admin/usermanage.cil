@@ -12,6 +12,10 @@
 (filecon "/usr/bin/chfn" file chfn_exec)
 (filecon "/usr/bin/chsh" file chfn_exec)
 
+(call files_read_config_files (usermanage_chfn_subject_type))
+
+(call miscfiles_read_locale (usermanage_chfn_subject_type))
+
 (type chfn_pam_config_t)
 (call auth_pam_config_object_type (chfn_pam_config_t))
 
