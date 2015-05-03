@@ -316,6 +316,20 @@
     (call fop_relabel_home (staff_t))
     (call fop_home_dir_object_type_transition_fop_home_dirs (staff_t)))
 
+(optional staff_optional_livestreamer
+    (call livestreamer_run (staff_subject_type staff_r))
+
+    (call livestreamer_manage_tmpfs_files (staff_t))
+    (call livestreamer_relabel_tmpfs_files (staff_t))
+
+    (call livestreamer_manage_cache_home (staff_t))
+    (call livestreamer_relabel_cache_home (staff_t))
+    (call livestreamer_cache_home_object_type_transition_cache_home_dirs (staff_t))
+
+    (call livestreamer_manage_config_home (staff_t))
+    (call livestreamer_relabel_config_home (staff_t))
+    (call livestreamer_config_home_object_type_transition_config_home_dirs (staff_t)))
+
 (optional staff_optional_mail
     (type staff_mutt_t)
     (call mail_role_template_mutt (staff_r staff_subject_type staff_mutt_t))

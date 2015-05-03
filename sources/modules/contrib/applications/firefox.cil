@@ -194,6 +194,9 @@
 (macro firefox_exec ((type ARG1))
     (call can_exec (ARG1 firefox_exec_t)))
 
+(macro firefox_mmap_exec_files ((type ARG1))
+    (allow ARG1 firefox_exec_t mmap_file_perms))
+
 (macro firefox_exec_plugs ((type ARG1))
     (call can_exec (ARG1 firefox_plugs_exec_t)))
 

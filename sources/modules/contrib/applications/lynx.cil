@@ -64,6 +64,9 @@
 (macro lynx_exec ((type ARG1))
     (call can_exec (ARG1 lynx_exec_t)))
 
+(macro lynx_mmap_exec_files ((type ARG1))
+    (allow ARG1 lynx_exec_t mmap_file_perms))
+
 (macro lynx_subject_type ((type ARG1))
     (typeattributeset lynx_subject_type ARG1))
 

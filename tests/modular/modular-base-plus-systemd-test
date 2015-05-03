@@ -46,7 +46,8 @@ modular_base_plus_systemd_modules () {
         sources/ubac.cil sources/modules/contrib/system/openssl.cil sources/modules/contrib/system/myqemu.cil sources/modules/contrib/system/systemd/stdiobridge.cil \
         sources/modules/contrib/system/fuse.cil sources/modules/contrib/applications/tty.cil sources/modules/contrib/system/tunctl.cil \
         sources/modules/contrib/system/bridgeutil.cil sources/modules/contrib/system/iotop.cil sources/modules/contrib/system/nethogs.cil \
-        sources/modules/contrib/applications/curl.cil sources/modules/contrib/applications/dunst.cil sources/modules/contrib/applications/libnotify.cil
+        sources/modules/contrib/applications/curl.cil sources/modules/contrib/applications/dunst.cil sources/modules/contrib/applications/libnotify.cil \
+        sources/modules/contrib/applications/livestreamer.cil
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 
