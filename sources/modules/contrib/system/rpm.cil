@@ -172,6 +172,8 @@
     (call dracut_run (rpm_script_t rpm_role)))
 
 (optional rpm_script_optional_fstools
+    (call fstools_manage_runtime_dirs (rpm_script_t))
+    (call fstools_runtime_object_type_transition_runtime_dirs (rpm_script_t))
     (call fstools_run (rpm_script_t rpm_role)))
 
 (optional rpm_script_optional_ld
