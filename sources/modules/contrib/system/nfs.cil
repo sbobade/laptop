@@ -251,6 +251,9 @@
 (context nfsutils_exec (system_u object_r nfsutils_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/scripts/nfs-utils_env\.sh" file nfsutils_exec)
 
+(call files_manage_config_runtime (nfsutils_t))
+(call files_runtime_object_type_transition_config_runtime_dirs (nfsutils_t))
+
 (optional nfsutils_optional_systemd
     (call systemd_daemon (nfsutils_t nfsutils_exec_t)))
 
