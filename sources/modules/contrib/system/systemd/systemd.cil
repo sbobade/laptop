@@ -222,6 +222,9 @@
 (call files_relabel_all_runtime (systemd_t))
 (call files_relabelto_lock_dirs (systemd_t))
 
+(call files_manage_config_runtime_dirs (systemd_t))
+(call files_runtime_object_type_transition_config_runtime_dirs (systemd_t))
+
 (call filesystems_getattr_all_filesystems (systemd_t))
 (call filesystems_list_binfmt_misc (systemd_t))
 (call filesystems_list_efivarfs (systemd_t))
@@ -363,6 +366,7 @@
 
 (context systemdhelper_exec (system_u object_r systemdhelper_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/[^/]*" file systemdhelper_exec)
+(filecon "/usr/lib/systemd/scripts(/.*)?" file systemdhelper_exec)
 (filecon "/usr/lib/systemd/system-generators/[^/]*" file systemdhelper_exec)
 
 (type systemctl_t)

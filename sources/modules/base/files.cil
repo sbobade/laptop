@@ -10,6 +10,7 @@
 
 (typeattribute files_boot_object_type)
 (typeattribute files_cache_object_type)
+(typeattribute files_config_runtime_object_type)
 (typeattribute files_config_object_type)
 (typeattribute files_data_object_type)
 (typeattribute files_flag_object_type)
@@ -42,6 +43,12 @@
 (filecon "/etc/sysconfig/network-scripts/network-functions.*" file config)
 (filecon "/etc/rc\.d/init\.d/functions" file config)
 (filecon "/etc/rc\.d/init\.d/README" file config)
+
+(type config_runtime_t)
+(call files_runtime_object_type (config_runtime_t))
+
+(context config_runtime (system_u object_r config_runtime_t (systemlow systemlow)))
+(filecon "/var/run/sysconfig(/.*)?" any config_runtime)
 
 (type data_t)
 (call files_data_object_type (data_t))
@@ -249,6 +256,10 @@
     (call files_object_type (ARG1))
     (typeattributeset files_config_object_type ARG1))
 
+(macro files_config_runtime_object_type ((type ARG1))
+    (call files_object_type (ARG1))
+    (typeattributeset files_config_runtime_object_type ARG1))
+
 (macro files_data_object_type ((type ARG1))
     (call files_object_type (ARG1))
     (typeattributeset files_data_object_type ARG1))
@@ -306,6 +317,11 @@
 (macro files_config_object_type_transition ((type ARG1)(type ARG2)
     (class ARG3)(name ARG4))
     (call object_type_transition_pattern (ARG1 config_t ARG2 ARG3 ARG4)))
+
+(macro files_config_runtime_object_type_transition ((type ARG1)(type ARG2)
+    (class ARG3)(name ARG4))
+    (call files_search_runtime (ARG1))
+    (call object_type_transition_pattern (ARG1 config_runtime_t ARG2 ARG3 ARG4)))
 
 (macro files_data_object_type_transition ((type ARG1)(type ARG2)
     (class ARG3)(name ARG4))
@@ -906,6 +922,47 @@
     (call files_setattr_mnt_dirs (ARG1))
     (call files_list_mnt (ARG1))
     (allow ARG1 mnt_t (dir (mounton))))
+
+(macro files_search_config_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 config_runtime_t search_dir_perms))
+
+(macro files_list_config_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 config_runtime_t list_dir_perms))
+
+(macro files_read_config_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 config_runtime_t config_runtime_t)))
+
+(macro files_read_config_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 config_runtime_t config_runtime_t)))
+
+(macro files_manage_config_runtime_dirs ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 config_runtime_t manage_dir_perms))
+
+(macro files_read_config_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 config_runtime_t read_file_perms)
+    (allow ARG1 config_runtime_t list_dir_perms)
+    (allow ARG1 config_runtime_t read_lnk_file_perms))
+
+(macro files_manage_config_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 config_runtime_t manage_file_perms)
+    (allow ARG1 config_runtime_t manage_dir_perms)
+    (allow ARG1 config_runtime_t manage_lnk_file_perms))
+
+(macro files_del_entry_config_runtime ((type ARG1))
+    (allow ARG1 config_runtime_t del_entry_dir_perms))
+
+(macro files_rw_config_runtime_dirs ((type ARG1))
+    (allow ARG1 config_runtime_t rw_dir_perms))
+
+(macro files_runtime_object_type_transition_config_runtime_dirs ((type ARG1))
+    (call files_runtime_object_type_transition (ARG1 config_runtime_t dir "sysconfig")))
 
 (macro files_search_runtime ((type ARG1))
     (call files_read_runtime_lnk_files (ARG1))
