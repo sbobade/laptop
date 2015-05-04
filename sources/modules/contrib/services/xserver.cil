@@ -116,6 +116,7 @@
 (call devices_rw_dri (xserver_t))
 (call devices_rw_event (xserver_t))
 
+(call files_search_user_runtime (xserver_t))
 (call files_read_config_files (xserver_t))
 (call files_read_data (xserver_t))
 
