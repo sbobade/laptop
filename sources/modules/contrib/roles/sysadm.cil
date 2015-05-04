@@ -445,6 +445,9 @@
 (optional sysadm_optional_resetimg
     (call resetimg_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_rpcbind
+    (call rpcbind_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_rpm
     (call rpm_admin (sysadm_t sysadm_r))
     (call rpm_run (sysadm_subject_type sysadm_r)))

@@ -1,0 +1,91 @@
+(typeattribute rpcbind_admin_subject_type)
+
+(typeattribute rpcbind_object_type)
+
+(type rpcbind_t)
+(type rpcbind_exec_t)
+(call subject_common_type (rpcbind_t))
+(call subject_entry (rpcbind_t rpcbind_exec_t))
+(roletype system_r rpcbind_t)
+
+(context rpcbind_exec (system_u object_r rpcbind_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rpcbind" file rpcbind_exec)
+
+(type rpcbind_runtime_t)
+(call files_runtime_object_type (rpcbind_runtime_t))
+
+(typeattributeset rpcbind_object_type rpcbind_runtime_t)
+
+(context rpcbind_runtime (system_u object_r rpcbind_runtime_t (systemlow systemlow)))
+(filecon "/var/run/rpcbind\.sock" socket rpcbind_runtime)
+
+(allow rpcbind_t rpcbind_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (rpcbind_t rpcbind_runtime_t sock_file "*"))
+
+(type rpcbind_config_t)
+(call files_config_object_type (rpcbind_config_t))
+
+(typeattributeset rpcbind_object_type rpcbind_config_t)
+
+(context rpcbind_config (system_u object_r rpcbind_config_t (systemlow systemlow)))
+(filecon "/etc/sysconfig/rpcbind" file rpcbind_config)
+
+(optional rpcbind_optional_systemd
+    (call systemd_daemon (rpcbind_t rpcbind_exec_t))
+
+    (call systemd_unix_stream_socket_activated (rpcbind_t rpcbind_runtime_t))
+
+    (type rpcbind_unit_t)
+    (call systemd_unit_object_type (rpcbind_unit_t))
+
+    (typeattributeset rpcbind_object_type rpcbind_unit_t)
+
+    (context rpcbind_unit (system_u object_r rpcbind_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*rpcbind.*" file rpcbind_unit)
+
+    (allow rpcbind_admin_subject_type rpcbind_unit_t (service (all))))
+
+(allow rpcbind_admin_subject_type rpcbind_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(allow rpcbind_admin_subject_type rpcbind_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (rpcbind_admin_subject_type rpcbind_t))
+
+(macro rpcbind_exec ((type ARG1))
+    (call can_exec (ARG1 rpcbind_exec_t)))
+
+(macro rpcbind_auto_subject_type_transition ((type ARG1))
+    (call rpcbind_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rpcbind_exec_t rpcbind_t)))
+
+(macro rpcbind_send_signal ((type ARG1))
+    (allow ARG1 rpcbind_t (process (signal))))
+
+(macro rpcbind_read_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 rpcbind_runtime_t read_sock_file_perms))
+
+(macro rpcbind_manage_runtime_sock_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 rpcbind_runtime_t manage_sock_file_perms))
+
+(macro rpcbind_stream_connect ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 rpcbind_runtime_t rpcbind_runtime_t
+        rpcbind_t)))
+
+(macro rpcbind_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 rpcbind_config_t read_file_perms))
+
+(macro rpcbind_manage_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 rpcbind_config_t manage_file_perms))
+
+(macro rpcbind_admin ((type ARG1)(role ARG2))
+    (typeattributeset rpcbind_admin_subject_type ARG1)
+    (optional rpcbind_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional rpcbind_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
