@@ -204,6 +204,10 @@
 (optional sysadm_optional_getty
     (call getty_admin (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_gluster
+    (call gluster_run (sysadm_subject_type sysadm_r))
+    (call gluster_admin (sysadm_r sysadm_r)))
+
 (optional sysadm_optional_gpg
     (call gpg_run_dirmngr (sysadm_subject_type sysadm_r))
     (call gpg_run_gpg2keys (sysadm_subject_type sysadm_r))

@@ -1,0 +1,248 @@
+(roleattribute gluster_role)
+
+(typeattribute gluster_admin_subject_type)
+
+(typeattribute gluster_object_type)
+
+(type glusterd_t)
+(type glusterd_exec_t)
+(call subject_common_type (glusterd_t))
+(call subject_entry (glusterd_t glusterd_exec_t))
+(roletype system_r glusterd_t)
+
+(context glusterd_exec (system_u object_r glusterd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/glusterd" file glusterd_exec)
+(filecon "/usr/sbin/glusterfsd" file glusterd_exec)
+
+(call gluster_exec_glusterd (glusterd_t))
+
+(type glusterd_runtime_t)
+(call files_runtime_object_type (glusterd_runtime_t))
+
+(typeattributeset gluster_object_type glusterd_runtime_t)
+
+(context glusterd_runtime (system_u object_r glusterd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/glusterd\.sock" socket glusterd_runtime)
+
+(allow glusterd_t glusterd_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (glusterd_t glusterd_runtime_t sock_file "*"))
+
+(allow glusterd_t gluster_runtime_t manage_dir_perms)
+(allow glusterd_t gluster_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (glusterd_t gluster_runtime_t dir "gluster"))
+
+(type gluster_config_t)
+(call files_config_object_type (gluster_config_t))
+
+(typeattributeset gluster_object_type gluster_config_t)
+
+(context gluster_config (system_u object_r gluster_config_t (systemlow systemlow)))
+(filecon "/etc/glusterfs(/.*)?" any gluster_config)
+(filecon "/etc/sysconfig/glusterd" file gluster_config)
+(filecon "/etc/sysconfig/glusterfsd" file gluster_config)
+
+(type glusterd_lib_t)
+(call files_lib_object_type (glusterd_lib_t))
+
+(typeattributeset gluster_object_type glusterd_lib_t)
+
+(context glusterd_lib (system_u object_r glusterd_lib_t (systemlow systemlow)))
+(filecon "/var/lib/glusterd(/.*)?" any glusterd_lib)
+
+(allow glusterd_t glusterd_lib_t manage_dir_perms)
+(allow glusterd_t glusterd_lib_t manage_file_perms)
+(call files_lib_object_type_transition (glusterd_t glusterd_lib_t dir "*"))
+
+(type glusterd_log_t)
+(call files_log_object_type (glusterd_log_t))
+
+(typeattributeset gluster_object_type glusterd_log_t)
+
+(context glusterd_log (system_u object_r glusterd_log_t (systemlow systemlow)))
+(filecon "/var/log/glusterfs(/.*)?" any glusterd_log)
+
+(allow glusterd_t glusterd_log_t manage_dir_perms)
+(call files_log_object_type_transition (glusterd_t glusterd_log_t dir "glusterfs"))
+
+(allow glusterd_t glusterd_log_t (file (setattr)))
+(allow glusterd_t glusterd_log_t create_file_perms)
+(allow glusterd_t glusterd_log_t delete_file_perms)
+(allow glusterd_t glusterd_log_t append_file_perms)
+(allow glusterd_t glusterd_log_t read_file_perms)
+
+(optional glusterd_optional_logrotate
+    (call logrotate_log_object_type (glusterd_log_t)))
+
+(optional glusterd_optional_systemd
+    (call systemd_daemon (glusterd_t glusterd_exec_t))
+
+    (type glusterd_unit_t)
+    (call systemd_unit_object_type (glusterd_unit_t))
+
+    (typeattributeset gluster_object_type glusterd_unit_t)
+
+    (context glusterd_unit (system_u object_r glusterd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*glusterd.*" file glusterd_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*glusterfsd.*" file glusterd_unit)
+
+    (allow gluster_admin_subject_type glusterd_unit_t (service (all))))
+
+(type gluster_t)
+(type gluster_exec_t)
+(call applications_app (gluster_t gluster_exec_t))
+(roletype gluster_role gluster_t)
+
+(roleattributeset gluster_role system_r)
+
+(context gluster_exec (system_u object_r gluster_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/glusterfs" file gluster_exec)
+(filecon "/usr/sbin/gluster" file gluster_exec)
+(filecon "/usr/sbin/glfsheal" file gluster_exec)
+
+(type gluster_runtime_t)
+(call files_runtime_object_type (gluster_runtime_t))
+
+(typeattributeset gluster_object_type gluster_runtime_t)
+
+(context gluster_runtime (system_u object_r gluster_runtime_t (systemlow systemlow)))
+(filecon "/var/run/gluster(/.*)?" any gluster_runtime)
+
+(allow gluster_t gluster_runtime_t manage_dir_perms)
+(allow gluster_t gluster_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (gluster_t gluster_runtime_t dir "gluster"))
+
+(allow gluster_admin_subject_type gluster_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(allow gluster_admin_subject_type glusterd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (gluster_admin_subject_type glusterd_t))
+
+(macro gluster_exec_glusterd ((type ARG1))
+    (call can_exec (ARG1 glusterd_exec_t)))
+
+(macro gluster_exec_gluster ((type ARG1))
+    (call can_exec (ARG1 gluster_exec_t)))
+
+(macro gluster_auto_subject_type_transition_glusterd ((type ARG1))
+    (call gluster_send_signal_glusterd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 glusterd_exec_t glusterd_t)))
+
+(macro gluster_send_signal_glusterd ((type ARG1))
+    (allow ARG1 glusterd_t (process (signal))))
+
+(macro gluster_auto_subject_type_transition ((type ARG1))
+    (call gluster_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 gluster_exec_t gluster_t)))
+
+(macro gluster_send_signal ((type ARG1))
+    (allow ARG1 gluster_t (process (signal))))
+
+(macro gluster_run ((type ARG1)(role ARG2))
+    (call gluster_auto_subject_type_transition (ARG1))
+    (roleattributeset gluster_role ARG2))
+
+(macro gluster_read_glusterd_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 glusterd_runtime_t read_sock_file_perms))
+
+(macro gluster_manage_glusterd_runtime_sock_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 glusterd_runtime_t manage_sock_file_perms))
+
+(macro gluster_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 gluster_runtime_t search_dir_perms))
+
+(macro gluster_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 gluster_runtime_t list_dir_perms))
+
+(macro gluster_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 gluster_runtime_t gluster_runtime_t)))
+
+(macro gluster_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 gluster_runtime_t gluster_runtime_t)))
+
+(macro gluster_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 gluster_runtime_t read_file_perms)
+    (allow ARG1 gluster_runtime_t list_dir_perms)
+    (allow ARG1 gluster_runtime_t read_lnk_file_perms))
+
+(macro gluster_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 gluster_runtime_t manage_file_perms)
+    (allow ARG1 gluster_runtime_t manage_dir_perms)
+    (allow ARG1 gluster_runtime_t manage_lnk_file_perms))
+
+(macro gluster_stream_connect_glusterd ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 glusterd_runtime_t glusterd_runtime_t
+        glusterd_t)))
+
+(macro gluster_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 gluster_config_t search_dir_perms))
+
+(macro gluster_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 gluster_config_t list_dir_perms))
+
+(macro gluster_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 gluster_config_t gluster_config_t)))
+
+(macro gluster_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 gluster_config_t gluster_config_t)))
+
+(macro gluster_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 gluster_config_t read_file_perms)
+    (allow ARG1 gluster_config_t list_dir_perms)
+    (allow ARG1 gluster_config_t read_lnk_file_perms))
+
+(macro gluster_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 gluster_config_t manage_file_perms)
+    (allow ARG1 gluster_config_t manage_dir_perms)
+    (allow ARG1 gluster_config_t manage_lnk_file_perms))
+
+(macro gluster_search_glusterd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 glusterd_lib_t search_dir_perms))
+
+(macro gluster_list_glusterd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 glusterd_lib_t list_dir_perms))
+
+(macro gluster_read_glusterd_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 glusterd_lib_t glusterd_lib_t)))
+
+(macro gluster_read_glusterd_lnk_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 glusterd_lib_t glusterd_lib_t)))
+
+(macro gluster_read_glusterd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 glusterd_lib_t read_file_perms)
+    (allow ARG1 glusterd_lib_t list_dir_perms)
+    (allow ARG1 glusterd_lib_t read_lnk_file_perms))
+
+(macro gluster_manage_glusterd_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 glusterd_lib_t manage_file_perms)
+    (allow ARG1 glusterd_lib_t manage_dir_perms)
+    (allow ARG1 glusterd_lib_t manage_lnk_file_perms))
+
+(macro gluster_admin ((type ARG1)(role ARG2))
+    (typeattributeset gluster_admin_subject_type ARG1)
+    (optional gluster_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional gluster_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
