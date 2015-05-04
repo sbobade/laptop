@@ -1,0 +1,386 @@
+(typeattribute nfs_admin_subject_type)
+
+(typeattribute nfs_subject_type)
+
+(typeattribute nfs_unit_object_type)
+(typeattribute nfs_object_type)
+
+(typeattributeset nfs_object_type nfs_unit_object_type)
+
+(type rpcd_t)
+(type rpcd_exec_t)
+(call subject_common_type (rpcd_t))
+(call subject_entry (rpcd_t rpcd_exec_t))
+(roletype system_r rpcd_t)
+
+(typeattributeset nfs_subject_type rpcd_t)
+
+(context rpcd_exec (system_u object_r rpcd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rpc\.idmapd" file rpcd_exec)
+
+(optional rpcd_optional_systemd
+    (call systemd_daemon (rpcd_t rpcd_exec_t))
+
+    (type rpcd_unit_t)
+    (call systemd_unit_object_type (rpcd_unit_t))
+
+    (typeattributeset nfs_unit_object_type rpcd_unit_t)
+
+    (context rpcd_unit (system_u object_r rpcd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*nfs-idmap.*" file rpcd_unit))
+
+(type nfsd_t)
+(type nfsd_exec_t)
+(call subject_common_type (nfsd_t))
+(call subject_entry (nfsd_t nfsd_exec_t))
+(roletype system_r nfsd_t)
+
+(typeattributeset nfs_subject_type nfsd_t)
+
+(context nfsd_exec (system_u object_r nfsd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rpc\.nfsd" file nfsd_exec)
+(filecon "/usr/sbin/exportfs" file nfsd_exec)
+
+(optional nfsd_optional_systemd
+    (call systemd_daemon (nfsd_t nfsd_exec_t))
+
+    (type nfsd_unit_t)
+    (call systemd_unit_object_type (nfsd_unit_t))
+
+    (typeattributeset nfs_unit_object_type nfsd_unit_t)
+
+    (context nfsd_unit (system_u object_r nfsd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*nfs-server.*" file nfsd_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*nfs\.service" file nfsd_unit))
+
+(type mountd_t)
+(type mountd_exec_t)
+(call subject_common_type (mountd_t))
+(call subject_entry (mountd_t mountd_exec_t))
+(roletype system_r mountd_t)
+
+(typeattributeset nfs_subject_type mountd_t)
+
+(context mountd_exec (system_u object_r mountd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rpc\.mountd" file mountd_exec)
+
+(optional mountd_optional_systemd
+    (call systemd_daemon (mountd_t mountd_exec_t))
+
+    (type mountd_unit_t)
+    (call systemd_unit_object_type (mountd_unit_t))
+
+    (typeattributeset nfs_unit_object_type mountd_unit_t)
+
+    (context mountd_unit (system_u object_r mountd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*nfs-mountd.*" file mountd_unit))
+
+(type gssd_t)
+(type gssd_exec_t)
+(call subject_common_type (gssd_t))
+(call subject_entry (gssd_t gssd_exec_t))
+(roletype system_r gssd_t)
+
+(typeattributeset nfs_subject_type gssd_t)
+
+(context gssd_exec (system_u object_r gssd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rpc\.gssd" file gssd_exec)
+
+(optional gssd_optional_systemd
+    (call systemd_daemon (gssd_t gssd_exec_t))
+
+    (type gssd_unit_t)
+    (call systemd_unit_object_type (gssd_unit_t))
+
+    (typeattributeset nfs_unit_object_type gssd_unit_t)
+
+    (context gssd_unit (system_u object_r gssd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*nfs-secure.*" file gssd_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*rpc-gssd.*" file gssd_unit))
+
+(type blkmapd_t)
+(type blkmapd_exec_t)
+(call subject_common_type (blkmapd_t))
+(call subject_entry (blkmapd_t blkmapd_exec_t))
+(roletype system_r blkmapd_t)
+
+(typeattributeset nfs_subject_type blkmapd_t)
+
+(context blkmapd_exec (system_u object_r blkmapd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/blkmapd" file blkmapd_exec)
+
+(type blkmapd_runtime_t)
+(call files_runtime_object_type (blkmapd_runtime_t))
+
+(typeattributeset nfs_object_type blkmapd_runtime_t)
+
+(context blkmapd_runtime (system_u object_r blkmapd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/blkmapd\.pid" file blkmapd_runtime)
+
+(allow blkmapd_t blkmapd_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (blkmapd_t blkmapd_runtime_t file "*"))
+
+(optional blkmapd_optional_systemd
+    (call systemd_daemon (blkmapd_t blkmapd_exec_t))
+
+    (call systemd_pid_object_type (blkmapd_runtime_t))
+
+    (type blkmapd_unit_t)
+    (call systemd_unit_object_type (blkmapd_unit_t))
+
+    (typeattributeset nfs_unit_object_type blkmapd_unit_t)
+
+    (context blkmapd_unit (system_u object_r blkmapd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*nfs-blkmap.*" file blkmapd_unit))
+
+(type statd_t)
+(type statd_exec_t)
+(call subject_common_type (statd_t))
+(call subject_entry (statd_t statd_exec_t))
+(roletype system_r statd_t)
+
+(typeattributeset nfs_subject_type statd_t)
+
+(context statd_exec (system_u object_r statd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rpc\.statd" file statd_exec)
+
+(type statd_runtime_t)
+(call files_runtime_object_type (statd_runtime_t))
+
+(typeattributeset nfs_object_type statd_runtime_t)
+
+(context statd_runtime (system_u object_r statd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/rpc\.statd\.pid" file statd_runtime)
+
+(allow statd_t statd_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (statd_t statd_runtime_t file "*"))
+
+(optional statd_optional_systemd
+    (call systemd_daemon (statd_t statd_exec_t))
+
+    (call systemd_pid_object_type (statd_runtime_t))
+
+    (type statd_unit_t)
+    (call systemd_unit_object_type (statd_unit_t))
+
+    (typeattributeset nfs_unit_object_type statd_unit_t)
+
+    (context statd_unit (system_u object_r statd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*nfs-lock.*" file statd_unit)
+    (filecon "/usr/lib/systemd/system/[^/]*rpc-statd.*" file statd_unit))
+
+(type statdnotify_t)
+(type statdnotify_exec_t)
+(call subject_common_type (statdnotify_t))
+(call subject_entry (statdnotify_t statdnotify_exec_t))
+(roletype system_r statdnotify_t)
+
+(typeattributeset nfs_subject_type statdnotify_t)
+
+(context statdnotify_exec (system_u object_r statdnotify_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/sm-notify" file statdnotify_exec)
+
+(type statdnotify_runtime_t)
+(call files_runtime_object_type (statdnotify_runtime_t))
+
+(typeattributeset nfs_object_type statdnotify_runtime_t)
+
+(context statdnotify_runtime (system_u object_r statdnotify_runtime_t (systemlow systemlow)))
+(filecon "/var/run/sm-notify\.pid" file statdnotify_runtime)
+
+(allow statdnotify_t statdnotify_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (statdnotify_t statdnotify_runtime_t file "*"))
+
+(optional statdnotify_optional_systemd
+    (call systemd_daemon (statdnotify_t statdnotify_exec_t))
+
+    (type statdnotify_unit_t)
+    (call systemd_unit_object_type (statdnotify_unit_t))
+
+    (typeattributeset nfs_unit_object_type statdnotify_unit_t)
+
+    (context statdnotify_unit (system_u object_r statdnotify_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*rpc-statd-notify.*" file statdnotify_unit))
+
+(type nfs_lib_t)
+(call files_lib_object_type (nfs_lib_t))
+
+(typeattributeset nfs_object_type nfs_lib_t)
+
+(context nfs_lib (system_u object_r nfs_lib_t (systemlow systemlow)))
+(filecon "/var/lib/nfs(/.*)?" any nfs_lib)
+
+(type nfs_export_config_t)
+(call files_config_object_type (nfs_export_config_t))
+
+(typeattributeset nfs_object_type nfs_export_config_t)
+
+(context nfs_export_config (system_u object_r nfs_export_config_t (systemlow systemlow)))
+(filecon "/etc/exports" file nfs_export_config)
+(filecon "/etc/exports\.d(/.*)?" any nfs_export_config)
+
+(type nfs_config_t)
+(call files_config_object_type (nfs_config_t))
+
+(typeattributeset nfs_object_type nfs_config_t)
+
+(context nfs_config (system_u object_r nfs_config_t (systemlow systemlow)))
+(filecon "/etc/nfsmount\.conf" file nfs_config)
+(filecon "/etc/sysconfig/nfs" file nfs_config)
+
+(optional nfs_optional_systemd
+    (allow nfs_admin_subject_type nfs_unit_object_type (service (all))))
+
+(allow nfs_admin_subject_type nfs_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (nfs_admin_subject_type nfs_subject_type))
+
+(allow nfs_admin_subject_type nfs_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro nfs_exec_rpcd ((type ARG1))
+    (call can_exec (ARG1 rpcd_exec_t)))
+
+(macro nfs_exec_nfsd ((type ARG1))
+    (call can_exec (ARG1 nfsd_exec_t)))
+
+(macro nfs_exec_mountd ((type ARG1))
+    (call can_exec (ARG1 mountd_exec_t)))
+
+(macro nfs_exec_gssd ((type ARG1))
+    (call can_exec (ARG1 gssd_exec_t)))
+
+(macro nfs_exec_blkmapd ((type ARG1))
+    (call can_exec (ARG1 blkmapd_exec_t)))
+
+(macro nfs_exec_statd ((type ARG1))
+    (call can_exec (ARG1 statd_exec_t)))
+
+(macro nfs_exec_statdnotify ((type ARG1))
+    (call can_exec (ARG1 statdnotify_exec_t)))
+
+(macro nfs_auto_subject_type_transition_rpcd ((type ARG1))
+    (call nfs_send_signal_rpcd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rpcd_exec_t rpcd_t)))
+
+(macro nfs_send_signal_rpcd ((type ARG1))
+    (allow ARG1 rpcd_t (process (signal))))
+
+(macro nfs_auto_subject_type_transition_nfsd ((type ARG1))
+    (call nfs_send_signal_nfsd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nfsd_exec_t nfsd_t)))
+
+(macro nfs_send_signal_nfsd ((type ARG1))
+    (allow ARG1 nfsd_t (process (signal))))
+
+(macro nfs_auto_subject_type_transition_mountd ((type ARG1))
+    (call nfs_send_signal_mountd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 mountd_exec_t mountd_t)))
+
+(macro nfs_send_signal_mountd ((type ARG1))
+    (allow ARG1 mountd_t (process (signal))))
+
+(macro nfs_auto_subject_type_transition_gssd ((type ARG1))
+    (call nfs_send_signal_gssd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 gssd_exec_t gssd_t)))
+
+(macro nfs_send_signal_gssd ((type ARG1))
+    (allow ARG1 gssd_t (process (signal))))
+
+(macro nfs_auto_subject_type_transition_blkmapd ((type ARG1))
+    (call nfs_send_signal_blkmapd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 blkmapd_exec_t blkmapd_t)))
+
+(macro nfs_send_signal_blkmapd ((type ARG1))
+    (allow ARG1 blkmapd_t (process (signal))))
+
+(macro nfs_auto_subject_type_transition_statd ((type ARG1))
+    (call nfs_send_signal_statd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 statd_exec_t statd_t)))
+
+(macro nfs_send_signal_statd ((type ARG1))
+    (allow ARG1 statd_t (process (signal))))
+
+(macro nfs_auto_subject_type_transition_statdnotify ((type ARG1))
+    (call nfs_send_signal_statdnotify (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 statdnotify_exec_t statdnotify_t)))
+
+(macro nfs_send_signal_statdnotify ((type ARG1))
+    (allow ARG1 statdnotify_t (process (signal))))
+
+(macro nfs_search_nfs_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 nfs_lib_t search_dir_perms))
+
+(macro nfs_list_nfs_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 nfs_lib_t list_dir_perms))
+
+(macro nfs_read_nfs_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 nfs_lib_t nfs_lib_t)))
+
+(macro nfs_read_nfs_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 nfs_lib_t nfs_lib_t)))
+
+(macro nfs_read_nfs_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 nfs_lib_t read_file_perms)
+    (allow ARG1 nfs_lib_t list_dir_perms)
+    (allow ARG1 nfs_lib_t read_lnk_file_perms))
+
+(macro nfs_manage_nfs_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 nfs_lib_t manage_file_perms)
+    (allow ARG1 nfs_lib_t manage_dir_perms)
+    (allow ARG1 nfs_lib_t manage_lnk_file_perms))
+
+(macro nfs_search_nfs_export_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 nfs_export_config_t search_dir_perms))
+
+(macro nfs_list_nfs_export_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 nfs_export_config_t list_dir_perms))
+
+(macro nfs_read_nfs_export_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 nfs_export_config_t nfs_export_config_t)))
+
+(macro nfs_read_nfs_export_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 nfs_export_config_t nfs_export_config_t)))
+
+(macro nfs_read_nfs_export_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 nfs_export_config_t read_file_perms)
+    (allow ARG1 nfs_export_config_t list_dir_perms)
+    (allow ARG1 nfs_export_config_t read_lnk_file_perms))
+
+(macro nfs_manage_nfs_export_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 nfs_export_config_t manage_file_perms)
+    (allow ARG1 nfs_export_config_t manage_dir_perms)
+    (allow ARG1 nfs_export_config_t manage_lnk_file_perms))
+
+(macro nfs_read_nfs_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 nfs_config_t read_file_perms))
+
+(macro nfs_manage_nfs_config_files ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 nfs_config_t manage_file_perms))
+
+(macro nfs_admin ((type ARG1)(role ARG2))
+    (typeattributeset nfs_admin_subject_type ARG1)
+    (optional nfs_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional nfs_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
