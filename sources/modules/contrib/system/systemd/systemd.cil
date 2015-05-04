@@ -188,6 +188,9 @@
 
 (allow systemd_t systemd_pid_object_type manage_file_perms)
 
+(call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
+(call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
+
 (call system_link_keyring (systemd_t))
 (call system_mounton_mountpoint_dirs (systemd_t))
 (call system_read_net_proc (systemd_t))
@@ -454,12 +457,13 @@
 (call commands_exec_object_entry_subject (systemd_generic_t))
 (call commands_shell_exec_object_entry_subject (systemd_generic_t))
 
-(call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
-(call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
+(call commands_exec (systemd_generic_t))
 
 (call terminals_use_inherited_console (systemd_generic_t))
 
 (call miscfiles_read_locale (systemd_generic_t))
+
+(call ns_client_subject_type (systemd_generic_t))
 
 (call systemd_send_signal (systemd_generic_t))
 (call systemd_send_signal_all_systemd_daemon_subjects (systemd_generic_t))

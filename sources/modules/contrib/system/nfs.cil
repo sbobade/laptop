@@ -262,6 +262,8 @@
 
 (call miscfiles_read_locale (nfsutils_t))
 
+(call nfs_read_nfs_config_files (nfsutils_t))
+
 (call ns_client_subject_type (nfsutils_t))
 
 (optional nfsutils_optional_systemd
