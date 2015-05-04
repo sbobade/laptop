@@ -161,6 +161,13 @@
 
 (filecon "/" dir rootfs_fs)
 
+(type rpc_pipefs_fs_t)
+(call filesystems_object_type (rpc_pipefs_fs_t))
+(call system_mountpoint_object_type (rpc_pipefs_fs_t))
+
+(context rpc_pipefs_fs (system_u object_r rpc_pipefs_fs_t (systemlow systemlow)))
+(genfscon "rpc_pipefs" "/" rpc_pipefs_fs)
+
 (type sysfs_fs_t)
 (call filesystems_object_type (sysfs_fs_t))
 (call system_mountpoint_object_type (sysfs_fs_t))
