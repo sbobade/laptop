@@ -222,7 +222,7 @@
 (call files_relabel_all_runtime (systemd_t))
 (call files_relabelto_lock_dirs (systemd_t))
 
-(call files_manage_config_runtime_dirs (systemd_t))
+(call files_manage_config_runtime (systemd_t))
 (call files_runtime_object_type_transition_config_runtime_dirs (systemd_t))
 
 (call filesystems_getattr_all_filesystems (systemd_t))
