@@ -511,6 +511,10 @@
     (call system_search_net_proc (ARG1))
     (allow ARG1 net_proc_t read_file_perms))
 
+(macro system_rw_net_proc ((type ARG1))
+    (call system_search_net_proc (ARG1))
+    (allow ARG1 net_proc_t rw_file_perms))
+
 (macro system_write_mtrr_proc ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 mtrr_proc_t write_file_perms))

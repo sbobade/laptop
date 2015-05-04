@@ -11,7 +11,25 @@
 (context gssproxy_exec (system_u object_r gssproxy_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/gssproxy" file gssproxy_exec)
 
+(allow gssproxy_t self rw_fifo_file_perms)
+(allow gssproxy_t self (unix_stream_socket (listen accept)))
+
+(call system_rw_net_proc (gssproxy_t))
+
+(call devices_read_urandom (gssproxy_t))
+
+(call files_read_config_files (gssproxy_t)) ; FIXME
+
+(call filesystems_list_debugfs (gssproxy_t))
+
+(call selinux_get_enforce_mode (gssproxy_t))
+
 (call gssproxy_read_config (gssproxy_t))
+
+(call miscfiles_read_locale (gssproxy_t))
+
+(optional gssproxy_optional_journal
+    (call journal_client_subject_type (gssproxy_t)))
 
 (type gssproxy_runtime_t)
 (call files_runtime_object_type (gssproxy_runtime_t))
@@ -44,6 +62,7 @@
 (filecon "/var/lib/gssproxy(/.*)?" any gssproxy_lib)
 
 (allow gssproxy_t gssproxy_lib_t manage_dir_perms)
+(allow gssproxy_t gssproxy_lib_t manage_sock_file_perms)
 (allow gssproxy_t gssproxy_lib_t manage_file_perms)
 (call files_lib_object_type_transition (gssproxy_t gssproxy_lib_t dir "*"))
 
@@ -148,12 +167,14 @@
     (call files_search_lib (ARG1))
     (allow ARG1 gssproxy_lib_t read_file_perms)
     (allow ARG1 gssproxy_lib_t list_dir_perms)
+    (allow ARG1 gssproxy_lib_t read_sock_file_perms)
     (allow ARG1 gssproxy_lib_t read_lnk_file_perms))
 
 (macro gssproxy_manage_lib ((type ARG1))
     (call files_search_lib (ARG1))
     (allow ARG1 gssproxy_lib_t manage_file_perms)
     (allow ARG1 gssproxy_lib_t manage_dir_perms)
+    (allow ARG1 gssproxy_lib_t manage_sock_file_perms)
     (allow ARG1 gssproxy_lib_t manage_lnk_file_perms))
 
 (macro gssproxy_admin ((type ARG1)(role ARG2))

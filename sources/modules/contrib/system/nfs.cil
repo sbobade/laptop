@@ -180,6 +180,15 @@
 (context statdnotify_exec (system_u object_r statdnotify_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/sm-notify" file statdnotify_exec)
 
+(allow statdnotify_t self (capability (dac_override)))
+
+(call filesystems_write_proc_files (statdnotify_t))
+
+(call miscfiles_read_locale (statdnotify_t))
+
+(optional statdnotify_optional_journal
+    (call journal_client_subject_type (statdnotify_t)))
+
 (type statdnotify_runtime_t)
 (call files_runtime_object_type (statdnotify_runtime_t))
 
@@ -231,6 +240,20 @@
 (optional nfs_optional_systemd
     (allow nfs_admin_subject_type nfs_unit_object_type (service (all))))
 
+(type nfsutils_t)
+(type nfsutils_exec_t)
+(call subject_common_type (nfsutils_t))
+(call subject_entry (nfsutils_t nfsutils_exec_t))
+(roletype system_r nfsutils_t)
+
+(typeattributeset nfs_subject_type nfsutils_t)
+
+(context nfsutils_exec (system_u object_r nfsutils_exec_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/scripts/nfs-utils_env\.sh" file nfsutils_exec)
+
+(optional nfsutils_optional_systemd
+    (call systemd_daemon (nfsutils_t nfsutils_exec_t)))
+
 (allow nfs_admin_subject_type nfs_subject_type (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (nfs_admin_subject_type nfs_subject_type))
 
@@ -242,6 +265,9 @@
 
 (macro nfs_exec_nfsd ((type ARG1))
     (call can_exec (ARG1 nfsd_exec_t)))
+
+(macro nfs_exec_nfsutils ((type ARG1))
+    (call can_exec (ARG1 nfsutils_exec_t)))
 
 (macro nfs_exec_mountd ((type ARG1))
     (call can_exec (ARG1 mountd_exec_t)))
@@ -265,6 +291,14 @@
 
 (macro nfs_send_signal_rpcd ((type ARG1))
     (allow ARG1 rpcd_t (process (signal))))
+
+(macro nfs_auto_subject_type_transition_nfsutils ((type ARG1))
+    (call nfs_send_signal_nfsutils (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 nfsutils_exec_t nfsutils_t)))
+
+(macro nfs_send_signal_nfsutils ((type ARG1))
+    (allow ARG1 nfsutils_t (process (signal))))
 
 (macro nfs_auto_subject_type_transition_nfsd ((type ARG1))
     (call nfs_send_signal_nfsd (ARG1))

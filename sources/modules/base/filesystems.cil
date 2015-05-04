@@ -568,6 +568,9 @@
 (macro filesystems_read_proc_files ((type ARG1))
     (call read_files_pattern (ARG1 proc_fs_t proc_fs_t)))
 
+(macro filesystems_write_proc_files ((type ARG1))
+    (call write_files_pattern (ARG1 proc_fs_t proc_fs_t)))
+
 (macro filesystems_read_proc_lnk_files ((type ARG1))
     (call read_lnk_files_pattern (ARG1 proc_fs_t proc_fs_t)))
 

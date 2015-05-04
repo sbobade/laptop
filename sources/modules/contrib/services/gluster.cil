@@ -4,6 +4,15 @@
 
 (typeattribute gluster_object_type)
 
+(typeattribute gluster_client_subject_type)
+
+(type gluster_port_t)
+(call network_unreserved_port_object_type (gluster_port_t))
+
+(context gluster_port (system_u object_r gluster_port_t (systemlow systemlow)))
+(portcon "tcp" 24007 gluster_port)
+(portcon "udp" 24007 gluster_port)
+
 (type glusterd_t)
 (type glusterd_exec_t)
 (call subject_common_type (glusterd_t))
@@ -14,7 +23,27 @@
 (filecon "/usr/sbin/glusterd" file glusterd_exec)
 (filecon "/usr/sbin/glusterfsd" file glusterd_exec)
 
+(allow glusterd_t self rw_fifo_file_perms)
+(allow glusterd_t self (unix_stream_socket (listen accept)))
+(allow glusterd_t self create_tcp_stream_socket_perms)
+
+(call network_tcp_bind_generic_node (glusterd_t))
+
+(call gluster_tcp_bind_gluster_port (glusterd_t))
+
 (call gluster_exec_glusterd (glusterd_t))
+(call gluster_read_config (glusterd_t))
+
+(optional glusterd_optional_journal
+    (call journal_client_subject_type (glusterd_t)))
+
+(type glusterd_tmpfs_t)
+(call files_tmpfs_object_type (glusterd_tmpfs_t))
+
+(typeattributeset gluster_object_type glusterd_tmpfs_t)
+
+(allow glusterd_t glusterd_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (glusterd_t glusterd_tmpfs_t file "*"))
 
 (type glusterd_runtime_t)
 (call files_runtime_object_type (glusterd_runtime_t))
@@ -22,10 +51,13 @@
 (typeattributeset gluster_object_type glusterd_runtime_t)
 
 (context glusterd_runtime (system_u object_r glusterd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/glusterd\.pid" file glusterd_runtime)
 (filecon "/var/run/glusterd\.socket" socket glusterd_runtime)
 
+(allow glusterd_t glusterd_runtime_t manage_file_perms)
 (allow glusterd_t glusterd_runtime_t manage_sock_file_perms)
 (call files_runtime_object_type_transition (glusterd_t glusterd_runtime_t sock_file "*"))
+(call files_runtime_object_type_transition (glusterd_t glusterd_runtime_t file "*"))
 
 (allow glusterd_t gluster_runtime_t manage_dir_perms)
 (allow glusterd_t gluster_runtime_t manage_file_perms)
@@ -94,6 +126,22 @@
 
 (roleattributeset gluster_role system_r)
 
+(allow gluster_client_subject_type self rw_fifo_file_perms)
+
+(allow gluster_t glusterd_log_t (file (setattr)))
+(allow gluster_t glusterd_log_t create_file_perms)
+(allow gluster_t glusterd_log_t append_file_perms)
+(allow gluster_t glusterd_log_t delete_file_perms)
+(allow gluster_t glusterd_log_t read_file_perms)
+
+(call miscfiles_read_locale (gluster_client_subject_type))
+
+(call gluster_stream_connect_glusterd (gluster_t))
+(call gluster_client_subject_type (gluster_t))
+
+(optional gluster_client_subject_type_optional_journal
+    (call journal_client_subject_type (gluster_client_subject_type)))
+
 (context gluster_exec (system_u object_r gluster_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/glusterfs" file gluster_exec)
 (filecon "/usr/sbin/gluster" file gluster_exec)
@@ -120,7 +168,11 @@
 (macro gluster_exec_glusterd ((type ARG1))
     (call can_exec (ARG1 glusterd_exec_t)))
 
+(macro gluster_client_subject_type ((type ARG1))
+    (typeattributeset gluster_client_subject_type ARG1))
+
 (macro gluster_exec_gluster ((type ARG1))
+    (call gluster_client_subject_type (ARG1))
     (call can_exec (ARG1 gluster_exec_t)))
 
 (macro gluster_auto_subject_type_transition_glusterd ((type ARG1))
@@ -143,6 +195,14 @@
     (call gluster_auto_subject_type_transition (ARG1))
     (roleattributeset gluster_role ARG2))
 
+(macro gluster_read_glusterd_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 glusterd_runtime_t read_file_perms))
+
+(macro gluster_manage_glusterd_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 glusterd_runtime_t manage_file_perms))
+
 (macro gluster_read_glusterd_runtime_sock_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (allow ARG1 glusterd_runtime_t read_sock_file_perms))
@@ -150,6 +210,14 @@
 (macro gluster_manage_glusterd_runtime_sock_files ((type ARG1))
     (call files_rw_runtime_dirs (ARG1))
     (allow ARG1 glusterd_runtime_t manage_sock_file_perms))
+
+(macro gluster_read_glusterd_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 glusterd_tmpfs_t read_file_perms))
+
+(macro gluster_manage_glusterd_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 glusterd_tmpfs_t manage_file_perms))
 
 (macro gluster_search_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
@@ -239,6 +307,17 @@
     (allow ARG1 glusterd_lib_t manage_file_perms)
     (allow ARG1 glusterd_lib_t manage_dir_perms)
     (allow ARG1 glusterd_lib_t manage_lnk_file_perms))
+
+(macro gluster_tcp_connect_gluster_port ((type ARG1))
+    (allow ARG1 gluster_port_t (tcp_socket (name_connect))))
+
+(macro gluster_tcp_bind_gluster_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 gluster_port_t (tcp_socket (name_bind))))
+
+(macro gluster_udp_bind_gluster_port ((type ARG1))
+    (allow ARG1 self (capability (net_bind_service)))
+    (allow ARG1 gluster_port_t (udp_socket (name_bind))))
 
 (macro gluster_admin ((type ARG1)(role ARG2))
     (typeattributeset gluster_admin_subject_type ARG1)

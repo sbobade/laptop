@@ -203,6 +203,9 @@
 (optional staff_emacs_optional_staff_git
     (call git_role_template (staff_r staff_emacs_t staff_git_t)))
 
+(optional staff_optional_gluster
+    (call gluster_exec_gluster (staff_subject_type)))
+
 (optional staff_optional_gpg
     (call gpg_run_dirmngr (staff_subject_type staff_r))
     (call gpg_run_gpg2keys (staff_subject_type staff_r))
