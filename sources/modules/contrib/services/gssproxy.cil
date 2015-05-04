@@ -1,0 +1,164 @@
+(typeattribute gssproxy_admin_subject_type)
+
+(typeattribute gssproxy_object_type)
+
+(type gssproxy_t)
+(type gssproxy_exec_t)
+(call subject_common_type (gssproxy_t))
+(call subject_entry (gssproxy_t gssproxy_exec_t))
+(roletype system_r gssproxy_t)
+
+(context gssproxy_exec (system_u object_r gssproxy_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/gssproxy" file gssproxy_exec)
+
+(call gssproxy_read_config (gssproxy_t))
+
+(type gssproxy_runtime_t)
+(call files_runtime_object_type (gssproxy_runtime_t))
+
+(typeattributeset gssproxy_object_type gssproxy_runtime_t)
+
+(context gssproxy_runtime (system_u object_r gssproxy_runtime_t (systemlow systemlow)))
+(filecon "/var/run/gssproxy\.pid" file gssproxy_runtime)
+(filecon "/var/run/gssproxy\.sock" socket gssproxy_runtime)
+
+(allow gssproxy_t gssproxy_runtime_t manage_file_perms)
+(allow gssproxy_t gssproxy_runtime_t manage_sock_file_perms)
+(call files_runtime_object_type_transition (gssproxy_t gssproxy_runtime_t sock_file "*"))
+(call files_runtime_object_type_transition (gssproxy_t gssproxy_runtime_t file "*"))
+
+(type gssproxy_config_t)
+(call files_config_object_type (gssproxy_config_t))
+
+(typeattributeset gssproxy_object_type gssproxy_config_t)
+
+(context gssproxy_config (system_u object_r gssproxy_config_t (systemlow systemlow)))
+(filecon "/etc/gssproxy(/.*)?" any gssproxy_config)
+
+(type gssproxy_lib_t)
+(call files_lib_object_type (gssproxy_lib_t))
+
+(typeattributeset gssproxy_object_type gssproxy_lib_t)
+
+(context gssproxy_lib (system_u object_r gssproxy_lib_t (systemlow systemlow)))
+(filecon "/var/lib/gssproxy(/.*)?" any gssproxy_lib)
+
+(allow gssproxy_t gssproxy_lib_t manage_dir_perms)
+(allow gssproxy_t gssproxy_lib_t manage_file_perms)
+(call files_lib_object_type_transition (gssproxy_t gssproxy_lib_t dir "*"))
+
+(optional gssproxy_optional_systemd
+    (call systemd_daemon (gssproxy_t gssproxy_exec_t))
+
+    (call systemd_pid_object_type (gssproxy_runtime_t))
+
+    (type gssproxy_unit_t)
+    (call systemd_unit_object_type (gssproxy_unit_t))
+
+    (typeattributeset gssproxy_object_type gssproxy_unit_t)
+
+    (context gssproxy_unit (system_u object_r gssproxy_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*gssproxy.*" file gssproxy_unit)
+
+    (allow gssproxy_admin_subject_type gssproxy_unit_t (service (all))))
+
+(allow gssproxy_admin_subject_type gssproxy_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(allow gssproxy_admin_subject_type gssproxy_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (gssproxy_admin_subject_type gssproxy_t))
+
+(macro gssproxy_exec ((type ARG1))
+    (call can_exec (ARG1 gssproxy_exec_t)))
+
+(macro gssproxy_auto_subject_type_transition ((type ARG1))
+    (call gssproxy_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 gssproxy_exec_t gssproxy_t)))
+
+(macro gssproxy_send_signal ((type ARG1))
+    (allow ARG1 gssproxy_t (process (signal))))
+
+(macro gssproxy_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 gssproxy_runtime_t read_file_perms))
+
+(macro gssproxy_manage_runtime_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 gssproxy_runtime_t manage_file_perms))
+
+(macro gssproxy_read_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 gssproxy_runtime_t read_sock_file_perms))
+
+(macro gssproxy_manage_runtime_sock_files ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 gssproxy_runtime_t manage_sock_file_perms))
+
+(macro gssproxy_stream_connect ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern (ARG1 gssproxy_runtime_t gssproxy_runtime_t
+        gssproxy_t)))
+
+(macro gssproxy_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 gssproxy_config_t search_dir_perms))
+
+(macro gssproxy_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 gssproxy_config_t list_dir_perms))
+
+(macro gssproxy_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 gssproxy_config_t gssproxy_config_t)))
+
+(macro gssproxy_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 gssproxy_config_t gssproxy_config_t)))
+
+(macro gssproxy_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 gssproxy_config_t read_file_perms)
+    (allow ARG1 gssproxy_config_t list_dir_perms)
+    (allow ARG1 gssproxy_config_t read_lnk_file_perms))
+
+(macro gssproxy_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 gssproxy_config_t manage_file_perms)
+    (allow ARG1 gssproxy_config_t manage_dir_perms)
+    (allow ARG1 gssproxy_config_t manage_lnk_file_perms))
+
+(macro gssproxy_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 gssproxy_lib_t search_dir_perms))
+
+(macro gssproxy_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 gssproxy_lib_t list_dir_perms))
+
+(macro gssproxy_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 gssproxy_lib_t gssproxy_lib_t)))
+
+(macro gssproxy_read_lnk_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 gssproxy_lib_t gssproxy_lib_t)))
+
+(macro gssproxy_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 gssproxy_lib_t read_file_perms)
+    (allow ARG1 gssproxy_lib_t list_dir_perms)
+    (allow ARG1 gssproxy_lib_t read_lnk_file_perms))
+
+(macro gssproxy_manage_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 gssproxy_lib_t manage_file_perms)
+    (allow ARG1 gssproxy_lib_t manage_dir_perms)
+    (allow ARG1 gssproxy_lib_t manage_lnk_file_perms))
+
+(macro gssproxy_admin ((type ARG1)(role ARG2))
+    (typeattributeset gssproxy_admin_subject_type ARG1)
+    (optional gssproxy_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional gssproxy_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

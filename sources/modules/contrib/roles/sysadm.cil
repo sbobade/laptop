@@ -276,6 +276,9 @@
 
     (call gpg_manage_config (sysadm_t)))
 
+(optional sysadm_optional_gssproxy
+    (call gssproxy_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_hostname
     (call hostname_run (sysadm_subject_type sysadm_r))
     (call hostname_manage_config_files (sysadm_t)))
