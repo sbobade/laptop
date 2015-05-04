@@ -360,6 +360,9 @@
     (call nettools_run (sysadm_subject_type sysadm_r))
     (call nettools_run_traceroute (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_nfs
+    (call nfs_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_nm
     (call nm_admin (sysadm_t sysadm_r))
     (call nm_run_nmcli (sysadm_subject_type sysadm_r)))
