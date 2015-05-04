@@ -139,6 +139,7 @@
 (call gluster_delete_glusterd_log_files (gluster_t))
 (call gluster_append_glusterd_log_files (gluster_t))
 (call gluster_setattr_glusterd_log_files (gluster_t))
+(call gluster_read_config (gluster_t))
 (call gluster_read_glusterd_lib (gluster_t))
 (call gluster_stream_connect_glusterd (gluster_t))
 (call gluster_client_subject_type (gluster_t))
