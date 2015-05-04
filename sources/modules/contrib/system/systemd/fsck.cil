@@ -13,7 +13,7 @@
 
 (allow fsck_t fsck_runtime_t manage_dir_perms)
 (allow fsck_t fsck_runtime_t manage_file_perms)
-(call files_runtime_object_type_transition (fsck_t fsck_runtime_t dir "*"))
+(call fsck_runtime_object_type_transition_runtime_dirs (fsck_t))
 
 (allow fsck_t self rw_fifo_file_perms)
 
@@ -75,3 +75,6 @@
     (allow ARG1 fsck_runtime_t manage_file_perms)
     (allow ARG1 fsck_runtime_t manage_dir_perms)
     (allow ARG1 fsck_runtime_t manage_lnk_file_perms))
+
+(macro fsck_runtime_object_type_transition_runtime_dirs ((type ARG1))
+    (call files_runtime_object_type_transition (ARG1 fsck_runtime_t dir "fsck")))

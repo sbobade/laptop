@@ -22,7 +22,7 @@
 (typeattributeset gluster_object_type glusterd_runtime_t)
 
 (context glusterd_runtime (system_u object_r glusterd_runtime_t (systemlow systemlow)))
-(filecon "/var/run/glusterd\.sock" socket glusterd_runtime)
+(filecon "/var/run/glusterd\.socket" socket glusterd_runtime)
 
 (allow glusterd_t glusterd_runtime_t manage_sock_file_perms)
 (call files_runtime_object_type_transition (glusterd_t glusterd_runtime_t sock_file "*"))

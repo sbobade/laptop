@@ -62,7 +62,6 @@
 
 (context fstools_runtime (system_u object_r fstools_runtime_t (systemlow systemlow)))
 (filecon "/var/run/blkid(/.*)?" any fstools_runtime)
-(filecon "/var/run/fsck(/.*)?" any fstools_runtime)
 
 (allow fstools_t self (capability (sys_admin sys_rawio dac_override)))
 (allow fstools_t self (process (setfscreate)))
@@ -117,7 +116,8 @@
             (call files_rw_all_files_except (fstools_t)))))
 
 (optional fstools_optional_fsck
-    (call fsck_manage_runtime_files (fstools_t)))
+    (call fsck_manage_runtime (fstools_t))
+    (call fsck_runtime_object_type_transition_runtime_dirs (fstools_t)))
 
 (optional fstools_optional_machine
     (call machine_rw_lib_files (fstools_t)))
@@ -173,8 +173,7 @@
     (call read_lnk_files_pattern (ARG1 fstools_runtime_t fstools_runtime_t)))
 
 (macro fstools_runtime_object_type_transition_runtime_dirs ((type ARG1))
-    (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "blkid"))
-    (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "fsck")))
+    (call files_runtime_object_type_transition (ARG1 fstools_runtime_t dir "blkid")))
 
 (macro fstools_use_fd ((type ARG1))
     (allow ARG1 fstools_t (fd (use))))
