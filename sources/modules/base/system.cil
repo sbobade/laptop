@@ -271,6 +271,9 @@
 (optional system_optional_fstools
     (call fstools_use_fd (system_t)))
 
+(optional system_optional_gssproxy
+    (call gssproxy_stream_connect (system_t)))
+
 (optional system_optional_kmod
     (call kmod_auto_subject_type_transition (system_t)))
 

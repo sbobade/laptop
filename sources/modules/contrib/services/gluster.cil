@@ -34,6 +34,8 @@
 (call gluster_exec_glusterd (glusterd_t))
 (call gluster_read_config (glusterd_t))
 
+(call miscfiles_read_locale (glusterd_t))
+
 (optional glusterd_optional_journal
     (call journal_client_subject_type (glusterd_t)))
 
@@ -108,6 +110,8 @@
 (optional glusterd_optional_systemd
     (call systemd_daemon (glusterd_t glusterd_exec_t))
 
+    (call systemd_pid_object_type (glusterd_runtime_t))
+
     (type glusterd_unit_t)
     (call systemd_unit_object_type (glusterd_unit_t))
 
@@ -128,14 +132,13 @@
 
 (allow gluster_client_subject_type self rw_fifo_file_perms)
 
-(allow gluster_t glusterd_log_t (file (setattr)))
-(allow gluster_t glusterd_log_t create_file_perms)
-(allow gluster_t glusterd_log_t append_file_perms)
-(allow gluster_t glusterd_log_t delete_file_perms)
-(allow gluster_t glusterd_log_t read_file_perms)
-
 (call miscfiles_read_locale (gluster_client_subject_type))
 
+(call gluster_read_glusterd_log_files (gluster_t))
+(call gluster_create_glusterd_log_files (gluster_t))
+(call gluster_delete_glusterd_log_files (gluster_t))
+(call gluster_append_glusterd_log_files (gluster_t))
+(call gluster_setattr_glusterd_log_files (gluster_t))
 (call gluster_stream_connect_glusterd (gluster_t))
 (call gluster_client_subject_type (gluster_t))
 
@@ -307,6 +310,38 @@
     (allow ARG1 glusterd_lib_t manage_file_perms)
     (allow ARG1 glusterd_lib_t manage_dir_perms)
     (allow ARG1 glusterd_lib_t manage_lnk_file_perms))
+
+(macro gluster_search_glusterd_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 glusterd_log_t search_dir_perms))
+
+(macro gluster_list_glusterd_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 glusterd_log_t list_dir_perms))
+
+(macro gluster_read_glusterd_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_files_pattern (ARG1 glusterd_log_t glusterd_log_t)))
+
+(macro gluster_read_glusterd_log_lnk_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_lnk_files_pattern (ARG1 glusterd_log_t glusterd_log_t)))
+
+(macro gluster_create_glusterd_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call create_files_pattern (ARG1 glusterd_log_t glusterd_log_t)))
+
+(macro gluster_delete_glusterd_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call delete_files_pattern (ARG1 glusterd_log_t glusterd_log_t)))
+
+(macro gluster_append_glusterd_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call append_files_pattern (ARG1 glusterd_log_t glusterd_log_t)))
+
+(macro gluster_setattr_glusterd_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call setattr_files_pattern (ARG1 glusterd_log_t glusterd_log_t)))
 
 (macro gluster_tcp_connect_gluster_port ((type ARG1))
     (allow ARG1 gluster_port_t (tcp_socket (name_connect))))

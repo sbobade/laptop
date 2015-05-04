@@ -186,6 +186,8 @@
 
 (call miscfiles_read_locale (statdnotify_t))
 
+(call nfs_read_nfs_lib (statdnotify_t))
+
 (optional statdnotify_optional_journal
     (call journal_client_subject_type (statdnotify_t)))
 
@@ -213,6 +215,7 @@
 
 (type nfs_lib_t)
 (call files_lib_object_type (nfs_lib_t))
+(call system_mountpoint_object_type (nfs_lib_t))
 
 (typeattributeset nfs_object_type nfs_lib_t)
 
@@ -251,8 +254,15 @@
 (context nfsutils_exec (system_u object_r nfsutils_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/scripts/nfs-utils_env\.sh" file nfsutils_exec)
 
+(call commands_exec (nfsutils_t))
+(call commands_mprot_read_shell_exec_files (nfsutils_t))
+
 (call files_manage_config_runtime (nfsutils_t))
 (call files_runtime_object_type_transition_config_runtime_dirs (nfsutils_t))
+
+(call miscfiles_read_locale (nfsutils_t))
+
+(call ns_client_subject_type (nfsutils_t))
 
 (optional nfsutils_optional_systemd
     (call systemd_daemon (nfsutils_t nfsutils_exec_t)))
