@@ -19,6 +19,7 @@
 (filecon "/usr/bin/repoquery" file rpm_exec)
 (filecon "/usr/bin/rpm" file rpm_exec)
 (filecon "/usr/bin/yum" file rpm_exec)
+(filecon "/usr/bin/yum-deprecated" file rpm_exec)
 (filecon "/usr/bin/yum-builddep" file rpm_exec)
 (filecon "/usr/sbin/yum-complete-transaction" file rpm_exec)
 (filecon "/usr/sbin/yumdb" file rpm_exec)
