@@ -107,6 +107,13 @@
 (call usersubject_home_dir_object_type_transition_user_home (firefox_t dir "Desktop"))
 (call usersubject_home_dir_object_type_transition_user_home (firefox_t file "*"))
 
+(call usersubject_create_cache_home_dirs (firefox_t))
+(call usersubject_home_dir_object_type_transition_cache_home_dirs (firefox_t))
+
+(call usersubject_manage_fonts_home (firefox_t))
+(call usersubject_home_dir_object_type_transition_fonts_home_dirs (firefox_t))
+(call usersubject_cache_home_object_type_transition_fonts_home_dirs (firefox_t))
+
 (call xserver_tmpfs_client_template (firefox_t firefox_tmpfs_t))
 
 (booleanif firefox_use_webcam
