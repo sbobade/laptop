@@ -47,6 +47,7 @@
 (call commands_mmap_all (dracut_t))
 
 (call devices_read_urandom (dracut_t))
+(call devices_rw_lvm_control (dracut_t))
 
 (call files_read_config (dracut_t))
 (call files_read_data (dracut_t))
