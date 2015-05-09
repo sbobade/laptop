@@ -54,6 +54,7 @@
 (call xserver_tmpfs_client_template (xpdf_t xpdf_tmpfs_t))
 
 (optional xpdf_optional_firefox
+    (call firefox_read_tmpfs_files (xpdf_t))
     (call firefox_run (xpdf_t xpdf_role)))
 
 (macro xpdf_exec ((type ARG1))
