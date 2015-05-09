@@ -57,6 +57,9 @@
     (call firefox_read_tmpfs_files (xpdf_t))
     (call firefox_run (xpdf_t xpdf_role)))
 
+(optional xpdf_optional_mail
+    (call mail_read_mutt_tmpfs_files (xpdf_t)))
+
 (macro xpdf_exec ((type ARG1))
     (call can_exec (ARG1 xpdf_exec_t)))
 
