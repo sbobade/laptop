@@ -709,6 +709,9 @@
     (type sysadm_timedatectl_t)
     (call timedate_role_template_timedatectl (sysadm_r sysadm_subject_type sysadm_timedatectl_t)))
 
+(optional sysadm_optional_timedatex
+    (call timedatex_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_timesync
     (call timesync_admin (sysadm_t sysadm_r)))
 

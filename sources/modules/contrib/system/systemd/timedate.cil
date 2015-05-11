@@ -17,13 +17,6 @@
 (context timedatectl_exec (system_u object_r timedatectl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/timedatectl" file timedatectl_exec)
 
-(type timedatex_t)
-(type timedatex_exec_t)
-(call systemd_daemon (timedatex_t timedatex_exec_t))
-
-(context timedatex_exec (system_u object_r timedatex_exec_t (systemlow systemlow)))
-(filecon "/usr/sbin/timedatex" file timedatex_exec)
-
 (type timedated_t)
 (type timedated_exec_t)
 (call systemd_daemon (timedated_t timedated_exec_t))
@@ -40,7 +33,6 @@
 
 (context timedated_unit (system_u object_r timedated_unit_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/system/[^/]*systemd-timedated.*" file timedated_unit)
-(filecon "/usr/lib/systemd/system/[^/]*timedatex.*" file timedated_unit)
 
 (type timedated_dbus_config_t)
 (call dbus_config_object_type (timedated_dbus_config_t))
@@ -101,32 +93,6 @@
 (call miscfiles_read_locale (timedate_timedatectl_client_subject_type))
 (call miscfiles_read_all_terminfo (timedate_timedatectl_client_subject_type))
 
-(call devices_read_clock (timedatex_t))
-
-(call filesystems_read_devtmpfs_lnk_files (timedatex_t))
-
-(call dbus_acquire_system_service (timedatex_t))
-(call dbus_system_client_subject_type (timedatex_t))
-
-(call hwclock_read_config_files (timedatex_t))
-
-(call miscfiles_read_locale (timedatex_t))
-
-(call systemd_search_config (timedatex_t))
-(call systemd_dbus_chat (timedatex_t))
-(call systemd_status_system (timedatex_t))
-(call systemd_reload_system (timedatex_t))
-(call systemd_list_unit (timedatex_t))
-(call systemd_read_unit_files (timedatex_t))
-
-(optional timedatex_optional_ntpd
-    (call ntp_start_ntpd_unit (timedatex_t))
-    (call ntp_enable_ntpd_unit (timedatex_t))
-    (call ntp_status_ntpd_unit (timedatex_t)))
-
-(optional timedatex_optional_polkit
-    (call polkit_dbus_chat_polkitd (timedatex_t)))
-
 (allow timedate_timedated_admin_subject_type timedated_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (timedate_timedated_admin_subject_type timedated_t))
 
@@ -155,17 +121,6 @@
 
 (macro timedate_send_signal_timedated ((type ARG1))
     (allow ARG1 timedated_t (process (signal))))
-
-(macro timedate_exec_timedatex ((type ARG1))
-    (call can_exec (ARG1 timedatex_exec_t)))
-
-(macro timedate_auto_subject_type_transition_timedatex ((type ARG1))
-    (call timedate_send_signal_timedatex (ARG1))
-    (call auto_subject_type_transition_pattern
-        (ARG1 timedatex_exec_t timedatex_t)))
-
-(macro timedate_send_signal_timedatex ((type ARG1))
-    (allow ARG1 timedatex_t (process (signal))))
 
 (macro timedate_auto_subject_type_transition_timedatectl ((type ARG1))
     (call timedate_send_signal_timedatectl (ARG1))

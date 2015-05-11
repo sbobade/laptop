@@ -1,0 +1,70 @@
+(typeattribute timedatex_admin_subject_type)
+
+(type timedatex_t)
+(type timedatex_exec_t)
+(call subject_common_type (timedatex_t))
+(call subject_entry (timedatex_t timedatex_exec_t))
+(roletype system_r timedatex_t)
+
+(context timedatex_exec (system_u object_r timedatex_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/timedatex" file timedatex_exec)
+
+(call devices_read_clock (timedatex_t))
+
+(call filesystems_read_devtmpfs_lnk_files (timedatex_t))
+
+(call dbus_acquire_system_service (timedatex_t))
+(call dbus_system_client_subject_type (timedatex_t))
+
+(call hwclock_read_config_files (timedatex_t))
+
+(call miscfiles_read_locale (timedatex_t))
+
+(optional timedatex_optional_ntpd
+    (call ntp_start_ntpd_unit (timedatex_t))
+    (call ntp_enable_ntpd_unit (timedatex_t))
+    (call ntp_status_ntpd_unit (timedatex_t)))
+
+(optional timedatex_optional_polkit
+    (call polkit_dbus_chat_polkitd (timedatex_t)))
+
+(optional timedatex_optional_systemd
+    (call systemd_daemon (timedatex_t timedatex_exec_t))
+
+    (type timedatex_unit_t)
+    (call systemd_unit_object_type (timedatex_unit_t))
+
+    (context timedatex_unit (system_u object_r timedatex_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*timedatex.*" file timedatex_unit)
+
+    (call systemd_search_config (timedatex_t))
+    (call systemd_dbus_chat (timedatex_t))
+    (call systemd_status_system (timedatex_t))
+    (call systemd_reload_system (timedatex_t))
+    (call systemd_list_unit (timedatex_t))
+    (call systemd_read_unit_files (timedatex_t))
+
+    (allow timedatex_admin_subject_type timedatex_unit_t (service (all)))
+
+    (allow timedatex_admin_subject_type timedatex_unit_t (all_file_objects
+        (not_mounton_entrypoint_and_execmod))))
+
+(allow timedatex_admin_subject_type timedatex_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (timedatex_admin_subject_type timedatex_t))
+
+(macro timedatex_exec ((type ARG1))
+    (call can_exec (ARG1 timedatex_exec_t)))
+
+(macro timedatex_auto_subject_type_transition ((type ARG1))
+    (call timedatex_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 timedatex_exec_t timedatex_t)))
+
+(macro timedatex_send_signal ((type ARG1))
+    (allow ARG1 timedatex_t (process (signal))))
+
+(macro timedatex_admin ((type ARG1)(role ARG2))
+    (typeattributeset timedatex_admin_subject_type ARG1)
+    (call systemd_system_service_admin_subject_type (ARG1))
+    (optional timedatex_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2))))
