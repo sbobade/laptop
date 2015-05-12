@@ -57,6 +57,17 @@
     (call curl_relabel_home_files (staff_t))
     (call curl_home_dir_object_type_transition_home_files (staff_t)))
 
+(optional staff_optional_dbus_dbussend
+    (type staff_dbussend_t)
+    (call dbus_dbussend_role_template (staff_r staff_subject_type staff_dbussend_t)))
+
+(optional staff_dbus_dbussend_optional_dbususer
+    (call dbususer_client_subject_type (staff_dbussend_t)))
+
+(optional staff_dbus_dbussend_optional_staff_mail_mutt
+    (allow staff_dbussend_t staff_mutt_t (fd (use)))
+    (call mail_read_inherited_mutt_tmpfs_files (staff_dbussend_t)))
+
 (optional staff_optional_staff_dbususer
     (type staff_dbususer_t)
     (call dbususer_role_template (staff_r staff_subject_type staff_dbususer_t))

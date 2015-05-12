@@ -170,3 +170,13 @@
 (macro mail_manage_mutt_config_files ((type ARG1))
     (call files_rw_config_dirs (ARG1))
     (allow ARG1 mutt_config_t manage_file_perms))
+
+(macro mail_read_inherited_mutt_tmpfs_files ((type ARG1))
+    (allow ARG1 mutt_tmpfs_t read_inherited_file_perms))
+
+(macro mail_read_all_inherited_mutt_tmpfs_files ((type ARG1))
+    (call mail_use_all_mutt_fd (ARG1))
+    (allow ARG1 mutt_tmpfs_t read_inherited_file_perms))
+
+(macro mail_use_all_mutt_fd ((type ARG1))
+    (allow ARG1 mail_mutt_subject_type (fd (use))))

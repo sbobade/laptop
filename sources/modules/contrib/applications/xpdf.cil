@@ -29,6 +29,8 @@
 
 (allow xpdf_t self rw_fifo_file_perms)
 
+(call commands_exec_shell (xpdf_t))
+
 (call files_dontaudit_catchall_subject_type (xpdf_t))
 (call files_read_config_files (xpdf_t))
 (call files_read_data_files (xpdf_t))
@@ -57,7 +59,8 @@
     (call firefox_read_tmpfs_files (xpdf_t))
     (call firefox_run (xpdf_t xpdf_role)))
 
-(optional xpdf_optional_mail
+(optional xpdf_optional_mail_mutt
+    (call mail_use_all_mutt_fd (xpdf_t))
     (call mail_read_mutt_tmpfs_files (xpdf_t)))
 
 (macro xpdf_exec ((type ARG1))

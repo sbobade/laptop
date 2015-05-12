@@ -6,6 +6,9 @@
 (typeattribute dbus_object_type)
 (typeattribute dbus_config_object_type)
 
+(typeattribute dbus_dbussend_subject_type)
+(typeattribute dbus_dbussend_client_subject_type)
+
 (type dbusd_t)
 (type dbusd_exec_t)
 (call subject_common_type (dbusd_t))
@@ -94,6 +97,16 @@
 (optional dbusd_optional_unconfined
     (call unconfined_use_fd_all_subjects (dbusd_t)))
 
+(type dbus_dbussend_exec_t)
+(call applications_app (dbus_dbussend_subject_type dbus_dbussend_exec_t))
+
+(context dbus_dbussend_exec (system_u object_r dbus_dbussend_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dbus-send" file dbus_dbussend_exec)
+
+(allow dbus_dbussend_client_subject_type self create_unix_stream_socket_perms)
+
+(call dbus_dbussend_client_subject_type (dbus_dbussend_subject_type))
+
 (allow dbus_subject_type self create_netlink_selinux_socket_perms)
 (allow dbus_subject_type self (unix_stream_socket (listen accept)))
 
@@ -142,6 +155,24 @@
 
 (call dbus_chat_all_unconfined_subjects (dbus_unconfined_subject_type))
 (call dbus_chat_all_system_client_subjects (dbus_unconfined_subject_type))
+
+(macro dbus_dbussend_subject_type ((type ARG1))
+    (typeattributeset dbus_dbussend_subject_type ARG1))
+
+(macro dbus_dbussend_client_subject_type ((type ARG1))
+    (typeattributeset dbus_dbussend_client_subject_type ARG1))
+
+(macro dbus_exec_dbussend ((type ARG1))
+    (call dbus_dbussend_client_subject_type (ARG1))
+    (call can_exec (ARG1 dbus_dbussend_exec_t)))
+
+(macro dbus_dbussend_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call dbus_dbussend_subject_type (ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 dbus_dbussend_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG2 ARG3 (process (signal signull sigkill sigstop)))
+    (call ps_subject_pattern (ARG2 ARG3)))
 
 (macro dbus_exec_dbusd ((type ARG1))
     (call can_exec (ARG1 dbusd_exec_t)))
