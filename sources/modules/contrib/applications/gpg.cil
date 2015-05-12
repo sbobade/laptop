@@ -230,6 +230,8 @@
 
 (call system_read_crypto_sysctl (dirmngr_t))
 
+(call gpg_read_config (dirmngr_t))
+
 (call miscfiles_read_locale (dirmngr_t))
 
 (macro gpg_exec ((type ARG1))

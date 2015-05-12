@@ -17,7 +17,7 @@
 (context udevadm_exec (system_u object_r udevadm_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/udevadm" file udevadm_exec)
 
-(allow udevadm_t self (capability (dac_override)))
+(allow udevadm_t self (capability (dac_override net_admin)))
 (allow udevadm_t self create_netlink_kobject_uevent_socket_perms)
 
 (call devices_rw_all (udevadm_t))
