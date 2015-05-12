@@ -60,7 +60,6 @@
     (call firefox_run (xpdf_t xpdf_role)))
 
 (optional xpdf_optional_mail_mutt
-    (call mail_use_all_mutt_fd (xpdf_t))
     (call mail_read_mutt_tmpfs_files (xpdf_t)))
 
 (macro xpdf_exec ((type ARG1))

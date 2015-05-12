@@ -56,6 +56,8 @@
 (call files_read_data_files (mail_mutt_subject_type))
 (call files_read_config_files (mail_mutt_subject_type))
 
+(call subject_interactive_fd_subject_type (mail_mutt_subject_type))
+
 (call mail_tcp_connect_imap_port (mail_mutt_subject_type))
 (call mail_tcp_connect_smtp_port (mail_mutt_subject_type))
 
@@ -172,10 +174,6 @@
     (allow ARG1 mutt_config_t manage_file_perms))
 
 (macro mail_read_inherited_mutt_tmpfs_files ((type ARG1))
-    (allow ARG1 mutt_tmpfs_t read_inherited_file_perms))
-
-(macro mail_read_all_inherited_mutt_tmpfs_files ((type ARG1))
-    (call mail_use_all_mutt_fd (ARG1))
     (allow ARG1 mutt_tmpfs_t read_inherited_file_perms))
 
 (macro mail_use_all_mutt_fd ((type ARG1))

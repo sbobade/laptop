@@ -65,7 +65,6 @@
     (call dbususer_client_subject_type (staff_dbussend_t)))
 
 (optional staff_dbus_dbussend_optional_staff_mail_mutt
-    (allow staff_dbussend_t staff_mutt_t (fd (use)))
     (call mail_read_inherited_mutt_tmpfs_files (staff_dbussend_t)))
 
 (optional staff_optional_staff_dbususer

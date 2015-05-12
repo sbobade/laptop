@@ -39,9 +39,6 @@
 
 (call xutil_read_home_files (xutil_t))
 
-(optional xutil_optional_mail_mutt
-    (call mail_use_all_mutt_fd (xutil_t)))
-
 (macro xutil_exec ((type ARG1))
     (call can_exec (ARG1 xutil_exec_t)))
 
