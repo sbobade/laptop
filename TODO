@@ -34,3 +34,5 @@
 * e145/x131e: reset container passwords
 
 * test lynx again by downloading .ZIP file
+
+* e145: copy ~/bin/toggle_touchpad_tap from x131e to e145
