@@ -186,7 +186,7 @@
 (call manage_sock_files_pattern (systemd_t systemd_sock_file_socket_activated_object_type
     systemd_sock_file_socket_activated_object_type))
 
-(allow systemd_t systemd_pid_object_type manage_file_perms)
+(allow systemd_t systemd_pid_object_type delete_file_perms)
 
 (call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
 (call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
