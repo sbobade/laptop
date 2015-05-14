@@ -128,7 +128,7 @@
 (call devices_rw_null (subject_common_type))
 (call devices_rw_zero (subject_common_type))
 
-(call selinux_getattr_filesystems (subject_common_type))
+(call seutil_libselinux_linked_subject_type (subject_common_type))
 
 (optional subject_common_type_optional_libraries
     (call libraries_use_ld_so (subject_common_type))

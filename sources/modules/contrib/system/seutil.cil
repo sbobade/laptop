@@ -13,6 +13,8 @@
 
 (typeattribute seutil_setsebool_client_subject_type)
 
+(typeattribute seutil_libselinux_linked_subject_type)
+
 (type load_policy_t)
 (type load_policy_exec_t)
 (call applications_app (load_policy_t load_policy_exec_t))
@@ -253,6 +255,12 @@
 (typeattributeset can_not_write_binary_policy
     (not (can_write_binary_policy)))
 (neverallow can_not_write_binary_policy policy_config_t (file (create write)))
+
+(call selinux_getattr_filesystems (seutil_libselinux_linked_subject_type))
+(allow seutil_libselinux_linked_subject_type selinux_config_t (dir (search)))
+
+(macro seutil_libselinux_linked_subject_type ((type ARG1))
+    (typeattributeset seutil_libselinux_linked_subject_type ARG1))
 
 (macro seutil_exec_load_policy ((type ARG1))
     (call can_exec (ARG1 load_policy_exec_t)))
