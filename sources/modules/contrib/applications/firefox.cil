@@ -73,6 +73,7 @@
 (call files_read_data (firefox_t))
 (call files_list_mnt (firefox_t))
 (call files_list_tmp (firefox_t))
+(call files_dontaudit_audit_access_tmp_dirs (firefox_t))
 
 (call network_udp_bind_generic_node (firefox_t))
 (call network_tcp_bind_generic_node (firefox_t))

@@ -77,6 +77,9 @@
 (optional pa_optional_journal
     (call journal_client_subject_type (pa_t)))
 
+(optional pa_optional_livestreamer
+    (call livestreamer_use_fd (pa_t)))
+
 (optional pa_optional_login_logind
     (call login_read_logind_systemd_runtime (pa_t)))
 

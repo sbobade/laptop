@@ -1177,6 +1177,9 @@
     (call files_search_var (ARG1))
     (call read_files_pattern (ARG1 var_tmp_t var_tmp_t)))
 
+(macro files_dontaudit_audit_access_tmp_dirs ((type ARG1))
+    (dontaudit ARG1 var_tmp_t (dir (audit_access))))
+
 (macro files_rw_tmp_dirs ((type ARG1))
     (call files_search_var (ARG1))
     (allow ARG1 var_tmp_t rw_dir_perms))

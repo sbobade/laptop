@@ -30,6 +30,7 @@
 (call usersubject_tmpfs_object_type (livestreamer_tmpfs_t))
 
 (allow livestreamer_t livestreamer_tmpfs_t manage_file_perms)
+(dontaudit livestreamer_t livestreamer_tmpfs_t relabel_file_perms)
 (call filesystems_tmpfs_object_type_transition (livestreamer_t livestreamer_tmpfs_t file "*"))
 
 (allow livestreamer_t self rw_fifo_file_perms)
@@ -40,6 +41,7 @@
 
 (call devices_read_urandom (livestreamer_t))
 
+(call files_dontaudit_catchall_subject_type (livestreamer_t))
 (call files_read_config_files (livestreamer_t))
 
 (call http_tcp_connect_http_port (livestreamer_t))
@@ -166,6 +168,9 @@
     (allow ARG1 livestreamer_cache_home_t relabel_file_perms)
     (allow ARG1 livestreamer_cache_home_t relabel_dir_perms)
     (allow ARG1 livestreamer_cache_home_t relabel_lnk_file_perms))
+
+(macro livestreamer_use_fd ((type ARG1))
+    (allow ARG1 livestreamer_t (fd (use))))
 
 (macro livestreamer_cache_home_object_type_transition_cache_home_dirs ((type ARG1))
     (call usersubject_cache_home_object_type_transition (ARG1 livestreamer_cache_home_t dir "livestreamer")))
