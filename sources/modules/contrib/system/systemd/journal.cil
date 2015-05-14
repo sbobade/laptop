@@ -1,21 +1,3 @@
-(tunable journal_audit_facility false)
-
-(tunableif journal_audit_facility
-    (true
-        (allow journald_t self (capability (audit_control)))
-        (allow journald_t self (capability2 (audit_read)))
-        (allow journald_t self create_netlink_audit_socket_perms)
-
-        (call system_rw_netlink_audit_sockets (journald_t))))
-
-        ;(call systemd_netlink_socket_activated (journald_t netlink_audit_socket))
-    ;(false
-        ;(dontaudit journald_t self (capability (audit_control)))
-        ;(dontaudit journald_t self (capability2 (audit_read)))
-        ;(dontaudit journald_t self create_netlink_audit_socket_perms)
-
-        ;(call system_dontaudit_rw_netlink_audit_sockets (journald_t)))))
-
 (roleattribute journal_journalctl_role)
 
 (typeattribute journal_journalctl_subject_type)
@@ -81,7 +63,7 @@
 (type journald_exec_t)
 (call systemd_daemon (journald_t journald_exec_t))
 
-;(call systemd_netlink_socket_activated (journald_t netlink_audit_socket))
+(call systemd_netlink_socket_activated (journald_t netlink_audit_socket))
 (call systemd_unix_dgram_socket_activated (journald_t journald_systemd_runtime_t))
 (call systemd_unix_stream_socket_activated (journald_t journald_systemd_runtime_t))
 
@@ -118,9 +100,9 @@
 (filecon "/var/log/journal(/.*)?" any journal_log)
 (filecon "/var/run/log(/.*)?" any journal_log)
 
-;(allow journald_t self (capability (audit_control)))
-;(allow journald_t self (capability2 (audit_read)))
-;(allow journald_t self create_netlink_audit_socket_perms)
+(allow journald_t self (capability (audit_control)))
+(allow journald_t self (capability2 (audit_read)))
+(allow journald_t self create_netlink_audit_socket_perms)
 (allow journald_t self create_unix_stream_stream_socket_perms)
 
 (allow journald_t journal_log_t manage_dir_perms)
@@ -163,7 +145,7 @@
 (call system_read_kernel_sysctl (journald_t))
 (call system_rw_unix_dgram_sockets (journald_t))
 (call system_rw_unix_stream_sockets (journald_t))
-;(call system_rw_netlink_audit_sockets (journald_t))
+(call system_rw_netlink_audit_sockets (journald_t))
 (call system_use_fd (journald_t))
 
 (call devices_rw_kmsg (journald_t))
