@@ -96,6 +96,7 @@
 (call lvm_run (bootloader_t bootloader_role))
 
 (call miscfiles_read_locale (bootloader_t))
+(call miscfiles_read_modules (bootloader_t))
 
 (call mount_exec (bootloader_t))
 
