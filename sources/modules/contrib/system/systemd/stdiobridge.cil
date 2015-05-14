@@ -26,7 +26,9 @@
 (call systemd_control_system (stdiobridge_t))
 
 (call timedate_dbus_chat_timedated (stdiobridge_t))
-(call timedate_dbus_chat_timedatex (stdiobridge_t))
+
+(optional stdiobridge_optional_timedatex
+    (call timedatex_dbus_chat (stdiobridge_t)))
 
 (macro stdiobridge_exec ((type ARG1))
     (call can_exec (ARG1 stdiobridge_exec_t)))

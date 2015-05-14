@@ -65,9 +65,11 @@
 
 (call dbus_system_client_subject_type (timedate_timedatectl_subject_type))
 
-(call timedate_dbus_chat_timedatex (timedate_timedatectl_subject_type))
 (call timedate_dbus_chat_timedated (timedate_timedatectl_subject_type))
 (call timedate_timedatectl_client_subject_type (timedate_timedatectl_subject_type))
+
+(optional timedate_timedatectl_subject_type_optional_timedatex
+    (call timedatex_dbus_chat (timedate_timedatectl_subject_type)))
 
 (optional timedate_timedatectl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (timedate_timedatectl_subject_type timedate_timedatectl_role)))
@@ -153,10 +155,6 @@
 (macro timedate_dbus_chat_timedated ((type ARG1))
     (allow ARG1 timedated_t (dbus (send_msg)))
     (allow timedated_t ARG1 (dbus (send_msg))))
-
-(macro timedate_dbus_chat_timedatex ((type ARG1))
-    (allow ARG1 timedatex_t (dbus (send_msg)))
-    (allow timedatex_t ARG1 (dbus (send_msg))))
 
 (macro timedate_rw_timedatectl_subject_unix_stream_sockets ((type ARG1))
     (allow ARG1 timedate_timedatectl_subject_type (unix_stream_socket (read write ioctl))))

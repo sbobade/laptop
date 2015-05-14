@@ -63,6 +63,10 @@
 (macro timedatex_send_signal ((type ARG1))
     (allow ARG1 timedatex_t (process (signal))))
 
+(macro timedatex_dbus_chat ((type ARG1))
+    (allow ARG1 timedatex_t (dbus (send_msg)))
+    (allow timedatex_t ARG1 (dbus (send_msg))))
+
 (macro timedatex_admin ((type ARG1)(role ARG2))
     (typeattributeset timedatex_admin_subject_type ARG1)
     (call systemd_system_service_admin_subject_type (ARG1))
