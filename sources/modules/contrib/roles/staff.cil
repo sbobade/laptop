@@ -598,6 +598,9 @@
     (type staff_systemctl_t)
     (call systemd_role_template_systemctl (staff_r staff_subject_type staff_systemctl_t)))
 
+(optional staff_xserver_optional_systemd
+    (call systemd_role_template_systemctl (staff_r staff_xinit_t staff_systemctl_t)))
+
 (optional staff_systemctl_optional_ssh
     (call systemd_rw_systemctl_subject_unix_stream_sockets (staff_ssh_t))
     (call ssh_role_template (staff_r staff_systemctl_t staff_ssh_t)))
