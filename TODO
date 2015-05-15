@@ -34,8 +34,3 @@
 * e145/x131e: reset container passwords
 
 * test lynx again by downloading .ZIP file
-
-* e145: copy ~/bin/toggle_touchpad_tap from x131e to e145
-* e145: remove Environment= from ~/.config/systemd/user/dbus.service and ~/.config/systemd/user/mynofify.service
-    and call /bin/systemctl --user import-environment DISPLAY , and /bin/systemctl --user import-environment DBUS_SESSION_BUS_ADDRESS
-    from ~/.xinitrc
