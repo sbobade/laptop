@@ -13,7 +13,7 @@
 
 (typeattribute seutil_setsebool_client_subject_type)
 
-(typeattribute seutil_libselinux_linked_subject_type)
+(typeattribute seutil_libselinux_linked_client_subject_type)
 
 (type load_policy_t)
 (type load_policy_exec_t)
@@ -256,11 +256,12 @@
     (not (can_write_binary_policy)))
 (neverallow can_not_write_binary_policy policy_config_t (file (create write)))
 
-(call selinux_getattr_filesystems (seutil_libselinux_linked_subject_type))
-(allow seutil_libselinux_linked_subject_type selinux_config_t (dir (search)))
+(call selinux_getattr_filesystems (seutil_libselinux_linked_client_subject_type))
 
-(macro seutil_libselinux_linked_subject_type ((type ARG1))
-    (typeattributeset seutil_libselinux_linked_subject_type ARG1))
+(call seutil_search_selinux_config (seutil_libselinux_linked_client_subject_type))
+
+(macro seutil_libselinux_linked_client_subject_type ((type ARG1))
+    (typeattributeset seutil_libselinux_linked_client_subject_type ARG1))
 
 (macro seutil_exec_load_policy ((type ARG1))
     (call can_exec (ARG1 load_policy_exec_t)))
