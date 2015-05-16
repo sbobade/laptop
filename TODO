@@ -34,3 +34,5 @@
 * e145/x131e: reset container passwords
 
 * test lynx again by downloading .ZIP file
+
+* make qemu work with -sandbox (seccomp)
