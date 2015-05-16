@@ -42,9 +42,7 @@
 (call usersubject_create_data_home_dirs (xpdf_t))
 (call usersubject_home_dir_object_type_transition_data_home_dirs (xpdf_t))
 
-(call filesystems_list_fuse (xpdf_t))
-(call filesystems_read_fuse_files (xpdf_t))
-(call filesystems_read_fuse_lnk_files (xpdf_t))
+(call filesystems_manage_fuse_subject_type (xpdf_t))
 
 (call usersubject_list_user_home (xpdf_t))
 (call usersubject_manage_user_home_files (xpdf_t))

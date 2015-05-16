@@ -5,6 +5,11 @@
 (typeattribute filesystems_unconfined_subject_type)
 (typeattribute filesystems_dontaudit_catchall_subject_type)
 
+(typeattribute filesystems_read_fuse_subject_type)
+(typeattribute filesystems_manage_fuse_subject_type)
+
+(tunable filesystems_use_fuse true)
+
 (type aio_fs_t)
 (call filesystems_object_type (aio_fs_t))
 
@@ -206,6 +211,19 @@
 
 (call filesystems_dontaudit_getattr_all_filesystems (filesystems_dontaudit_catchall_subject_type))
 (call filesystems_dontaudit_manage_all (filesystems_dontaudit_catchall_subject_type))
+
+(tunableif filesystems_use_fuse
+        (true
+            (call filesystems_read_fuse (filesystems_read_fuse_subject_type))
+            (call filesystems_getattr_fuse_filesystems (filesystems_read_fuse_subject_type))
+            (call filesystems_manage_fuse (filesystems_manage_fuse_subject_type))
+            (call filesystems_getattr_fuse_filesystems (filesystems_manage_fuse_subject_type))))
+
+(macro filesystems_read_fuse_subject_type ((type ARG1))
+    (typeattributeset filesystems_read_fuse_subject_type ARG1))
+
+(macro filesystems_manage_fuse_subject_type ((type ARG1))
+    (typeattributeset filesystems_manage_fuse_subject_type ARG1))
 
 (macro filesystems_object_type ((type ARG1))
     (typeattributeset filesystems_object_type ARG1))
@@ -496,7 +514,7 @@
 (macro filesystems_modify_filesystem_quotas ((type ARG1))
     (allow ARG1 fs_t (filesystem (quotamod))))
 
-(macro filesystems_getattr_fuse ((type ARG1))
+(macro filesystems_getattr_fuse_filesystems ((type ARG1))
     (allow ARG1 fuse_fs_t (filesystem (getattr))))
 
 (macro filesystems_mount_fuse ((type ARG1))
@@ -519,6 +537,16 @@
 
 (macro filesystems_read_fuse_lnk_files ((type ARG1))
     (call read_lnk_files_pattern (ARG1 fuse_fs_t fuse_fs_t)))
+
+(macro filesystems_read_fuse ((type ARG1))
+    (allow ARG1 fuse_fs_t list_dir_perms)
+    (allow ARG1 fuse_fs_t read_file_perms)
+    (allow ARG1 fuse_fs_t read_lnk_file_perms))
+
+(macro filesystems_manage_fuse ((type ARG1))
+    (allow ARG1 fuse_fs_t manage_dir_perms)
+    (allow ARG1 fuse_fs_t manage_file_perms)
+    (allow ARG1 fuse_fs_t manage_lnk_file_perms))
 
 (macro filesystems_unmount_fuse ((type ARG1))
     (allow ARG1 fuse_fs_t (filesystem (unmount))))

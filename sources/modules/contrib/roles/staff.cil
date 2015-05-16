@@ -160,9 +160,7 @@
     (type staff_sshfs_t)
     (call fuse_role_template_sshfs (staff_r staff_subject_type staff_sshfs_t))
 
-    (call filesystems_manage_fuse_dirs (staff_t))
-    (call filesystems_manage_fuse_files (staff_t))
-    (call filesystems_manage_fuse_lnk_files (staff_t))
+    (call filesystems_manage_fuse_subject_type (staff_t))
 
     (call fuse_run_fusermount (staff_subject_type staff_r)))
 

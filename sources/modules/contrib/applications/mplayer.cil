@@ -37,9 +37,7 @@
 
 (call files_search_mnt (mplayer_t))
 
-(call filesystems_list_fuse (mplayer_t))
-(call filesystems_read_fuse_files (mplayer_t))
-(call filesystems_read_fuse_lnk_files (mplayer_t))
+(call filesystems_read_fuse_subject_type (mplayer_t))
 
 (call miscfiles_read_locale (mplayer_t))
 

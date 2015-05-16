@@ -199,7 +199,9 @@
 (optional sysadm_optional_fuse
     (call fuse_run_fusermount (sysadm_subject_type sysadm_r))
     (call fuse_run_ulockmgr (sysadm_subject_type sysadm_r))
-    (call fuse_manage_config_files (sysadm_t)))
+    (call fuse_manage_config_files (sysadm_t))
+
+    (call filesystems_manage_fuse_subject_type (sysadm_t)))
 
 (optional sysadm_optional_getty
     (call getty_admin (sysadm_t sysadm_r)))

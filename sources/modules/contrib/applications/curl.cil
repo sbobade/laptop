@@ -26,11 +26,8 @@
 (allow curl_t curl_home_t read_file_perms)
 
 (call filesystems_getattr_filesystems (curl_t))
-(call filesystems_getattr_fuse (curl_t))
 
-(call filesystems_list_fuse (curl_t))
-(call filesystems_manage_fuse_files (curl_t))
-(call filesystems_read_fuse_lnk_files (curl_t))
+(call filesystems_manage_fuse_subject_type (curl_t))
 
 (call curl_read_config_files (curl_t))
 
