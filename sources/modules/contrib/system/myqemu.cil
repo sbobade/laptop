@@ -76,6 +76,7 @@
 (call ns_client_subject_type (myqemu_virt_subject_type))
 
 (call qemu_mprot_read_qemu_exec_files (myqemu_virt_subject_type))
+(call qemu_read_config (myqemu_virt_subject_type))
 
 (call usersubject_use_inherited_terminals (myqemu_virt_subject_type))
 
