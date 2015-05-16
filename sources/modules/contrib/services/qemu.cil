@@ -13,6 +13,14 @@
 (filecon "/usr/bin/qemu-nbd" file qemu_exec)
 (filecon "/usr/bin/qemu-system-x86_64" file qemu_exec)
 
+(type qemu_config_t)
+(call files_config_object_type (qemu_config_t))
+
+(typeattributeset qemu_object_type qemu_config_t)
+
+(context qemu_config (system_u object_r qemu_config_t (systemlow systemlow)))
+(filecon "/etc/qemu(/.*)?" any qemu_config)
+
 (type qemuga_t)
 (type qemuga_exec_t)
 (call subject_common_type (qemuga_t))
@@ -99,6 +107,34 @@
 (macro qemu_manage_qemuga_runtime_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (allow ARG1 qemuga_runtime_t manage_file_perms))
+
+(macro qemu_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 qemu_config_t search_dir_perms))
+
+(macro qemu_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 qemu_config_t list_dir_perms))
+
+(macro qemu_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 qemu_config_t qemu_config_t)))
+
+(macro qemu_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 qemu_config_t qemu_config_t)))
+
+(macro qemu_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 qemu_config_t list_dir_perms)
+    (allow ARG1 qemu_config_t read_file_perms)
+    (allow ARG1 qemu_config_t read_lnk_file_perms))
+
+(macro qemu_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 qemu_config_t manage_dir_perms)
+    (allow ARG1 qemu_config_t manage_file_perms)
+    (allow ARG1 qemu_config_t manage_lnk_file_perms))
 
 (macro qemu_admin ((type ARG1)(role ARG2))
     (typeattributeset qemu_admin_subject_type ARG1)
