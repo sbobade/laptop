@@ -37,4 +37,4 @@
 
 * make qemu work with -sandbox (seccomp)
 
-* work on local fonts: https://wiki.archlinux.org/index.php/Font_configuration
+* work on local fonts: fc-cat(1), fc-cache(1), fc-list(1), fc-match(1), fc-query(1)
