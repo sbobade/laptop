@@ -775,6 +775,9 @@
 
     (call xutil_home_dir_object_type_transition_home_files (staff_t)))
 
+(optional staff_xserver_optional_xwd
+    (call xwd_run (staff_subject_type staff_r)))
+
 (macro staff_subject_type ((type ARG1))
     (typeattributeset staff_subject_type ARG1))
 

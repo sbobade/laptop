@@ -1,0 +1,24 @@
+(roleattribute xwd_role)
+
+(type xwd_t)
+(type xwd_exec_t)
+(call applications_app (xwd_t xwd_exec_t))
+(roletype xwd_role xwd_t)
+
+(context xwd_exec (system_u object_r xwd_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/xwd" file xwd_exec)
+
+(macro xwd_exec ((type ARG1))
+    (call can_exec (ARG1 xwd_exec_t)))
+
+(macro xwd_auto_subject_type_transition ((type ARG1))
+    (call xwd_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 xwd_exec_t xwd_t)))
+
+(macro xwd_send_signal ((type ARG1))
+    (allow ARG1 xwd_t (process (signal))))
+
+(macro xwd_run ((type ARG1)(role ARG2))
+    (call xwd_auto_subject_type_transition (ARG1))
+    (roleattributeset xwd_role ARG2))
