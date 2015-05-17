@@ -176,6 +176,7 @@
 
 (call login_send_signull (usersubject_common_login_subject_type))
 
+(call miscfiles_read_fonts (usersubject_common_login_subject_type))
 (call miscfiles_read_man (usersubject_common_login_subject_type))
 
 (call seutil_read_default_context_files (usersubject_common_login_subject_type))
