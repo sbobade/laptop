@@ -36,3 +36,5 @@
 * test lynx again by downloading .ZIP file
 
 * make qemu work with -sandbox (seccomp)
+
+* work on local fonts: https://wiki.archlinux.org/index.php/Font_configuration

@@ -109,9 +109,9 @@
 (call usersubject_create_cache_home_dirs (firefox_t))
 (call usersubject_home_dir_object_type_transition_cache_home_dirs (firefox_t))
 
-(call usersubject_manage_fonts_home (firefox_t))
-(call usersubject_home_dir_object_type_transition_fonts_home_dirs (firefox_t))
-(call usersubject_cache_home_object_type_transition_fonts_home_dirs (firefox_t))
+(call usersubject_manage_fonts_cache_home (firefox_t))
+(call usersubject_home_dir_object_type_transition_fonts_cache_home (firefox_t))
+(call usersubject_cache_home_object_type_transition_fonts_cache_home_dirs (firefox_t))
 
 (call xserver_tmpfs_client_template (firefox_t firefox_tmpfs_t))
 
@@ -178,11 +178,12 @@
 (call subject_dontaudit_read_all_common_subjects_state (firefox_plugs_t))
 (call subject_execmem_uncond (firefox_plugs_t))
 
-(call usersubject_manage_fonts_home (firefox_plugs_t))
-(call usersubject_cache_home_object_type_transition_fonts_home_dirs (firefox_plugs_t))
-
 (call usersubject_create_cache_home_dirs (firefox_plugs_t))
 (call usersubject_home_dir_object_type_transition_cache_home_dirs (firefox_plugs_t))
+
+(call usersubject_manage_fonts_cache_home (firefox_plugs_t))
+(call usersubject_home_dir_object_type_transition_fonts_cache_home (firefox_plugs_t))
+(call usersubject_cache_home_object_type_transition_fonts_cache_home_dirs (firefox_plugs_t))
 
 (call xserver_tmpfs_client_template (firefox_plugs_t firefox_plugs_tmpfs_t))
 

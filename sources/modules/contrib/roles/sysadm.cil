@@ -20,9 +20,14 @@
 (context sysadm_cert_home (sysadm_u object_r cert_home_t (systemlow systemlow)))
 (filecon "/root/\.pki(/.*)?" any sysadm_cert_home)
 
-(context sysadm_fonts_home (sysadm_u object_r fonts_home_t (systemlow systemlow)))
-(filecon "/root/\.fontconfig(/.*)?" any sysadm_fonts_home)
-(filecon "/root/\.cache/fontconfig(/.*)?" any sysadm_fonts_home)
+(context sysadm_fonts_cache_home (sysadm_u object_r fonts_cache_home_t (systemlow systemlow)))
+(filecon "/root/\.fontconfig(/.*)?" any sysadm_fonts_cache_home)
+(filecon "/root/\.cache/fontconfig(/.*)?" any sysadm_fonts_cache_home)
+
+(context sysadm_fonts_config_home (sysadm_u object_r fonts_config_home_t (systemlow systemlow)))
+(filecon "/root/\.fonts\.conf" file sysadm_fonts_config_home)
+(filecon "/root/\.fonts\.conf\.d(/.*)?" any sysadm_fonts_config_home)
+(filecon "/root/\.config/fontconfig(/.*)?" any sysadm_fonts_config_home)
 
 (context sysadm_terminfo_home (sysadm_u object_r terminfo_home_t (systemlow systemlow)))
 (filecon "/root/\.terminfo" file sysadm_terminfo_home)

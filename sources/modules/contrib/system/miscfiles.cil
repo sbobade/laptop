@@ -1,6 +1,9 @@
 (typeattribute miscfiles_cert_object_type)
 (typeattribute miscfiles_terminfo_config_object_type)
+
 (typeattribute miscfiles_fonts_cache_object_type)
+(typeattribute miscfiles_fonts_config_object_type)
+(typeattribute miscfiles_fonts_data_object_type)
 
 (type cert_t)
 (call files_object_type (cert_t))
@@ -45,12 +48,14 @@
 
 (type fonts_config_t)
 (call files_config_object_type (fonts_config_t))
+(call miscfiles_fonts_config_object_type (fonts_config_t))
 
 (context fonts_config (system_u object_r fonts_config_t (systemlow systemlow)))
 (filecon "/etc/fonts(/.*)?" any fonts_config)
 
 (type fonts_data_t)
 (call files_data_object_type (fonts_data_t))
+(call miscfiles_fonts_data_object_type (fonts_data_t))
 
 (context fonts_data (system_u object_r fonts_data_t (systemlow systemlow)))
 (filecon "/usr/share/fonts(/.*)?" any fonts_data)
@@ -276,6 +281,12 @@
 (macro miscfiles_fonts_cache_object_type ((type ARG1))
     (typeattributeset miscfiles_fonts_cache_object_type ARG1))
 
+(macro miscfiles_fonts_config_object_type ((type ARG1))
+    (typeattributeset miscfiles_fonts_config_object_type ARG1))
+
+(macro miscfiles_fonts_data_object_type ((type ARG1))
+    (typeattributeset miscfiles_fonts_data_object_type ARG1))
+
 (macro miscfiles_dontaudit_setattr_fonts_cache_dirs ((type ARG1))
     (dontaudit ARG1 fonts_cache_t (dir (setattr))))
 
@@ -365,6 +376,48 @@
     (allow ARG1 fonts_config_t list_dir_perms)
     (allow ARG1 fonts_config_t read_lnk_file_perms))
 
+(macro miscfiles_search_all_fonts_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 miscfiles_fonts_config_object_type search_dir_perms)
+    (optional miscfiles_search_all_fonts_config_optional_usersubject
+        (call usersubject_search_config_home (ARG1))))
+
+(macro miscfiles_list_all_fonts_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 miscfiles_fonts_config_object_type list_dir_perms)
+    (optional miscfiles_list_all_fonts_config_optional_usersubject
+        (call usersubject_search_config_home (ARG1))))
+
+(macro miscfiles_read_all_fonts_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 miscfiles_fonts_config_object_type
+        miscfiles_fonts_config_object_type))
+    (optional miscfiles_read_all_fonts_config_file_optional_usersubject
+        (call usersubject_search_config_home (ARG1))))
+
+(macro miscfiles_read_all_fonts_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 miscfiles_fonts_config_object_type
+        miscfiles_fonts_config_object_type))
+    (optional miscfiles_read_all_fonts_config_lnk_files_optional_usersubject
+        (call usersubject_search_config_home (ARG1))))
+
+(macro miscfiles_read_all_fonts_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 miscfiles_fonts_config_object_type read_file_perms)
+    (allow ARG1 miscfiles_fonts_config_object_type list_dir_perms)
+    (allow ARG1 miscfiles_fonts_config_object_type read_lnk_file_perms)
+    (optional miscfiles_read_all_fonts_config_optional_usersubject
+        (call usersubject_search_config_home (ARG1))))
+
+(macro miscfiles_manage_all_fonts_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 miscfiles_fonts_config_object_type manage_file_perms)
+    (allow ARG1 miscfiles_fonts_config_object_type list_dir_perms)
+    (allow ARG1 miscfiles_fonts_config_object_type manage_lnk_file_perms)
+    (optional miscfiles_manage_all_fonts_config_optional_usersubject
+        (call usersubject_manage_fonts_config_home (ARG1))))
+
 (macro miscfiles_search_fonts_data ((type ARG1))
     (call files_search_data (ARG1))
     (allow ARG1 fonts_data_t search_dir_perms))
@@ -387,6 +440,48 @@
     (allow ARG1 fonts_data_t list_dir_perms)
     (allow ARG1 fonts_data_t read_lnk_file_perms))
 
+(macro miscfiles_search_all_fonts_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 miscfiles_fonts_data_object_type search_dir_perms)
+    (optional miscfiles_search_all_fonts_data_optional_usersubject
+        (call usersubject_search_data_home (ARG1))))
+
+(macro miscfiles_list_all_fonts_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 miscfiles_fonts_data_object_type list_dir_perms)
+    (optional miscfiles_list_all_fonts_data_optional_usersubject
+        (call usersubject_search_data_home (ARG1))))
+
+(macro miscfiles_read_all_fonts_data_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_files_pattern (ARG1 miscfiles_fonts_data_object_type
+        miscfiles_fonts_data_object_type))
+    (optional miscfiles_read_all_fonts_data_file_optional_usersubject
+        (call usersubject_search_data_home (ARG1))))
+
+(macro miscfiles_read_all_fonts_data_lnk_files ((type ARG1))
+    (call files_search_data (ARG1))
+    (call read_lnk_files_pattern (ARG1 miscfiles_fonts_data_object_type
+        miscfiles_fonts_data_object_type))
+    (optional miscfiles_read_all_data_config_lnk_files_optional_usersubject
+        (call usersubject_search_data_home (ARG1))))
+
+(macro miscfiles_read_all_fonts_data ((type ARG1))
+    (call files_search_data (ARG1))
+    (allow ARG1 miscfiles_fonts_data_object_type read_file_perms)
+    (allow ARG1 miscfiles_fonts_data_object_type list_dir_perms)
+    (allow ARG1 miscfiles_fonts_data_object_type read_lnk_file_perms)
+    (optional miscfiles_read_all_fonts_data_optional_usersubject
+        (call usersubject_search_data_home (ARG1))))
+
+(macro miscfiles_manage_all_fonts_data ((type ARG1))
+    (call files_rw_data_dirs (ARG1))
+    (allow ARG1 miscfiles_fonts_data_object_type manage_file_perms)
+    (allow ARG1 miscfiles_fonts_data_object_type list_dir_perms)
+    (allow ARG1 miscfiles_fonts_data_object_type manage_lnk_file_perms)
+    (optional miscfiles_manage_all_fonts_data_optional_usersubject
+        (call usersubject_manage_fonts_data_home (ARG1))))
+
 (macro miscfiles_read_fonts ((type ARG1))
     (call miscfiles_read_fonts_cache (ARG1))
     (call miscfiles_read_fonts_config (ARG1))
@@ -394,8 +489,8 @@
 
 (macro miscfiles_read_all_fonts ((type ARG1))
     (call miscfiles_read_all_fonts_cache (ARG1))
-    (call miscfiles_read_fonts_config (ARG1))
-    (call miscfiles_read_fonts_data (ARG1)))
+    (call miscfiles_read_all_fonts_config (ARG1))
+    (call miscfiles_read_all_fonts_data (ARG1)))
 
 (macro miscfiles_search_factory_data ((type ARG1))
     (call files_search_data (ARG1))
