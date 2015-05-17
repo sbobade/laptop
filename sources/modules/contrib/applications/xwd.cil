@@ -8,6 +8,14 @@
 (context xwd_exec (system_u object_r xwd_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/xwd" file xwd_exec)
 
+(call xserver_client_subject_type (xwd_t))
+
+(call usersubject_manage_user_home_files (xwd_t))
+(call usersubject_home_dir_object_type_transition_user_home (xwd_t file "*"))
+
+(call usersubject_manage_tmpfs_files (xwd_t))
+(call usersubject_tmpfs_object_type_transition_user_tmpfs (xwd_t file "*"))
+
 (macro xwd_exec ((type ARG1))
     (call can_exec (ARG1 xwd_exec_t)))
 
