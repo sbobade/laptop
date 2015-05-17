@@ -16,6 +16,7 @@
 
 (call files_dontaudit_catchall_subject_type (qiv_t))
 (call files_read_config_files (qiv_t))
+(call files_read_data_files (qiv_t))
 (call files_search_mnt (qiv_t))
 
 (call filesystems_getattr_filesystems (qiv_t))
@@ -23,6 +24,9 @@
 (call filesystems_read_fuse_subject_type (qiv_t))
 
 (call usersubject_read_user_home_files (qiv_t))
+
+(call miscfiles_read_locale (qiv_t))
+(call miscfiles_read_all_fonts (qiv_t))
 
 (call xserver_tmpfs_client_template (qiv_t qiv_tmpfs_t))
 
