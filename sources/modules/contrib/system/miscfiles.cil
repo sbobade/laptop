@@ -312,6 +312,12 @@
     (allow ARG1 fonts_cache_t list_dir_perms)
     (allow ARG1 fonts_cache_t read_lnk_file_perms))
 
+(macro miscfiles_manage_fonts_cache ((type ARG1))
+    (call files_rw_cache_dirs (ARG1))
+    (allow ARG1 fonts_cache_t manage_file_perms)
+    (allow ARG1 fonts_cache_t manage_dir_perms)
+    (allow ARG1 fonts_cache_t manage_lnk_file_perms))
+
 (macro miscfiles_search_all_fonts_cache ((type ARG1))
     (call files_search_cache (ARG1))
     (allow ARG1 miscfiles_fonts_cache_object_type search_dir_perms)
@@ -375,6 +381,12 @@
     (allow ARG1 fonts_config_t read_file_perms)
     (allow ARG1 fonts_config_t list_dir_perms)
     (allow ARG1 fonts_config_t read_lnk_file_perms))
+
+(macro miscfiles_manage_fonts_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 fonts_config_t manage_file_perms)
+    (allow ARG1 fonts_config_t manage_dir_perms)
+    (allow ARG1 fonts_config_t manage_lnk_file_perms))
 
 (macro miscfiles_search_all_fonts_config ((type ARG1))
     (call files_search_config (ARG1))
@@ -440,6 +452,12 @@
     (allow ARG1 fonts_data_t list_dir_perms)
     (allow ARG1 fonts_data_t read_lnk_file_perms))
 
+(macro miscfiles_manage_fonts_data ((type ARG1))
+    (call files_rw_data_dirs (ARG1))
+    (allow ARG1 fonts_data_t manage_file_perms)
+    (allow ARG1 fonts_data_t manage_dir_perms)
+    (allow ARG1 fonts_data_t manage_lnk_file_perms))
+
 (macro miscfiles_search_all_fonts_data ((type ARG1))
     (call files_search_data (ARG1))
     (allow ARG1 miscfiles_fonts_data_object_type search_dir_perms)
@@ -486,6 +504,11 @@
     (call miscfiles_read_fonts_cache (ARG1))
     (call miscfiles_read_fonts_config (ARG1))
     (call miscfiles_read_fonts_data (ARG1)))
+
+(macro miscfiles_manage_fonts ((type ARG1))
+    (call miscfiles_manage_fonts_cache (ARG1))
+    (call miscfiles_manage_fonts_config (ARG1))
+    (call miscfiles_manage_fonts_data (ARG1)))
 
 (macro miscfiles_read_all_fonts ((type ARG1))
     (call miscfiles_read_all_fonts_cache (ARG1))
