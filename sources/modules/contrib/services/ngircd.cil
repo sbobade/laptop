@@ -1,0 +1,106 @@
+(typeattribute ngircd_admin_subject_type)
+
+(typeattribute ngircd_object_type)
+
+(type ngircd_t)
+(type ngircd_exec_t)
+(call subject_common_type (ngircd_t))
+(call subject_entry (ngircd_t ngircd_exec_t))
+(roletype system_r ngircd_t)
+
+(context ngircd_exec (system_u object_r ngircd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/ngircd" file ngircd_exec)
+
+(allow ngircd_t self (capability (setuid setgid)))
+(allow ngircd_t self create_tcp_stream_socket_perms)
+(allow ngircd_t self create_unix_dgram_socket_perms)
+(allow ngircd_t self rw_fifo_file_perms)
+
+(call system_audit_client_subject_type (ngircd_t))
+
+(call devices_read_urandom (ngircd_t))
+
+(call files_read_config_files (ngircd_t))
+(call files_read_data_files (ngircd_t))
+
+(call network_tcp_bind_generic_node (ngircd_t))
+
+(call irc_tcp_bind_irc_port (ngircd_t))
+
+(call miscfiles_read_locale (ngircd_t))
+
+(call ngircd_read_config_files (ngircd_t))
+(call ngircd_read_pam_config_files (ngircd_t))
+
+(call ns_client_subject_type (ngircd_t))
+
+(call auth_read_pam_config_files (ngircd_t))
+
+(type ngircd_config_t)
+(call files_config_object_type (ngircd_config_t))
+
+(typeattributeset ngircd_object_type ngircd_config_t)
+
+(context ngircd_config (system_u object_r ngircd_config_t (systemlow systemlow)))
+(filecon "/etc/ngircd\..*" file ngircd_config)
+
+(type ngircd_pam_config_t)
+(call auth_pam_config_object_type (ngircd_pam_config_t))
+
+(typeattributeset ngircd_object_type ngircd_pam_config_t)
+
+(context ngircd_pam_config (system_u object_r ngircd_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/ngircd" file ngircd_pam_config)
+
+(type ngircd_runtime_t)
+(call files_runtime_object_type (ngircd_runtime_t))
+
+(typeattributeset ngircd_object_type ngircd_runtime_t)
+
+(context ngircd_runtime (system_u object_r ngircd_runtime_t (systemlow systemlow)))
+(filecon "/var/run/ngircd(/.*)?" any ngircd_runtime)
+
+(optional ngircd_optional_systemd
+    (call systemd_daemon (ngircd_t ngircd_exec_t))
+
+    (type ngircd_unit_t)
+    (call systemd_unit_object_type (ngircd_unit_t))
+
+    (typeattributeset ngircd_object_type ngircd_unit_t)
+
+    (context ngircd_unit (system_u object_r ngircd_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*ngircd.*" file ngircd_unit)
+
+    (allow ngircd_admin_subject_type ngircd_unit_t (service (all))))
+
+(allow ngircd_admin_subject_type ngircd_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (ngircd_admin_subject_type ngircd_t))
+
+(allow ngircd_admin_subject_type ngircd_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro ngircd_exec ((type ARG1))
+    (call can_exec (ARG1 ngircd_exec_t)))
+
+(macro ngircd_auto_subject_type_transition ((type ARG1))
+    (call ngircd_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 ngircd_exec_t ngircd_t)))
+
+(macro ngircd_send_signal ((type ARG1))
+    (allow ARG1 ngircd_t (process (signal))))
+
+(macro ngircd_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 ngircd_config_t read_file_perms))
+
+(macro ngircd_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 ngircd_pam_config_t read_file_perms))
+
+(macro ngircd_admin ((type ARG1)(role ARG2))
+    (typeattributeset ngircd_admin_subject_type ARG1)
+    (optional ngircd_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional ngircd_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

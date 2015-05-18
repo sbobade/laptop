@@ -383,6 +383,9 @@
 (optional sysadm_optional_nfs
     (call nfs_admin (sysadm_t sysadm_r)))
 
+(optional sysadm_optional_ngircd
+    (call ngircd_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_nm
     (call nm_admin (sysadm_t sysadm_r))
     (call nm_run_nmcli (sysadm_subject_type sysadm_r)))
