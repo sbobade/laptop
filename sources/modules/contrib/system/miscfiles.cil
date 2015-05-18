@@ -349,7 +349,7 @@
 (macro miscfiles_manage_all_fonts_cache ((type ARG1))
     (call files_rw_cache_dirs (ARG1))
     (allow ARG1 miscfiles_fonts_cache_object_type manage_file_perms)
-    (allow ARG1 miscfiles_fonts_cache_object_type list_dir_perms)
+    (allow ARG1 miscfiles_fonts_cache_object_type manage_dir_perms)
     (allow ARG1 miscfiles_fonts_cache_object_type manage_lnk_file_perms)
     (optional miscfiles_manage_all_fonts_cache_optional_usersubject
         (call usersubject_rw_cache_home_dirs (ARG1))))
@@ -413,7 +413,7 @@
 (macro miscfiles_manage_all_fonts_config ((type ARG1))
     (call files_rw_config_dirs (ARG1))
     (allow ARG1 miscfiles_fonts_config_object_type manage_file_perms)
-    (allow ARG1 miscfiles_fonts_config_object_type list_dir_perms)
+    (allow ARG1 miscfiles_fonts_config_object_type manage_dir_perms)
     (allow ARG1 miscfiles_fonts_config_object_type manage_lnk_file_perms)
     (optional miscfiles_manage_all_fonts_config_optional_usersubject
         (call usersubject_rw_config_home_dirs (ARG1))))
@@ -477,7 +477,7 @@
 (macro miscfiles_manage_all_fonts_data ((type ARG1))
     (call files_rw_data_dirs (ARG1))
     (allow ARG1 miscfiles_fonts_data_object_type manage_file_perms)
-    (allow ARG1 miscfiles_fonts_data_object_type list_dir_perms)
+    (allow ARG1 miscfiles_fonts_data_object_type manage_dir_perms)
     (allow ARG1 miscfiles_fonts_data_object_type manage_lnk_file_perms)
     (optional miscfiles_manage_all_fonts_data_optional_usersubject
         (call usersubject_rw_data_home_dirs (ARG1))))
