@@ -35,4 +35,8 @@
 
 * test lynx again by downloading .ZIP file
 
-* make qemu work with -sandbox (seccomp)
+* revert: ( this seems to be a bug in librados )
+
+commit 4ef0093bb6ff10dea02c450b61b5aa5f86cba07f
+commit a74277c18d04aecd1c49811ddf1b2d0a46c34e0f
+commit 5b3e118c180f34e1eb8151a0913a829f3e6c7c10
