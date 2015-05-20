@@ -80,8 +80,6 @@
 
 (call miscfiles_read_locale (myqemu_virt_subject_type))
 
-(call myqemu_read_all_virt_tmpfs_object_files (myqemu_virt_subject_type))
-
 (call ns_client_subject_type (myqemu_virt_subject_type))
 
 (call qemu_mprot_read_qemu_exec_files (myqemu_virt_subject_type))
@@ -408,10 +406,6 @@
 (macro myqemu_use_all_inherited_virt_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 myqemu_virt_pty_object_type rw_inherited_term_perms))
-
-(macro myqemu_read_all_virt_tmpfs_object_files ((type ARG1))
-    (call filesystems_search_tmpfs (ARG1))
-    (allow ARG1 myqemu_virt_tmpfs_object_type read_file_perms))
 
 (macro myqemu_admin ((type ARG1)(role ARG2))
     (typeattributeset myqemu_admin_subject_type ARG1)
