@@ -5,6 +5,7 @@
 (typeattribute myqemu_virt_object_type)
 (typeattribute myqemu_virt_runtime_object_type)
 (typeattribute myqemu_virt_pty_object_type)
+(typeattribute myqemu_virt_tmpfs_object_type)
 
 (typeattribute myqemu_object_type)
 
@@ -18,8 +19,9 @@
 (type virt_object_t)
 (type virt_runtime_object_t)
 (type virt_pty_object_t)
+(type virt_tmpfs_object_t)
 
-(call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t virt_pty_object_t))
+(call myqemu_virt_template (virt_subject_t virt_object_t virt_runtime_object_t virt_pty_object_t virt_tmpfs_object_t))
 
 (context virt_runtime_object (system_u object_r virt_runtime_object_t (systemlow systemlow)))
 (filecon "/var/run/.*\.qga\.sock" socket virt_runtime_object)
@@ -31,6 +33,10 @@
 (call files_object_type (myqemu_virt_object_type))
 
 (typeattributeset myqemu_object_type myqemu_virt_object_type)
+
+(call files_tmpfs_object_type (myqemu_virt_tmpfs_object_type))
+
+(typeattributeset myqemu_object_type myqemu_virt_tmpfs_object_type)
 
 (call files_runtime_object_type (myqemu_virt_runtime_object_type))
 
@@ -65,6 +71,7 @@
 
 (call filesystems_getattr_filesystems (myqemu_virt_subject_type))
 (call filesystems_read_sysfs (myqemu_virt_subject_type))
+(call filesystems_getattr_tmpfs_filesystems (myqemu_virt_subject_type))
 
 (call subject_use_interactive_fd_subject_type (myqemu_virt_subject_type))
 
@@ -245,7 +252,7 @@
     (call systemd_unit_object_type (ARG1))
     (typeattributeset myqemu_runner_systemd_unit_object_type ARG1))
 
-(macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3)(type ARG4))
+(macro myqemu_virt_template ((type ARG1)(type ARG2)(type ARG3)(type ARG4)(type ARG5))
     (call myqemu_virt_subject_type (ARG1))
     (call myqemu_virt_object_type (ARG2))
     (allow ARG1 ARG2 rw_file_perms)
@@ -254,7 +261,10 @@
     (call files_runtime_object_type_transition (ARG1 ARG3 sock_file "*"))
     (call myqemu_virt_pty_object_type (ARG4))
     (call terminals_create_pty (ARG1 ARG4))
-    (allow ARG1 ARG4 rw_term_perms))
+    (allow ARG1 ARG4 rw_term_perms)
+    (call myqemu_virt_tmpfs_object_type (ARG5))
+    (allow ARG1 ARG5 manage_file_perms)
+    (call filesystems_tmpfs_object_type_transition (ARG1 ARG5 file "*")))
 
 (macro myqemu_virt_pty_object_type ((type ARG1))
     (call terminals_pty_object_type (ARG1))
@@ -268,6 +278,9 @@
 
 (macro myqemu_virt_runtime_object_type ((type ARG1))
     (typeattributeset myqemu_virt_runtime_object_type ARG1))
+
+(macro myqemu_virt_tmpfs_object_type ((type ARG1))
+    (typeattributeset myqemu_virt_tmpfs_object_type ARG1))
 
 (macro myqemu_exec_installer ((type ARG1))
     (call can_exec (ARG1 myqemu_installer_exec_t)))
