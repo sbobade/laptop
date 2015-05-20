@@ -80,7 +80,7 @@
 
 (call miscfiles_read_locale (myqemu_virt_subject_type))
 
-(call myqemu_read_all_virt_tmpfs_object_files (myqemu_virt_subject_type)) ; FIXME
+(call myqemu_read_all_virt_tmpfs_object_files (myqemu_virt_subject_type))
 
 (call ns_client_subject_type (myqemu_virt_subject_type))
 
