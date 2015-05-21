@@ -170,6 +170,30 @@
 
 (class binder (impersonate call set_context_mgr transfer))
 
+(classcommon netlink_iscsi_socket socket)
+(class netlink_iscsi_socket ())
+
+(classcommon netlink_fib_lookup_socket socket)
+(class netlink_fib_lookup_socket ())
+
+(classcommon netlink_connector_socket socket)
+(class netlink_connector_socket ())
+
+(classcommon netlink_netfilter_socket socket)
+(class netlink_netfilter_socket ())
+
+(classcommon netlink_generic_socket socket)
+(class netlink_generic_socket ())
+
+(classcommon netlink_scsitransport_socket socket)
+(class netlink_scsitransport_socket ())
+
+(classcommon netlink_rdma_socket socket)
+(class netlink_rdma_socket ())
+
+(classcommon netlink_crypto_socket socket)
+(class netlink_crypto_socket ())
+
 (classorder (security process system capability filesystem file
     dir fd lnk_file chr_file blk_file sock_file fifo_file socket
     tcp_socket udp_socket rawip_socket node netif netlink_socket
@@ -179,4 +203,7 @@
     netlink_selinux_socket netlink_audit_socket netlink_ip6fw_socket
     netlink_dnrt_socket dbus association netlink_kobject_uevent_socket
     appletalk_socket packet key dccp_socket memprotect peer
-    capability2 kernel_service tun_socket service binder))
+    capability2 kernel_service tun_socket service binder netlink_iscsi_socket
+    netlink_fib_lookup_socket netlink_connector_socket netlink_netfilter_socket
+    netlink_generic_socket netlink_scsitransport_socket netlink_rdma_socket
+    netlink_crypto_socket))

@@ -149,3 +149,43 @@
 (constrain (tun_socket (create relabelto relabelfrom))
     (or (eq u1 u2)
     (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_iscsi_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_fib_lookup_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_connector_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_netfilter_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_generic_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_scsitransport_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_rdma_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))
+
+(constrain (netlink_crypto_socket (create relabelto relabelfrom))
+    (or
+    (eq u1 u2)
+    (eq t1 subject_can_change_object_identity)))

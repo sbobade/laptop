@@ -755,3 +755,83 @@
 (classpermissionset create_tun_socket_perms (tun_socket
     (create ioctl read getattr write setattr append bind connect getopt
     setopt shutdown)))
+
+(classpermission rw_netlink_iscsi_socket_perms)
+(classpermissionset rw_netlink_iscsi_socket_perms (netlink_iscsi_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_iscsi_socket_perms)
+(classpermissionset create_netlink_iscsi_socket_perms
+    (netlink_iscsi_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
+
+(classpermission rw_netlink_fib_lookup_socket_perms)
+(classpermissionset rw_netlink_fib_lookup_socket_perms (netlink_fib_lookup_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_fib_lookup_socket_perms)
+(classpermissionset create_netlink_fib_lookup_socket_perms
+    (netlink_fib_lookup_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
+
+(classpermission rw_netlink_connector_socket_perms)
+(classpermissionset rw_netlink_connector_socket_perms (netlink_connector_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_connector_socket_perms)
+(classpermissionset create_netlink_connector_socket_perms
+    (netlink_connector_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
+
+(classpermission rw_netlink_netfilter_socket_perms)
+(classpermissionset rw_netlink_netfilter_socket_perms (netlink_netfilter_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_netfilter_socket_perms)
+(classpermissionset create_netlink_netfilter_socket_perms
+    (netlink_netfilter_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
+
+(classpermission rw_netlink_generic_socket_perms)
+(classpermissionset rw_netlink_generic_socket_perms (netlink_generic_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_generic_socket_perms)
+(classpermissionset create_netlink_generic_socket_perms
+    (netlink_generic_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
+
+(classpermission rw_netlink_scsitransport_socket_perms)
+(classpermissionset rw_netlink_scsitransport_socket_perms (netlink_scsitransport_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_scsitransport_socket_perms)
+(classpermissionset create_netlink_scsitransport_socket_perms
+    (netlink_scsitransport_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
+
+(classpermission rw_netlink_rdma_socket_perms)
+(classpermissionset rw_netlink_rdma_socket_perms (netlink_rdma_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_rdma_socket_perms)
+(classpermissionset create_netlink_rdma_socket_perms
+    (netlink_rdma_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
+
+(classpermission rw_netlink_crypto_socket_perms)
+(classpermissionset rw_netlink_crypto_socket_perms (netlink_crypto_socket
+    (ioctl read getattr write setattr append bind connect getopt setopt
+    shutdown)))
+
+(classpermission create_netlink_crypto_socket_perms)
+(classpermissionset create_netlink_crypto_socket_perms
+    (netlink_crypto_socket (create ioctl read getattr write setattr append
+    bind connect getopt setopt shutdown)))
