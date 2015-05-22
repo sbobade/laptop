@@ -184,6 +184,10 @@
 (optional logind_optional_network_networkd
     (call network_dbus_chat_networkd (logind_t)))
 
+(optional logind_optional_sessions
+    (call sessions_manage_runtime_files (logind_t))
+    (call sessions_runtime_object_type_transition_runtime_files (logind_t "*")))
+
 (optional logind_optional_unconfineduser
     (call unconfineduser_read_state_all_subjects (logind_t)))
 
