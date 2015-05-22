@@ -70,6 +70,7 @@
 
 (call auth_read_passwd_config_files (dracut_t))
 
+(call dracut_exec (dracut_t))
 (call dracut_read_config (dracut_t))
 
 (call fstools_exec (dracut_t))

@@ -170,11 +170,16 @@
 
 (call udev_client_subject_type (journald_t))
 
+(call utmp_read_utmp_runtime_files (journald_t))
+
 (optional journald_optional_machine
     (call machine_read_config_files (journald_t)))
 
 (optional journald_optional_plymouth
     (call plymouth_use_fd_plymouthd (journald_t)))
+
+(optional journald_optional_usersubject
+    (call usersubject_write_terminals (journald_t)))
 
 (allow journal_journalctl_client_subject_type self (capability (ipc_lock)))
 (allow journal_journalctl_client_subject_type self (process (setrlimit)))
