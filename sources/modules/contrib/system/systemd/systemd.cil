@@ -401,6 +401,8 @@
 
 (call terminals_use_inherited_console (systemd_systemctl_subject_type))
 
+(call ns_client_subject_type (systemd_systemctl_subject_type))
+
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
 (call systemd_search_config (systemd_systemctl_subject_type))
@@ -412,6 +414,8 @@
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_control_system (systemd_systemctl_subject_type))
+
+(call utmp_read_utmp_runtime_files (systemd_systemctl_subject_type))
 
 (optional systemd_systemctl_subject_type_applications
     (call applications_getattr_all_subjects (systemd_systemctl_subject_type))
