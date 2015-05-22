@@ -46,6 +46,10 @@
 (allow git_subject_type git_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (git_subject_type git_tmpfs_t file "*"))
 
+(call git_manage_config_home (git_subject_type))
+(call git_config_home_object_type_transition_git_config_home_dirs (git_subject_type))
+(call git_home_dir_object_type_transition_git_config_home_files (git_subject_type))
+
 (call devices_read_urandom (git_subject_type))
 
 (call files_read_data (git_subject_type))
