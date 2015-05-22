@@ -157,8 +157,8 @@
 (call nspawn_read_tmpfs_lnk_files (nspawn_common_container_subject_type))
 
 (call nspawn_search_systemd_runtime (nspawn_common_container_subject_type))
-(call nspawn_setattr_terminals (nspawn_common_container_subject_type))
-(call nspawn_use_terminals (nspawn_common_container_subject_type))
+(call nspawn_setattr_ptys (nspawn_common_container_subject_type))
+(call nspawn_use_ptys (nspawn_common_container_subject_type))
 
 (optional nspawn_common_container_subject_type_optional_systemduser
     (call systemduser_dontaudit_link_keyring_all_subjects (nspawn_common_container_subject_type)))
@@ -262,8 +262,8 @@
 
 (call miscfiles_read_locale (nspawn_t))
 
-(call nspawn_setattr_terminals (nspawn_t))
-(call nspawn_use_terminals (nspawn_t))
+(call nspawn_setattr_ptys (nspawn_t))
+(call nspawn_use_ptys (nspawn_t))
 
 (call systemd_mmap_exec_files (nspawn_t))
 (call systemd_notify_system_subject_type (nspawn_t))
@@ -339,23 +339,23 @@
 (macro nspawn_systemd_runtime_object_type_transition_runtime_dirs ((type ARG1))
     (call systemd_runtime_object_type_transition (ARG1 nspawn_systemd_runtime_t dir "nspawn")))
 
-(macro nspawn_relabel_terminals ((type ARG1))
+(macro nspawn_relabel_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 nspawn_pty_dev_t relabel_chr_file_perms))
 
-(macro nspawn_setattr_terminals ((type ARG1))
+(macro nspawn_setattr_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 nspawn_pty_dev_t (chr_file (setattr))))
 
-(macro nspawn_getattr_terminals ((type ARG1))
+(macro nspawn_getattr_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 nspawn_pty_dev_t (chr_file (getattr))))
 
-(macro nspawn_use_terminals ((type ARG1))
+(macro nspawn_use_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 nspawn_pty_dev_t rw_term_perms))
 
-(macro nspawn_use_inherited_terminals ((type ARG1))
+(macro nspawn_use_inherited_ptys ((type ARG1))
     (allow ARG1 nspawn_pty_dev_t rw_inherited_term_perms))
 
 (macro nspawn_common_container_subject_type ((type ARG1))

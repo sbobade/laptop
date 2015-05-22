@@ -378,6 +378,10 @@
 (macro myqemu_relabel_all_virt_object_files ((type ARG1))
     (allow ARG1 myqemu_virt_object_type relabel_file_perms))
 
+(macro myqemu_getattr_installer_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 myqemu_installer_pty_object_t (chr_file (getattr))))
+
 (macro myqemu_use_installer_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 myqemu_installer_pty_object_t rw_term_perms))
@@ -385,6 +389,10 @@
 (macro myqemu_use_virt_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 myqemu_virt_pty_object_t rw_term_perms))
+
+(macro myqemu_getattr_all_virt_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 myqemu_virt_pty_object_type (chr_file (getattr))))
 
 (macro myqemu_use_all_virt_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))

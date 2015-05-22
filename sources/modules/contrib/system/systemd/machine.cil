@@ -73,7 +73,7 @@
 
 (call machine_manage_lib (machined_t))
 
-(call nspawn_getattr_terminals (machined_t))
+(call nspawn_getattr_ptys (machined_t))
 (call nspawn_read_state (machined_t))
 (call nspawn_list_all_common_container_objects (machined_t))
 (call nspawn_read_all_common_container_object_lnk_files (machined_t))
@@ -96,11 +96,15 @@
 (call systemd_start_transient_units (machined_t))
 (call systemd_stop_transient_units (machined_t))
 
+(optional machined_optional_myqemu
+    (call myqemu_getattr_installer_ptys (machined_t))
+    (call myqemu_getattr_all_virt_ptys (machined_t)))
+
 (optional machined_optional_polkit
     (call polkit_dbus_chat_polkitd (machined_t)))
 
 (optional machined_optional_usersubject
-    (call usersubject_getattr_terminals (machined_t)))
+    (call usersubject_getattr_ptys (machined_t)))
 
 (allow machine_machinectl_client_subject_type self (capability (ipc_lock)))
 (allow machine_machinectl_client_subject_type self (process (setrlimit)))
