@@ -452,7 +452,7 @@
     (call systemduser_read_config_home (systemd_systemctl_subject_type)))
 
 (optional systemd_systemdctl_subject_type_optional_usersubject
-    (call usersubject_use_terminals (systemd_systemctl_subject_type))
+    (call usersubject_write_terminals (systemd_systemctl_subject_type))
     (call usersubject_search_exec_home (systemd_systemctl_subject_type))
     (call usersubject_read_exec_home_lnk_files (systemd_systemctl_subject_type))
     (call usersubject_read_user_home_files (systemd_systemctl_subject_type)))

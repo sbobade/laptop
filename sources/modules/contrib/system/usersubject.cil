@@ -1243,6 +1243,10 @@
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 user_pty_dev_t (chr_file (setattr))))
 
+(macro usersubject_write_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 user_pty_dev_t write_chr_file_perms))
+
 (macro usersubject_relabel_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 user_pty_dev_t relabel_chr_file_perms))
@@ -1273,6 +1277,14 @@
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 usersubject_pty_object_type (chr_file (setattr))))
 
+(macro usersubject_getattr_all_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 usersubject_pty_object_type (chr_file (getattr))))
+
+(macro usersubject_write_all_ptys ((type ARG1))
+    (call filesystems_search_devpts (ARG1))
+    (allow ARG1 usersubject_pty_object_type write_chr_file_perms))
+
 (macro usersubject_relabel_all_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 usersubject_pty_object_type relabel_chr_file_perms))
@@ -1299,6 +1311,10 @@
 (macro usersubject_setattr_ttys ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 user_tty_dev_t (chr_file (setattr))))
+
+(macro usersubject_write_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 user_tty_dev_t write_chr_file_perms))
 
 (macro usersubject_relabel_ttys ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
@@ -1327,6 +1343,14 @@
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 usersubject_tty_object_type (chr_file (setattr))))
 
+(macro usersubject_getattr_all_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usersubject_tty_object_type (chr_file (getattr))))
+
+(macro usersubject_write_all_ttys ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (allow ARG1 usersubject_tty_object_type write_chr_file_perms))
+
 (macro usersubject_relabel_all_ttys ((type ARG1))
     (call filesystems_search_devtmpfs (ARG1))
     (allow ARG1 usersubject_tty_object_type relabel_chr_file_perms))
@@ -1351,6 +1375,10 @@
     (call usersubject_getattr_ptys (ARG1))
     (call usersubject_getattr_ttys (ARG1)))
 
+(macro usersubject_write_terminals ((type ARG1))
+    (call usersubject_write_ptys (ARG1))
+    (call usersubject_write_ttys (ARG1)))
+
 (macro usersubject_use_terminals ((type ARG1))
     (call usersubject_use_ptys (ARG1))
     (call usersubject_use_ttys (ARG1)))
@@ -1366,6 +1394,14 @@
 (macro usersubject_setattr_all_terminals ((type ARG1))
     (call usersubject_setattr_all_ptys (ARG1))
     (call usersubject_setattr_all_ttys (ARG1)))
+
+(macro usersubject_getattr_all_terminals ((type ARG1))
+    (call usersubject_getattr_all_ptys (ARG1))
+    (call usersubject_getattr_all_ttys (ARG1)))
+
+(macro usersubject_write_all_terminals ((type ARG1))
+    (call usersubject_write_all_ptys (ARG1))
+    (call usersubject_write_all_ttys (ARG1)))
 
 (macro usersubject_use_all_terminals ((type ARG1))
     (call usersubject_use_all_ptys (ARG1))
