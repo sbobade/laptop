@@ -233,6 +233,7 @@
 (call filesystems_list_binfmt_misc (systemd_t))
 (call filesystems_list_efivarfs (systemd_t))
 (call filesystems_list_pstore (systemd_t))
+(call filesystems_list_devpts (systemd_t))
 (call filesystems_manage_devtmpfs_dirs (systemd_t))
 (call filesystems_manage_devtmpfs_lnk_files (systemd_t))
 (call filesystems_manage_devtmpfs_chr_files (systemd_t))
