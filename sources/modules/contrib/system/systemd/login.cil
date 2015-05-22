@@ -145,12 +145,19 @@
 
 (call login_read_logind_systemd_config_files (logind_t))
 
+(call miscfiles_read_locale (logind_t))
+
 (call ns_client_subject_type (logind_t))
 
 (call polkit_dbus_chat_polkitd (logind_t))
 
 (call seutil_read_selinux_config_files (logind_t))
 (call seutil_read_file_context_files (logind_t))
+
+(call shutdown_manage_shutdownd_systemd_runtime_dirs (logind_t))
+(call shutdown_manage_shutdownd_systemd_runtime_files (logind_t))
+(call shutdown_systemd_runtime_object_type_transition_shutdownd_systemd_runtime_dirs
+    (logind_t))
 
 (call systemd_dbus_chat (logind_t))
 (call systemd_write_systemd_runtime_sock_files (logind_t))
@@ -171,6 +178,8 @@
 (call usersubject_use_terminals (logind_t))
 
 (call udev_client_subject_type (logind_t))
+
+(call utmp_read_utmp_runtime_files (logind_t))
 
 (optional logind_optional_network_networkd
     (call network_dbus_chat_networkd (logind_t)))

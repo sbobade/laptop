@@ -122,7 +122,7 @@
 (allow shutdownd_t shutdownd_systemd_runtime_t manage_dir_perms)
 (allow shutdownd_t shutdownd_systemd_runtime_t manage_file_perms)
 (allow shutdownd_t shutdownd_systemd_runtime_t manage_sock_file_perms)
-(call systemd_runtime_object_type_transition (shutdownd_t shutdownd_systemd_runtime_t dir "*"))
+(call shutdown_systemd_runtime_object_type_transition_shutdownd_systemd_runtime_dirs (shutdownd_t))
 (call systemd_runtime_object_type_transition (shutdownd_t shutdownd_systemd_runtime_t sock_file "*"))
 
 (allow shutdownd_t self (capability (dac_override sys_tty_config)))
@@ -192,6 +192,14 @@
     (call systemd_search_runtime (ARG1))
     (call read_files_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t)))
 
+(macro shutdown_manage_shutdownd_systemd_runtime_files ((type ARG1))
+    (call systemd_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t)))
+
+(macro shutdown_manage_shutdownd_systemd_runtime_dirs ((type ARG1))
+    (call systemd_rw_runtime_dirs (ARG1))
+    (call manage_dirs_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t)))
+
 (macro shutdown_read_shutdownd_systemd_runtime_lnk_files ((type ARG1))
     (call systemd_search_runtime (ARG1))
     (call read_lnk_files_pattern (ARG1 shutdownd_systemd_runtime_t shutdownd_systemd_runtime_t)))
@@ -209,6 +217,9 @@
     (allow ARG1 shutdownd_systemd_runtime_t manage_dir_perms)
     (allow ARG1 shutdownd_systemd_runtime_t manage_sock_file_perms)
     (allow ARG1 shutdownd_systemd_runtime_t manage_lnk_file_perms))
+
+(macro shutdown_systemd_runtime_object_type_transition_shutdownd_systemd_runtime_dirs ((type ARG1))
+    (call systemd_runtime_object_type_transition (ARG1 shutdownd_systemd_runtime_t dir "shutdown")))
 
 (macro shutdown_share_state ((type ARG1))
     (allow ARG1 shutdown_t (process (share))))
