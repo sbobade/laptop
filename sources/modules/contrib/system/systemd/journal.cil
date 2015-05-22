@@ -179,7 +179,7 @@
     (call plymouth_use_fd_plymouthd (journald_t)))
 
 (optional journald_optional_usersubject
-    (call usersubject_write_terminals (journald_t)))
+    (call usersubject_use_terminals (journald_t)))
 
 (allow journal_journalctl_client_subject_type self (capability (ipc_lock)))
 (allow journal_journalctl_client_subject_type self (process (setrlimit)))
