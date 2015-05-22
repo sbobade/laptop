@@ -401,7 +401,9 @@
 
 (call terminals_use_inherited_console (systemd_systemctl_subject_type))
 
-(call ns_client_subject_type (systemd_systemctl_subject_type))
+(call auth_read_passwd_config_files (systemd_systemctl_subject_type))
+
+(call ns_read_config_files (systemd_systemctl_subject_type))
 
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
